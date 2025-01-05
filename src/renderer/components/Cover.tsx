@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle,
 } from "./ui/card";
 
 const Cover: React.FC<{ fileName: string }> = ({ fileName }) => {
@@ -36,15 +32,10 @@ const Cover: React.FC<{ fileName: string }> = ({ fileName }) => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Card Title</CardTitle>
-        <CardDescription>Card Description</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p>Card Content</p>
-      </CardContent>
-      <CardFooter>
-        <p>Card Footer</p>
+      <img src={`file://${picturePath}`} className="rounded-xl rounded-b-none"/>
+      <CardFooter className="flex flex-col align-middle py-2">
+        <p>The Last of Us Past 1</p>
+        <p>3h 32m • Playing</p>
       </CardFooter>
     </Card>
   );

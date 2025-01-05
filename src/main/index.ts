@@ -65,9 +65,6 @@ ipcMain.handle("run-command", async (event, command) => {
   });
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
-//
 ipcMain.handle("get-pictures-directory", async (event, command) => {
   const picturesDir = path.join(app.getPath("userData"), "images");
   return picturesDir;
