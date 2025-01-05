@@ -7,6 +7,7 @@ import * as path from "path";
 import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import { User } from "./entities/User";
+import Steam from "./service/storefront/steam";
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -22,6 +23,8 @@ const createWindow = (): void => {
     },
   });
 
+  require("dotenv").config();
+
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainWindow.webContents.session.webRequest.onHeadersReceived(
     (details, callback) => {
@@ -29,7 +32,7 @@ const createWindow = (): void => {
         responseHeaders: {
           ...details.responseHeaders,
           "Content-Security-Policy": [
-            "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval';",
+            "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src 'http://0.0.0.0:3000';",
           ],
         },
       });
@@ -55,6 +58,13 @@ const createWindow = (): void => {
       );
     })
     .catch((error) => console.log(error));
+
+  AppDataSource.runMigrations()
+  .then()
+  .catch((error)=>console.log(error))
+
+  //const steam = new Steam()
+  //steam.getOwnedGames()
 
   //mainWindow.webContents.openDevTools();
 };

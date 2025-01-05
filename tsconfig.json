@@ -13,9 +13,9 @@
         "noImplicitAny": true,
         "sourceMap": true,
         "strict": true,
-        "baseUrl": "./",
+        "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["./src/renderer/*"]
         },
         "outDir": "dist",
         "moduleResolution": "node",

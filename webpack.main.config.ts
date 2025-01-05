@@ -14,9 +14,9 @@ export const mainConfig: Configuration = {
     rules,
   },
   resolve: {
-    alias: {
-      '@/components': path.resolve(__dirname, 'src/renderer/components/'), // Adjust this to your source directory
-    },
+    //alias: {
+    //  '@': path.resolve(__dirname, './src/renderer'), // Adjust this to your source directory
+    //},
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
 };
