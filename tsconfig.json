@@ -19,8 +19,13 @@
         },
         "outDir": "dist",
         "moduleResolution": "node",
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
 
 }

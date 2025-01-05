@@ -91,3 +91,4 @@ out/
 # IDEs
 .vscode/
 .idea/
+database.sqlite
