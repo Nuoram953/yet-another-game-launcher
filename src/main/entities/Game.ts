@@ -6,6 +6,7 @@ import {
   ManyToOne,
 } from "typeorm";
 import { Storefront } from "./Storefront";
+import { GameStatus } from "./GameStatus";
 
 @Entity()
 export class Game {

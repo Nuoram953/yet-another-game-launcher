@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, Session } from "electron";
 import { exec } from "child_process";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -8,96 +8,93 @@ import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import { User } from "./entities/User";
 import Steam from "./service/storefront/steam";
+import { join } from "path";
 
-if (require("electron-squirrel-startup")) {
-  app.quit();
-}
+require("dotenv").config();
 
-const createWindow = (): void => {
-  const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
-    webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-      webSecurity: false,
-    },
-  });
+class MainApplication {
+  private mainWindow: BrowserWindow | null = null;
 
-  require("dotenv").config();
+  constructor() {
+    // Bind methods to ensure correct 'this' context
+    this.initialize = this.initialize.bind(this);
+    this.createWindow = this.createWindow.bind(this);
+  }
 
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainWindow.webContents.session.webRequest.onHeadersReceived(
-    (details, callback) => {
-      callback({
-        responseHeaders: {
-          ...details.responseHeaders,
-          "Content-Security-Policy": [
-            "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src 'http://0.0.0.0:3000';",
-          ],
+  async initialize(): Promise<void> {
+    try {
+      // Wait for Electron app to be ready
+      await app.whenReady();
+
+      // Create the browser window
+      await this.createWindow();
+
+      const steam = new Steam();
+      await steam.initialize();
+
+      app.on("activate", async () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+          await this.createWindow();
+        }
+      });
+
+      app.on("window-all-closed", () => {
+        if (process.platform !== "darwin") {
+          app.quit();
+        }
+      });
+    } catch (error) {
+      console.error("Failed to initialize application:", error);
+      app.quit();
+    }
+  }
+
+  async setupCSP(session: Session): Promise<void> {
+    return new Promise((resolve) => {
+      session.webRequest.onHeadersReceived((details, callback) => {
+        callback({
+          responseHeaders: {
+            ...details.responseHeaders,
+            "Content-Security-Policy": [
+              "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src 'http://0.0.0.0:3000';",
+            ],
+          },
+        });
+      });
+      // Ensure the listener is registered before resolving
+      resolve();
+    });
+  }
+
+  async createWindow(): Promise<void> {
+    try {
+      this.mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+          preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+          webSecurity: false,
         },
       });
-    },
-  );
 
-  AppDataSource.initialize()
-    .then(async () => {
-      console.log("Inserting a new user into the database...");
-      const user = new User();
-      user.firstName = "Timber";
-      user.lastName = "Saw";
-      user.age = 25;
-      await AppDataSource.manager.save(user);
-      console.log("Saved a new user with id: " + user.id);
+      await this.setupCSP(this.mainWindow.webContents.session)
 
-      console.log("Loading users from the database...");
-      const users = await AppDataSource.manager.find(User);
-      console.log("Loaded users: ", users);
+      await this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-      console.log(
-        "Here you can setup and run express / fastify / any other framework.",
-      );
-    })
-    .catch((error) => console.log(error));
 
-  AppDataSource.runMigrations()
-  .then()
-  .catch((error)=>console.log(error))
-
-  //const steam = new Steam()
-  //steam.getOwnedGames()
-
-  //mainWindow.webContents.openDevTools();
-};
-
-app.on("ready", createWindow);
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
+      this.mainWindow.on("closed", () => {
+        this.mainWindow = null;
+      });
+    } catch (error) {
+      console.error("Failed to create window:", error);
+      throw error;
+    }
   }
-});
+}
 
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
-
-ipcMain.handle("run-command", async (event, command) => {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(`Error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        reject(`Stderr: ${stderr}`);
-        return;
-      }
-      resolve(stdout);
-    });
-  });
-});
+// Create and start the application
+const mainApp = new MainApplication();
+mainApp.initialize().catch(console.error);
 
 ipcMain.handle("get-pictures-directory", async (event, command) => {
   const picturesDir = path.join(app.getPath("userData"), "images");
