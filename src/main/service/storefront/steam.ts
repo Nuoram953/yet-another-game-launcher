@@ -33,7 +33,7 @@ class Steam implements IStorefront {
   async initialize(): Promise<Game[]> {
     await this.getSteamUserData();
     const games = await this.getOwnedGames();
-    await insertMissing(games)
+    await insertMissing(games, 1)
     return await getAllGames()
   }
 

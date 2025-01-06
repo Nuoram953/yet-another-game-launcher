@@ -19,6 +19,7 @@ export async function insertMissing(games: IGame[], storefront: Storefront) {
 
   const bulkData = games.map((game) => ({
     storefront: store,
+    name: game.name,
     external_id: game.id,
     game_status: status,
     time_played: game.timePlayed,
