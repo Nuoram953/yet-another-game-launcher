@@ -12,6 +12,8 @@ import { join } from "path";
 
 require("dotenv").config();
 
+let hasRunInitialLibrariesUpdate: boolean = false;
+
 class MainApplication {
   private mainWindow: BrowserWindow | null = null;
 
@@ -97,8 +99,11 @@ ipcMain.handle("get-pictures-directory", async (event, command) => {
   return picturesDir;
 });
 
-ipcMain.handle("get-steam-games", async (event, command) => {
-  const steam = new Steam();
-  const games = await steam.initialize();
-  return games
+ipcMain.handle("update-libraries", async (event, forceReload) => {
+  if (!hasRunInitialLibrariesUpdate || forceReload) {
+    hasRunInitialLibrariesUpdate = true;
+    const steam = new Steam();
+    const games = await steam.initialize();
+    return games;
+  }
 });

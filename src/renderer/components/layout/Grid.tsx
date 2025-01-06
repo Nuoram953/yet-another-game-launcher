@@ -4,23 +4,7 @@ import SearchWithFilters from "../SearchWithFilters";
 import Cover from "../Cover";
 import _ from "lodash";
 
-const Grid = () => {
-  const [games, setGames] = useState([]);
-
-  useEffect(() => {
-    const fetchPicturePath = async () => {
-      try {
-        const steamGames = await window.api.getSteamGames();
-
-        setGames(steamGames);
-      } catch (error) {
-        console.error("Error fetching picture path:", error);
-      }
-    };
-
-    fetchPicturePath();
-  }, []);
-
+const Grid: React.FC<{ games: any }> = ({ games }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <SearchWithFilters />

@@ -19,6 +19,12 @@ export class Game {
   @Column()
   external_id: number;
 
+  @Column()
+  name: string;
+
   @ManyToOne(() => GameStatus, (gameStatues) => gameStatues.game)
   game_status: GameStatus;
+
+  @Column({type:"bigint"})
+  time_played: number;
 }

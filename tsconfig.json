@@ -15,7 +15,8 @@
         "strict": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["./src/renderer/*"]
+            "@/*": ["./src/renderer/*"],
+            "~/*":[".src/main/"]
         },
         "outDir": "dist",
         "moduleResolution": "node",
@@ -24,8 +25,6 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false
     },
-    "include": ["src/**/*"],
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "include": ["src/**/*"]
 
 }

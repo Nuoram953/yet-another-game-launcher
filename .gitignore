@@ -92,3 +92,4 @@ out/
 .vscode/
 .idea/
 database.sqlite
+dist/src

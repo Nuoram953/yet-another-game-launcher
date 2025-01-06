@@ -3,20 +3,13 @@ import { app } from "electron";
 import path from "path";
 import fs from "fs";
 import vdf from "vdf";
+import { IGame, IStorefront } from "src/main/types";
+import { Game } from "src/main/entities/Game";
+import { getAllGames, insertMissing } from "~/dal/game";
 
-interface Game {
-  id: number;
-  name: string;
-  timePlayed: number;
-}
 
-interface Storefront {
-  initialize(): Promise<Game[]>;
-  getOwnedGames(): Promise<Game[]>;
-  parseGames(response: any): Promise<Game[]>;
-}
 
-class Steam implements Storefront {
+class Steam implements IStorefront {
   private steamid: string | undefined;
   private apiKey: string | undefined;
   private personaName: string | undefined;
@@ -25,8 +18,8 @@ class Steam implements Storefront {
     this.apiKey = process.env.STEAM_API_KEY;
   }
 
-  async parseGames(response: AxiosResponse): Promise<Game[]> {
-    const games: Game[] = [];
+  async parseGames(response: AxiosResponse): Promise<IGame[]> {
+    const games: IGame[] = [];
     for (const entry of response.data.response.games) {
       games.push({
         id: entry.appid,
@@ -39,7 +32,9 @@ class Steam implements Storefront {
 
   async initialize(): Promise<Game[]> {
     await this.getSteamUserData();
-    return await this.getOwnedGames();
+    const games = await this.getOwnedGames();
+    await insertMissing(games)
+    return await getAllGames()
   }
 
   async getSteamUserData() {
@@ -58,7 +53,6 @@ class Steam implements Storefront {
     const user = users[0];
     this.steamid = user[0];
     this.personaName = user[1]["PersonaName"];
-    console.log(this.steamid, this.personaName);
   }
 
   async getOwnedGames() {
@@ -74,8 +68,6 @@ class Steam implements Storefront {
           },
         },
       );
-
-      console.log(response);
 
       const games = await this.parseGames(response);
 
