@@ -29,11 +29,14 @@ export async function insertMissing(games: IGame[], storefront: Storefront) {
     .insert()
     .into(Game)
     .values(bulkData)
+    .orIgnore()
     .execute();
 }
 
 export async function getAllGames() {
-  return await AppDataSource.getRepository(Game)
+  const games = await AppDataSource.getRepository(Game)
     .createQueryBuilder("game")
     .getMany();
+  console.log(games)
+  return games
 }

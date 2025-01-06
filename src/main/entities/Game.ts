@@ -4,11 +4,13 @@ import {
   Column,
   Generated,
   ManyToOne,
+  Unique,
 } from "typeorm";
 import { Storefront } from "./Storefront";
 import { GameStatus } from "./GameStatus";
 
 @Entity()
+@Unique(['storefront', 'external_id'])
 export class Game {
   @PrimaryGeneratedColumn("uuid")
   id: number;
