@@ -29,9 +29,6 @@ class MainApplication {
       // Create the browser window
       await this.createWindow();
 
-      const steam = new Steam();
-      await steam.initialize();
-
       app.on("activate", async () => {
         if (BrowserWindow.getAllWindows().length === 0) {
           await this.createWindow();
@@ -77,10 +74,9 @@ class MainApplication {
         },
       });
 
-      await this.setupCSP(this.mainWindow.webContents.session)
+      await this.setupCSP(this.mainWindow.webContents.session);
 
       await this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
 
       this.mainWindow.on("closed", () => {
         this.mainWindow = null;
@@ -99,4 +95,10 @@ mainApp.initialize().catch(console.error);
 ipcMain.handle("get-pictures-directory", async (event, command) => {
   const picturesDir = path.join(app.getPath("userData"), "images");
   return picturesDir;
+});
+
+ipcMain.handle("get-steam-games", async (event, command) => {
+  const steam = new Steam();
+  const games = await steam.initialize();
+  return games
 });

@@ -3,7 +3,7 @@ import { Card, CardFooter } from "./ui/card";
 import { ArrowDownToLine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const Cover: React.FC<{ fileName: string }> = ({ fileName }) => {
+const Cover: React.FC<{ fileName?: string }> = ({ fileName }) => {
   const [picturePath, setPicturePath] = useState<string | null>(null);
   const navigate = useNavigate();
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { app } from "electron";
 import path from "path";
 import fs from "fs";
@@ -8,7 +8,6 @@ interface Game {
   id: number;
   name: string;
   timePlayed: number;
-  lastPlayed: number;
 }
 
 interface Storefront {
@@ -26,8 +25,16 @@ class Steam implements Storefront {
     this.apiKey = process.env.STEAM_API_KEY;
   }
 
-  async parseGames(response: any): Promise<Game[]> {
-    return [];
+  async parseGames(response: AxiosResponse): Promise<Game[]> {
+    const games: Game[] = [];
+    for (const entry of response.data.response.games) {
+      games.push({
+        id: entry.appid,
+        name: entry.name,
+        timePlayed: entry.playtime_forever,
+      });
+    }
+    return games;
   }
 
   async initialize(): Promise<Game[]> {
