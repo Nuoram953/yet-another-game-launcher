@@ -4,19 +4,26 @@ import { AppDataSource } from "../data-source";
 import { Game } from "../entities/Game";
 import { IGame } from "../types";
 import { getStorefrontById } from "./storefront";
+import { getGameStatusById } from "./game_status";
 
-export async function insertMissing(games: IGame[], storefront:Storefront) {
-  const store = await getStorefrontById(storefront) 
-  if (_.isNull(store)){
-    return
+export async function insertMissing(games: IGame[], storefront: Storefront) {
+  const store = await getStorefrontById(storefront);
+  if (_.isNull(store)) {
+    throw new Error("Invalid storefront")
   }
 
-  const bulkData = games.map(game=>({
-    storefront:store,
-    external_id:game.id,
-    game_status:GameStatus.UNPLAYED,
-    time_played:game.timePlayed
-  }))
+  const status = await getGameStatusById(GameStatus.UNPLAYED);
+  if (_.isNull(status)) {
+    throw new Error("Invalid status")
+  }
+
+  const bulkData = games.map((game) => ({
+    storefront: store,
+    external_id: game.id,
+    game_status: status,
+    time_played: game.timePlayed,
+  }));
+
   await AppDataSource.createQueryBuilder()
     .insert()
     .into(Game)

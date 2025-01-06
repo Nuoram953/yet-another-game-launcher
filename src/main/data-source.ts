@@ -7,7 +7,7 @@ export const AppDataSource = new DataSource({
   name: "Yagl",
   type: "sqlite",
   entities: [Game,Storefront, GameStatus],
-  migrations: [__dirname + "/migrations/*{.ts,.js}"],
+  migrations: [__dirname + "/src/main/migrations/*{.ts,.js}"],
   database:"database.sqlite",
   synchronize: true,
   logging: false,
