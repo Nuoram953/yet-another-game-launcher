@@ -3,11 +3,11 @@ import { app } from "electron";
 import path from "path";
 import fs from "fs";
 import vdf from "vdf";
-import { IGame, IStorefront } from "src/main/types";
+import { IStorefront } from "src/main/types";
 import { Game } from "src/main/entities/Game";
-import { getAllGames, insertMissing } from "~/dal/game";
-
-
+import { IGame } from "src/common/types";
+import { GameStatus } from "../../constant";
+import { insertMissing } from "../../dal/game";
 
 class Steam implements IStorefront {
   private steamid: string | undefined;
@@ -24,17 +24,25 @@ class Steam implements IStorefront {
       games.push({
         id: entry.appid,
         name: entry.name,
+        status: entry.playtime_forever
+          ? GameStatus.PLAYED
+          : GameStatus.UNPLAYED,
         timePlayed: entry.playtime_forever,
+        playtimeWindows: entry.playtime_windows_forever,
+        playtimeMac: entry.playtime_mac_forever,
+        playtimeLinux: entry.playtime_linux_forever,
+        playtimeSteamDeck: entry.playtime_deck_forever,
+        lastPlayed: entry.rtime_last_played,
+        playtimeDisconnected: entry.playtime_disconnected,
       });
     }
     return games;
   }
 
-  async initialize(): Promise<Game[]> {
+  async initialize(): Promise<void> {
     await this.getSteamUserData();
     const games = await this.getOwnedGames();
-    await insertMissing(games, 1)
-    return await getAllGames()
+    await insertMissing(games, 1);
   }
 
   async getSteamUserData() {
@@ -75,6 +83,24 @@ class Steam implements IStorefront {
     } catch (error) {
       console.log(error);
       return [];
+    }
+  }
+  //https://steamcdn-a.akamaihd.net/steam/apps/1422450/library_600x900_2x.jpg
+  //
+  async downloadImage(url: string, destination: string): Promise<void> {
+    try {
+      const response = await axios.get<Buffer>(url, {
+        responseType: "arraybuffer", // Ensure the response is treated as binary data
+      });
+
+      fs.writeFileSync(destination, response.data);
+      console.log(`Image saved to ${destination}`);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error(`Axios error: ${error.message}`);
+      } else {
+        console.error(`Unexpected error: ${(error as Error).message}`);
+      }
     }
   }
 }

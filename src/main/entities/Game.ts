@@ -13,7 +13,7 @@ import { GameStatus } from "./GameStatus";
 @Unique(['storefront', 'external_id'])
 export class Game {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @ManyToOne(() => Storefront, (storefront) => storefront.game)
   storefront: Storefront;

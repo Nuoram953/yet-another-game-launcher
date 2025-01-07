@@ -16,7 +16,8 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/renderer/*"],
-            "~/*":[".src/main/"]
+            "~/*":[".src/main/"],
+            "@common/*":["src/common/"]
         },
         "outDir": "dist",
         "moduleResolution": "node",

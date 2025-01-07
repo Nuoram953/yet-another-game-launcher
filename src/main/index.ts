@@ -4,6 +4,8 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 import * as path from "path";
 
+import "./handlers/database";
+
 import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import { User } from "./entities/User";
@@ -14,13 +16,14 @@ require("dotenv").config();
 
 let hasRunInitialLibrariesUpdate: boolean = false;
 
-class MainApplication {
-  private mainWindow: BrowserWindow | null = null;
+class MainWindowManager {
+  mainWindow: BrowserWindow | null = null;
 
   constructor() {
     // Bind methods to ensure correct 'this' context
     this.initialize = this.initialize.bind(this);
     this.createWindow = this.createWindow.bind(this);
+    this.mainWindow = null;
   }
 
   async initialize(): Promise<void> {
@@ -31,6 +34,8 @@ class MainApplication {
       // Create the browser window
       await this.createWindow();
 
+      await AppDataSource.initialize();
+
       app.on("activate", async () => {
         if (BrowserWindow.getAllWindows().length === 0) {
           await this.createWindow();
@@ -39,6 +44,7 @@ class MainApplication {
 
       app.on("window-all-closed", () => {
         if (process.platform !== "darwin") {
+          AppDataSource.destroy();
           app.quit();
         }
       });
@@ -88,14 +94,20 @@ class MainApplication {
       throw error;
     }
   }
+  sendToRenderer(channel, data) {
+    if (this.mainWindow) {
+      this.mainWindow.webContents.send(channel, data);
+    }
+  }
 }
 
 // Create and start the application
-const mainApp = new MainApplication();
+
+export const mainApp = new MainWindowManager();
 mainApp.initialize().catch(console.error);
 
-ipcMain.handle("get-pictures-directory", async (event, command) => {
-  const picturesDir = path.join(app.getPath("userData"), "images");
+ipcMain.handle("get-pictures-directory", async (event, id) => {
+  const picturesDir = path.join(app.getPath("userData"), id);
   return picturesDir;
 });
 
@@ -107,3 +119,4 @@ ipcMain.handle("update-libraries", async (event, forceReload) => {
     return games;
   }
 });
+
