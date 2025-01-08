@@ -13,6 +13,7 @@ export class Migration1736171321527 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "temporary_game" RENAME TO "game"`);
         await queryRunner.query(`INSERT into storefront (name) values ('steam')`);
         await queryRunner.query(`INSERT into game_status (name) values ('UNPLAYED')`);
+        await queryRunner.query(`INSERT into game_status (name) values ('PLAYED')`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

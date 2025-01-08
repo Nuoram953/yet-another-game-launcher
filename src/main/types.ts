@@ -10,5 +10,5 @@ export interface IGame {
 export interface IStorefront {
   initialize(): Promise<void>;
   getOwnedGames(): Promise<IGame[]>;
-  parseGames(response: AxiosResponse): Promise<IGame[]>;
+  parseResponse(response: AxiosResponse): Promise<IGame[]>;
 }

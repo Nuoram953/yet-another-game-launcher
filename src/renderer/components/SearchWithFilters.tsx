@@ -10,7 +10,7 @@ const SearchWithFilters = () => {
   const [priceRange, setPriceRange] = useState([0]);
 
   return (
-    <div className="w-full max-w-3xl p-4">
+    <div className="w-full p-4">
       <div className="flex gap-2 mb-4">
         <div className="relative w-full">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />

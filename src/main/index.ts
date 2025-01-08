@@ -5,6 +5,7 @@ import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import Steam from "./service/storefront/steam";
 import log from 'electron-log/main';
+import MetadataManager from "./manager/metadataManager";
 
 require("dotenv").config();
 
@@ -12,6 +13,7 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let hasRunInitialLibrariesUpdate: boolean = false;
+export let metadataManager: MetadataManager
 
 class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
@@ -27,6 +29,8 @@ class MainWindowManager {
 
       log.initialize()
       log.errorHandler.startCatching()
+
+      metadataManager = new MetadataManager()
 
       await app.whenReady();
       log.warn('App is ready')

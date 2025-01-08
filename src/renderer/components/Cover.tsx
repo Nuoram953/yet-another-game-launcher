@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardFooter } from "./ui/card";
-import { ArrowDownToLine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { IGame } from "src/common/types";
 import { convertToHoursAndMinutes } from "@/utils/util";
+import { Skeleton } from "./ui/skeleton";
+
+const SkeletonCover =() =>{
+  return (
+    <div className="flex flex-col space-y-3">
+      <Skeleton className="rounded-xl h-[400px]" />
+    </div>
+  )
+}
 
 const Cover: React.FC<{ game: IGame }> = ({ game }) => {
   const [picturePath, setPicturePath] = useState<string | null>(null);
@@ -14,7 +22,7 @@ const Cover: React.FC<{ game: IGame }> = ({ game }) => {
       try {
         console.log(game)
         const directory = await window.api.getStoredPicturesDirectory(game.id);
-        setPicturePath(`${directory}/cover_1.jpg`);
+        setPicturePath(`${directory}/cover/cover_1.jpg`);
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }
@@ -31,7 +39,7 @@ const Cover: React.FC<{ game: IGame }> = ({ game }) => {
   };
 
   if (!picturePath) {
-    return <div>Loading...</div>;
+    return <SkeletonCover />;
   }
 
   return (

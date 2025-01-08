@@ -13,7 +13,7 @@
   "aliases": {
     "components": "@/renderer/components",
     "utils": "@/renderer/lib/utils",
-    "ui": "@/renderer/components/ui",
+    "ui": "@/components/ui",
     "lib": "@/renderer/lib",
     "hooks": "@/renderer/hooks"
   },
