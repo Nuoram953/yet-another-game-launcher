@@ -2,7 +2,6 @@ import _ from "lodash";
 import { GameStatus, Storefront } from "../constant";
 import { AppDataSource } from "../data-source";
 import { Game } from "../entities/Game";
-import { IGame } from "../types";
 import { getStorefrontById } from "./storefront";
 import { getGameStatusById } from "./game_status";
 import axios from "axios";
@@ -11,16 +10,13 @@ import { app } from "electron";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { mainApp } from "..";
+import { IGame } from "src/common/types";
+import log from "electron-log/main";
 
 export async function insertMissing(games: IGame[], storefront: Storefront) {
   const store = await getStorefrontById(storefront);
   if (_.isNull(store)) {
     throw new Error("Invalid storefront");
-  }
-
-  const status = await getGameStatusById(GameStatus.UNPLAYED);
-  if (_.isNull(status)) {
-    throw new Error("Invalid status");
   }
 
   for (const item of games) {
@@ -30,7 +26,11 @@ export async function insertMissing(games: IGame[], storefront: Storefront) {
     });
 
     if (!game) {
-      console.log("Creating new game");
+      const status = await getGameStatusById(item.status);
+      if (_.isNull(status)) {
+        throw new Error("Invalid status");
+      }
+
       game = AppDataSource.getRepository(Game).create({
         storefront: store,
         name: item.name,
@@ -41,9 +41,11 @@ export async function insertMissing(games: IGame[], storefront: Storefront) {
       await AppDataSource.getRepository(Game).save(game);
       const folder = await createFolderInUserData(game!.id);
       await downloadImage(
-        `https://steamcdn-a.akamaihd.net/steam/apps/${game?.external_id}/library_600x900_2x.jpg`,
+        `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game?.external_id}/library_600x900.jpg`,
         folder + "/cover_1.jpg",
       );
+
+      log.info(`${game.name} - ${game.id} - ${store.name} was added`);
 
       mainApp.sendToRenderer("add-new-game", {
         id: game.id,

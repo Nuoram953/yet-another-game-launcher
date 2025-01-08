@@ -7,6 +7,7 @@ import Grid from "./components/layout/Grid";
 import Layout from "./components/layout/Layout";
 import { ipcMain } from "electron";
 import { IGame } from "src/common/types";
+import { LibraryContext, LibraryContextType } from "./context/DatabaseContext";
 
 const App = () => {
   const [games, setGames] = useState<IGame[]>([]);
@@ -23,36 +24,36 @@ const App = () => {
     };
 
     fetchPicturePath();
-    window.api.onReceiveFromMain("add-new-game", (newGame:IGame)=>{
+    window.api.onReceiveFromMain("add-new-game", (newGame: IGame) => {
       setGames((prevItems) => [...prevItems, newGame]);
-    })
-
+    });
   }, []);
 
-
   return (
-    <HashRouter>
-      <Routes>
-        <Route
-          index
-          path="/"
-          element={
-            <Layout>
-              <Grid games={games} />
-            </Layout>
-          }
-        />
-        <Route
-          index
-          path="/game/:id"
-          element={
-            <Layout>
-              <p>test</p>
-            </Layout>
-          }
-        />
-      </Routes>
-    </HashRouter>
+    <LibraryContext.Provider value={{ games, setGames }}>
+      <HashRouter>
+        <Routes>
+          <Route
+            index
+            path="/"
+            element={
+              <Layout>
+                <Grid />
+              </Layout>
+            }
+          />
+          <Route
+            index
+            path="/game/:id"
+            element={
+              <Layout>
+                <p>test</p>
+              </Layout>
+            }
+          />
+        </Routes>
+      </HashRouter>
+    </LibraryContext.Provider>
   );
 };
 

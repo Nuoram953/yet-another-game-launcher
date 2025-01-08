@@ -4,7 +4,6 @@ import path from "path";
 import fs from "fs";
 import vdf from "vdf";
 import { IStorefront } from "src/main/types";
-import { Game } from "src/main/entities/Game";
 import { IGame } from "src/common/types";
 import { GameStatus } from "../../constant";
 import { insertMissing } from "../../dal/game";
@@ -18,13 +17,13 @@ class Steam implements IStorefront {
     this.apiKey = process.env.STEAM_API_KEY;
   }
 
-  async parseGames(response: AxiosResponse): Promise<IGame[]> {
+  async parseResponse(response: AxiosResponse): Promise<IGame[]> {
     const games: IGame[] = [];
     for (const entry of response.data.response.games) {
       games.push({
         id: entry.appid,
         name: entry.name,
-        status: entry.playtime_forever
+        status: entry.playtime_forever > 0
           ? GameStatus.PLAYED
           : GameStatus.UNPLAYED,
         timePlayed: entry.playtime_forever,
@@ -60,7 +59,6 @@ class Steam implements IStorefront {
 
     const user = users[0];
     this.steamid = user[0];
-    this.personaName = user[1]["PersonaName"];
   }
 
   async getOwnedGames() {
@@ -77,30 +75,12 @@ class Steam implements IStorefront {
         },
       );
 
-      const games = await this.parseGames(response);
+      const games = await this.parseResponse(response);
 
       return games;
     } catch (error) {
       console.log(error);
       return [];
-    }
-  }
-  //https://steamcdn-a.akamaihd.net/steam/apps/1422450/library_600x900_2x.jpg
-  //
-  async downloadImage(url: string, destination: string): Promise<void> {
-    try {
-      const response = await axios.get<Buffer>(url, {
-        responseType: "arraybuffer", // Ensure the response is treated as binary data
-      });
-
-      fs.writeFileSync(destination, response.data);
-      console.log(`Image saved to ${destination}`);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(`Axios error: ${error.message}`);
-      } else {
-        console.error(`Unexpected error: ${(error as Error).message}`);
-      }
     }
   }
 }

@@ -1,18 +1,15 @@
 import { app, BrowserWindow, ipcMain, Session } from "electron";
-import { exec } from "child_process";
-declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
-declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 import * as path from "path";
-
 import "./handlers/database";
-
 import "reflect-metadata";
 import { AppDataSource } from "./data-source";
-import { User } from "./entities/User";
 import Steam from "./service/storefront/steam";
-import { join } from "path";
+import log from 'electron-log/main';
 
 require("dotenv").config();
+
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let hasRunInitialLibrariesUpdate: boolean = false;
 
@@ -20,7 +17,6 @@ class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
 
   constructor() {
-    // Bind methods to ensure correct 'this' context
     this.initialize = this.initialize.bind(this);
     this.createWindow = this.createWindow.bind(this);
     this.mainWindow = null;
@@ -28,11 +24,15 @@ class MainWindowManager {
 
   async initialize(): Promise<void> {
     try {
-      // Wait for Electron app to be ready
-      await app.whenReady();
 
-      // Create the browser window
+      log.initialize()
+      log.errorHandler.startCatching()
+
+      await app.whenReady();
+      log.warn('App is ready')
+
       await this.createWindow();
+      log.info("Window created")
 
       await AppDataSource.initialize();
 
@@ -101,7 +101,6 @@ class MainWindowManager {
   }
 }
 
-// Create and start the application
 
 export const mainApp = new MainWindowManager();
 mainApp.initialize().catch(console.error);

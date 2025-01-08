@@ -36,9 +36,8 @@ const Cover: React.FC<{ game: IGame }> = ({ game }) => {
 
   return (
     <Card onClick={handleRunCommand} className="w-full">
-      <img
+      <ImageWithFallback
         src={`file://${picturePath}`}
-        className="rounded-xl rounded-b-none w-full"
       />
       <CardFooter className="flex flex-row align-middle py-2 justify-around">
         <div className="flex flex-col truncate w-wull text-center">
@@ -49,6 +48,31 @@ const Cover: React.FC<{ game: IGame }> = ({ game }) => {
         </div>
       </CardFooter>
     </Card>
+  );
+};
+
+const ImageWithFallback = ({ src, alt, style }) => {
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <div
+      style={{
+        ...style,
+        display: "inline-block",
+        backgroundColor: hasError ? "grey" : "transparent",
+      }}
+      className="rounded-xl rounded-b-none w-full"
+    >
+      {!hasError && (
+        <img
+          src={src}
+          alt={alt}
+          style={{ display: "block", ...style }}
+          onError={() => setHasError(true)}
+          className="rounded-xl rounded-b-none w-full"
+        />
+      )}
+    </div>
   );
 };
 
