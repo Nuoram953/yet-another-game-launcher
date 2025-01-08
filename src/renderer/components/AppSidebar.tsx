@@ -12,6 +12,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ const AppSidebar = () => {
 
   return (
     <Sidebar collapsible="icon">
+        <SidebarTrigger />
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>

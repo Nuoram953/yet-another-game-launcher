@@ -29,12 +29,11 @@ const Cover: React.FC<{ game: IGame }> = ({ game }) => {
     };
 
     fetchPicturePath();
-  }, [game.name]);
+  }, []);
 
   const handleRunCommand = async () => {
     try {
-      navigate(`/game/${188930}`);
-      //const result = await window.api.runCommand(`steam steam://rungameid/1888930`);
+      navigate(`/game/${game.id}`);
     } catch (err) {}
   };
 

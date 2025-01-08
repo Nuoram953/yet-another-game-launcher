@@ -33,10 +33,16 @@ export async function insertMissing(games: IGame[], storefront: Storefront) {
         external_id: item.id,
         game_status: status,
         time_played: item.timePlayed,
+        last_time_played: item.lastPlayed,
       });
       await AppDataSource.getRepository(Game).save(game);
 
-      await metadataManager.downloadImage(IMAGE_TYPE.COVER, game, `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game?.external_id}/library_600x900.jpg`, "jpg")
+      await metadataManager.downloadImage(
+        IMAGE_TYPE.COVER,
+        game,
+        `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game?.external_id}/library_600x900.jpg`,
+        "jpg",
+      );
 
       log.info(`${game.name} - ${game.id} - ${store.name} was added`);
 
@@ -55,6 +61,7 @@ export async function getAllGames() {
     .createQueryBuilder("game")
     .innerJoinAndSelect("game.game_status", "game_status")
     .innerJoinAndSelect("game.storefront", "storefront")
+    .orderBy("game.last_time_played", "DESC")
     .getMany();
   return games;
 }
@@ -64,7 +71,7 @@ export async function getGameById(id: string) {
     .createQueryBuilder("game")
     .innerJoinAndSelect("game.game_status", "game_status")
     .innerJoinAndSelect("game.storefront", "storefront")
-    .where("id=gameId", { gameId: id })
+    .where("game.id=:gameId", { gameId: id })
     .getOne();
   return game;
 }

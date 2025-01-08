@@ -7,6 +7,6 @@ export interface IGame {
   playtimeMac?:string,
   playtimeLinux?:string,
   playtimeSteamDeck?:string,
-  lastPlayed?:string,
+  lastPlayed?:number,
   playtimeDisconnected?:string
 }

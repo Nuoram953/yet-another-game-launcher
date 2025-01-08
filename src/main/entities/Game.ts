@@ -29,4 +29,7 @@ export class Game {
 
   @Column({type:"bigint"})
   time_played: number;
+
+  @Column({type:"int", nullable:true})
+  last_time_played: number;
 }

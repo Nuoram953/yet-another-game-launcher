@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, Session } from "electron";
 import * as path from "path";
 import "./handlers/database";
+import "./handlers/steam";
 import "reflect-metadata";
 import { AppDataSource } from "./data-source";
 import Steam from "./service/storefront/steam";

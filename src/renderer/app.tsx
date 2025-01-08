@@ -8,6 +8,7 @@ import Layout from "./components/layout/Layout";
 import { ipcMain } from "electron";
 import { IGame } from "src/common/types";
 import { LibraryContext, LibraryContextType } from "./context/DatabaseContext";
+import GameDetail from "./pages/GameDetail";
 
 const App = () => {
   const [games, setGames] = useState<IGame[]>([]);
@@ -47,7 +48,7 @@ const App = () => {
             path="/game/:id"
             element={
               <Layout>
-                <p>test</p>
+                <GameDetail/>
               </Layout>
             }
           />

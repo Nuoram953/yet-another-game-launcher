@@ -23,4 +23,9 @@ onReceiveFromMain: (channel, callback) => {
 
 contextBridge.exposeInMainWorld('database', {
   getGames: () => ipcRenderer.invoke('games'),
+  getGame: (id:string) => ipcRenderer.invoke('game', id),
+})
+
+contextBridge.exposeInMainWorld('steam', {
+  run: (appid:number) => ipcRenderer.invoke('steam-run', appid),
 })
