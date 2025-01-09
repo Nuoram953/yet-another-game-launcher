@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Session } from "electron";
+import { app, BrowserWindow, ipcMain, nativeTheme, Session } from "electron";
 import * as path from "path";
 import "./handlers/database";
 import "./handlers/steam";
@@ -32,6 +32,9 @@ class MainWindowManager {
       log.errorHandler.startCatching()
 
       metadataManager = new MetadataManager()
+
+      nativeTheme.themeSource = "dark"
+
 
       await app.whenReady();
       log.warn('App is ready')
@@ -124,3 +127,15 @@ ipcMain.handle("update-libraries", async (event, forceReload) => {
   }
 });
 
+ipcMain.handle('dark-mode:toggle', () => {
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = 'light'
+  } else {
+    nativeTheme.themeSource = 'dark'
+  }
+  return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle('dark-mode:system', () => {
+  nativeTheme.themeSource = 'system'
+})

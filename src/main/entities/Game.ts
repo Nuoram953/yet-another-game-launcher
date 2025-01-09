@@ -32,4 +32,7 @@ export class Game {
 
   @Column({type:"int", nullable:true})
   last_time_played: number;
+
+  @Column({type:"boolean", default:false})
+  is_installed: boolean;
 }

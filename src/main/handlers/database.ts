@@ -1,34 +1,38 @@
 import { ipcMain } from "electron";
 import { getAllGames, getGameById } from "../dal/game";
 import { Game } from "../entities/Game";
-import log from 'electron-log/main';
 import _ from "lodash";
-import { IGame } from "../../common/types";
+import SteamGridDB from "../service/metadata/steamgriddb";
 
-ipcMain.handle("games", async (event):Promise<IGame[]> => {
-  const dbGames:Game[] =  await getAllGames()
+ipcMain.handle("games", async (event):Promise<any|void> => {
+  const games:Game[] =  await getAllGames()
 
-  return dbGames.map(game=>({
+  return games.map(game=>({
     id:game.id,
     name:game.name,
+    externalId: game.external_id,
     timePlayed:game.time_played,
     status:game.game_status.name
   }))
 });
 
+//TODO: Fix types
 ipcMain.handle("game", async (event, id):Promise<any|void> => {
-  const dbGame =  await getGameById(id)
+  const game =  await getGameById(id)
 
-  if(_.isNil(dbGame)){
+  if(_.isNil(game)){
     throw new Error("Invalid game id ${id}")
   }
 
+  const sgdb = new SteamGridDB()
+  await sgdb.getGameIdByExternalId(game, "steam")
+
   return {
-    id:dbGame.id,
-    externalId: dbGame.external_id,
-    name:dbGame.name,
-    timePlayed:dbGame.time_played,
-    status:dbGame.game_status.name
+    id:game.id,
+    externalId: game.external_id,
+    name:game.name,
+    timePlayed:game.time_played,
+    status:game.game_status.name
   }
 
 });

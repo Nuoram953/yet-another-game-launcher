@@ -12,13 +12,12 @@ contextBridge.exposeInMainWorld('api', {
   updateLibraries: (forceReload:boolean) => ipcRenderer.invoke('update-libraries', forceReload),
   getStoredPicturesDirectory: (id:string) => ipcRenderer.invoke('get-pictures-directory', id),
   getSteamGames: () => ipcRenderer.invoke('get-steam-games'),
-onReceiveFromMain: (channel, callback) => {
-    // Ensure that the renderer is only receiving specific messages
-    const validChannels = ['add-new-game']; // Add any channels you want to listen for
-    if (validChannels.includes(channel)) {
-      ipcRenderer.on(channel, (event, data) => callback(data));
-    }
-  },
+  onReceiveFromMain: (channel, callback) => {
+      const validChannels = ['add-new-game', 'is-game-running']; // Add any channels you want to listen for
+      if (validChannels.includes(channel)) {
+        ipcRenderer.on(channel, (event, data) => callback(data));
+      }
+    },
 })
 
 contextBridge.exposeInMainWorld('database', {

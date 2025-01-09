@@ -4,28 +4,26 @@ import path from "path";
 import fs from "fs";
 import vdf from "vdf";
 import { IStorefront } from "src/main/types";
-import { IGame } from "src/common/types";
-import { GameStatus } from "../../constant";
+import { ISteamGame } from "src/common/types";
+import { GameStatus, Storefront } from "../../constant";
 import { insertMissing } from "../../dal/game";
 
 class Steam implements IStorefront {
   private steamid: string | undefined;
   private apiKey: string | undefined;
-  private personaName: string | undefined;
 
   constructor() {
     this.apiKey = process.env.STEAM_API_KEY;
   }
 
-  async parseResponse(response: AxiosResponse): Promise<IGame[]> {
-    const games: IGame[] = [];
+  async parseResponse(response: AxiosResponse): Promise<ISteamGame[]> {
+    const games: ISteamGame[] = [];
     for (const entry of response.data.response.games) {
       games.push({
         id: entry.appid,
         name: entry.name,
-        status: entry.playtime_forever > 0
-          ? GameStatus.PLAYED
-          : GameStatus.UNPLAYED,
+        status:
+          entry.playtime_forever > 0 ? GameStatus.PLAYED : GameStatus.UNPLAYED,
         timePlayed: entry.playtime_forever,
         playtimeWindows: entry.playtime_windows_forever,
         playtimeMac: entry.playtime_mac_forever,
@@ -41,7 +39,7 @@ class Steam implements IStorefront {
   async initialize(): Promise<void> {
     await this.getSteamUserData();
     const games = await this.getOwnedGames();
-    await insertMissing(games, 1);
+    await insertMissing(games, Storefront.STEAM);
   }
 
   async getSteamUserData() {

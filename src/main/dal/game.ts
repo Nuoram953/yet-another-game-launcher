@@ -75,3 +75,21 @@ export async function getGameById(id: string) {
     .getOne();
   return game;
 }
+
+export async function getGameByExtenalIdAndStorefront(
+  externalId: number,
+  storefront: Storefront,
+) {
+  const game = await AppDataSource.getRepository(Game)
+    .createQueryBuilder("game")
+    .innerJoinAndSelect("game.game_status", "game_status")
+    .innerJoinAndSelect("game.storefront", "storefront")
+    .where("game.external_id=:externalId and game.storefront=:storefrontId", {
+      externalId: externalId,
+      storefrontId: storefront
+    })
+    .getOne();
+  return game;
+}
+
+export async function updateOrCreate(game: IGame, storefront: Storefront) {}
