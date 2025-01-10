@@ -3,10 +3,10 @@ import * as path from "path";
 import "./handlers/database";
 import "./handlers/steam";
 import "reflect-metadata";
-import { AppDataSource } from "./data-source";
-import Steam from "./service/storefront/steam";
+import Steam from "./api/storefront/steam";
 import log from 'electron-log/main';
 import MetadataManager from "./manager/metadataManager";
+import { PrismaClient } from '@prisma/client'
 
 require("dotenv").config();
 
@@ -15,6 +15,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let hasRunInitialLibrariesUpdate: boolean = false;
 export let metadataManager: MetadataManager
+export let prisma:PrismaClient
 
 class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
@@ -42,7 +43,8 @@ class MainWindowManager {
       await this.createWindow();
       log.info("Window created")
 
-      await AppDataSource.initialize();
+      prisma = new PrismaClient()
+
 
       app.on("activate", async () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -52,7 +54,6 @@ class MainWindowManager {
 
       app.on("window-all-closed", () => {
         if (process.platform !== "darwin") {
-          AppDataSource.destroy();
           app.quit();
         }
       });

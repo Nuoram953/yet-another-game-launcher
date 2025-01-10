@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../database.sqlite"
+}
+
+model Game {
+  id               String          @id @default(uuid())
+  external_id      Int?
+  name             String
+  last_time_played Int?
+  is_installed     Boolean         @default(false)
+  game_status      GameStatus      @relation(fields: [gameStatusId], references: [id])
+  gameStatusId     Int
+  Storefront       Storefront?     @relation(fields: [storefrontId], references: [id])
+  storefrontId     Int?
+  GameTimePlayed   GameTimePlayed? @relation(fields: [gameTimePlayedId], references: [id])
+  gameTimePlayedId String?         @unique
+}
+
+model GameTimePlayed {
+  id                       String @id @default(uuid())
+  time_played              Int    @default(0)
+  time_played_windows      Int    @default(0)
+  time_played_linux        Int    @default(0)
+  time_played_mac          Int    @default(0)
+  time_played_steamdeck    Int    @default(0)
+  time_played_disconnected Int    @default(0)
+  Game                     Game?
+}
+
+model GameStatus {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  Game Game[]
+}
+
+model Storefront {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  Game Game[]
+}

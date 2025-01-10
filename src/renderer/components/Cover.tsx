@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IGame } from "src/common/types";
 import { convertToHoursAndMinutes } from "@/utils/util";
 import { Skeleton } from "./ui/skeleton";
+import { Game } from "../../main/entities/Game";
 
 const SkeletonCover =() =>{
   return (
@@ -13,7 +14,7 @@ const SkeletonCover =() =>{
   )
 }
 
-const Cover: React.FC<{ game: IGame }> = ({ game }) => {
+const Cover: React.FC<{ game: Game }> = ({ game }) => {
   const [picturePath, setPicturePath] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -50,7 +51,7 @@ const Cover: React.FC<{ game: IGame }> = ({ game }) => {
         <div className="flex flex-col truncate w-wull text-center">
           <p className="truncate w-full text-center">{game.name}</p>
           <p>
-            {`${game.timePlayed > 0 ? convertToHoursAndMinutes(game.timePlayed) + " • " : ""} ${game.status}`}
+            {`${game.game_time_played_id.time_played > 0 ? convertToHoursAndMinutes(game.game_time_played_id.time_played) + " • " : ""} ${game.game_status.name}`}
           </p>
         </div>
       </CardFooter>

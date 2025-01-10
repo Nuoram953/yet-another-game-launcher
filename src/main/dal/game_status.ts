@@ -1,7 +1,20 @@
-import { Storefront, GameStatus } from "../constant";
-import { GameStatus as repo } from "../entities/GameStatus";
+import { GameStatus } from "../entities/GameStatus";
 import { AppDataSource } from "../data-source";
+import { In } from "typeorm";
 
-export async function getGameStatusById(status: GameStatus) {
-  return await AppDataSource.getRepository(repo).findOneBy({ id: status });
+export async function getGameStatusById(status: number) {
+  return await AppDataSource.getRepository(GameStatus).findOneBy({
+    id: status,
+  });
+}
+
+export async function getGameStatusPlayedAndUnplayed(): Promise<{
+  played: GameStatus;
+  unplayed: GameStatus;
+}> {
+  const status = await AppDataSource.getRepository(GameStatus).find({
+    where: { id: In([1, 2]) },
+  });
+
+  return { unplayed: status[0], played: status[1] };
 }

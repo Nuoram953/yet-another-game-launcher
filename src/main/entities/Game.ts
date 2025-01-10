@@ -5,9 +5,12 @@ import {
   Generated,
   ManyToOne,
   Unique,
+  OneToOne,
+  JoinColumn,
 } from "typeorm";
 import { Storefront } from "./Storefront";
 import { GameStatus } from "./GameStatus";
+import { GameTimePlayed } from "./GameTimePlayed";
 
 @Entity()
 @Unique(['storefront', 'external_id'])
@@ -27,8 +30,8 @@ export class Game {
   @ManyToOne(() => GameStatus, (gameStatues) => gameStatues.game)
   game_status: GameStatus;
 
-  @Column({type:"bigint"})
-  time_played: number;
+  @OneToOne(() => GameTimePlayed, (gameTimePlayed)=>gameTimePlayed.id)
+  game_time_played_id: GameTimePlayed;
 
   @Column({type:"int", nullable:true})
   last_time_played: number;

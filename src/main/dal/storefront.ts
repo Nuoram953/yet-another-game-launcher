@@ -1,7 +1,6 @@
-import { Storefront } from "../constant";
-import { Storefront as repo } from "../entities/Storefront";
+import { Storefront } from "../entities/Storefront";
 import { AppDataSource } from "../data-source";
 
-export async function getStorefrontById(storefront: Storefront) {
-  return await AppDataSource.getRepository(repo).findOneBy({id:1});
+export async function getStorefrontById(storefront: number):Promise<Storefront|null> {
+  return await AppDataSource.getRepository(Storefront).findOneBy({id:1});
 }
