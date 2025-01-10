@@ -93,3 +93,4 @@ out/
 .idea/
 database.sqlite
 dist/src
+database.sqlite-journal

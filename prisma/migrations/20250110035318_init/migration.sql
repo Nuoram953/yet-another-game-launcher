@@ -1,10 +1,10 @@
 -- CreateTable
 CREATE TABLE "Game" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "external_id" INTEGER,
+    "externalId" INTEGER,
     "name" TEXT NOT NULL,
-    "last_time_played" INTEGER,
-    "is_installed" BOOLEAN NOT NULL DEFAULT false,
+    "lastTimePlayed" INTEGER,
+    "isInstalled" BOOLEAN NOT NULL DEFAULT false,
     "gameStatusId" INTEGER NOT NULL,
     "storefrontId" INTEGER,
     "gameTimePlayedId" TEXT,
@@ -16,12 +16,12 @@ CREATE TABLE "Game" (
 -- CreateTable
 CREATE TABLE "GameTimePlayed" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "time_played" INTEGER NOT NULL DEFAULT 0,
-    "time_played_windows" INTEGER NOT NULL DEFAULT 0,
-    "time_played_linux" INTEGER NOT NULL DEFAULT 0,
-    "time_played_mac" INTEGER NOT NULL DEFAULT 0,
-    "time_played_steamdeck" INTEGER NOT NULL DEFAULT 0,
-    "time_played_disconnected" INTEGER NOT NULL DEFAULT 0
+    "timePlayed" INTEGER NOT NULL DEFAULT 0,
+    "timePlayed_windows" INTEGER NOT NULL DEFAULT 0,
+    "timePlayed_linux" INTEGER NOT NULL DEFAULT 0,
+    "timePlayed_mac" INTEGER NOT NULL DEFAULT 0,
+    "timePlayed_steamdeck" INTEGER NOT NULL DEFAULT 0,
+    "timePlayed_disconnected" INTEGER NOT NULL DEFAULT 0
 );
 
 -- CreateTable
@@ -38,6 +38,9 @@ CREATE TABLE "Storefront" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Game_gameTimePlayedId_key" ON "Game"("gameTimePlayedId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Game_externalId_storefrontId_key" ON "Game"("externalId", "storefrontId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "GameStatus_name_key" ON "GameStatus"("name");

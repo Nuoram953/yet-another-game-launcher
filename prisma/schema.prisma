@@ -12,26 +12,28 @@ datasource db {
 
 model Game {
   id               String          @id @default(uuid())
-  external_id      Int?
+  externalId      Int?
   name             String
-  last_time_played Int?
-  is_installed     Boolean         @default(false)
-  game_status      GameStatus      @relation(fields: [gameStatusId], references: [id])
+  lastTimePlayed Int?
+  isInstalled     Boolean         @default(false)
+  gameStatus      GameStatus      @relation(fields: [gameStatusId], references: [id])
   gameStatusId     Int
-  Storefront       Storefront?     @relation(fields: [storefrontId], references: [id])
+  storefront       Storefront?     @relation(fields: [storefrontId], references: [id])
   storefrontId     Int?
-  GameTimePlayed   GameTimePlayed? @relation(fields: [gameTimePlayedId], references: [id])
+  gameTimePlayed   GameTimePlayed? @relation(fields: [gameTimePlayedId], references: [id])
   gameTimePlayedId String?         @unique
+
+  @@unique([externalId, storefrontId])
 }
 
 model GameTimePlayed {
   id                       String @id @default(uuid())
-  time_played              Int    @default(0)
-  time_played_windows      Int    @default(0)
-  time_played_linux        Int    @default(0)
-  time_played_mac          Int    @default(0)
-  time_played_steamdeck    Int    @default(0)
-  time_played_disconnected Int    @default(0)
+  timePlayed              Int    @default(0)
+  timePlayed_windows      Int    @default(0)
+  timePlayed_linux        Int    @default(0)
+  timePlayed_mac          Int    @default(0)
+  timePlayed_steamdeck    Int    @default(0)
+  timePlayed_disconnected Int    @default(0)
   Game                     Game?
 }
 

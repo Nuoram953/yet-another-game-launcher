@@ -1,11 +1,9 @@
 import _ from "lodash";
 import { GameStatus, Storefront } from "../constant";
-import { AppDataSource } from "../data-source";
-import { getStorefrontById } from "./storefront";
 import { mainApp, metadataManager, prisma } from "..";
 import log from "electron-log/main";
 import { IMAGE_TYPE } from "../../common/constant";
-import { Game } from "@prisma/client";
+import { Game, Prisma } from "@prisma/client";
 
 export async function updateGame(id: string, newData: Partial<Game>) {
   return await prisma.game.update({
@@ -17,22 +15,28 @@ export async function updateGame(id: string, newData: Partial<Game>) {
 export async function getAllGames() {
   return await prisma.game.findMany({
     include: {
-      game_status: true,
-      Storefront: true,
-      GameTimePlayed: true,
+      gameStatus: true,
+      storefront: true,
+      gameTimePlayed: true,
     },
   });
 }
 
-export async function getGameById(id: string) {
+export async function getGameById(
+  id: string,
+): Promise<
+  Prisma.GameGetPayload<{
+    include: { gameStatus: true; storefront: true; gameTimePlayed: true };
+  }> | null
+> {
   return await prisma.game.findFirst({
     where: {
       id,
     },
     include: {
-      game_status: true,
-      Storefront: true,
-      GameTimePlayed: true,
+      gameStatus: true,
+      storefront: true,
+      gameTimePlayed: true,
     },
   });
 }
@@ -41,61 +45,58 @@ export async function getGameByExtenalIdAndStorefront(
   externalId: number,
   storefront: Storefront,
 ) {
-  const game = await AppDataSource.getRepository(Game)
-    .createQueryBuilder("game")
-    .innerJoinAndSelect("game.game_status", "game_status")
-    .innerJoinAndSelect("game.storefront", "storefront")
-    .where("game.external_id=:externalId and game.storefront=:storefrontId", {
-      externalId: externalId,
+  return await prisma.game.findFirst({
+    where: {
+      externalId,
       storefrontId: storefront,
-    })
-    .getOne();
-  return game;
-}
-
-export async function isGameExist(externalId: number, storefront: Storefront) {
-  const store = await getStorefrontById(storefront);
-  const game = await AppDataSource.getRepository(Game).findOne({
-    where: { external_id: externalId, storefront: store! },
+    },
+    include: {
+      gameStatus: true,
+      storefront: true,
+      gameTimePlayed: true,
+    },
   });
-  return game;
 }
 
-export async function createOrUpdate(
-  game: Game,
+export async function createOrUpdateExternal(
+  externalId: number,
+  data: Game,
   storefront: Storefront,
+  gameStatus: GameStatus,
 ): Promise<Game> {
-  let dbGame = await getGameByExtenalIdAndStorefront(
-    game.external_id,
-    storefront,
+  const createdOrUpdatedGame = await prisma.game.upsert({
+    where: {
+      externalId_storefrontId: {
+        externalId: externalId,
+        storefrontId: storefront,
+      },
+    },
+    update: {
+      lastTimePlayed: data.lastTimePlayed,
+    },
+    create: {
+      name: data.name,
+      lastTimePlayed: data.lastTimePlayed,
+      isInstalled: false,
+      gameStatusId: gameStatus,
+      storefrontId: storefront,
+    },
+  });
+
+  const game = await getGameById(createdOrUpdatedGame.id);
+
+  await metadataManager.downloadImage(
+    IMAGE_TYPE.COVER,
+    game,
+    `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game.externalId}/library_600x900.jpg`,
+    "jpg",
   );
 
-  if (!(await isGameExist(game.external_id, storefront)) && !dbGame) {
-    dbGame = AppDataSource.getRepository(Game).create(game);
+  log.info(`${game.name} - ${game.id} - ${game?.storefront?.name} was added`);
 
-    await AppDataSource.getRepository(Game).save(game);
+  mainApp.sendToRenderer("add-new-game", {
+    game,
+  });
 
-    await metadataManager.downloadImage(
-      IMAGE_TYPE.COVER,
-      game,
-      `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${dbGame.external_id}/library_600x900.jpg`,
-      "jpg",
-    );
-
-    log.info(
-      `${dbGame.name} - ${dbGame.id} - ${dbGame.storefront.name} was added`,
-    );
-
-    mainApp.sendToRenderer("add-new-game", {
-      id: dbGame.id,
-      name: dbGame.name,
-      timePlayed: dbGame.game_time_played_id.time_played,
-      status: dbGame.game_status.name,
-    });
-    return dbGame;
-  }
-
-  await updateGame(game);
-
-  return dbGame!;
+  return game;
 }
