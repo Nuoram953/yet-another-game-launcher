@@ -1,8 +1,8 @@
 import { ipcMain } from "electron";
 import { getAllGames, getGameById } from "../dal/game";
-import { Game } from "../entities/Game";
 import _ from "lodash";
 import SteamGridDB from "../api/metadata/steamgriddb";
+import { Game } from "@prisma/client";
 
 ipcMain.handle("games", async (_event): Promise<Game[]> => {
   return await getAllGames();

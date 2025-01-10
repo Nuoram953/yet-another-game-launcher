@@ -3,16 +3,12 @@ import { app } from "electron";
 import path from "path";
 import fs from "fs";
 import vdf from "vdf";
-import { IStorefront } from "src/main/types";
-import { ISteamGame } from "src/common/types";
 import { GameStatus, Storefront } from "../../constant";
 import * as GameQueries from "../../dal/game";
-import * as GameTimePlayedQueries from "../../dal/game_time_played";
-import { Game } from "src/main/entities/Game";
 import { getGameStatusPlayedAndUnplayed } from "../../dal/game_status";
 import { getStorefrontById } from "../../dal/storefront";
-import { GameTimePlayed } from "../../entities/GameTimePlayed";
 import { v4 as uuidv4 } from 'uuid';
+import { Game, GameTimePlayed } from "@prisma/client";
 
 class Steam {
   private steamid: string | undefined;
@@ -23,33 +19,30 @@ class Steam {
   }
 
   async parseResponse(response: AxiosResponse): Promise<void> {
-    const storefront = await getStorefrontById(1);
-    const { unplayed, played } = await getGameStatusPlayedAndUnplayed();
     for (const entry of response.data.response.games) {
 
-      const gameTime: GameTimePlayed = {
-        id:uuidv4(),
-        time_played: entry.playtime_forever,
-        time_played_windows: entry.playtime_windows_forever,
-        time_played_mac: entry.playtime_mac_forever,
-        time_played_linux: entry.playtime_linux_forever,
-        time_played_steamdeck: entry.playtime_deck_forever,
-        time_played_disconnected: entry.playtime_disconnected,
-      };
+      //const gameTime: GameTimePlayed = {
+      //  id:uuidv4(),
+      //  timePlayed: entry.playtime_forever,
+      //  timePlayed_windows: entry.playtime_windows_forever,
+      //  timePlayed_mac: entry.playtime_mac_forever,
+      //  timePlayed_linux: entry.playtime_linux_forever,
+      //  timePlayed_steamdeck: entry.playtime_deck_forever,
+      //  timePlayed_disconnected: entry.playtime_disconnected,
+      //};
 
-      const game: Game = {
+      const data: Game = {
           id: uuidv4(),
-          external_id: entry.appid,
+          externalId: entry.appid,
           name: entry.name,
-          storefront: storefront!,
-          game_status: entry.playtime_forever > 0 ? played : unplayed,
-          last_time_played: entry.rtime_last_played,
-          is_installed: false,
-          game_time_played_id: new GameTimePlayed()
+          storefrontId: Storefront.STEAM,
+          gameStatusId: entry.playtime_forever > 0 ? 2 : 1,
+          lastTimePlayed: entry.rtime_last_played,
+          isInstalled: false,
+          gameTimePlayedId: null
       };
 
-      const dbGame = await GameQueries.createOrUpdate(game, Storefront.STEAM)
-      const dbGameTimePlayed = await GameTimePlayedQueries.createOrUpdate(dbGame, gameTime)
+      const dbGame = await GameQueries.createOrUpdateExternal(data.externalId!, data, Storefront.STEAM, data.gameStatusId)
     }
   }
 

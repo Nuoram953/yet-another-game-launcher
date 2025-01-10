@@ -47,3 +47,7 @@ CREATE UNIQUE INDEX "GameStatus_name_key" ON "GameStatus"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Storefront_name_key" ON "Storefront"("name");
+
+        INSERT into Storefront (name) values ('steam');
+        INSERT into GameStatus (name) values ('UNPLAYED');
+        INSERT into GameStatus (name) values ('PLAYED');

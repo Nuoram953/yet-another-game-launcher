@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
-import { IGame } from '../../common/types';
+import { Game } from '@prisma/client';
 
 export interface LibraryContextType {
-    games: IGame[];
-    setGames: React.Dispatch<React.SetStateAction<IGame[]>>;
+    games: Game[];
+    setGames: React.Dispatch<React.SetStateAction<Game[]>>;
 }
 
 export const LibraryContext = createContext<LibraryContextType | undefined>();

@@ -1,4 +1,4 @@
-import { Game } from "src/main/entities/Game";
+import { Game } from "@prisma/client";
 import axios from "axios";
 
 class SteamGridDB {
@@ -21,7 +21,7 @@ class SteamGridDB {
       | "eshop",
   ) {
     const response = await axios.get(
-      `https://www.steamgriddb.com/api/v2/games/${platform}/${game.external_id}`,
+      `https://www.steamgriddb.com/api/v2/games/${platform}/${game.externalId}`,
       { headers: { Authorization: `Bearer ${this.apikey}` } },
     );
 

@@ -22,13 +22,9 @@ export async function getAllGames() {
   });
 }
 
-export async function getGameById(
-  id: string,
-): Promise<
-  Prisma.GameGetPayload<{
-    include: { gameStatus: true; storefront: true; gameTimePlayed: true };
-  }> | null
-> {
+export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
+  include: { gameStatus: true; storefront: true; gameTimePlayed: true };
+}> | null> {
   return await prisma.game.findFirst({
     where: {
       id,
@@ -73,6 +69,7 @@ export async function createOrUpdateExternal(
     },
     update: {
       lastTimePlayed: data.lastTimePlayed,
+      gameStatusId: gameStatus,
     },
     create: {
       name: data.name,
@@ -80,22 +77,28 @@ export async function createOrUpdateExternal(
       isInstalled: false,
       gameStatusId: gameStatus,
       storefrontId: storefront,
+      externalId: externalId,
     },
   });
 
   const game = await getGameById(createdOrUpdatedGame.id);
 
-  await metadataManager.downloadImage(
-    IMAGE_TYPE.COVER,
-    game,
-    `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game.externalId}/library_600x900.jpg`,
-    "jpg",
-  );
+  //await metadataManager.downloadImage(
+  //  IMAGE_TYPE.COVER,
+  //  game,
+  //  `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game.externalId}/library_600x900.jpg`,
+  //  "jpg",
+  //);
+  //
+  //
+  if (!game) {
+    throw new Error("invalid game");
+  }
 
   log.info(`${game.name} - ${game.id} - ${game?.storefront?.name} was added`);
 
   mainApp.sendToRenderer("add-new-game", {
-    game,
+    ...game,
   });
 
   return game;

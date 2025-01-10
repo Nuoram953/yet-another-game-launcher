@@ -4,9 +4,11 @@ import "./handlers/database";
 import "./handlers/steam";
 import "reflect-metadata";
 import Steam from "./api/storefront/steam";
-import log from 'electron-log/main';
+import log from "electron-log/main";
 import MetadataManager from "./manager/metadataManager";
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
+import fs from "fs"
+const { execSync } = require('child_process');
 
 require("dotenv").config();
 
@@ -14,8 +16,9 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let hasRunInitialLibrariesUpdate: boolean = false;
-export let metadataManager: MetadataManager
-export let prisma:PrismaClient
+export let metadataManager: MetadataManager;
+export let prisma: PrismaClient;
+export let dbPath:string
 
 class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
@@ -28,29 +31,40 @@ class MainWindowManager {
 
   async initialize(): Promise<void> {
     try {
+      dbPath = path.join(app.getPath('userData'), 'app.sqlite')
 
-      log.initialize()
-      log.errorHandler.startCatching()
+      process.env.DATABASE_URL = `file:${dbPath}`
+      log.initialize();
+      log.errorHandler.startCatching();
 
-      metadataManager = new MetadataManager()
+      metadataManager = new MetadataManager();
 
-      nativeTheme.themeSource = "dark"
-
+      nativeTheme.themeSource = "dark";
 
       await app.whenReady();
-      log.warn('App is ready')
+      log.warn("App is ready");
 
       await this.createWindow();
-      log.info("Window created")
+      log.info("Window created");
 
-      prisma = new PrismaClient()
+    try {
+        execSync('npx prisma migrate deploy');
+    } catch (error) {
+        console.error('Error running Prisma migrations:', error);
+    }
 
+      prisma = new PrismaClient();
 
       app.on("activate", async () => {
         if (BrowserWindow.getAllWindows().length === 0) {
           await this.createWindow();
         }
       });
+
+      //app.on("before-quit", () => {
+      //  fs.copyFileSync("../../.webpack/database.sqlite", app.getPath('userData')+"/db_back.db");
+      //  console.log("Database backup saved.");
+      //});
 
       app.on("window-all-closed", () => {
         if (process.platform !== "darwin") {
@@ -110,7 +124,6 @@ class MainWindowManager {
   }
 }
 
-
 export const mainApp = new MainWindowManager();
 mainApp.initialize().catch(console.error);
 
@@ -128,15 +141,15 @@ ipcMain.handle("update-libraries", async (event, forceReload) => {
   }
 });
 
-ipcMain.handle('dark-mode:toggle', () => {
+ipcMain.handle("dark-mode:toggle", () => {
   if (nativeTheme.shouldUseDarkColors) {
-    nativeTheme.themeSource = 'light'
+    nativeTheme.themeSource = "light";
   } else {
-    nativeTheme.themeSource = 'dark'
+    nativeTheme.themeSource = "dark";
   }
-  return nativeTheme.shouldUseDarkColors
-})
+  return nativeTheme.shouldUseDarkColors;
+});
 
-ipcMain.handle('dark-mode:system', () => {
-  nativeTheme.themeSource = 'system'
-})
+ipcMain.handle("dark-mode:system", () => {
+  nativeTheme.themeSource = "system";
+});

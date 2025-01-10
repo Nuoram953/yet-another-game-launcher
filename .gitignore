@@ -94,3 +94,4 @@ out/
 database.sqlite
 dist/src
 database.sqlite-journal
+database.sqlite-journal

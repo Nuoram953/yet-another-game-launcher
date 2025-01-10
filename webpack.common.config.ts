@@ -3,7 +3,7 @@ import type { Configuration } from 'webpack';
 import { rules } from './webpack.rules';
 import path from 'path'
 
-export const mainConfig: Configuration = {
+export const commonConfig: Configuration = {
   /**
    * This is the main entry point for your application, it's the first file
    * that runs in the main process.

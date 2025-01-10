@@ -1,11 +1,10 @@
 import axios from "axios";
 import fs from "fs";
 import { IMAGE_TYPE } from "../../common/constant";
-import { IGame } from "../../common/types";
 import { app } from "electron";
 import log from "electron-log";
 import _ from "lodash";
-import { Game } from "../entities/Game";
+import { Game } from "@prisma/client";
 
 class MetadataManager {
   private userPath: string;

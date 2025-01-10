@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IGame } from "src/common/types";
 import { convertToHoursAndMinutes } from "@/utils/util";
 import { Skeleton } from "./ui/skeleton";
-import { Game } from "../../main/entities/Game";
+import { Game, Prisma } from "@prisma/client";
 
 const SkeletonCover =() =>{
   return (
@@ -14,7 +14,9 @@ const SkeletonCover =() =>{
   )
 }
 
-const Cover: React.FC<{ game: Game }> = ({ game }) => {
+const Cover: React.FC<{ game: Prisma.GameGetPayload<{
+    include: { gameStatus: true; storefront: true; gameTimePlayed: true };
+  }> }> = ({ game }) => {
   const [picturePath, setPicturePath] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -51,7 +53,7 @@ const Cover: React.FC<{ game: Game }> = ({ game }) => {
         <div className="flex flex-col truncate w-wull text-center">
           <p className="truncate w-full text-center">{game.name}</p>
           <p>
-            {`${game.game_time_played_id.time_played > 0 ? convertToHoursAndMinutes(game.game_time_played_id.time_played) + " • " : ""} ${game.game_status.name}`}
+            {`${game.gameTimePlayed?.timePlayed??0 > 0 ? convertToHoursAndMinutes(game.gameTimePlayed?.timePlayed??0) + " • " : ""} ${game.gameStatus.name}`}
           </p>
         </div>
       </CardFooter>

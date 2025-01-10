@@ -1,17 +1,14 @@
 import * as ReactDOM from "react-dom/client";
 import React, { useEffect, useState } from "react";
-import Cover from "./components/Cover";
-import SearchWithFilters from "./components/SearchWithFilters";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Grid from "./components/layout/Grid";
 import Layout from "./components/layout/Layout";
-import { ipcMain } from "electron";
-import { IGame } from "src/common/types";
-import { LibraryContext, LibraryContextType } from "./context/DatabaseContext";
+import { LibraryContext } from "./context/DatabaseContext";
 import GameDetail from "./pages/GameDetail";
+import { Game } from "@prisma/client";
 
 const App = () => {
-  const [games, setGames] = useState<IGame[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
 
   useEffect(() => {
     const fetchPicturePath = async () => {
@@ -25,7 +22,7 @@ const App = () => {
     };
 
     fetchPicturePath();
-    window.api.onReceiveFromMain("add-new-game", (newGame: IGame) => {
+    window.api.onReceiveFromMain("add-new-game", (newGame: Game) => {
       setGames((prevItems) => [...prevItems, newGame]);
     });
   }, []);

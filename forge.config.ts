@@ -6,6 +6,7 @@ import { MakerRpm } from '@electron-forge/maker-rpm';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 
 import { mainConfig } from './webpack.main.config';
+import { commonConfig } from './webpack.common.config';
 import { rendererConfig } from './webpack.renderer.config';
 
 const config: ForgeConfig = {
