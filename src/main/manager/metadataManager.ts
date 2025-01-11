@@ -13,7 +13,7 @@ class MetadataManager {
     this.userPath = app.getPath("userData");
   }
 
-  async downloadMissing(game:Game){
+  async downloadMissingImages(game:Game){
 
   }
 

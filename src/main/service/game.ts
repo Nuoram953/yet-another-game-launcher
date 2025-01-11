@@ -12,7 +12,7 @@ export const createOrUpdateGame = async (data:Partial<Game>, store:Storefront) =
     throw new Error("invalid game")
   }
 
-  await metadataManager.downloadMissing(game)
+  await metadataManager.downloadMissingImages(game)
   //if(game.updatedAt.getTime() === game.createdAt.getTime()){
   //  log.info(`${game.name} - ${game.id} - ${game?.storefront?.name} was added`);
   //  await metadataManager.downloadImage(
@@ -21,8 +21,7 @@ export const createOrUpdateGame = async (data:Partial<Game>, store:Storefront) =
   //    `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game.externalId}/library_600x900.jpg`,
   //    "jpg",
   //  );
-
-  }
+  //}
   //download 1 cover, logo, and background
   //download achievements
   //download music

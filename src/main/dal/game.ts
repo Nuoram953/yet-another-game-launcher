@@ -18,11 +18,12 @@ export async function getAllGames() {
       gameStatus: true,
       storefront: true,
     },
+    orderBy: [{ lastTimePlayed: "desc" }],
   });
 }
 
 export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
-  include: { gameStatus: true; storefront: true;};
+  include: { gameStatus: true; storefront: true };
 }> | null> {
   return await prisma.game.findFirst({
     where: {
@@ -55,8 +56,8 @@ export async function createOrUpdateExternal(
   data: Partial<Game>,
   storefront: Storefront,
 ): Promise<Prisma.GameGetPayload<{
-  include: { gameStatus: true; storefront: true;};
-}>|null >{
+  include: { gameStatus: true; storefront: true };
+}> | null> {
   const createdOrUpdatedGame = await prisma.game.upsert({
     where: {
       externalId_storefrontId: {
@@ -67,7 +68,7 @@ export async function createOrUpdateExternal(
     update: {
       lastTimePlayed: data.lastTimePlayed,
       gameStatusId: data.gameStatusId,
-      timePlayed:data.timePlayed
+      timePlayed: data.timePlayed,
     },
     create: {
       name: data.name!,
@@ -76,7 +77,7 @@ export async function createOrUpdateExternal(
       gameStatusId: data.gameStatusId ?? GameStatus.UNPLAYED,
       storefrontId: storefront,
       externalId: data.externalId!,
-      timePlayed:data.timePlayed
+      timePlayed: data.timePlayed,
     },
   });
 
