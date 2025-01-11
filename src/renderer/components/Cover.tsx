@@ -38,7 +38,7 @@ const Cover: React.FC<{
     };
 
     fetchPicturePath();
-  }, []);
+  }, [game]);
 
   const getStatusColor = (status: string) => {
     const colors = {
@@ -59,8 +59,8 @@ const Cover: React.FC<{
     // Calculate rotation based on mouse position
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -10; // Max 10 degrees
-    const rotateY = ((x - centerX) / centerX) * 10; // Max 10 degrees
+    const rotateX = ((y - centerY) / centerY) * -10;
+    const rotateY = ((x - centerX) / centerX) * 10;
 
     cardElement.style.transform = `
       perspective(1000px)
