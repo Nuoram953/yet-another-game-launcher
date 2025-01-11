@@ -19,11 +19,5 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
   const sgdb = new SteamGridDB();
   await sgdb.getGameIdByExternalId(game, "steam");
 
-  return {
-    id: game.id,
-    externalId: game.external_id,
-    name: game.name,
-    timePlayed: game.game_time_played_id.time_played,
-    status: game.game_status.name,
-  };
+  return game
 });

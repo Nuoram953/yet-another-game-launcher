@@ -20,21 +20,16 @@ model Game {
   gameStatusId     Int
   storefront       Storefront?     @relation(fields: [storefrontId], references: [id])
   storefrontId     Int?
-  gameTimePlayed   GameTimePlayed? @relation(fields: [gameTimePlayedId], references: [id])
-  gameTimePlayedId String?         @unique
+  timePlayed              Int    @default(0)
+  timePlayedWindows      Int    @default(0)
+  timePlayedLinux        Int    @default(0)
+  timePlayedMac          Int    @default(0)
+  timePlayedSteamdeck    Int    @default(0)
+  timePlayedDisconnected Int    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([externalId, storefrontId])
-}
-
-model GameTimePlayed {
-  id                       String @id @default(uuid())
-  timePlayed              Int    @default(0)
-  timePlayed_windows      Int    @default(0)
-  timePlayed_linux        Int    @default(0)
-  timePlayed_mac          Int    @default(0)
-  timePlayed_steamdeck    Int    @default(0)
-  timePlayed_disconnected Int    @default(0)
-  Game                     Game?
 }
 
 model GameStatus {

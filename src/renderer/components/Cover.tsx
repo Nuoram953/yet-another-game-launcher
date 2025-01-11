@@ -15,7 +15,7 @@ const SkeletonCover =() =>{
 }
 
 const Cover: React.FC<{ game: Prisma.GameGetPayload<{
-    include: { gameStatus: true; storefront: true; gameTimePlayed: true };
+    include: { gameStatus: true; storefront: true;};
   }> }> = ({ game }) => {
   const [picturePath, setPicturePath] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const Cover: React.FC<{ game: Prisma.GameGetPayload<{
         <div className="flex flex-col truncate w-wull text-center">
           <p className="truncate w-full text-center">{game.name}</p>
           <p>
-            {`${game.gameTimePlayed?.timePlayed??0 > 0 ? convertToHoursAndMinutes(game.gameTimePlayed?.timePlayed??0) + " • " : ""} ${game.gameStatus.name}`}
+            {`${game?.timePlayed > 0 ? convertToHoursAndMinutes(game?.timePlayed) + " • " : ""} ${game.gameStatus.name}`}
           </p>
         </div>
       </CardFooter>

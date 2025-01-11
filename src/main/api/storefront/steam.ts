@@ -3,12 +3,9 @@ import { app } from "electron";
 import path from "path";
 import fs from "fs";
 import vdf from "vdf";
-import { GameStatus, Storefront } from "../../constant";
-import * as GameQueries from "../../dal/game";
-import { getGameStatusPlayedAndUnplayed } from "../../dal/game_status";
-import { getStorefrontById } from "../../dal/storefront";
-import { v4 as uuidv4 } from 'uuid';
-import { Game, GameTimePlayed } from "@prisma/client";
+import { Storefront } from "../../constant";
+import { Game } from "@prisma/client";
+import { createOrUpdateGame } from "../../service/game";
 
 class Steam {
   private steamid: string | undefined;
@@ -20,29 +17,22 @@ class Steam {
 
   async parseResponse(response: AxiosResponse): Promise<void> {
     for (const entry of response.data.response.games) {
-
-      //const gameTime: GameTimePlayed = {
-      //  id:uuidv4(),
-      //  timePlayed: entry.playtime_forever,
-      //  timePlayed_windows: entry.playtime_windows_forever,
-      //  timePlayed_mac: entry.playtime_mac_forever,
-      //  timePlayed_linux: entry.playtime_linux_forever,
-      //  timePlayed_steamdeck: entry.playtime_deck_forever,
-      //  timePlayed_disconnected: entry.playtime_disconnected,
-      //};
-
-      const data: Game = {
-          id: uuidv4(),
-          externalId: entry.appid,
-          name: entry.name,
-          storefrontId: Storefront.STEAM,
-          gameStatusId: entry.playtime_forever > 0 ? 2 : 1,
-          lastTimePlayed: entry.rtime_last_played,
-          isInstalled: false,
-          gameTimePlayedId: null
+      const data: Partial<Game> = {
+        externalId: entry.appid,
+        name: entry.name,
+        storefrontId: Storefront.STEAM,
+        gameStatusId: entry.playtime_forever > 0 ? 2 : 1,
+        lastTimePlayed: entry.rtime_last_played,
+        isInstalled: false,
+        timePlayed: entry.playtime_forever,
+        timePlayedWindows: entry.playtime_windows_forever,
+        timePlayedMac: entry.playtime_mac_forever,
+        timePlayedLinux: entry.playtime_linux_forever,
+        timePlayedSteamdeck: entry.playtime_deck_forever,
+        timePlayedDisconnected: entry.playtime_disconnected,
       };
 
-      const dbGame = await GameQueries.createOrUpdateExternal(data.externalId!, data, Storefront.STEAM, data.gameStatusId)
+      await createOrUpdateGame(data, Storefront.STEAM);
     }
   }
 
@@ -83,7 +73,6 @@ class Steam {
       );
 
       this.parseResponse(response);
-
     } catch (error) {
       console.log(error);
       return [];

@@ -17,13 +17,12 @@ export async function getAllGames() {
     include: {
       gameStatus: true,
       storefront: true,
-      gameTimePlayed: true,
     },
   });
 }
 
 export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
-  include: { gameStatus: true; storefront: true; gameTimePlayed: true };
+  include: { gameStatus: true; storefront: true;};
 }> | null> {
   return await prisma.game.findFirst({
     where: {
@@ -32,7 +31,6 @@ export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
     include: {
       gameStatus: true,
       storefront: true,
-      gameTimePlayed: true,
     },
   });
 }
@@ -49,57 +47,38 @@ export async function getGameByExtenalIdAndStorefront(
     include: {
       gameStatus: true,
       storefront: true,
-      gameTimePlayed: true,
     },
   });
 }
 
 export async function createOrUpdateExternal(
-  externalId: number,
-  data: Game,
+  data: Partial<Game>,
   storefront: Storefront,
-  gameStatus: GameStatus,
-): Promise<Game> {
+): Promise<Prisma.GameGetPayload<{
+  include: { gameStatus: true; storefront: true;};
+}>|null >{
   const createdOrUpdatedGame = await prisma.game.upsert({
     where: {
       externalId_storefrontId: {
-        externalId: externalId,
+        externalId: data.externalId!,
         storefrontId: storefront,
       },
     },
     update: {
       lastTimePlayed: data.lastTimePlayed,
-      gameStatusId: gameStatus,
+      gameStatusId: data.gameStatusId,
+      timePlayed:data.timePlayed
     },
     create: {
-      name: data.name,
+      name: data.name!,
       lastTimePlayed: data.lastTimePlayed,
       isInstalled: false,
-      gameStatusId: gameStatus,
+      gameStatusId: data.gameStatusId ?? GameStatus.UNPLAYED,
       storefrontId: storefront,
-      externalId: externalId,
+      externalId: data.externalId!,
+      timePlayed:data.timePlayed
     },
   });
 
-  const game = await getGameById(createdOrUpdatedGame.id);
-
-  //await metadataManager.downloadImage(
-  //  IMAGE_TYPE.COVER,
-  //  game,
-  //  `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game.externalId}/library_600x900.jpg`,
-  //  "jpg",
-  //);
-  //
-  //
-  if (!game) {
-    throw new Error("invalid game");
-  }
-
-  log.info(`${game.name} - ${game.id} - ${game?.storefront?.name} was added`);
-
-  mainApp.sendToRenderer("add-new-game", {
-    ...game,
-  });
-
-  return game;
+  return await getGameById(createdOrUpdatedGame.id);
 }
