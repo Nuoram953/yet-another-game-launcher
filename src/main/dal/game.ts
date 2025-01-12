@@ -52,6 +52,24 @@ export async function getGameByExtenalIdAndStorefront(
   });
 }
 
+export async function updateSizeAndLocation(
+  externalId: number,
+  storefront: Storefront,
+  size: number,
+  location: string,
+) {
+  await prisma.game.updateMany({
+    data: {
+      size,
+      location,
+    },
+    where: {
+      externalId: externalId,
+      storefrontId: storefront,
+    },
+  });
+}
+
 export async function updateIsInstalled(
   installedExternalIds: number[],
   storefront: Storefront,

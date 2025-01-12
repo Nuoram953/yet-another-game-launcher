@@ -29,7 +29,6 @@ const Cover: React.FC<{
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
-        console.log(game);
         const directory = await window.api.getStoredPicturesDirectory(game.id);
         setPicturePath(`${directory}/cover/cover_1.jpg`);
       } catch (error) {
@@ -50,6 +49,11 @@ const Cover: React.FC<{
     };
     return colors[status] || "bg-gray-500";
   };
+
+  const handleOnInstall =(e)=>{
+    e.stopPropagation()
+    window.steam.install(game.externalId);
+  }
 
   const handleMouseMove = (e, cardElement) => {
     const rect = cardElement.getBoundingClientRect();
@@ -78,7 +82,9 @@ const Cover: React.FC<{
   const handleRunCommand = async () => {
     try {
       navigate(`/game/${game.id}`);
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
   };
 
   if (!picturePath) {
@@ -107,7 +113,7 @@ const Cover: React.FC<{
       </div>
 
       {!game.isInstalled && (
-        <div className="absolute bottom-16 right-2">
+        <div className="absolute bottom-16 right-2" onClick={handleOnInstall}>
           <Badge variant={"default"} className={`bg-gray-600 shadow-md`}>
             <ArrowDownToLine color="white" size={20} />
           </Badge>

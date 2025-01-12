@@ -26,5 +26,6 @@ contextBridge.exposeInMainWorld('database', {
 })
 
 contextBridge.exposeInMainWorld('steam', {
-  run: (appid:number) => ipcRenderer.invoke('steam-run', appid),
+  launch: (appid:number) => ipcRenderer.invoke('steam:launch', appid),
+  install: (appid:number) => ipcRenderer.invoke('steam:install', appid),
 })

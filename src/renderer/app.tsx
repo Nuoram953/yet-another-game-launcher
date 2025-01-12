@@ -6,9 +6,12 @@ import Layout from "./components/layout/Layout";
 import { LibraryContext } from "./context/DatabaseContext";
 import GameDetail from "./pages/GameDetail";
 import { Game } from "@prisma/client";
+import { BreadcrumbContext } from "./context/BreadcrumbsContext";
+import { Breadcrumb } from "./types";
 
 const App = () => {
   const [games, setGames] = useState<Game[]>([]);
+  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
 
   useEffect(() => {
     const fetchPicturePath = async () => {
@@ -28,30 +31,32 @@ const App = () => {
   }, []);
 
   return (
-    <LibraryContext.Provider value={{ games, setGames }}>
-      <HashRouter>
-        <Routes>
-          <Route
-            index
-            path="/"
-            element={
-              <Layout>
-                <Grid />
-              </Layout>
-            }
-          />
-          <Route
-            index
-            path="/game/:id"
-            element={
-              <Layout>
-                <GameDetail/>
-              </Layout>
-            }
-          />
-        </Routes>
-      </HashRouter>
-    </LibraryContext.Provider>
+    <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
+      <LibraryContext.Provider value={{ games, setGames }}>
+        <HashRouter>
+          <Routes>
+            <Route
+              index
+              path="/"
+              element={
+                <Layout>
+                  <Grid />
+                </Layout>
+              }
+            />
+            <Route
+              index
+              path="/game/:id"
+              element={
+                <Layout>
+                  <GameDetail />
+                </Layout>
+              }
+            />
+          </Routes>
+        </HashRouter>
+      </LibraryContext.Provider>
+    </BreadcrumbContext.Provider>
   );
 };
 

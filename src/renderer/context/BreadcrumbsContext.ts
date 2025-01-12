@@ -1,31 +1,20 @@
-import React, { createContext, useContext, useState } from 'react';
+import { Breadcrumb } from "@/types";
+import { createContext, useContext, useState, ReactNode, FC } from "react";
+import { useNavigate } from "react-router-dom";
 
-type Breadcrumb = {
-  label: string;
-  path: string;
-};
-
-type BreadcrumbContextType = {
+export interface BreadcrumbContextType {
   breadcrumbs: Breadcrumb[];
-  setBreadcrumbs: (breadcrumbs: Breadcrumb[]) => void;
-};
+  setBreadcrumbs: (newBreadcrumbs: Breadcrumb[]) => void;
+}
 
-const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(undefined);
+export const BreadcrumbContext = createContext<
+  BreadcrumbContextType | undefined
+>(undefined);
 
-export const BreadcrumbProvider = ( children ) => {
-  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-
-  return (
-    <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
-      {children}
-    </BreadcrumbContext.Provider>
-  );
-};
-
-export const useBreadcrumbs = (): BreadcrumbContextType => {
+export const useBreadcrumbsContext = () => {
   const context = useContext(BreadcrumbContext);
-  if (!context) {
-    throw new Error('useBreadcrumbs must be used within a BreadcrumbProvider');
+  if (context === undefined) {
+    throw new Error("context not found");
   }
   return context;
 };

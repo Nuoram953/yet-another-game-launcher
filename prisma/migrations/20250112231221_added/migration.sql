@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Game" ADD COLUMN "location" TEXT;
+ALTER TABLE "Game" ADD COLUMN "size" INTEGER DEFAULT 0;

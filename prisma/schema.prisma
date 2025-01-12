@@ -26,6 +26,8 @@ model Game {
   timePlayedMac          Int    @default(0)
   timePlayedSteamdeck    Int    @default(0)
   timePlayedDisconnected Int    @default(0)
+  size BigInt?    @default(0)
+  location String? 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

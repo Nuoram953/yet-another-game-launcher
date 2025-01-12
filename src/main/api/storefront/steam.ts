@@ -7,6 +7,7 @@ import { Storefront } from "../../constant";
 import { Game } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
 import * as GameQueries from "../../dal/game";
+import acfParser from "steam-acf2json";
 
 class Steam {
   private steamid: string | undefined;
@@ -104,6 +105,15 @@ class Steam {
         .filter((item) => item !== undefined) as number[];
 
       await GameQueries.updateIsInstalled(appIds, Storefront.STEAM, true);
+
+      for (const appId of appIds) {
+        const fileName = `/appmanifest_${appId}.acf`;
+        const filePath = path.join(steamConfigDirectory, fileName)
+        const file = fs.readFileSync(filePath, 'utf-8')
+        const decode = acfParser.decode(file)
+        const gamePath = path.join(steamConfigDirectory, "common", decode.AppState.installdir)
+        await GameQueries.updateSizeAndLocation(appId, Storefront.STEAM, Number(decode.AppState.SizeOnDisk), gamePath)
+      }
     } catch (error) {
       console.log(error);
       return [];

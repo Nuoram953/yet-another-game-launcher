@@ -16,15 +16,25 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
+import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
+  const { breadcrumbs, setBreadcrumbs } = useBreadcrumbsContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.api.onReceiveFromMain("is-game-running", (isRunning: boolean) => {
       setIsGameRunning(isRunning);
     });
   }, []);
+
+  const handleClickBreadcrumbs = (path: string) => {
+    const index = breadcrumbs.findIndex((item) => item.path === path);
+    setBreadcrumbs(breadcrumbs.splice(0, index));
+    navigate(path);
+  };
 
   return (
     <SidebarProvider>
@@ -37,15 +47,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Separator orientation="vertical" className="mr-2 h-4" />
               <Breadcrumb>
                 <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      Building Your Application
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                  </BreadcrumbItem>
+                  {breadcrumbs.map((breadcrumb, index) => (
+                    <>
+                      <BreadcrumbItem className="hidden md:block">
+                        <BreadcrumbLink
+                          onClick={() =>
+                            handleClickBreadcrumbs(breadcrumb.path)
+                          }
+                        >
+                          {breadcrumb.label}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      {index != breadcrumbs.length - 1 && (
+                        <BreadcrumbSeparator className="hidden md:block" />
+                      )}
+                    </>
+                  ))}
                 </BreadcrumbList>
               </Breadcrumb>
             </div>

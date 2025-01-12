@@ -3,10 +3,14 @@ import Cover from "../Cover";
 import _ from "lodash";
 import { useLibraryContext } from "@/context/DatabaseContext";
 import { Input } from "../ui/input";
+import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 
 const Grid = () => {
   const { games } = useLibraryContext();
   const [search, setSearch] = React.useState("");
+  //const { setBreadcrumbs } = useBreadcrumbsContext();
+  //
+  //setBreadcrumbs([{ label: "Library", path: "/" }]);
 
   const handleSearch = (e) => {
     const newSearch = e.target.value;

@@ -1,17 +1,17 @@
 import { ipcMain } from "electron";
-import { exec, spawn } from "child_process";
+import { spawn } from "child_process";
 import log from "electron-log/main";
-import { mainApp } from "..";
-import { checkIfAllProcessesTerminated, spawnAndTrackChildren, trackAllChildProcessesRecursive, trackGameTime } from "../utils/tracking";
+import { spawnAndTrackChildren } from "../utils/tracking";
 import { delay } from "../utils/utils";
 
-ipcMain.handle("steam-run", async (_event, appid: number) => {
+ipcMain.handle("steam:launch", async (_event, appid: number) => {
   log.info(`Starting steam game ${appid}`);
-  const process = spawn("steam", ["-silent",`steam://launch/${appid}`], {
+  const process = spawn("steam", ["-silent", `steam://launch/${appid}`], {
     detached: true,
     stdio: "ignore",
   });
-
+  await delay(10000)
+  await spawnAndTrackChildren()
   //await trackAllChildProcessesRecursive(process.pid);
   //
   //setInterval(checkIfAllProcessesTerminated, 5000);
@@ -23,4 +23,21 @@ ipcMain.handle("steam-run", async (_event, appid: number) => {
   //mainApp.sendToRenderer("is-game-running", {
   //  isRunning: true,
   //});
+});
+
+ipcMain.handle("steam:install", async (_event, appid: number) => {
+  log.info(`Installing steam game ${appid}`);
+  spawn("steam", [`steam://install/${appid}`], {
+    detached: true,
+    stdio: "ignore",
+  });
+});
+
+
+ipcMain.handle("steam:uninstall", async (_event, appid: number) => {
+  log.info(`Installing steam game ${appid}`);
+  spawn("steam", [`steam://uninstall/${appid}`], {
+    detached: true,
+    stdio: "ignore",
+  });
 });
