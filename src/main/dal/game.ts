@@ -53,7 +53,7 @@ export async function getGameByExtenalIdAndStorefront(
 }
 
 export async function updateIsInstalled(
-  externalId: number,
+  installedExternalIds: number[],
   storefront: Storefront,
   isInstalled: boolean,
 ) {
@@ -62,7 +62,17 @@ export async function updateIsInstalled(
       isInstalled: isInstalled,
     },
     where: {
-      externalId: externalId,
+      externalId: { in: installedExternalIds },
+      storefrontId: storefront,
+    },
+  });
+
+  await prisma.game.updateMany({
+    data: {
+      isInstalled: false,
+    },
+    where: {
+      externalId: { notIn: installedExternalIds },
       storefrontId: storefront,
     },
   });

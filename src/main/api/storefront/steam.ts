@@ -16,6 +16,12 @@ class Steam {
     this.apiKey = process.env.STEAM_API_KEY;
   }
 
+  async initialize(): Promise<void> {
+    await this.getSteamUserData();
+    await this.getOwnedGames();
+    await this.getInstalledGames();
+  }
+
   async parseResponse(response: AxiosResponse): Promise<void> {
     for (const entry of response.data.response.games) {
       const data: Partial<Game> = {
@@ -35,12 +41,6 @@ class Steam {
 
       await createOrUpdateGame(data, Storefront.STEAM);
     }
-  }
-
-  async initialize(): Promise<void> {
-    await this.getSteamUserData();
-    await this.getOwnedGames();
-    await this.getInstalledGames();
   }
 
   async getSteamUserData() {
@@ -93,12 +93,17 @@ class Steam {
       );
 
       const dataJson = await vdf.parse(data);
-      console.log(dataJson)
 
-      for(const [key, value] of Object.entries(dataJson.libraryfolders[0].apps)){
-        console.log(key)
-        await GameQueries.updateIsInstalled(Number(key), Storefront.STEAM, true)
-      }
+      const appIds: number[] = Object.keys(dataJson.libraryfolders[0].apps)
+        .map((key) => {
+          const fileName = `/appmanifest_${key}.acf`;
+          if (fs.existsSync(path.join(steamConfigDirectory, fileName))) {
+            return Number(key);
+          }
+        })
+        .filter((item) => item !== undefined) as number[];
+
+      await GameQueries.updateIsInstalled(appIds, Storefront.STEAM, true);
     } catch (error) {
       console.log(error);
       return [];
