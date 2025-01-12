@@ -1,89 +1,72 @@
+"use client";
+
+import * as React from "react";
+import {
+  AudioWaveform,
+  Command,
+  GalleryVerticalEnd,
+  SquareTerminal,
+} from "lucide-react";
+
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "./ui/collapsible";
-import { ChevronRight, Gamepad2 } from "lucide-react";
+import { NavPlatform } from "./sidebar/nav-platforms";
 
-const AppSidebar = () => {
-  const navigate = useNavigate();
-
-  return (
-    <Sidebar collapsible="icon">
-      <SidebarTrigger />
-      <SidebarHeader />
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Platform</SidebarGroupLabel>
-          <SidebarMenu>
-            <Collapsible
-              key=""
-              asChild
-              defaultOpen={true}
-              className="group/collapsible"
-            >
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={"test tooltip"}>
-                    <Gamepad2 />
-                    <span>Test 3</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        asChild
-                        onClick={() => navigate("/")}
-                      >
-                        <span>test</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        asChild
-                        onClick={() => navigate("/")}
-                      >
-                        <span>test</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        asChild
-                        onClick={() => navigate("/")}
-                      >
-                        <span>test</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter />
-    </Sidebar>
-  );
+// This is sample data.
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  teams: [
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: Command,
+      plan: "Free",
+    },
+  ],
+  NavPlatform: [
+    {
+      title: "Platforms",
+      url: "/steam",
+      icon: SquareTerminal,
+      isActive: true,
+      items: [
+        {
+          title: "Steam",
+          url: "/steam",
+        },
+      ],
+    },
+  ],
 };
 
-export default AppSidebar;
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader></SidebarHeader>
+      <SidebarContent>
+        <NavPlatform items={data.NavPlatform} />
+      </SidebarContent>
+      <SidebarFooter></SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}

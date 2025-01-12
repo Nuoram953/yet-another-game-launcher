@@ -52,6 +52,22 @@ export async function getGameByExtenalIdAndStorefront(
   });
 }
 
+export async function updateIsInstalled(
+  externalId: number,
+  storefront: Storefront,
+  isInstalled: boolean,
+) {
+  await prisma.game.updateMany({
+    data: {
+      isInstalled: isInstalled,
+    },
+    where: {
+      externalId: externalId,
+      storefrontId: storefront,
+    },
+  });
+}
+
 export async function createOrUpdateExternal(
   data: Partial<Game>,
   storefront: Storefront,

@@ -6,7 +6,7 @@ export interface LibraryContextType {
     setGames: React.Dispatch<React.SetStateAction<Game[]>>;
 }
 
-export const LibraryContext = createContext<LibraryContextType | undefined>();
+export const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
 
 export const useLibraryContext = () => {
     const context = useContext(LibraryContext);

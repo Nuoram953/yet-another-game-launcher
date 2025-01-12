@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import SearchWithFilters from "../SearchWithFilters";
+import React from "react";
 import Cover from "../Cover";
 import _ from "lodash";
 import { useLibraryContext } from "@/context/DatabaseContext";
@@ -16,34 +15,43 @@ const Grid = () => {
     }
   };
 
-  const uniqueGames = Array.from(new Map(games.map(game => [game.id, game])).values());
+  const uniqueGames = Array.from(
+    new Map(games.map((game) => [game.id, game])).values(),
+  );
 
   const filteringGames = search
     ? uniqueGames.filter((game) =>
-        game.name.toLowerCase().includes(search.toLowerCase())
+        game.name.toLowerCase().includes(search.toLowerCase()),
       )
     : uniqueGames;
 
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="max-w-md mx-auto">
+    <>
+      <div className="max-w-md mx-auto p-2">
         <Input
           type="search"
-          placeholder="Search movies..."
+          placeholder="Search library..."
           value={search}
           onChange={handleSearch}
-          className="w-full"
+          className="text-white"
         />
       </div>
-      <div className="w-full p-4">
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6">
-          {filteringGames.map((game) => (
-            <Cover key={game.id} game={game} />
-          ))}
+      <div className="flex flex-col items-center justify-center min-h-screen ">
+        <div className="w-full p-4">
+          <div
+            className={`grid gap-6 ${
+              filteringGames.length <= 2
+                ? "grid-cols-[repeat(auto-fit,minmax(250px,300px))] justify-center"
+                : "grid-cols-[repeat(auto-fit,minmax(250px,1fr))]"
+            }`}
+          >
+            {filteringGames.map((game) => (
+              <Cover key={game.id} game={game} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -6,6 +6,7 @@ import vdf from "vdf";
 import { Storefront } from "../../constant";
 import { Game } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
+import * as GameQueries from "../../dal/game";
 
 class Steam {
   private steamid: string | undefined;
@@ -39,6 +40,7 @@ class Steam {
   async initialize(): Promise<void> {
     await this.getSteamUserData();
     await this.getOwnedGames();
+    await this.getInstalledGames();
   }
 
   async getSteamUserData() {
@@ -73,6 +75,30 @@ class Steam {
       );
 
       this.parseResponse(response);
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  async getInstalledGames() {
+    try {
+      const steamConfigDirectory = path.join(
+        app.getPath("userData"),
+        "../../.steam/steam/steamapps",
+      );
+      const data = await fs.promises.readFile(
+        `${steamConfigDirectory}/libraryfolders.vdf`,
+        "utf8",
+      );
+
+      const dataJson = await vdf.parse(data);
+      console.log(dataJson)
+
+      for(const [key, value] of Object.entries(dataJson.libraryfolders[0].apps)){
+        console.log(key)
+        await GameQueries.updateIsInstalled(Number(key), Storefront.STEAM, true)
+      }
     } catch (error) {
       console.log(error);
       return [];

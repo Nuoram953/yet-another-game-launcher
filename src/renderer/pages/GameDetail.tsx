@@ -24,7 +24,7 @@ const GameDetail = () => {
   }, []);
 
   const handleOnClick = async ()=>{
-    await window.steam.run(game.extenalId);
+    await window.steam.run(game.externalId);
   }
 
   return (

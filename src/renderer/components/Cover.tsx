@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { convertToHoursAndMinutes } from "@/utils/util";
 import { Skeleton } from "./ui/skeleton";
 import { Prisma } from "@prisma/client";
-import { Clock } from "lucide-react";
+import { ArrowDownToLine, Clock } from "lucide-react";
 import { Badge } from "./ui/badge";
 
 const SkeletonCover = () => {
@@ -87,7 +87,7 @@ const Cover: React.FC<{
 
   return (
     <div
-      className="w-full relative"
+      className="w-full relative text-white"
       onClick={handleRunCommand}
       onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
       onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
@@ -100,14 +100,22 @@ const Cover: React.FC<{
       <div className="absolute top-2 left-2">
         <Badge
           variant={"default"}
-          className={`${getStatusColor(game.gameStatus.name)} text-white shadow-md`}
+          className={`${getStatusColor(game.gameStatus.name)} shadow-md`}
         >
           {game.gameStatus.name}
         </Badge>
       </div>
+
+      {!game.isInstalled && (
+        <div className="absolute bottom-16 right-2">
+          <Badge variant={"default"} className={`bg-gray-600 shadow-md`}>
+            <ArrowDownToLine color="white" size={20} />
+          </Badge>
+        </div>
+      )}
       <div className="flex flex-col truncate w-wull text-left">
-        <p className="truncate w-full">{game.name}</p>
-        <div className="flex flex-row items-center">
+        <p className="truncate w-full text-white">{game.name}</p>
+        <div className="flex flex-row items-center text-gray-300">
           <Clock className="mr-1" size={16} />
           <p>{convertToHoursAndMinutes(game.timePlayed)}</p>
         </div>
