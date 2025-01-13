@@ -1,17 +1,20 @@
 import { ipcMain } from "electron";
 import { spawn } from "child_process";
 import log from "electron-log/main";
-import { spawnAndTrackChildren } from "../utils/tracking";
+import { monitorDirectoryProcesses, spawnAndTrackChildren } from "../utils/tracking";
 import { delay } from "../utils/utils";
+import { getGameByExtenalIdAndStorefront } from "../dal/game";
+import { Storefront } from "../constant";
 
 ipcMain.handle("steam:launch", async (_event, appid: number) => {
+  const game = await getGameByExtenalIdAndStorefront(appid, Storefront.STEAM)
   log.info(`Starting steam game ${appid}`);
-  const process = spawn("steam", ["-silent", `steam://launch/${appid}`], {
+  spawn("steam", ["-silent", `steam://launch/${appid}`], {
     detached: true,
     stdio: "ignore",
   });
-  await delay(10000)
-  await spawnAndTrackChildren()
+  const result = await monitorDirectoryProcesses(game?.location!);
+  console.log(result)
   //await trackAllChildProcessesRecursive(process.pid);
   //
   //setInterval(checkIfAllProcessesTerminated, 5000);

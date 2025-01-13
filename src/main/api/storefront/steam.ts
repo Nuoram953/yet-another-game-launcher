@@ -108,11 +108,20 @@ class Steam {
 
       for (const appId of appIds) {
         const fileName = `/appmanifest_${appId}.acf`;
-        const filePath = path.join(steamConfigDirectory, fileName)
-        const file = fs.readFileSync(filePath, 'utf-8')
-        const decode = acfParser.decode(file)
-        const gamePath = path.join(steamConfigDirectory, "common", decode.AppState.installdir)
-        await GameQueries.updateSizeAndLocation(appId, Storefront.STEAM, Number(decode.AppState.SizeOnDisk), gamePath)
+        const filePath = path.join(steamConfigDirectory, fileName);
+        const file = fs.readFileSync(filePath, "utf-8");
+        const decode = acfParser.decode(file);
+        const gamePath = path.join(
+          app.getPath("userData"),
+          "../../.local/share/Steam/steamapps/common",
+          decode.AppState.installdir,
+        );
+        await GameQueries.updateSizeAndLocation(
+          appId,
+          Storefront.STEAM,
+          Number(decode.AppState.SizeOnDisk),
+          gamePath,
+        );
       }
     } catch (error) {
       console.log(error);

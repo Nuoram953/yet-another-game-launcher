@@ -95,3 +95,4 @@ database.sqlite
 dist/src
 database.sqlite-journal
 database.sqlite-journal
+prisma/${process.env.USER_DATA_PATH}
