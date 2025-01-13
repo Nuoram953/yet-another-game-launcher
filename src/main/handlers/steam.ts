@@ -5,6 +5,7 @@ import { monitorDirectoryProcesses, spawnAndTrackChildren } from "../utils/track
 import { delay } from "../utils/utils";
 import { getGameByExtenalIdAndStorefront } from "../dal/game";
 import { Storefront } from "../constant";
+import { createGameActiviy } from "../dal/gameActiviy";
 
 ipcMain.handle("steam:launch", async (_event, appid: number) => {
   const game = await getGameByExtenalIdAndStorefront(appid, Storefront.STEAM)
@@ -13,8 +14,10 @@ ipcMain.handle("steam:launch", async (_event, appid: number) => {
     detached: true,
     stdio: "ignore",
   });
-  const result = await monitorDirectoryProcesses(game?.location!);
-  console.log(result)
+  const {startTime, endTime} = await monitorDirectoryProcesses(game?.location!);
+  if(startTime && endTime){
+    await createGameActiviy(game!.id!, startTime, endTime)
+  }
   //await trackAllChildProcessesRecursive(process.pid);
   //
   //setInterval(checkIfAllProcessesTerminated, 5000);

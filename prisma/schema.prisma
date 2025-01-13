@@ -7,29 +7,30 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL") 
+  url      = env("DATABASE_URL")
 }
 
 model Game {
-  id               String          @id @default(uuid())
-  externalId      Int?
-  name             String
-  lastTimePlayed Int?
-  isInstalled     Boolean         @default(false)
-  gameStatus      GameStatus      @relation(fields: [gameStatusId], references: [id])
-  gameStatusId     Int
-  storefront       Storefront?     @relation(fields: [storefrontId], references: [id])
-  storefrontId     Int?
-  timePlayed              Int    @default(0)
-  timePlayedWindows      Int    @default(0)
-  timePlayedLinux        Int    @default(0)
-  timePlayedMac          Int    @default(0)
-  timePlayedSteamdeck    Int    @default(0)
-  timePlayedDisconnected Int    @default(0)
-  size BigInt?    @default(0)
-  location String? 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                     String         @id @default(uuid())
+  externalId             Int?
+  name                   String
+  lastTimePlayed         Int?
+  isInstalled            Boolean        @default(false)
+  gameStatus             GameStatus     @relation(fields: [gameStatusId], references: [id])
+  gameStatusId           Int
+  storefront             Storefront?    @relation(fields: [storefrontId], references: [id])
+  storefrontId           Int?
+  timePlayed             Int            @default(0)
+  timePlayedWindows      Int            @default(0)
+  timePlayedLinux        Int            @default(0)
+  timePlayedMac          Int            @default(0)
+  timePlayedSteamdeck    Int            @default(0)
+  timePlayedDisconnected Int            @default(0)
+  size                   BigInt?        @default(0)
+  location               String?
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  activities             GameActivity[]
 
   @@unique([externalId, storefrontId])
 }
@@ -38,6 +39,17 @@ model GameStatus {
   id   Int    @id @default(autoincrement())
   name String @unique
   Game Game[]
+}
+
+model GameActivity {
+  id        Int    @id @default(autoincrement())
+  gameId    String
+  game      Game   @relation(fields: [gameId], references: [id])
+  startedAt BigInt
+  endedAt   BigInt
+  duration  Int
+
+  @@index([gameId])
 }
 
 model Storefront {
