@@ -26,6 +26,6 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false
     },
-    "include": ["src/**/*", "node_module/@prisma/client"]
+    "include": ["src/**/*", "node_module/@prisma/client", "./i18n.ts"]
 
 }

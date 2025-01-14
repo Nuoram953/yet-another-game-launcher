@@ -7,8 +7,9 @@ import Steam from "./api/storefront/steam";
 import log from "electron-log/main";
 import MetadataManager from "./manager/metadataManager";
 import { PrismaClient } from "@prisma/client";
-import fs from "fs"
-const { execSync } = require('child_process');
+import fs from "fs";
+import { execSync, exec } from "child_process";
+import { initMainI18n } from "./i18n";
 
 require("dotenv").config();
 
@@ -18,7 +19,8 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 let hasRunInitialLibrariesUpdate: boolean = false;
 export let metadataManager: MetadataManager;
 export let prisma: PrismaClient;
-export let dbPath:string
+export let dbPath: string;
+export let i18n: Awaited<ReturnType<typeof initMainI18n>>;
 
 class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
@@ -31,9 +33,10 @@ class MainWindowManager {
 
   async initialize(): Promise<void> {
     try {
-      dbPath = path.join(app.getPath('userData'), 'app.sqlite')
+      dbPath = path.join(app.getPath("userData"), "app.sqlite");
 
-      process.env.DATABASE_URL = `file:${dbPath}`
+      process.env.DATABASE_URL = `file:${dbPath}`;
+
       log.initialize();
       log.errorHandler.startCatching();
 
@@ -44,14 +47,16 @@ class MainWindowManager {
       await app.whenReady();
       log.warn("App is ready");
 
+      i18n = await initMainI18n();
+
       await this.createWindow();
       log.info("Window created");
 
-    try {
-        execSync('npx prisma migrate deploy');
-    } catch (error) {
-        console.error('Error running Prisma migrations:', error);
-    }
+      try {
+        execSync("npx prisma migrate deploy");
+      } catch (error) {
+        console.error("Error running Prisma migrations:", error);
+      }
 
       prisma = new PrismaClient();
 
@@ -84,12 +89,11 @@ class MainWindowManager {
           responseHeaders: {
             ...details.responseHeaders,
             "Content-Security-Policy": [
-              "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src 'http://0.0.0.0:3000';",
+              "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'http://0.0.0.0:3000'; connect-src 'self' 'http://0.0.0.0:3000';",
             ],
           },
         });
       });
-      // Ensure the listener is registered before resolving
       resolve();
     });
   }
@@ -128,8 +132,9 @@ export const mainApp = new MainWindowManager();
 mainApp.initialize().catch(console.error);
 
 ipcMain.handle("get-pictures-directory", async (event, id) => {
-  const picturesDir = path.join(app.getPath("userData"), id);
-  return picturesDir;
+  const picturesDir = path.join(app.getPath("userData"), id, "cover");
+  const files = fs.readdirSync(picturesDir);
+  return path.join(picturesDir, files[0]);
 });
 
 ipcMain.handle("update-libraries", async (event, forceReload) => {

@@ -5,6 +5,7 @@ import { Skeleton } from "./ui/skeleton";
 import { Prisma } from "@prisma/client";
 import { ArrowDownToLine, Clock } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { useTranslation } from "react-i18next";
 
 const SkeletonCover = () => {
   return (
@@ -25,12 +26,15 @@ const Cover: React.FC<{
 }> = ({ game }) => {
   const [picturePath, setPicturePath] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation("GameStatus");
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
         const directory = await window.api.getStoredPicturesDirectory(game.id);
-        setPicturePath(`${directory}/cover/cover_1.jpg`);
+        setPicturePath(directory);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }
@@ -41,19 +45,19 @@ const Cover: React.FC<{
 
   const getStatusColor = (status: string) => {
     const colors = {
-      PLAYING: "bg-blue-500",
-      PLAYED: "bg-yellow-500",
-      PLAN: "bg-purple-500",
-      DROPPED: "bg-red-500",
-      COMPLETED: "bg-green-500",
+      playing: "bg-blue-500",
+      played: "bg-yellow-500",
+      planned: "bg-purple-500",
+      dropped: "bg-red-500",
+      completed: "bg-green-500",
     };
     return colors[status] || "bg-gray-500";
   };
 
-  const handleOnInstall =(e)=>{
-    e.stopPropagation()
+  const handleOnInstall = (e) => {
+    e.stopPropagation();
     window.steam.install(game.externalId);
-  }
+  };
 
   const handleMouseMove = (e, cardElement) => {
     const rect = cardElement.getBoundingClientRect();
@@ -83,11 +87,11 @@ const Cover: React.FC<{
     try {
       navigate(`/game/${game.id}`);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   };
 
-  if (!picturePath) {
+  if (loading) {
     return <SkeletonCover />;
   }
 
@@ -108,7 +112,7 @@ const Cover: React.FC<{
           variant={"default"}
           className={`${getStatusColor(game.gameStatus.name)} shadow-md`}
         >
-          {game.gameStatus.name}
+          {t(game.gameStatus.name)}
         </Badge>
       </div>
 

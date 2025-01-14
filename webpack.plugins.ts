@@ -18,6 +18,13 @@ export const plugins = [
         ),
         to: path.resolve(__dirname, ".webpack/renderer"),
       },
+      {
+        from: path.resolve(
+          __dirname,
+          "locale",
+        ),
+        to: path.resolve(__dirname, ".webpack/locale"),
+      },
     ],
   }),
 ];

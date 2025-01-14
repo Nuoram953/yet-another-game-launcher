@@ -3,14 +3,12 @@ import Cover from "../Cover";
 import _ from "lodash";
 import { useLibraryContext } from "@/context/DatabaseContext";
 import { Input } from "../ui/input";
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { useTranslation } from "react-i18next";
 
 const Grid = () => {
   const { games } = useLibraryContext();
   const [search, setSearch] = React.useState("");
-  //const { setBreadcrumbs } = useBreadcrumbsContext();
-  //
-  //setBreadcrumbs([{ label: "Library", path: "/" }]);
+  const { t, i18n } = useTranslation("common");
 
   const handleSearch = (e) => {
     const newSearch = e.target.value;
@@ -31,6 +29,7 @@ const Grid = () => {
 
   return (
     <>
+      <p>{t("test")}</p>
       <div className="max-w-md mx-auto p-2">
         <Input
           type="search"
