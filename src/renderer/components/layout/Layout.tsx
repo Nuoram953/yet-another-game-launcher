@@ -18,6 +18,7 @@ import {
 } from "../ui/breadcrumb";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { useNavigate } from "react-router-dom";
+import NotificationList from "../notification/NotificationList";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
@@ -82,6 +83,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </SidebarInset>
+      <NotificationList/>
       {isGameRunning ? (
         <Alert>
           <Terminal className="h-4 w-4" />
