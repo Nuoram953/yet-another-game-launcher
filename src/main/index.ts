@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, nativeTheme, Session } from "electron";
 import * as path from "path";
 import "./handlers/database";
 import "./handlers/steam";
+import "./handlers/status";
 import "reflect-metadata";
 import Steam from "./api/storefront/steam";
 import log from "electron-log/main";

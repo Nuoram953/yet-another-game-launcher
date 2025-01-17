@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { convertToHoursAndMinutes } from "@/utils/util";
-import { Skeleton } from "./ui/skeleton";
 import { Prisma } from "@prisma/client";
-import { ArrowDownToLine, Clock } from "lucide-react";
-import { Badge } from "./ui/badge";
-import { useTranslation } from "react-i18next";
+import { Clock } from "lucide-react";
+import { SkeletonCover } from "./cover/skeleton";
+import { InstallBadge } from "./cover/installBadge";
+import { StatusBadge } from "./cover/statusBadge";
+import { ImageWithFallback } from "./cover/cover";
 
-const SkeletonCover = () => {
-  return (
-    <div className="flex flex-col space-y-3">
-      <Skeleton className="rounded-xl h-[400px]" />
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-[150px]" />
-        <Skeleton className="h-4 w-[75px]" />
-      </div>
-    </div>
-  );
-};
 
 const Cover: React.FC<{
   game: Prisma.GameGetPayload<{
@@ -26,7 +16,6 @@ const Cover: React.FC<{
 }> = ({ game }) => {
   const [picturePath, setPicturePath] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { t } = useTranslation("GameStatus");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -43,16 +32,6 @@ const Cover: React.FC<{
     fetchPicturePath();
   }, [game]);
 
-  const getStatusColor = (status: string) => {
-    const colors = {
-      playing: "bg-blue-500",
-      played: "bg-yellow-500",
-      planned: "bg-purple-500",
-      dropped: "bg-red-500",
-      completed: "bg-green-500",
-    };
-    return colors[status] || "bg-gray-500";
-  };
 
   const handleOnInstall = (e) => {
     e.stopPropagation();
@@ -107,21 +86,11 @@ const Cover: React.FC<{
       }}
     >
       <ImageWithFallback src={`file://${picturePath}`} />
-      <div className="absolute top-2 left-2">
-        <Badge
-          variant={"default"}
-          className={`${getStatusColor(game.gameStatus.name)} shadow-md`}
-        >
-          {t(game.gameStatus.name)}
-        </Badge>
-      </div>
+
+      <StatusBadge status={game.gameStatus.name}  />
 
       {!game.isInstalled && (
-        <div className="absolute bottom-16 right-2" onClick={handleOnInstall}>
-          <Badge variant={"default"} className={`bg-gray-600 shadow-md`}>
-            <ArrowDownToLine color="white" size={20} />
-          </Badge>
-        </div>
+        <InstallBadge handleOnClick={handleOnInstall}/>
       )}
       <div className="flex flex-col truncate w-wull text-left">
         <p className="truncate w-full text-white">{game.name}</p>
@@ -130,31 +99,6 @@ const Cover: React.FC<{
           <p>{convertToHoursAndMinutes(game.timePlayed)}</p>
         </div>
       </div>
-    </div>
-  );
-};
-
-const ImageWithFallback = ({ src, alt, style }) => {
-  const [hasError, setHasError] = useState(false);
-
-  return (
-    <div
-      style={{
-        ...style,
-        display: "inline-block",
-        backgroundColor: hasError ? "grey" : "transparent",
-      }}
-      className="rounded-xl rounded-b-none w-full"
-    >
-      {!hasError && (
-        <img
-          src={src}
-          alt={alt}
-          style={{ display: "block", ...style }}
-          onError={() => setHasError(true)}
-          className="rounded-xl w-full"
-        />
-      )}
     </div>
   );
 };

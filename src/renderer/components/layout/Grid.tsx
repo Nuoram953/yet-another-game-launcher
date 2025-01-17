@@ -8,8 +8,8 @@ import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 
 const COLUMN_WIDTH = 250;
-const ROW_HEIGHT = 525;
-const GAP = 18;
+const ROW_HEIGHT = 520;
+const GAP = 16;
 
 const Grid = () => {
   const { games } = useLibraryContext();
@@ -23,7 +23,6 @@ const Grid = () => {
     }
   }, [search]);
 
-  // Memoize filtered games list
   const filteredGames = useMemo(() => {
     const uniqueGames = Array.from(
       new Map(games.map((game) => [game.id, game])).values()
@@ -36,7 +35,6 @@ const Grid = () => {
       : uniqueGames;
   }, [games, search]);
 
-  // Memoize the cell renderer
   const Cell = useCallback(({ columnIndex, rowIndex, style, data }) => {
     const { games, columnCount } = data;
     const gameIndex = rowIndex * columnCount + columnIndex;
@@ -58,27 +56,28 @@ const Grid = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
-      <p>{t("test")}</p>
-      
-      <div className="max-w-md mx-auto p-2">
-        <Input
-          type="search"
-          placeholder="Search library..."
-          value={search}
-          onChange={handleSearch}
-          className="text-white"
-        />
+    // Main container with exact viewport height and no overflow
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Header section with fixed height */}
+      <div className="flex-none">
+        <p>{t("test")}</p>
+        <div className="max-w-md mx-auto p-2">
+          <Input
+            type="search"
+            placeholder="Search library..."
+            value={search}
+            onChange={handleSearch}
+            className="text-white"
+          />
+        </div>
       </div>
 
-      <div className="flex-1 w-full p-4">
+      {/* Grid section that takes remaining height */}
+      <div className="flex-1 min-h-0">
         <AutoSizer>
           {({ height, width }) => {
-            // Calculate grid dimensions
             const columnCount = Math.max(1, Math.floor((width - GAP) / (COLUMN_WIDTH + GAP)));
             const rowCount = Math.ceil(filteredGames.length / columnCount);
-            
-            // Calculate actual column width to fill space evenly
             const availableWidth = width - GAP * (columnCount + 1);
             const adjustedColumnWidth = Math.floor(availableWidth / columnCount);
 

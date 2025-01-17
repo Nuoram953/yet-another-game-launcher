@@ -144,3 +144,12 @@ export async function createOrUpdateExternal(
 
   return await getGameById(createdOrUpdatedGame.id);
 }
+
+export async function getCountByStatus(){
+  return await prisma.game.groupBy({
+    by:["gameStatusId"],
+    _count:{
+      gameStatusId:true
+    },
+  });
+}

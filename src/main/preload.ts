@@ -25,7 +25,9 @@ contextBridge.exposeInMainWorld("api", {
 contextBridge.exposeInMainWorld("database", {
   getGames: () => ipcRenderer.invoke("games"),
   getGame: (id: string) => ipcRenderer.invoke("game", id),
+  getStatus: () => ipcRenderer.invoke("statusAndCount")
 });
+
 
 contextBridge.exposeInMainWorld("steam", {
   launch: (appid: number) => ipcRenderer.invoke("steam:launch", appid),

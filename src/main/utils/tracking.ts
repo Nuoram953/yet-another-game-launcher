@@ -10,7 +10,7 @@ interface ProcessInfo {
 export async function monitorDirectoryProcesses(
   directoryPath: string,
 ): Promise<ProcessInfo> {
-  await delay(30000);
+  await delay(60000);
   const startTime = new Date();
   console.log(`Monitoring started at: ${startTime}`);
 

@@ -35,7 +35,7 @@ const GameDetail = () => {
   };
 
   return (
-    <div>
+    <div className="bg-slate-500 h-screen">
       <p>{id}</p>
       <Button onClick={handleOnClick} />
     </div>

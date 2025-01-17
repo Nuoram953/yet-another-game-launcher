@@ -1,21 +1,22 @@
 import { Game } from "@prisma/client";
-import * as GameQueries from "../dal/game"
+import * as GameQueries from "../dal/game";
 import { Storefront } from "../constant";
 import { mainApp, metadataManager } from "..";
-import  log  from "electron-log/main";
-import { IMAGE_TYPE } from "../../common/constant";
 import { monitorDirectoryProcesses } from "../utils/tracking";
 import { getMinutesBetween } from "../utils/utils";
 import { createGameActiviy } from "../dal/gameActiviy";
 
-export const createOrUpdateGame = async (data:Partial<Game>, store:Storefront) => {
-  const game = await GameQueries.createOrUpdateExternal(data, store)
+export const createOrUpdateGame = async (
+  data: Partial<Game>,
+  store: Storefront,
+) => {
+  const game = await GameQueries.createOrUpdateExternal(data, store);
 
-  if(!game){
-    throw new Error("invalid game")
+  if (!game) {
+    throw new Error("invalid game");
   }
 
-  await metadataManager.downloadMissingImages(game)
+  await metadataManager.downloadMissingImages(game);
   //if(game.updatedAt.getTime() === game.createdAt.getTime()){
   //  log.info(`${game.name} - ${game.id} - ${game?.storefront?.name} was added`);
   //  await metadataManager.downloadImage(
@@ -28,22 +29,26 @@ export const createOrUpdateGame = async (data:Partial<Game>, store:Storefront) =
   //download 1 cover, logo, and background
   //download achievements
   //download music
-  
+
   mainApp.sendToRenderer("add-new-game", {
     ...game,
   });
 };
-export const preLaunch = async (game:Game) => {
+export const preLaunch = async (game: Game) => {
   //track process
   //create a temporary session in db
   //show banner in react
 };
-export const postLaunch = async (game:Game) => {
-
-  const {startTime, endTime} = await monitorDirectoryProcesses(game?.location!);
-  if(startTime && endTime){
-    await createGameActiviy(game.id, startTime, endTime)
-    await GameQueries.updateTimePlayed(game.id, await getMinutesBetween(startTime, endTime))
+export const postLaunch = async (game: Game) => {
+  const { startTime, endTime } = await monitorDirectoryProcesses(
+    game?.location!,
+  );
+  if (startTime && endTime) {
+    await createGameActiviy(game.id, startTime, endTime);
+    await GameQueries.updateTimePlayed(
+      game.id,
+      (await getMinutesBetween(startTime, endTime)) + 1,
+    ); //The minute delay for the catching the process
   }
   //stop process
   //add session to db
@@ -54,6 +59,4 @@ export const postLaunch = async (game:Game) => {
   //hide banner in react
 };
 
-export const downloadAchievements = () =>{
-  
-}
+export const downloadAchievements = () => {};
