@@ -70,6 +70,23 @@ export async function updateSizeAndLocation(
   });
 }
 
+export async function updateTimePlayed(
+  gameId: string,
+  timePlayed: number,
+) {
+  await prisma.game.update({
+    data: {
+      timePlayed:{
+        increment:timePlayed
+      },
+      lastTimePlayed: new Date().getTime()
+    },
+    where: {
+      id: gameId,
+    },
+  });
+}
+
 export async function updateIsInstalled(
   installedExternalIds: number[],
   storefront: Storefront,

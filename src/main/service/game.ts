@@ -4,6 +4,9 @@ import { Storefront } from "../constant";
 import { mainApp, metadataManager } from "..";
 import  log  from "electron-log/main";
 import { IMAGE_TYPE } from "../../common/constant";
+import { monitorDirectoryProcesses } from "../utils/tracking";
+import { getMinutesBetween } from "../utils/utils";
+import { createGameActiviy } from "../dal/gameActiviy";
 
 export const createOrUpdateGame = async (data:Partial<Game>, store:Storefront) => {
   const game = await GameQueries.createOrUpdateExternal(data, store)
@@ -30,12 +33,18 @@ export const createOrUpdateGame = async (data:Partial<Game>, store:Storefront) =
     ...game,
   });
 };
-export const preLaunch = async () => {
+export const preLaunch = async (game:Game) => {
   //track process
   //create a temporary session in db
   //show banner in react
 };
-export const postLaunch = async () => {
+export const postLaunch = async (game:Game) => {
+
+  const {startTime, endTime} = await monitorDirectoryProcesses(game?.location!);
+  if(startTime && endTime){
+    await createGameActiviy(game.id, startTime, endTime)
+    await GameQueries.updateTimePlayed(game.id, await getMinutesBetween(startTime, endTime))
+  }
   //stop process
   //add session to db
   //delete temporary session

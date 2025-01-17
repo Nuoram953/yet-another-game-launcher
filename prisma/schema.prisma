@@ -14,7 +14,7 @@ model Game {
   id                     String         @id @default(uuid())
   externalId             Int?
   name                   String
-  lastTimePlayed         Int?
+  lastTimePlayed         BigInt?
   isInstalled            Boolean        @default(false)
   gameStatus             GameStatus     @relation(fields: [gameStatusId], references: [id])
   gameStatusId           Int

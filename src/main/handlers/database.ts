@@ -20,12 +20,6 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
   const sgdb = new SteamGridDB(game);
   await sgdb.getGameIdByExternalId("steam");
 
-  console.log("sending notification");
-  mainApp.sendToRenderer("notification", {
-    title: "test",
-    message: "tst mess",
-    useToast:true
-  });
 
   //await sgdb.downloadAllImageType(3)
 

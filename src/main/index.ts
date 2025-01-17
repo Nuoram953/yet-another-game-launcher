@@ -109,6 +109,8 @@ class MainWindowManager {
         },
       });
 
+      this.mainWindow.setMenuBarVisibility(false)
+
       await this.setupCSP(this.mainWindow.webContents.session);
 
       await this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -139,6 +141,11 @@ ipcMain.handle("get-pictures-directory", async (event, id) => {
 
 ipcMain.handle("update-libraries", async (event, forceReload) => {
   if (!hasRunInitialLibrariesUpdate || forceReload) {
+    mainApp.sendToRenderer("notification", {
+      title: "Updating libraries",
+      message: "You can continue to use the app while it's updating",
+      useToast: true,
+    });
     hasRunInitialLibrariesUpdate = true;
     const steam = new Steam();
     const games = await steam.initialize();
@@ -158,4 +165,3 @@ ipcMain.handle("dark-mode:toggle", () => {
 ipcMain.handle("dark-mode:system", () => {
   nativeTheme.themeSource = "system";
 });
-

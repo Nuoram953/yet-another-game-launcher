@@ -1,15 +1,14 @@
 import { ipcMain } from "electron";
 import { spawn } from "child_process";
 import log from "electron-log/main";
-import { monitorDirectoryProcesses } from "../utils/tracking";
-import { getGameByExtenalIdAndStorefront } from "../dal/game";
+import { getGameByExtenalIdAndStorefront, updateTimePlayed } from "../dal/game";
 import { Storefront } from "../constant";
-import { createGameActiviy } from "../dal/gameActiviy";
+import * as GameService from "../service/game"
 
 ipcMain.handle("steam:launch", async (_event, appid: number) => {
   const game = await getGameByExtenalIdAndStorefront(appid, Storefront.STEAM)
   if(!game){
-    log.error("Invalid game")
+    throw new Error("invalid game")
   }
 
   log.info(`Starting steam game ${appid}`);
@@ -18,10 +17,7 @@ ipcMain.handle("steam:launch", async (_event, appid: number) => {
     stdio: "ignore",
   });
 
-  const {startTime, endTime} = await monitorDirectoryProcesses(game?.location!);
-  if(startTime && endTime){
-    await createGameActiviy(game!.id!, startTime, endTime)
-  }
+  await GameService.postLaunch(game)
 
   //mainApp.sendToRenderer("is-game-running", {
   //  isRunning: true,
