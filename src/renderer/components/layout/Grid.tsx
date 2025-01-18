@@ -1,20 +1,19 @@
 import React, { useCallback, useMemo } from "react";
 import Cover from "../Cover";
 import _ from "lodash";
-import { useLibraryContext } from "@/context/DatabaseContext";
+import { useGames, useLibraryContext } from "@/context/DatabaseContext";
 import { Input } from "../ui/input";
 import { useTranslation } from "react-i18next";
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 
-const COLUMN_WIDTH = 250;
+const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
 const GAP = 16;
 
 const Grid = () => {
-  const { games } = useLibraryContext();
+  const { games, loading, error } = useGames();
   const [search, setSearch] = React.useState("");
-  const { t } = useTranslation("common");
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newSearch = e.target.value;
@@ -54,6 +53,22 @@ const Grid = () => {
       </div>
     );
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="text-lg">Loading games...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="text-red-500">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

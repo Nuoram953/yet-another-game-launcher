@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Grid from "./components/layout/Grid";
 import Layout from "./components/layout/Layout";
-import { LibraryContext } from "./context/DatabaseContext";
+import { GamesProvider, LibraryContext } from "./context/DatabaseContext";
 import GameDetail from "./pages/GameDetail";
 import { Game } from "@prisma/client";
 import { BreadcrumbContext } from "./context/BreadcrumbsContext";
@@ -39,7 +39,7 @@ const App = () => {
     <I18nextProvider i18n={i18n}>
       <NotificationProvider>
         <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
-          <LibraryContext.Provider value={{ games, setGames }}>
+          <GamesProvider>
             <HashRouter>
               <Routes>
                 <Route
@@ -63,7 +63,7 @@ const App = () => {
               </Routes>
             </HashRouter>
             <Toaster />
-          </LibraryContext.Provider>
+          </GamesProvider>
         </BreadcrumbContext.Provider>
       </NotificationProvider>
     </I18nextProvider>

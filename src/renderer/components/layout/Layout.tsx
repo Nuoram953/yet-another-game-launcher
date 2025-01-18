@@ -4,8 +4,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import React, { useEffect, useState } from "react";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Terminal } from "lucide-react";
 import { Separator } from "@radix-ui/react-separator";
 import { AppSidebar } from "../AppSidebar";
 import {
@@ -84,7 +82,7 @@ export default function Layout({ children }: LayoutProps) {
             </header>
 
             {/* Game Running Alert */}
-            {!gameRunning.isRunning && <RunningHeader game={gameRunning.game} />}
+            {gameRunning.isRunning && <RunningHeader game={gameRunning.game} />}
 
             <div className="">{children}</div>
           </main>
