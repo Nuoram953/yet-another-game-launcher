@@ -1,6 +1,7 @@
 import psList from "ps-list";
 import path from "path";
 import { delay, normalizePath } from "./utils";
+import  log  from "electron-log/main";
 
 interface ProcessInfo {
   startTime: Date;
@@ -30,9 +31,7 @@ export async function monitorDirectoryProcesses(
       console.log(
         `\nFound ${directoryProcesses.length} processes at ${new Date()}:`,
       );
-      directoryProcesses.forEach((proc) => {
-        console.log(`PID: ${proc.pid}, Name: ${proc.name}`);
-      });
+      log.debug(`Found ${directoryProcesses.length}. Continue tracking`)
       return true;
     }
 

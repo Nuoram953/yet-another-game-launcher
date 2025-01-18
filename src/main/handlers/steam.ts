@@ -11,17 +11,14 @@ ipcMain.handle("steam:launch", async (_event, appid: number) => {
     throw new Error("invalid game")
   }
 
-  log.info(`Starting steam game ${appid}`);
+  await GameService.preLaunch(game)
+
   spawn("steam", ["-silent", `steam://launch/${appid}`], {
     detached: true,
     stdio: "ignore",
   });
 
   await GameService.postLaunch(game)
-
-  //mainApp.sendToRenderer("is-game-running", {
-  //  isRunning: true,
-  //});
 });
 
 ipcMain.handle("steam:install", async (_event, appid: number) => {

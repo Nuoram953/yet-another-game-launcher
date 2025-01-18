@@ -19,7 +19,7 @@ const GameDetail = () => {
         }
 
         setBreadcrumbs([
-          { path: "/", label: "library" },
+          { path: "/", label: "Library" },
           { path: `/${result.id}`, label: result.name },
         ]);
       } catch (error) {

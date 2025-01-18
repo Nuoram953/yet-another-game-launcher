@@ -18,20 +18,29 @@ import {
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { useNavigate } from "react-router-dom";
 import NotificationList from "../notification/NotificationList";
+import { RunningHeader } from "../runningHeader";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
+  const [gameRunning, setGameRunning] = useState<object>({});
   const { breadcrumbs, setBreadcrumbs } = useBreadcrumbsContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.api.onReceiveFromMain("is-game-running", (isRunning: boolean) => {
-      setIsGameRunning(isRunning);
-    });
+    window.api.onReceiveFromMain(
+      "is-game-running",
+      (data: { isRunning: boolean }) => {
+        console.log(`is running? : ${data.isRunning}`);
+        setGameRunning(data);
+      },
+    );
+
+    return () => {
+      window.api.removeListener("is-game-running");
+    };
   }, []);
 
   const handleClickBreadcrumbs = (path: string) => {
@@ -57,7 +66,9 @@ export default function Layout({ children }: LayoutProps) {
                       <React.Fragment key={breadcrumb.path}>
                         <BreadcrumbItem className="hidden md:block">
                           <BreadcrumbLink
-                            onClick={() => handleClickBreadcrumbs(breadcrumb.path)}
+                            onClick={() =>
+                              handleClickBreadcrumbs(breadcrumb.path)
+                            }
                           >
                             {breadcrumb.label}
                           </BreadcrumbLink>
@@ -73,35 +84,12 @@ export default function Layout({ children }: LayoutProps) {
             </header>
 
             {/* Game Running Alert */}
-            {isGameRunning && (
-              <Alert className="rounded-none border-x-0">
-                <Terminal className="h-4 w-4" />
-                <AlertTitle>Heads up!</AlertTitle>
-                <AlertDescription>
-                  You can add components and dependencies to your app using the cli.
-                </AlertDescription>
-              </Alert>
-            )}
+            {!gameRunning.isRunning && <RunningHeader game={gameRunning.game} />}
 
-            {/* Main Content */}
-            <div className="">
-              {children}
-            </div>
+            <div className="">{children}</div>
           </main>
-
-          {/* Fixed Bottom Alert */}
-          {isGameRunning && (
-            <Alert className="rounded-none border-x-0">
-              <Terminal className="h-4 w-4" />
-              <AlertTitle>Heads up!</AlertTitle>
-              <AlertDescription>
-                You can add components and dependencies to your app using the cli.
-              </AlertDescription>
-            </Alert>
-          )}
         </SidebarInset>
 
-        {/* Notification List */}
         <NotificationList />
       </div>
     </SidebarProvider>

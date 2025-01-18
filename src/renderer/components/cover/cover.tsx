@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const ImageWithFallback = ({ src, alt, style }) => {
+export const ImageWithFallback = ({ src, alt, style, className }) => {
   const [hasError, setHasError] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ export const ImageWithFallback = ({ src, alt, style }) => {
           alt={alt}
           style={{ display: "block", ...style }}
           onError={() => setHasError(true)}
-          className="rounded-xl w-full"
+          className={"rounded-xl w-full " + className}
         />
       )}
     </div>

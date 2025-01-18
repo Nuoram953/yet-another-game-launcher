@@ -5,6 +5,7 @@ import { mainApp, metadataManager } from "..";
 import { monitorDirectoryProcesses } from "../utils/tracking";
 import { getMinutesBetween } from "../utils/utils";
 import { createGameActiviy } from "../dal/gameActiviy";
+import log  from "electron-log/main";
 
 export const createOrUpdateGame = async (
   data: Partial<Game>,
@@ -35,14 +36,19 @@ export const createOrUpdateGame = async (
   });
 };
 export const preLaunch = async (game: Game) => {
-  //track process
-  //create a temporary session in db
-  //show banner in react
+  log.info(`Starting game ${game.id}`);
+
+  mainApp.sendToRenderer("is-game-running", {
+    isRunning: true,
+    game
+  });
 };
+
 export const postLaunch = async (game: Game) => {
   const { startTime, endTime } = await monitorDirectoryProcesses(
     game?.location!,
   );
+
   if (startTime && endTime) {
     await createGameActiviy(game.id, startTime, endTime);
     await GameQueries.updateTimePlayed(
@@ -50,13 +56,10 @@ export const postLaunch = async (game: Game) => {
       (await getMinutesBetween(startTime, endTime)) + 1,
     ); //The minute delay for the catching the process
   }
-  //stop process
-  //add session to db
-  //delete temporary session
-  //update playtime
-  //update achivevements
-  //update last play date
-  //hide banner in react
+
+  mainApp.sendToRenderer("is-game-running", {
+    isRunning: false,
+  });
 };
 
 export const downloadAchievements = () => {};

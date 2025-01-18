@@ -56,11 +56,8 @@ const Grid = () => {
   }, []);
 
   return (
-    // Main container with exact viewport height and no overflow
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Header section with fixed height */}
       <div className="flex-none">
-        <p>{t("test")}</p>
         <div className="max-w-md mx-auto p-2">
           <Input
             type="search"
@@ -72,7 +69,6 @@ const Grid = () => {
         </div>
       </div>
 
-      {/* Grid section that takes remaining height */}
       <div className="flex-1 min-h-0">
         <AutoSizer>
           {({ height, width }) => {
