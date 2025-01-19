@@ -15,21 +15,24 @@ const Grid = () => {
   const { games, loading, error } = useGames();
   const [search, setSearch] = React.useState("");
 
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSearch = e.target.value;
-    if (newSearch !== search) {
-      setSearch(newSearch);
-    }
-  }, [search]);
+  const handleSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newSearch = e.target.value;
+      if (newSearch !== search) {
+        setSearch(newSearch);
+      }
+    },
+    [search],
+  );
 
   const filteredGames = useMemo(() => {
     const uniqueGames = Array.from(
-      new Map(games.map((game) => [game.id, game])).values()
+      new Map(games.map((game) => [game.id, game])).values(),
     );
 
     return search
       ? uniqueGames.filter((game) =>
-          game.name.toLowerCase().includes(search.toLowerCase())
+          game.name.toLowerCase().includes(search.toLowerCase()),
         )
       : uniqueGames;
   }, [games, search]);
@@ -44,7 +47,7 @@ const Grid = () => {
     const adjustedStyle = {
       ...style,
       padding: GAP / 2,
-      boxSizing: 'border-box' as const,
+      boxSizing: "border-box" as const,
     };
 
     return (
@@ -87,10 +90,15 @@ const Grid = () => {
       <div className="flex-1 min-h-0">
         <AutoSizer>
           {({ height, width }) => {
-            const columnCount = Math.max(1, Math.floor((width - GAP) / (COLUMN_WIDTH + GAP)));
+            const columnCount = Math.max(
+              1,
+              Math.floor((width - GAP) / (COLUMN_WIDTH + GAP)),
+            );
             const rowCount = Math.ceil(filteredGames.length / columnCount);
             const availableWidth = width - GAP * (columnCount + 1);
-            const adjustedColumnWidth = Math.floor(availableWidth / columnCount);
+            const adjustedColumnWidth = Math.floor(
+              availableWidth / columnCount,
+            );
 
             return (
               <FixedSizeGrid

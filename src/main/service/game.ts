@@ -60,6 +60,8 @@ export const postLaunch = async (game: Game) => {
   mainApp.sendToRenderer("is-game-running", {
     isRunning: false,
   });
+
+  mainApp.sendToRenderer("request:games",{});
 };
 
 export const downloadAchievements = () => {};

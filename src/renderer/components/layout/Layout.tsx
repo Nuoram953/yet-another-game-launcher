@@ -17,29 +17,17 @@ import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { useNavigate } from "react-router-dom";
 import NotificationList from "../notification/NotificationList";
 import { RunningHeader } from "../runningHeader";
+import { useGames } from "@/context/DatabaseContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [gameRunning, setGameRunning] = useState<object>({});
+  const {gameRunning} = useGames()
   const { breadcrumbs, setBreadcrumbs } = useBreadcrumbsContext();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    window.api.onReceiveFromMain(
-      "is-game-running",
-      (data: { isRunning: boolean }) => {
-        console.log(`is running? : ${data.isRunning}`);
-        setGameRunning(data);
-      },
-    );
-
-    return () => {
-      window.api.removeListener("is-game-running");
-    };
-  }, []);
 
   const handleClickBreadcrumbs = (path: string) => {
     const index = breadcrumbs.findIndex((item) => item.path === path);

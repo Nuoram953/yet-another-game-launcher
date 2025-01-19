@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/sidebar";
 import React from "react";
 
+    //https://wireframe.cc/nFc2yR
+
 export function NavPlatform({
   items,
 }: {
@@ -65,7 +67,7 @@ export function NavPlatform({
                           <a href={subItem.url}>
                             <span>{subItem.title}</span>
                           </a>
-                          <div className="flex flex-row gap-2">
+                          <div className="flex flex-row gap-1">
                             <ExternalLink size={18}/>
                             <Globe size={18}/>
                           </div>

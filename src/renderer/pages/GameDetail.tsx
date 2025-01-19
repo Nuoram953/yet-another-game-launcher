@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Game } from "@prisma/client";
+import { Background } from "@/components/detail/Background";
+import { Logo } from "@/components/detail/Logo";
 
 const GameDetail = () => {
   const [game, setGame] = useState<Game>();
@@ -13,7 +15,6 @@ const GameDetail = () => {
     const fetchPicturePath = async () => {
       try {
         const result = await window.database.getGame(id);
-        console.log(result);
         if (result) {
           setGame(result);
         }
@@ -35,9 +36,21 @@ const GameDetail = () => {
   };
 
   return (
-    <div className="bg-slate-500 h-screen">
-      <p>{id}</p>
-      <Button onClick={handleOnClick} />
+    <div className="bg-slate-500 h-screen relative">
+      <div className="absolute inset-0">
+        <Background gameId={id} />
+      </div>
+
+      <div className="relative z-10 h-full flex flex-col items-center justify-center pt-16">
+        <div className="max-w-[50vw]">
+          <Logo gameId={id} />
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center gap-4">
+          <p className="text-white">{id}</p>
+          <Button onClick={handleOnClick} />
+        </div>
+      </div>
     </div>
   );
 };

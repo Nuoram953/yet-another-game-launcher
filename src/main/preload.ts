@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.invoke("get-pictures-directory", id),
   getSteamGames: () => ipcRenderer.invoke("get-steam-games"),
   onReceiveFromMain: (channel, callback) => {
-    const validChannels = ["add-new-game", "is-game-running"]; // Define valid channels
+    const validChannels = ["add-new-game", "is-game-running", "request:games"]; // Define valid channels
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, data) => {
         callback(data); // Pass data to the provided callback
@@ -38,6 +38,11 @@ contextBridge.exposeInMainWorld("database", {
 contextBridge.exposeInMainWorld("steam", {
   launch: (appid: number) => ipcRenderer.invoke("steam:launch", appid),
   install: (appid: number) => ipcRenderer.invoke("steam:install", appid),
+});
+
+contextBridge.exposeInMainWorld("ressource", {
+  getSingleBackground: (appid: number) => ipcRenderer.invoke("ressource:singleBackground", appid),
+  getSingleLogo: (appid: number) => ipcRenderer.invoke("ressource:singleLogo", appid),
 });
 
 contextBridge.exposeInMainWorld("notifications", {

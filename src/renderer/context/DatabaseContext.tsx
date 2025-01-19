@@ -1,8 +1,6 @@
-import { Game } from '@prisma/client';
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import { Game } from "@prisma/client";
+import React, { createContext, useContext, useState, useCallback } from "react";
 
-
-// Define filter types
 export interface GameFilters {
   search: string;
   genre: string;
@@ -10,15 +8,14 @@ export interface GameFilters {
   minRating: number;
 }
 
-// Define sort configuration type
 export interface SortConfig {
   field: keyof Game;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
-// Define the context value type
 interface GamesContextValue {
   games: Game[];
+  gameRunning: object
   loading: boolean;
   error: string | null;
   filters: GameFilters;
@@ -28,74 +25,96 @@ interface GamesContextValue {
   refreshGames: () => Promise<void>;
 }
 
-// Define provider props type
 interface GamesProviderProps {
   children: React.ReactNode;
 }
 
-// Create the context with an undefined initial value
 const GamesContext = createContext<GamesContextValue | undefined>(undefined);
 
-// Custom hook to use the games context with type safety
 export const useGames = (): GamesContextValue => {
   const context = useContext(GamesContext);
   if (!context) {
-    throw new Error('useGames must be used within a GamesProvider');
+    throw new Error("useGames must be used within a GamesProvider");
   }
   return context;
 };
 
 export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [games, setGames] = useState<Game[]>([]);
+  const [gameRunning, setGameRunning] = useState<object>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<GameFilters>({
-    search: '',
-    genre: '',
-    platform: '',
+    search: "",
+    genre: "",
+    platform: "",
     minRating: 0,
   });
   const [sortConfig, setSortConfig] = useState<SortConfig>({
-    field: 'title',
-    direction: 'asc',
+    field: "name",
+    direction: "asc",
   });
 
-  // Function to fetch games with sort and filter params
   const fetchGames = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await window.database.getGames({
         filters,
-        sort:sortConfig
+        sort: sortConfig,
       });
       setGames(response as Game[]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
     }
   }, [filters, sortConfig]);
 
-  // Update filters with type safety
   const updateFilters = useCallback((newFilters: Partial<GameFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
-  // Update sort with type safety
   const updateSort = useCallback((field: keyof Game) => {
-    setSortConfig(prev => ({
+    setSortConfig((prev) => ({
       field,
-      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc',
+      direction:
+        prev.field === field && prev.direction === "asc" ? "desc" : "asc",
     }));
   }, []);
+
 
   React.useEffect(() => {
     fetchGames();
   }, [filters, sortConfig, fetchGames]);
 
+  React.useEffect(() => {
+    window.api.onReceiveFromMain("request:games", (data) => {
+      fetchGames();
+    });
+
+    return () => {
+      window.api.removeListener("request:games");
+    };
+  }, []);
+
+  React.useEffect(() => {
+    window.api.onReceiveFromMain(
+      "is-game-running",
+      (data: { isRunning: boolean }) => {
+        console.log(`is running? : ${data.isRunning}`);
+        setGameRunning(data);
+      },
+    );
+
+    return () => {
+      window.api.removeListener("is-game-running");
+    };
+  }, []);
+
   const value: GamesContextValue = {
     games,
+    gameRunning,
     loading,
     error,
     filters,
@@ -106,8 +125,6 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   };
 
   return (
-    <GamesContext.Provider value={value}>
-      {children}
-    </GamesContext.Provider>
+    <GamesContext.Provider value={value}>{children}</GamesContext.Provider>
   );
 };
