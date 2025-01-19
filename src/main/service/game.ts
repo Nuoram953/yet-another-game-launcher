@@ -5,7 +5,8 @@ import { mainApp, metadataManager } from "..";
 import { monitorDirectoryProcesses } from "../utils/tracking";
 import { getMinutesBetween } from "../utils/utils";
 import { createGameActiviy } from "../dal/gameActiviy";
-import log  from "electron-log/main";
+import log from "electron-log/main";
+import SteamGridDB from "../api/metadata/steamgriddb";
 
 export const createOrUpdateGame = async (
   data: Partial<Game>,
@@ -17,19 +18,11 @@ export const createOrUpdateGame = async (
     throw new Error("invalid game");
   }
 
-  await metadataManager.downloadMissingImages(game);
-  //if(game.updatedAt.getTime() === game.createdAt.getTime()){
-  //  log.info(`${game.name} - ${game.id} - ${game?.storefront?.name} was added`);
-  //  await metadataManager.downloadImage(
-  //    IMAGE_TYPE.COVER,
-  //    game,
-  //    `https://shared.cloudflare.steamstatic.com//store_item_assets/steam/apps/${game.externalId}/library_600x900.jpg`,
-  //    "jpg",
-  //  );
-  //}
-  //download 1 cover, logo, and background
-  //download achievements
-  //download music
+  if (game.updatedAt.getTime() === game.createdAt.getTime()) {
+    const sgdb = new SteamGridDB(game);
+    await sgdb.getGameIdByExternalId("steam");
+    await sgdb.downloadAllImageType(3, 3);
+  }
 
   mainApp.sendToRenderer("add-new-game", {
     ...game,
@@ -40,7 +33,7 @@ export const preLaunch = async (game: Game) => {
 
   mainApp.sendToRenderer("is-game-running", {
     isRunning: true,
-    game
+    game,
   });
 };
 
@@ -61,7 +54,7 @@ export const postLaunch = async (game: Game) => {
     isRunning: false,
   });
 
-  mainApp.sendToRenderer("request:games",{});
+  mainApp.sendToRenderer("request:games", {});
 };
 
 export const downloadAchievements = () => {};

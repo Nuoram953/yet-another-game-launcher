@@ -12,7 +12,8 @@ ipcMain.handle("ressource:singleBackground", async (event, id) => {
       IMAGE_TYPE.BACKGROUND,
     );
     const files = fs.readdirSync(directory);
-    return `file://${path.join(directory, files[2])}`;
+    const file = Math.floor(Math.random() * files.length);
+    return `file://${path.join(directory, files[file])}`;
   } catch {
     return "";
   }

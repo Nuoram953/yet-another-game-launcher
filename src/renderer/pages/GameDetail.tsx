@@ -5,9 +5,12 @@ import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Game } from "@prisma/client";
 import { Background } from "@/components/detail/Background";
 import { Logo } from "@/components/detail/Logo";
+import { Info } from "@/components/detail/Info";
+import { Summary } from "@/components/detail/Summary";
 
 const GameDetail = () => {
   const [game, setGame] = useState<Game>();
+  const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
   const { setBreadcrumbs } = useBreadcrumbsContext();
 
@@ -17,6 +20,7 @@ const GameDetail = () => {
         const result = await window.database.getGame(id);
         if (result) {
           setGame(result);
+          setLoading(false);
         }
 
         setBreadcrumbs([
@@ -31,9 +35,9 @@ const GameDetail = () => {
     fetchPicturePath();
   }, []);
 
-  const handleOnClick = async () => {
-    await window.steam.launch(game.externalId);
-  };
+  if (loading && game === undefined) {
+    return <div>loading</div>;
+  }
 
   return (
     <div className="bg-slate-500 h-screen relative">
@@ -42,13 +46,15 @@ const GameDetail = () => {
       </div>
 
       <div className="relative z-10 h-full flex flex-col items-center justify-center pt-16">
-        <div className="max-w-[50vw]">
+        <div className="max-w-[33vw] pb-[150px]">
           <Logo gameId={id} />
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center gap-4">
-          <p className="text-white">{id}</p>
-          <Button onClick={handleOnClick} />
+        <div className="flex-1 flex flex-col items-center overflow-y-scroll w-full max-w-6xl">
+          <div className="w-full">
+            <Info game={game} />
+            <Summary game={game} />
+          </div>
         </div>
       </div>
     </div>

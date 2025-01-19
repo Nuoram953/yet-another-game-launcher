@@ -22,7 +22,7 @@ class SteamGridDB {
     this.game = game;
   }
 
-  async downloadAllImageType(countPerType: number) {
+  async downloadAllImageType(countPerType: number, max:number) {
     await this.downloadGridForGame(countPerType);
     await this.downladHeroesForGame(countPerType);
     await this.downloadLogosForGame(countPerType);
@@ -110,7 +110,7 @@ class SteamGridDB {
           params: {
             gameId: this.gameId,
             styles: "alternate,material",
-            dimensions: "1920x620,3840x1240,1600x650",
+            dimensions: "3840x1240",
             mimes: "image/jpeg,image/png,image/webp",
             type: "static",
             limit: 50,
@@ -128,7 +128,7 @@ class SteamGridDB {
       } else {
         images = [...images, ...response.data.data];
         page += 1;
-        await delay(2000);
+        await delay(1000);
       }
     }
 
