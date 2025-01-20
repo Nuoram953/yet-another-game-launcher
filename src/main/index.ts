@@ -91,7 +91,7 @@ class MainWindowManager {
           responseHeaders: {
             ...details.responseHeaders,
             "Content-Security-Policy": [
-              "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'http://0.0.0.0:3000'; connect-src 'self' 'http://0.0.0.0:3000';",
+              "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'http://0.0.0.0:3000'; connect-src 'self' 'http://0.0.0.0:3000'; media-src 'self' file: data:;",
             ],
           },
         });

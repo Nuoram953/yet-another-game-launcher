@@ -43,6 +43,8 @@ contextBridge.exposeInMainWorld("steam", {
 contextBridge.exposeInMainWorld("ressource", {
   getSingleBackground: (appid: number) => ipcRenderer.invoke("ressource:singleBackground", appid),
   getSingleLogo: (appid: number) => ipcRenderer.invoke("ressource:singleLogo", appid),
+  getRecentlyPlayedBackgrounds: (max: number) => ipcRenderer.invoke("ressource:recentlyPlayedBackground", max),
+  getSingleTrailer: (appid: number) => ipcRenderer.invoke("ressource:singleTrailer", appid),
 });
 
 contextBridge.exposeInMainWorld("notifications", {

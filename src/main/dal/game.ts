@@ -12,14 +12,16 @@ export async function updateGame(id: string, newData: Partial<Game>) {
   });
 }
 
-export async function getAllGames() {
-  return await prisma.game.findMany({
+export async function getAllGames(limit?: number) {
+  const where = {
     include: {
       gameStatus: true,
       storefront: true,
     },
-    orderBy: [{ lastTimePlayed: "desc" }],
-  });
+    orderBy: [{ lastTimePlayed: "desc" as Prisma.SortOrder }],
+    ...(limit && { take: limit }),
+  };
+  return await prisma.game.findMany(where);
 }
 
 export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
@@ -70,16 +72,13 @@ export async function updateSizeAndLocation(
   });
 }
 
-export async function updateTimePlayed(
-  gameId: string,
-  timePlayed: number,
-) {
+export async function updateTimePlayed(gameId: string, timePlayed: number) {
   await prisma.game.update({
     data: {
-      timePlayed:{
-        increment:timePlayed
+      timePlayed: {
+        increment: timePlayed,
       },
-      lastTimePlayed: new Date().getTime()
+      lastTimePlayed: new Date().getTime(),
     },
     where: {
       id: gameId,
@@ -145,11 +144,11 @@ export async function createOrUpdateExternal(
   return await getGameById(createdOrUpdatedGame.id);
 }
 
-export async function getCountByStatus(){
+export async function getCountByStatus() {
   return await prisma.game.groupBy({
-    by:["gameStatusId"],
-    _count:{
-      gameStatusId:true
+    by: ["gameStatusId"],
+    _count: {
+      gameStatusId: true,
     },
   });
 }

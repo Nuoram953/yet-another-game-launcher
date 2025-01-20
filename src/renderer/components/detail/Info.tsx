@@ -4,34 +4,44 @@ import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { PlayIcon, Settings } from "lucide-react";
 import { Badge } from "../ui/badge";
+import VideoPlayer from "../VideoPlayer";
 
 interface Props {
   game: Game;
 }
 
 export const Info = ({ game }: Props) => {
-  //useEffect(() => {
-  //  const fetchLogoPicture = async () => {
-  //    try {
-  //      const logo = await window.ressource.getSingleLogo(gameId);
-  //      setLogoPicture(logo);
-  //      setLoading(false);
-  //    } catch (error) {
-  //      console.error("Error fetching picture path:", error);
-  //    }
-  //  };
-  //
-  //  fetchLogoPicture();
-  //}, []);
-  //
+  const [picturePath, setPicturePath] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchPicturePath = async () => {
+      try {
+        const directory = await window.ressource.getSingleTrailer(game.id);
+
+        setPicturePath(directory);
+        console.log(picturePath);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching picture path:", error);
+      }
+    };
+
+    fetchPicturePath();
+  }, [game]);
+
   const handleOnClick = async () => {
     await window.steam.launch(game.externalId);
   };
 
+  if (loading) {
+    return <div>loading...</div>;
+  }
+
   return (
-    <Card className="flex flex-row m-6 bg-stone-700/30 backdrop-blur-md border-white/50 shadow-xl">
-      <div className="w-1/2"></div>
-      <div className="flex flex-col w-1/2 p-6">
+    <Card className="flex flex-col m-6 bg-stone-700/30 backdrop-blur-md border-white/50 shadow-xl">
+      <VideoPlayer path={picturePath} />
+      <div className="flex flex-col  p-6">
         <h1 className="text-6xl font-bold ">{game.name}</h1>
         <h2 className="text-2xl font-bold pb-6">Naughty Dog</h2>
 

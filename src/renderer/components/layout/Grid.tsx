@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 import { useTranslation } from "react-i18next";
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
+import { CarouselRecentlyPlayed } from "../carousel/RecentlyPlayed";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;

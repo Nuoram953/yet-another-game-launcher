@@ -35,14 +35,14 @@ export const Background = ({ gameId }: Props) => {
 
       <div className="absolute inset-0">
         <div
-          className="w-full h-full backdrop-blur-sm"
+          className="w-full h-full"
           style={{
             background: `linear-gradient(
         to bottom,
-        transparent 33%,
+        transparent 30%,
         rgba(0, 0, 0, 0.0) 33%,
-        rgba(0, 0, 0, 0.4) 50%,
-        rgba(0, 0, 0, 0.6) 66%,
+        rgba(0, 0, 0, 0.7) 50%,
+        rgba(0, 0, 0, 0.8) 66%,
         rgba(0, 0, 0, 0.8) 80%,
         rgba(0, 0, 0, 0.9) 90%,
         rgba(0, 0, 0, 1) 100%

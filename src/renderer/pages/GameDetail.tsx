@@ -46,11 +46,11 @@ const GameDetail = () => {
       </div>
 
       <div className="relative z-10 h-full flex flex-col items-center justify-center pt-16">
-        <div className="max-w-[33vw] pb-[150px]">
+        <div className="max-w-[33vw] pb-[75px]">
           <Logo gameId={id} />
         </div>
 
-        <div className="flex-1 flex flex-col items-center overflow-y-scroll w-full max-w-6xl">
+        <div className="flex-1 flex flex-col items-center overflow-y-scroll h-fit w-full max-w-[1300px] mb-14">
           <div className="w-full">
             <Info game={game} />
             <Summary game={game} />
