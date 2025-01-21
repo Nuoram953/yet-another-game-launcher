@@ -95,6 +95,8 @@
     "typeorm": "^0.3.20",
     "use-resize-observer": "^9.1.0",
     "uuid": "^11.0.5",
-    "vdf": "^0.0.2"
+    "vdf": "^0.0.2",
+    "youtube-dl-exec": "^3.0.13",
+    "youtube-sr": "^4.3.11"
   }
 }
