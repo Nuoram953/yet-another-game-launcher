@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Grid from "./components/layout/Grid";
 import Layout from "./components/layout/Layout";
-import { GamesProvider, LibraryContext } from "./context/DatabaseContext";
+import { GamesProvider } from "./context/DatabaseContext";
 import GameDetail from "./pages/GameDetail";
 import { Game } from "@prisma/client";
 import { BreadcrumbContext } from "./context/BreadcrumbsContext";

@@ -40,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="h-screen w-screen flex overflow-hidden">
         <AppSidebar />
         <SidebarInset className="flex-1 flex flex-col min-h-0">
-          <main className="flex-1 flex flex-col min-h-0 bg-slate-900">
+          <main className="flex-1 flex flex-col min-h-0 bg-gray-900">
             <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800">
               <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger className="dark" />
@@ -68,7 +68,6 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </header>
 
-            {/* Game Running Alert */}
             {gameRunning.isRunning && <RunningHeader game={gameRunning.game} />}
 
             <div className="">{children}</div>

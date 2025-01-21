@@ -55,7 +55,10 @@ const GameDetail = () => {
           <Logo gameId={id} />
 
           <div className="flex flex-row gap-2 justify-center mt-4">
-            <Button className="flex items-center gap-2 bg-green-600 text-white" onClick={handleOnClick}>
+            <Button
+              className="flex items-center gap-2 bg-green-600 text-white"
+              onClick={handleOnClick}
+            >
               <PlayIcon className="w-4 h-4" color="white" />
               Play
             </Button>

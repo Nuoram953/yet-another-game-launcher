@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 interface Props {
   gameId: string;
-  size: number
+  size?: number
 }
 
 export const Logo = ({ gameId, size }: Props) => {
@@ -28,6 +28,6 @@ export const Logo = ({ gameId, size }: Props) => {
   }
 
   return (
-      <img src={LogoPicture} />
+      <img src={LogoPicture} className="max-h-52"/>
   );
 };

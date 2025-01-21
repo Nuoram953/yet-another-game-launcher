@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert } from "./ui/alert";
 import { Game } from "@prisma/client";
 import { Button } from "./ui/button";
+import { Logo } from "./detail/Logo";
 
 interface Props {
   game: Game;
@@ -43,11 +44,7 @@ export const RunningHeader = ({ game }: Props) => {
     <Alert className="rounded-none border-x-0">
       <div className="flex justify-between items-center content-center">
         <div className="flex flew-col gap-4">
-          <img
-            src={`file://${picturePath}`}
-            className={"rounded-xl h-32 w-24"}
-          />
-          <h1 className="text-xl">{game.name}</h1>
+          <Logo gameId={game.id}/>
         </div>
         <div className="flex flex-row gap-4 items-center">
           <p className="text-center text-xl text-white font-bold">Current session: </p>
