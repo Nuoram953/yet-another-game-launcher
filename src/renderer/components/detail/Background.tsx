@@ -38,15 +38,16 @@ export const Background = ({ gameId }: Props) => {
           className="w-full h-full"
           style={{
             background: `linear-gradient(
-        to bottom,
-        transparent 30%,
-        rgba(0, 0, 0, 0.0) 33%,
-        rgba(0, 0, 0, 0.7) 50%,
-        rgba(0, 0, 0, 0.8) 66%,
-        rgba(0, 0, 0, 0.8) 80%,
-        rgba(0, 0, 0, 0.9) 90%,
-        rgba(0, 0, 0, 1) 100%
-      )`,
+              to bottom,
+              transparent 0%,
+              rgba(0, 0, 0, 0.05) 0%,
+              rgba(0, 0, 0, 0.3) 33%,
+              rgba(0, 0, 0, 0.7) 50%,
+              rgba(0, 0, 0, 0.8) 66%,
+              rgba(0, 0, 0, 0.8) 80%,
+              rgba(0, 0, 0, 0.9) 90%,
+              rgba(0, 0, 0, 1) 100%
+            )`,
           }}
         />
       </div>

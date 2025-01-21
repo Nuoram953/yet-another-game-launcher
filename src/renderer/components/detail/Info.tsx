@@ -5,22 +5,26 @@ import { Card } from "../ui/card";
 import { PlayIcon, Settings } from "lucide-react";
 import { Badge } from "../ui/badge";
 import VideoPlayer from "../VideoPlayer";
+import { ImageWithFallback } from "../cover/cover";
 
 interface Props {
   game: Game;
 }
 
 export const Info = ({ game }: Props) => {
-  const [picturePath, setPicturePath] = useState<string | null>(null);
+  const [trailer, setTrailer] = useState<string | null>(null);
+  const [cover, setCover] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
-        const directory = await window.ressource.getSingleTrailer(game.id);
+        const trailer = await window.ressource.getSingleTrailer(game.id);
+        const cover = await window.api.getStoredPicturesDirectory(game.id);
 
-        setPicturePath(directory);
-        console.log(picturePath);
+        setTrailer(trailer);
+        setCover(cover);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);
@@ -40,53 +44,45 @@ export const Info = ({ game }: Props) => {
 
   return (
     <Card className="flex flex-col m-6 bg-stone-700/30 backdrop-blur-md border-white/50 shadow-xl">
-      <VideoPlayer path={picturePath} />
-      <div className="flex flex-col  p-6">
-        <h1 className="text-6xl font-bold ">{game.name}</h1>
-        <h2 className="text-2xl font-bold pb-6">Naughty Dog</h2>
-
-        <p className="">
-          Game description Game descriptionGame descriptionGame descriptionGame
-          descriptionGame descriptionGame descriptionGame descriptionGame
-          descriptionGame descriptionGame descriptionGame descriptionGame
-          descriptionGame descriptionGame descriptionGame descriptionGame
-          descriptionGame descriptionGame descriptionGame descriptionGame
-          description
-        </p>
-
-        <p className="font-bold mt-4">Genres</p>
-        <div className="flex-1 flex pt-2 gap-2">
-          <Badge>Shooter</Badge>
-          <Badge>Adventure</Badge>
+      <VideoPlayer path={trailer} />
+      <div className="flex flex-row p-6">
+        <div className="w-1/3 py-6">
+          <ImageWithFallback src={`file://${cover}`} />
         </div>
+        <div className="flex flex-col w-2/3 px-6">
+          <h1 className="text-6xl font-bold ">{game.name}</h1>
+          <h2 className="text-2xl font-bold pb-6">Naughty Dog</h2>
 
-        <p className="font-bold mt-1">Themes</p>
-        <div className="flex-1 flex pt-2 gap-2">
-          <Badge>Action</Badge>
-          <Badge>Horror</Badge>
-          <Badge>Survival</Badge>
-          <Badge>Stealth</Badge>
-        </div>
+          <p className="">
+            Game description Game descriptionGame descriptionGame
+            descriptionGame descriptionGame descriptionGame descriptionGame
+            descriptionGame descriptionGame descriptionGame descriptionGame
+            descriptionGame descriptionGame descriptionGame descriptionGame
+            descriptionGame descriptionGame descriptionGame descriptionGame
+            descriptionGame description
+          </p>
 
-        <p className="font-bold mt-1">Game Modes</p>
-        <div className="flex-1 flex pt-2 gap-2">
-          <Badge>Single player</Badge>
-          <Badge>Multiplayer</Badge>
-          <Badge>Co-operative</Badge>
-        </div>
+          <p className="font-bold ">Genres</p>
+          <div className=" flex gap-2 h-fit">
+            <Badge className="h-fit">Shooter</Badge>
+            <Badge className="h-fit">Adventure</Badge>
+          </div>
 
-        <div className="flex flex-row gap-2 mt-6">
-          <Button
-            onClick={handleOnClick}
-            className="flex items-center gap-2 bg-green-600 text-white"
-          >
-            <PlayIcon className="w-4 h-4" color="white" />
-            Play
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Settings className="w-4 h-4" />
-            Manage
-          </Button>
+          <p className="font-bold ">Themes</p>
+          <div className=" flex pt-2 gap-2">
+            <Badge className="h-fit">Action</Badge>
+            <Badge className="h-fit">Horror</Badge>
+            <Badge className="h-fit">Survival</Badge>
+            <Badge className="h-fit">Stealth</Badge>
+          </div>
+
+          <p className="font-bold ">Game Modes</p>
+          <div className=" flex pt-2 gap-2">
+            <Badge className="h-fit">Single player</Badge>
+            <Badge className="h-fit">Multiplayer</Badge>
+            <Badge className="h-fit">Co-operative</Badge>
+          </div>
+
         </div>
       </div>
     </Card>
