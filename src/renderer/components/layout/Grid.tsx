@@ -8,6 +8,7 @@ import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { CarouselRecentlyPlayed } from "../carousel/RecentlyPlayed";
 import GameCarousel from "../carousel/GameCarousel";
+import { RecentlyPlayedCarousel } from "../carousel/recentlyPlayed/RecentlyPlayedCarousel";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -77,7 +78,7 @@ const Grid = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <GameCarousel/>
+      <RecentlyPlayedCarousel/>
       <div className="flex-none">
         <div className="max-w-md mx-auto p-2">
           <Input

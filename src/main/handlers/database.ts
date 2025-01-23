@@ -2,6 +2,7 @@ import { ipcMain, ipcRenderer } from "electron";
 import { getAllGames, getGameById } from "../dal/game";
 import _ from "lodash";
 import { Game } from "@prisma/client";
+import * as GameQueries from '../dal/game'
 import SteamGridDB from "../api/metadata/steamgriddb";
 
 ipcMain.handle("games", async (_event): Promise<Game[]> => {
@@ -21,4 +22,9 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
   //await sgdb.downladHeroesForGame(3);
 
   return game;
+});
+
+
+ipcMain.handle("database:recentlyPlayed", async (_event, max): Promise<Game[]> => {
+  return await GameQueries.getAllGames(max);
 });

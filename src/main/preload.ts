@@ -33,6 +33,7 @@ contextBridge.exposeInMainWorld("database", {
   getGames: () => ipcRenderer.invoke("games"),
   getGame: (id: string) => ipcRenderer.invoke("game", id),
   getStatus: () => ipcRenderer.invoke("statusAndCount"),
+  getRecentlyPlayed: (max: number) => ipcRenderer.invoke("database:recentlyPlayed", max),
 });
 
 contextBridge.exposeInMainWorld("steam", {

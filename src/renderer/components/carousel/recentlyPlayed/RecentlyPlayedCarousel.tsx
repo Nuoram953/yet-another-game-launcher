@@ -1,59 +1,38 @@
 import React, { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { RecentlyPlayedCarouselItem } from "./RecentlyPlayedItem";
+import { Game } from "@prisma/client";
 
-const GameCarousel = () => {
+export const RecentlyPlayedCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const [GameBackgrounds, setGameBackgrounds] = useState<string[]>([]);
+  const [recentGames, setRecentGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Sample featured games data
-  const featuredGames = [
-    {
-      id: 1,
-      title: "Elden Ring",
-      description: "An epic action RPG set in a vast world",
-      imageUrl: "/api/placeholder/800/400",
-    },
-    {
-      id: 2,
-      title: "God of War Ragnarök",
-      description: "Continue the Norse saga in this epic adventure",
-      imageUrl: "/api/placeholder/800/400",
-    },
-    {
-      id: 3,
-      title: "Horizon Forbidden West",
-      description: "Explore a vibrant, post-apocalyptic world",
-      imageUrl: "/api/placeholder/800/400",
-    },
-  ];
-
   useEffect(() => {
-    const fetchLogoPicture = async () => {
+    const fetchData = async () => {
       try {
-        const pictures = await window.ressource.getRecentlyPlayedBackgrounds(3);
-        console.log(pictures);
-        setGameBackgrounds(pictures);
+        const data = await window.database.getRecentlyPlayed(10);
+        setRecentGames(data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }
     };
 
-    fetchLogoPicture();
+    fetchData();
   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
+      console.log()
       setCurrentIndex((prevIndex) =>
-        prevIndex === featuredGames.length - 1 ? 0 : prevIndex + 1,
+        prevIndex === recentGames.length - 1 ? 0 : prevIndex + 1,
       );
     }, 15000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [recentGames]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -61,41 +40,25 @@ const GameCarousel = () => {
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === featuredGames.length - 1 ? 0 : prevIndex + 1,
+      prevIndex === recentGames.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? featuredGames.length - 1 : prevIndex - 1,
+      prevIndex === 0 ? recentGames.length - 1 : prevIndex - 1,
     );
   };
 
   return (
     <div className="relative w-full mx-auto mb-8">
-      <div className="relative h-[32rem] overflow-hidden">
+      <div className="relative h-[24rem] overflow-hidden">
         <div
           className="absolute w-full h-full transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
-          {featuredGames.map((game, index) => (
-            <div
-              key={game.id}
-              className="absolute w-full h-full"
-              style={{ left: `${index * 100}%` }}
-            >
-              <img
-                src={GameBackgrounds[index]}
-                alt={game.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
-                <h2 className="text-4xl font-bold text-white mb-2">
-                  {game.title}
-                </h2>
-                <p className="text-lg text-gray-200">{game.description}</p>
-              </div>
-            </div>
+          {recentGames.map((game, index) => (
+            <RecentlyPlayedCarouselItem game={game} index={index} />
           ))}
         </div>
 
@@ -115,7 +78,7 @@ const GameCarousel = () => {
         </button>
 
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          {featuredGames.map((_, index) => (
+          {recentGames.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
@@ -130,5 +93,3 @@ const GameCarousel = () => {
     </div>
   );
 };
-
-export default GameCarousel;
