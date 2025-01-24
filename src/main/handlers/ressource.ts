@@ -48,10 +48,29 @@ ipcMain.handle("ressource:singleIcon", async (event, id) => {
 
 ipcMain.handle("ressource:singleTrailer", async (event, id) => {
   try {
-    const file = path.join(app.getPath("userData"), id, "trailer.mp4");
-    console.log(file)
+    const videoExtensions = [
+      ".mp4",
+      ".mkv",
+      ".avi",
+      ".mov",
+      ".flv",
+      ".wmv",
+      ".webm",
+    ];
 
-    return `file://${file}`;
+    const directory = path.join(
+      app.getPath("userData"),
+      id,
+      IMAGE_TYPE.TRAILER,
+    );
+    const files = fs.readdirSync(directory);
+
+    if (files.length === 1) {
+      return `file://${path.join(directory, files[0])}`;
+    }
+
+    const file = Math.floor(Math.random() * files.length);
+    return `file://${path.join(directory, files[file])}`;
   } catch (e) {
     console.log(e);
     return "";

@@ -4,6 +4,7 @@ import _ from "lodash";
 import { Game } from "@prisma/client";
 import * as GameQueries from '../dal/game'
 import SteamGridDB from "../api/metadata/steamgriddb";
+import { YouTubeDownloader } from "../api/video/youtube";
 
 ipcMain.handle("games", async (_event): Promise<Game[]> => {
   return await getAllGames();
@@ -21,6 +22,7 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
   await sgdb.getGameIdByExternalId("steam");
   await sgdb.downloadAllImageType(3, 3);
 
+   await YouTubeDownloader.searchAndDownloadVideos(game)
   return game;
 });
 

@@ -2,5 +2,6 @@ export enum IMAGE_TYPE {
   COVER = "cover",
   BACKGROUND = "background",
   LOGO = "logo",
-  ICON= "icon"
+  ICON= "icon",
+  TRAILER = "trailer"
 }
