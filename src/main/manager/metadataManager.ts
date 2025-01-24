@@ -33,6 +33,10 @@ class MetadataManager {
   }
 
   async getNumberOfFiles(path:string){
+    if (!fs.existsSync(path)) {
+      return 0
+    }
+
     const items = fs.readdirSync(path)
 
     if(_.isNil(items)){

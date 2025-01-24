@@ -17,9 +17,9 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
     throw new Error("Invalid game id ${id}");
   }
 
-  //const sgdb = new SteamGridDB(game);
-  //await sgdb.getGameIdByExternalId("steam");
-  //await sgdb.downladHeroesForGame(3);
+  const sgdb = new SteamGridDB(game);
+  await sgdb.getGameIdByExternalId("steam");
+  await sgdb.downloadAllImageType(3, 3);
 
   return game;
 });
