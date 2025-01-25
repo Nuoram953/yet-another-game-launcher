@@ -1,6 +1,7 @@
 import log from "electron-log/main";
 import { Storefront } from "../../constant";
 import axios from "../../../common/axiosConfig";
+import { Game } from "@prisma/client";
 
 class Igdb {
   private expirationInSeconds: number;
@@ -47,25 +48,6 @@ class Igdb {
     return response.data[0].game;
   }
 
-  async getGame(externalId: number, store?: Storefront) {
-    const id = await this.getExternalGame(externalId, store);
-
-    const response = await axios.post(
-      "https://api.igdb.com/v4/games",
-      `fields *, screenshots.*, platforms.*, artworks.*, genres.*, themes.*, cover.*;  where id=${id};`,
-      {
-        headers: {
-          Authorization: `Bearer ${await this.getToken()}`,
-          Accept: "application/json",
-          "Client-ID": process.env.IGDB_CLIENT_ID,
-        },
-      },
-    );
-
-    console.log(response.data);
-    const company = await this.getInvolvedCompany(id)
-  }
-
   async getInvolvedCompany(id: number) {
     const response = await axios.post(
       "https://api.igdb.com/v4/involved_companies",
@@ -79,7 +61,31 @@ class Igdb {
       },
     );
 
+    return response.data;
+  }
+
+  async getGame(externalId: number, store?: Storefront) {
+    const id = await this.getExternalGame(externalId, store);
+
+    const response = await axios.post(
+      "https://api.igdb.com/v4/games",
+      `fields *, platforms.*, genres.*, themes.*;  where id=${id};`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getToken()}`,
+          Accept: "application/json",
+          "Client-ID": process.env.IGDB_CLIENT_ID,
+        },
+      },
+    );
+
     console.log(response.data);
+    const company: object[] = await this.getInvolvedCompany(id);
+
+    const publishers = company.filter((company) => company.publisher).map(item=>item.company.name);
+    const developers = company.filter((company) => company.developer).map(item=>item.company.name);;
+
+    return {publishers, developers}
   }
 }
 

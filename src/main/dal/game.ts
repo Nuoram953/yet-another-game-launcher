@@ -30,6 +30,16 @@ export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
     storefront: true;
     achievements: true;
     activities: true;
+    developers: {
+      include: {
+        company: true;
+      };
+    };
+    publishers: {
+      include: {
+        company: true;
+      };
+    };
   };
 }> | null> {
   return await prisma.game.findFirst({
@@ -41,6 +51,16 @@ export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
       storefront: true,
       achievements: true,
       activities: true,
+      developers: {
+        include: {
+          company: true,
+        },
+      },
+      publishers: {
+        include: {
+          company: true,
+        },
+      },
     },
   });
 }

@@ -39,6 +39,7 @@ const GameDetailsContent = () => {
       try {
         const result = await window.database.getGame(id);
         if (result) {
+          console.log(result);
           await updateSelectedGame(result);
           setLoading(false);
         }
@@ -125,7 +126,9 @@ const GameDetailsContent = () => {
                     }}
                   >
                     <h3 className="text-gray-400 text-sm">{label}</h3>
-                    <p>Game namee</p>
+                    {selectedGame.developers.map((dev) => (
+                      <p>{dev.company.name}</p>
+                    ))}
                   </div>
                 ),
               )}
@@ -138,7 +141,7 @@ const GameDetailsContent = () => {
           </div>
         );
       case "metadata":
-        return <SectionMetadata />
+        return <SectionMetadata />;
       default:
         return (
           <div className="bg-gray-800 p-6 rounded-lg animate-fadeIn">

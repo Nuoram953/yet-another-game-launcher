@@ -32,7 +32,7 @@ model Game {
   updatedAt              DateTime          @updatedAt
   activities             GameActivity[]
   achievements           GameAchievement[]
-  developpers            GameDevelopper[]
+  developers             GameDeveloper[]
   publishers             GamePublisher[]
 
   @@unique([externalId, storefrontId])
@@ -55,32 +55,31 @@ model GameActivity {
   @@index([gameId])
 }
 
-model Developper {
-  id             String           @id @default(uuid())
-  name           String
-  GameDevelopper GameDevelopper[]
+model Company {
+  id            String          @id @default(uuid())
+  name          String          @unique
+  GameDeveloper GameDeveloper[]
+  GamePublisher GamePublisher[]
 }
 
-model GameDevelopper {
-  id           String     @id @default(uuid())
-  gameId       String
-  game         Game       @relation(fields: [gameId], references: [id])
-  developperId String
-  developper   Developper @relation(fields: [developperId], references: [id])
+model GameDeveloper {
+  id        String  @id @default(uuid())
+  gameId    String
+  game      Game    @relation(fields: [gameId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  @@unique([gameId, companyId])
 }
 
 model GamePublisher {
-  id         String    @id @default(uuid())
-  gameId     String
-  game       Game      @relation(fields: [gameId], references: [id])
-  publisheId String
-  publisher  Publisher @relation(fields: [publisheId], references: [id])
-}
+  id        String  @id @default(uuid())
+  gameId    String
+  game      Game    @relation(fields: [gameId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-model Publisher {
-  id            String          @id @default(uuid())
-  name          String
-  GamePublisher GamePublisher[]
+  @@unique([gameId, companyId])
 }
 
 model GameAchievement {

@@ -29,6 +29,8 @@ interface GamesContextValue {
       storefront: true;
       achievements: true;
       activities: true;
+      developers:true,
+      publishers:true
     };
   }>;
   updateSelectedGame: (game: Game|null) => Promise<void>;
