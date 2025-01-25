@@ -18,7 +18,7 @@ export const StatsPanel = () => {
   const last7DaysSessions = selectedGame.activities.filter(
     (session) => session.startedAt >= sevenDaysAgo,
   );
-    let detail;
+    let detail = "Not played recently";
   const lastSession = selectedGame.activities[selectedGame.activities.length - 1];
 
   if (lastSession) {

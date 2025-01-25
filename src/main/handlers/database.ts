@@ -2,7 +2,7 @@ import { ipcMain, ipcRenderer } from "electron";
 import { getAllGames, getGameById } from "../dal/game";
 import _ from "lodash";
 import { Game } from "@prisma/client";
-import * as GameQueries from '../dal/game'
+import * as GameQueries from "../dal/game";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
 
@@ -20,13 +20,15 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
 
   const sgdb = new SteamGridDB(game);
   await sgdb.getGameIdByExternalId("steam");
-  await sgdb.downloadAllImageType(3, 3);
+  await sgdb.downloadAllImageType(1, 1);
 
-   await YouTubeDownloader.searchAndDownloadVideos(game)
+  await YouTubeDownloader.searchAndDownloadVideos(game);
   return game;
 });
 
-
-ipcMain.handle("database:recentlyPlayed", async (_event, max): Promise<Game[]> => {
-  return await GameQueries.getAllGames(max);
-});
+ipcMain.handle(
+  "database:recentlyPlayed",
+  async (_event, max): Promise<Game[]> => {
+    return await GameQueries.getAllGames(max);
+  },
+);
