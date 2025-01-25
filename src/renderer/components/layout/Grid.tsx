@@ -17,6 +17,9 @@ const GAP = 16;
 const Grid = () => {
   const { games, loading, error } = useGames();
   const [search, setSearch] = React.useState("");
+  const {updateSelectedGame} = useGames()
+
+  updateSelectedGame(null)
 
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

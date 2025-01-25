@@ -12,6 +12,7 @@ import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import { execSync, exec } from "child_process";
 import { initMainI18n } from "./i18n";
+import Igdb from "./api/metadata/igdb";
 
 require("dotenv").config();
 
@@ -20,6 +21,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let hasRunInitialLibrariesUpdate: boolean = false;
 export let metadataManager: MetadataManager;
+export let igdb: Igdb;
 export let prisma: PrismaClient;
 export let dbPath: string;
 export let i18n: Awaited<ReturnType<typeof initMainI18n>>;
@@ -43,6 +45,7 @@ class MainWindowManager {
       log.errorHandler.startCatching();
 
       metadataManager = new MetadataManager();
+      igdb = new Igdb();
 
       nativeTheme.themeSource = "dark";
 

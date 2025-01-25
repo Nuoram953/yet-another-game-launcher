@@ -1,18 +1,21 @@
+import { useGames } from "@/context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 
 interface Props {
-  gameId: string;
   children: any;
 }
 
-export const Background = ({ gameId, children }: Props) => {
+export const Background = ({ children }: Props) => {
   const [backgroundPicture, setBackgroundPicture] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const { selectedGame } = useGames();
 
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const background = await window.ressource.getSingleBackground(gameId);
+        const background = await window.ressource.getSingleBackground(
+          selectedGame.id,
+        );
         setBackgroundPicture(background);
         setLoading(false);
       } catch (error) {

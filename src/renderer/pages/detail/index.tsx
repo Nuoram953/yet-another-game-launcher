@@ -27,18 +27,16 @@ import { StatsPanel } from "./StatsPanel";
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [loading, setLoading] = useState(false);
-  const [game, setGame] = useState<Game>();
   const { id } = useParams();
   const { setBreadcrumbs } = useBreadcrumbsContext();
-  const { updateSelectedGame } = useGames();
+  const { selectedGame, updateSelectedGame } = useGames();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await window.database.getGame(id);
         if (result) {
-          setGame(result)
-          updateSelectedGame(result);
+          await updateSelectedGame(result);
           setLoading(false);
         }
 
@@ -54,12 +52,12 @@ const GameDetailsContent = () => {
     fetchData();
   }, []);
 
-  if (loading || !game) {
+  if (loading || !selectedGame) {
     return <div>...</div>;
   }
 
   const handleOnClick = async () => {
-    await window.steam.launch(game.externalId);
+    await window.steam.launch(selectedGame.externalId);
   };
 
   // Define sections array that was missing
@@ -109,7 +107,7 @@ const GameDetailsContent = () => {
         return (
           <div className="space-y-6 animate-fadeIn">
             <StatsPanel />
-            <Trailer gameId={game.id} />
+            <Trailer />
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {["Release Date", "Developer", "Publisher", "Genre"].map(
@@ -149,9 +147,9 @@ const GameDetailsContent = () => {
 
   return (
     <div className="h-screen bg-gray-900 text-white flex flex-col">
-      <Background gameId={game.id}>
+      <Background>
         <div className="absolute inset-0 flex items-center justify-between p-6">
-          <Logo gameId={game.id} />
+          <Logo />
           <Button
             size="lg"
             className="bg-green-600 hover:bg-green-500 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-lg"

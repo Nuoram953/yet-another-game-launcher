@@ -1,18 +1,15 @@
+import { useGames } from "@/context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 
-interface Props {
-  gameId: string;
-  size?: number;
-}
-
-export const Logo = ({ gameId, size }: Props) => {
+export const Logo = () => {
   const [LogoPicture, setLogoPicture] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const {selectedGame} = useGames()
 
   useEffect(() => {
     const fetchLogoPicture = async () => {
       try {
-        const logo = await window.ressource.getSingleLogo(gameId);
+        const logo = await window.ressource.getSingleLogo(selectedGame.id);
         setLogoPicture(logo);
         setLoading(false);
       } catch (error) {

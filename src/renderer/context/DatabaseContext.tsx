@@ -31,7 +31,7 @@ interface GamesContextValue {
       activities: true;
     };
   }>;
-  updateSelectedGame: (game: Game) => Promise<void>;
+  updateSelectedGame: (game: Game|null) => Promise<void>;
 }
 
 interface GamesProviderProps {
@@ -75,6 +75,12 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
         sort: sortConfig,
       });
       setGames(response as Game[]);
+      console.log(selectedGame)
+      if(selectedGame != null){
+        const game = response.find((game) => game.id === selectedGame.id);
+        setSelectedGame(game)
+        console.log(selectedGame)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -86,7 +92,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
-  const updateSelectedGame = useCallback(async (game: Game) => {
+  const updateSelectedGame = useCallback(async (game: Game|null) => {
     setSelectedGame(game);
   }, []);
 

@@ -1,18 +1,16 @@
 import VideoPlayer from "@/components/VideoPlayer";
+import { useGames } from "@/context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 
-interface Props {
-  gameId: string;
-}
-
-export const Trailer = ({ gameId }: Props) => {
+export const Trailer = () => {
   const [trailer, setTrailer] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const { selectedGame } = useGames();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const logo = await window.ressource.getSingleTrailer(gameId);
+        const logo = await window.ressource.getSingleTrailer(selectedGame.id);
         setTrailer(logo);
         setLoading(false);
       } catch (error) {
