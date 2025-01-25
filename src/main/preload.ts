@@ -7,6 +7,11 @@ import { IGame } from "src/common/types";
 //
 const { contextBridge, ipcRenderer } = require("electron");
 
+contextBridge.exposeInMainWorld('appControl', {
+  onAppBlur: (callback) => ipcRenderer.on('app-blur', callback),
+  onAppFocus: (callback) => ipcRenderer.on('app-focus', callback),
+});
+
 contextBridge.exposeInMainWorld("api", {
   runCommand: (command: any) => ipcRenderer.invoke("run-command", command),
   updateLibraries: (forceReload: boolean) =>

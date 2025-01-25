@@ -43,11 +43,15 @@ export const postLaunch = async (game: Game) => {
   );
 
   if (startTime && endTime) {
-    await createGameActiviy(game.id, startTime, endTime);
-    await GameQueries.updateTimePlayed(
-      game.id,
-      (await getMinutesBetween(startTime, endTime)) + 1,
-    ); //The minute delay for the catching the process
+    const minutes = await getMinutesBetween(startTime, endTime);
+    if (minutes > 0) {
+      await createGameActiviy(game.id, startTime, endTime);
+      await GameQueries.updateTimePlayed(game.id, minutes + 1);
+    } else {
+      log.warn(
+        `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
+      );
+    }
   }
 
   mainApp.sendToRenderer("is-game-running", {

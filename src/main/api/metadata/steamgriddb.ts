@@ -5,13 +5,6 @@ import { mainApp, metadataManager, metadataManager } from "../../index";
 import log from "electron-log/main";
 import { delay } from "../../utils/utils";
 
-enum SteamGridDbType {
-  GRID = "grid",
-  HEROES = "heroes",
-  LOGOS = "logos",
-  ICONS = "icons",
-}
-
 class SteamGridDB {
   private apikey: string | undefined;
   private gameId: number;
@@ -61,7 +54,7 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.info(`${this.gameId} has ${files} cover and the max was ${max}. Skipping`)
+      log.info(`${this.game.id} has ${files} cover and the max was ${max}. Skipping`)
       return
     };
 
@@ -124,7 +117,7 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.info(`${this.gameId} has ${files} background and the max was ${max}. Skipping`)
+      log.info(`${this.game.id} has ${files} background and the max was ${max}. Skipping`)
       return
     };
 
@@ -136,7 +129,7 @@ class SteamGridDB {
           params: {
             gameId: this.gameId,
             styles: "alternate,material",
-            dimensions: "3840x1240",
+            dimensions: "3840x1240,1920x620",
             mimes: "image/jpeg,image/png,image/webp",
             type: "static",
             limit: 50,
@@ -181,7 +174,7 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.info(`${this.gameId} has ${files} logo and the max was ${max}. Skipping`)
+      log.info(`${this.game.id} has ${files} logo and the max was ${max}. Skipping`)
       return
     };
 

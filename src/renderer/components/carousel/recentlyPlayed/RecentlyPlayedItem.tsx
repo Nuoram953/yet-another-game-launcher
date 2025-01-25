@@ -42,7 +42,6 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
       />
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
         <h2 className="text-4xl font-bold text-white mb-2">{game.name}</h2>
-        <p className="text-lg text-gray-200">{game.timePlayed}</p>
       </div>
     </div>
   );

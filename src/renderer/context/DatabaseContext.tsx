@@ -1,4 +1,4 @@
-import { Game } from "@prisma/client";
+import { Game, Prisma } from "@prisma/client";
 import React, { createContext, useContext, useState, useCallback } from "react";
 
 export interface GameFilters {
@@ -15,7 +15,7 @@ export interface SortConfig {
 
 interface GamesContextValue {
   games: Game[];
-  gameRunning: object
+  gameRunning: object;
   loading: boolean;
   error: string | null;
   filters: GameFilters;
@@ -23,6 +23,15 @@ interface GamesContextValue {
   updateFilters: (newFilters: Partial<GameFilters>) => void;
   updateSort: (field: keyof Game) => void;
   refreshGames: () => Promise<void>;
+  selectedGame: Prisma.GameGetPayload<{
+    include: {
+      gameStatus: true;
+      storefront: true;
+      achievements: true;
+      activities: true;
+    };
+  }>;
+  updateSelectedGame: (game: Game) => Promise<void>;
 }
 
 interface GamesProviderProps {
@@ -55,6 +64,8 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     direction: "asc",
   });
 
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+
   const fetchGames = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -75,6 +86,10 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
+  const updateSelectedGame = useCallback(async (game: Game) => {
+    setSelectedGame(game);
+  }, []);
+
   const updateSort = useCallback((field: keyof Game) => {
     setSortConfig((prev) => ({
       field,
@@ -82,7 +97,6 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
         prev.field === field && prev.direction === "asc" ? "desc" : "asc",
     }));
   }, []);
-
 
   React.useEffect(() => {
     fetchGames();
@@ -122,6 +136,8 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     updateFilters,
     updateSort,
     refreshGames: fetchGames,
+    selectedGame,
+    updateSelectedGame,
   };
 
   return (

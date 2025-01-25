@@ -25,7 +25,12 @@ export async function getAllGames(limit?: number) {
 }
 
 export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
-  include: { gameStatus: true; storefront: true };
+  include: {
+    gameStatus: true;
+    storefront: true;
+    achievements: true;
+    activities: true;
+  };
 }> | null> {
   return await prisma.game.findFirst({
     where: {
@@ -34,6 +39,8 @@ export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
     include: {
       gameStatus: true,
       storefront: true,
+      achievements: true,
+      activities: true,
     },
   });
 }

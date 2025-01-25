@@ -72,6 +72,8 @@ class MainWindowManager {
       //  fs.copyFileSync("../../.webpack/database.sqlite", app.getPath('userData')+"/db_back.db");
       //  console.log("Database backup saved.");
       //});
+      //
+      //
 
       app.on("window-all-closed", () => {
         if (process.platform !== "darwin") {
@@ -120,6 +122,15 @@ class MainWindowManager {
       this.mainWindow.on("closed", () => {
         this.mainWindow = null;
       });
+
+      this.mainWindow.on("blur", () => {
+        this.mainWindow?.webContents.send("app-blur")
+      });
+
+      this.mainWindow.on("focus", () => {
+        this.mainWindow?.webContents.send("app-focus")
+      });
+
     } catch (error) {
       console.error("Failed to create window:", error);
       throw error;

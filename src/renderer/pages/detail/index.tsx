@@ -20,6 +20,9 @@ import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Background } from "./Background";
 import { Logo } from "./Logo";
 import { Trailer } from "./Trailer";
+import { convertToHoursAndMinutes } from "@/utils/util";
+import { useGames } from "@/context/DatabaseContext";
+import { StatsPanel } from "./StatsPanel";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -27,13 +30,15 @@ const GameDetailsContent = () => {
   const [game, setGame] = useState<Game>();
   const { id } = useParams();
   const { setBreadcrumbs } = useBreadcrumbsContext();
+  const { updateSelectedGame } = useGames();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await window.database.getGame(id);
         if (result) {
-          setGame(result);
+          setGame(result)
+          updateSelectedGame(result);
           setLoading(false);
         }
 
@@ -88,39 +93,6 @@ const GameDetailsContent = () => {
     </div>
   );
 
-  const StatsPanel = () => (
-    <div className="bg-gray-850 border-b border-gray-700">
-      <div className=" mx-auto py-4">
-        <div className="flex flex-row justify-around gap-4 w-full">
-          <StatCard
-            icon={Clock}
-            label="Time Played"
-            value={`${game?.timePlayed}h`}
-            detail="Last played 2 hours ago"
-          />
-          <StatCard
-            icon={Trophy}
-            label="Achievements"
-            value={`3/15`}
-            detail={`33% Complete`}
-          />
-          <StatCard
-            icon={Activity}
-            label="Recent Activity"
-            value="12 Events"
-            detail="This week"
-          />
-          <StatCard
-            icon={Activity}
-            label="Status"
-            value={game.gameStatus.name}
-            detail="This week"
-          />
-        </div>
-      </div>
-    </div>
-  );
-
   const renderContent = () => {
     if (loading) {
       return (
@@ -136,8 +108,8 @@ const GameDetailsContent = () => {
       case "overview":
         return (
           <div className="space-y-6 animate-fadeIn">
-      <StatsPanel />
-            <Trailer gameId={game.id}/>
+            <StatsPanel />
+            <Trailer gameId={game.id} />
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {["Release Date", "Developer", "Publisher", "Genre"].map(
@@ -179,7 +151,7 @@ const GameDetailsContent = () => {
     <div className="h-screen bg-gray-900 text-white flex flex-col">
       <Background gameId={game.id}>
         <div className="absolute inset-0 flex items-center justify-between p-6">
-          <Logo gameId={game.id}/>
+          <Logo gameId={game.id} />
           <Button
             size="lg"
             className="bg-green-600 hover:bg-green-500 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-lg"
@@ -190,7 +162,6 @@ const GameDetailsContent = () => {
           </Button>
         </div>
       </Background>
-
 
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
