@@ -7,9 +7,9 @@ import { IGame } from "src/common/types";
 //
 const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld('appControl', {
-  onAppBlur: (callback) => ipcRenderer.on('app-blur', callback),
-  onAppFocus: (callback) => ipcRenderer.on('app-focus', callback),
+contextBridge.exposeInMainWorld("appControl", {
+  onAppBlur: (callback) => ipcRenderer.on("app-blur", callback),
+  onAppFocus: (callback) => ipcRenderer.on("app-focus", callback),
 });
 
 contextBridge.exposeInMainWorld("api", {
@@ -38,7 +38,8 @@ contextBridge.exposeInMainWorld("database", {
   getGames: () => ipcRenderer.invoke("games"),
   getGame: (id: string) => ipcRenderer.invoke("game", id),
   getStatus: () => ipcRenderer.invoke("statusAndCount"),
-  getRecentlyPlayed: (max: number) => ipcRenderer.invoke("database:recentlyPlayed", max),
+  getRecentlyPlayed: (max: number) =>
+    ipcRenderer.invoke("database:recentlyPlayed", max),
 });
 
 contextBridge.exposeInMainWorld("steam", {
@@ -47,10 +48,16 @@ contextBridge.exposeInMainWorld("steam", {
 });
 
 contextBridge.exposeInMainWorld("ressource", {
-  getSingleBackground: (appid: number) => ipcRenderer.invoke("ressource:singleBackground", appid),
-  getSingleLogo: (appid: number) => ipcRenderer.invoke("ressource:singleLogo", appid),
-  getRecentlyPlayedBackgrounds: (max: number) => ipcRenderer.invoke("ressource:recentlyPlayedBackground", max),
-  getSingleTrailer: (appid: number) => ipcRenderer.invoke("ressource:singleTrailer", appid),
+  getAll: (appid: number) =>
+    ipcRenderer.invoke("ressource:getAll", appid),
+  getSingleBackground: (appid: number) =>
+    ipcRenderer.invoke("ressource:singleBackground", appid),
+  getSingleLogo: (appid: number) =>
+    ipcRenderer.invoke("ressource:singleLogo", appid),
+  getRecentlyPlayedBackgrounds: (max: number) =>
+    ipcRenderer.invoke("ressource:recentlyPlayedBackground", max),
+  getSingleTrailer: (appid: number) =>
+    ipcRenderer.invoke("ressource:singleTrailer", appid),
 });
 
 contextBridge.exposeInMainWorld("notifications", {

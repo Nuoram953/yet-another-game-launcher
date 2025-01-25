@@ -7,7 +7,7 @@ class Igdb {
   private token: string | null;
 
   constructor() {
-    this.token = null
+    this.token = null;
   }
 
   async authentication() {
@@ -19,35 +19,67 @@ class Igdb {
       log.error("Invalid");
     }
 
-    const currentTimeInSeconds = Math.floor(Date.now() / 1000); // Current time in seconds
-    this.expirationInSeconds = currentTimeInSeconds+Number(response.data.expires_in);
+    const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+    this.expirationInSeconds =
+      currentTimeInSeconds + Number(response.data.expires_in);
     this.token = response.data.access_token;
+    return this.token;
   }
 
-  isTokenValid(): boolean {
-    console.log(Math.floor(Date.now() / 1000) )
-    console.log(this.expirationInSeconds)
-    return Math.floor(Date.now() / 1000) < this.expirationInSeconds;
+  async getToken() {
+    const isValid = Math.floor(Date.now() / 1000) < this.expirationInSeconds;
+    return isValid ? this.token : await this.authentication();
   }
 
   async getExternalGame(externalId: number, store?: Storefront) {
-    console.log(this.token == null)
-    console.log(!this.isTokenValid())
-    if (this.token === null || !this.isTokenValid()) {
-      await this.authentication();
-    }
-
     const response = await axios.post(
       "https://api.igdb.com/v4/external_games",
       `fields *; where uid="${externalId}" & category=${1};`,
       {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          Authorization: `Bearer ${await this.getToken()}`,
           Accept: "application/json",
           "Client-ID": process.env.IGDB_CLIENT_ID,
         },
       },
     );
+
+    return response.data[0].game;
+  }
+
+  async getGame(externalId: number, store?: Storefront) {
+    const id = await this.getExternalGame(externalId, store);
+
+    const response = await axios.post(
+      "https://api.igdb.com/v4/games",
+      `fields *, screenshots.*, platforms.*, artworks.*, genres.*, themes.*, cover.*;  where id=${id};`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getToken()}`,
+          Accept: "application/json",
+          "Client-ID": process.env.IGDB_CLIENT_ID,
+        },
+      },
+    );
+
+    console.log(response.data);
+    const company = await this.getInvolvedCompany(id)
+  }
+
+  async getInvolvedCompany(id: number) {
+    const response = await axios.post(
+      "https://api.igdb.com/v4/involved_companies",
+      `fields *, company.*;  where game=${id};`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getToken()}`,
+          Accept: "application/json",
+          "Client-ID": process.env.IGDB_CLIENT_ID,
+        },
+      },
+    );
+
+    console.log(response.data);
   }
 }
 

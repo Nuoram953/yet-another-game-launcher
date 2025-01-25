@@ -4,6 +4,28 @@ import fs from "fs";
 import * as path from "path";
 import { IMAGE_TYPE } from "../../common/constant";
 import * as GameQueries from "../dal/game";
+import log from "electron-log/main";
+
+ipcMain.handle("ressource:getAll", async (event, id) => {
+  const ressource: { [key: string]: any } = {};
+  try {
+    for (const type of Object.values(IMAGE_TYPE)) {
+      ressource[type] = [];
+      const directory = path.join(app.getPath("userData"), id, type);
+      if (!fs.existsSync(directory)) {
+        break;
+      }
+      const files = fs.readdirSync(directory);
+      for (const file of files) {
+        ressource[type].push(`file://${path.join(directory, file)}`);
+      }
+    }
+    return ressource;
+  } catch (e) {
+    log.warn(e);
+    return "";
+  }
+});
 
 ipcMain.handle("ressource:singleBackground", async (event, id) => {
   try {

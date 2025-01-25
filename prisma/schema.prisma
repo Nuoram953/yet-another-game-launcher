@@ -31,7 +31,9 @@ model Game {
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
   activities             GameActivity[]
-  achievements        GameAchievement[]
+  achievements           GameAchievement[]
+  developpers            GameDevelopper[]
+  publishers             GamePublisher[]
 
   @@unique([externalId, storefrontId])
 }
@@ -51,6 +53,34 @@ model GameActivity {
   duration  Int
 
   @@index([gameId])
+}
+
+model Developper {
+  id             String           @id @default(uuid())
+  name           String
+  GameDevelopper GameDevelopper[]
+}
+
+model GameDevelopper {
+  id           String     @id @default(uuid())
+  gameId       String
+  game         Game       @relation(fields: [gameId], references: [id])
+  developperId String
+  developper   Developper @relation(fields: [developperId], references: [id])
+}
+
+model GamePublisher {
+  id         String    @id @default(uuid())
+  gameId     String
+  game       Game      @relation(fields: [gameId], references: [id])
+  publisheId String
+  publisher  Publisher @relation(fields: [publisheId], references: [id])
+}
+
+model Publisher {
+  id            String          @id @default(uuid())
+  name          String
+  GamePublisher GamePublisher[]
 }
 
 model GameAchievement {

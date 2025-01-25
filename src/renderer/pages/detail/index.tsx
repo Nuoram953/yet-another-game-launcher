@@ -12,6 +12,8 @@ import {
   Settings,
   MessageSquare,
   Award,
+  PictureInPicture,
+  Image,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Game } from "@prisma/client";
@@ -23,6 +25,7 @@ import { Trailer } from "./Trailer";
 import { convertToHoursAndMinutes } from "@/utils/util";
 import { useGames } from "@/context/DatabaseContext";
 import { StatsPanel } from "./StatsPanel";
+import { SectionMetadata } from "./SectionMetadata";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -72,6 +75,7 @@ const GameDetailsContent = () => {
     { id: "updates", icon: Download, label: "Updates" },
     { id: "settings", icon: Settings, label: "Settings" },
     { id: "community", icon: MessageSquare, label: "Community" },
+    { id: "metadata", icon: Image, label: "Metadata" },
   ];
 
   const handleSectionChange = (sectionId) => {
@@ -133,6 +137,8 @@ const GameDetailsContent = () => {
             </div>
           </div>
         );
+      case "metadata":
+        return <SectionMetadata />
       default:
         return (
           <div className="bg-gray-800 p-6 rounded-lg animate-fadeIn">

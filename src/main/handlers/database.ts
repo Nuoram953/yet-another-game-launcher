@@ -26,7 +26,7 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
 
   await YouTubeDownloader.searchAndDownloadVideos(game);
 
-  await igdb.getExternalGame(game.externalId!);
+  await igdb.getGame(game.externalId!);
   return game;
 });
 
