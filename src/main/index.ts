@@ -65,6 +65,7 @@ class MainWindowManager {
 
       prisma = new PrismaClient();
 
+
       app.on("activate", async () => {
         if (BrowserWindow.getAllWindows().length === 0) {
           await this.createWindow();

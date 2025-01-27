@@ -29,11 +29,24 @@ interface GamesContextValue {
       storefront: true;
       achievements: true;
       activities: true;
-      developers:true,
-      publishers:true
+      developers: {
+        include: {
+          company: true;
+        };
+      };
+      publishers: {
+        include: {
+          company: true;
+        };
+      };
+      tags: {
+        include: {
+          tag: true;
+        };
+      };
     };
   }>;
-  updateSelectedGame: (game: Game|null) => Promise<void>;
+  updateSelectedGame: (game: Game | null) => Promise<void>;
 }
 
 interface GamesProviderProps {
@@ -77,11 +90,11 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
         sort: sortConfig,
       });
       setGames(response as Game[]);
-      console.log(selectedGame)
-      if(selectedGame != null){
+      console.log(selectedGame);
+      if (selectedGame != null) {
         const game = response.find((game) => game.id === selectedGame.id);
-        setSelectedGame(game)
-        console.log(selectedGame)
+        setSelectedGame(game);
+        console.log(selectedGame);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -94,7 +107,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
-  const updateSelectedGame = useCallback(async (game: Game|null) => {
+  const updateSelectedGame = useCallback(async (game: Game | null) => {
     setSelectedGame(game);
   }, []);
 
@@ -117,6 +130,16 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
     return () => {
       window.api.removeListener("request:games");
+    };
+  }, []);
+
+  React.useEffect(() => {
+    window.api.onReceiveFromMain("request:game", (game) => {
+      setSelectedGame(game);
+    });
+
+    return () => {
+      window.api.removeListener("request:game");
     };
   }, []);
 

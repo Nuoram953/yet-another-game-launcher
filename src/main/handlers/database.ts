@@ -6,7 +6,7 @@ import queries from "../dal/dal"
 import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
 import Igdb from "../api/metadata/igdb";
-import { igdb } from "..";
+import { igdb, mainApp } from "..";
 
 ipcMain.handle("games", async (_event): Promise<Game[]> => {
   return await getAllGames();
@@ -26,7 +26,7 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
 
   await YouTubeDownloader.searchAndDownloadVideos(game);
 
-  const {developers, publishers} = await igdb.getGame(game.externalId!);
+  const {developers, publishers, partialGameData, themes, genres} = await igdb.getGame(game.externalId!);
 
   for(const developer of developers){
     await queries.GameDeveloper.findOrCreate(game.id, developer)
@@ -36,9 +36,21 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
     await queries.GamePublisher.findOrCreate(game.id, publisher)
   }
 
+  for(const theme of themes){
+    await queries.GameTag.findOrCreate(game.id, theme, {isTheme:true})
+  }
+
+  for(const genre of genres){
+    await queries.GameTag.findOrCreate(game.id, genre, {isGenre:true})
+  }
+
+  await queries.Game.updateGame(game.id, partialGameData)
+
   console.log(developers, publishers)
 
-  return game;
+  const updatedGame = await getGameById(id);
+
+  return updatedGame;
 });
 
 ipcMain.handle(

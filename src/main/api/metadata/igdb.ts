@@ -79,13 +79,26 @@ class Igdb {
       },
     );
 
-    console.log(response.data);
     const company: object[] = await this.getInvolvedCompany(id);
 
-    const publishers = company.filter((company) => company.publisher).map(item=>item.company.name);
-    const developers = company.filter((company) => company.developer).map(item=>item.company.name);;
+    const publishers = company
+      .filter((company) => company.publisher)
+      .map((item) => item.company.name);
 
-    return {publishers, developers}
+    const developers = company
+      .filter((company) => company.developer)
+      .map((item) => item.company.name);
+
+    const themes = response.data[0].themes.map((item) => item.name);
+    const genres = response.data[0].genres.map((item) => item.name);
+
+    const partialGameData: Partial<Game> = {
+      summary: response.data[0].storyline ?? response.data[0].summary,
+      scoreCritic: response.data[0].aggregated_rating ?? null,
+      scoreCommunity: response.data[0].rating ?? null,
+    };
+
+    return { publishers, developers, partialGameData, themes, genres };
   }
 }
 

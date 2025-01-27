@@ -1,5 +1,5 @@
 import { Game } from "@prisma/client";
-import * as GameQueries from "../dal/game";
+import queries from "../dal/dal"
 import { Storefront } from "../constant";
 import { mainApp, metadataManager } from "..";
 import { monitorDirectoryProcesses } from "../utils/tracking";
@@ -12,7 +12,7 @@ export const createOrUpdateGame = async (
   data: Partial<Game>,
   store: Storefront,
 ) => {
-  const game = await GameQueries.createOrUpdateExternal(data, store);
+  const game = await queries.Game.createOrUpdateExternal(data, store);
 
   if (!game) {
     throw new Error("invalid game");
@@ -46,7 +46,7 @@ export const postLaunch = async (game: Game) => {
     const minutes = await getMinutesBetween(startTime, endTime);
     if (minutes > 0) {
       await createGameActiviy(game.id, startTime, endTime);
-      await GameQueries.updateTimePlayed(game.id, minutes + 1);
+      await queries.Game.updateTimePlayed(game.id, minutes + 1);
     } else {
       log.warn(
         `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
@@ -59,6 +59,12 @@ export const postLaunch = async (game: Game) => {
   });
 
   mainApp.sendToRenderer("request:games", {});
+
+  mainApp.sendToRenderer("request:game", {
+    ...await queries.Game.getGameById(game.id)
+  });
+
+
 };
 
 export const downloadAchievements = () => {};

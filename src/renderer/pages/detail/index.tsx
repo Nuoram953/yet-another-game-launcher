@@ -26,6 +26,10 @@ import { convertToHoursAndMinutes } from "@/utils/util";
 import { useGames } from "@/context/DatabaseContext";
 import { StatsPanel } from "./StatsPanel";
 import { SectionMetadata } from "./SectionMetadata";
+import { Info } from "@/components/detail/Info";
+import { Summary } from "@/components/detail/Summary";
+import { ButtonPlay } from "@/components/button/Play";
+import ScoreCircle from "./ScoreCircle";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -110,34 +114,50 @@ const GameDetailsContent = () => {
     switch (activeSection) {
       case "overview":
         return (
-          <div className="space-y-6 animate-fadeIn">
+          <div className="space-y-6 animate-fadeIn min-h-[1500px]">
             <StatsPanel />
             <Trailer />
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {["Release Date", "Developer", "Publisher", "Genre"].map(
-                (label, index) => (
-                  <div
-                    key={label}
-                    className="bg-gray-800 p-4 rounded-lg transform hover:scale-105 transition-all duration-300"
-                    style={{
-                      animationDelay: `${index * 100}ms`,
-                      animation: "slideUp 0.5s ease-out forwards",
-                    }}
-                  >
-                    <h3 className="text-gray-400 text-sm">{label}</h3>
-                    {selectedGame.developers.map((dev) => (
-                      <p>{dev.company.name}</p>
-                    ))}
-                  </div>
-                ),
-              )}
+              <div
+                className="bg-gray-800 p-4 rounded-lg transform hover:scale-105 transition-all duration-300"
+                style={{
+                  animationDelay: `${1 * 100}ms`,
+                  animation: "slideUp 0.5s ease-out forwards",
+                }}
+              >
+                <h3 className="text-gray-400 text-sm">Developer</h3>
+                {selectedGame.developers.map((dev) => (
+                  <p>{dev.company.name}</p>
+                ))}
+              </div>
+
+              <div
+                className="bg-gray-800 p-4 rounded-lg transform hover:scale-105 transition-all duration-300"
+                style={{
+                  animationDelay: `${2 * 100}ms`,
+                  animation: "slideUp 0.5s ease-out forwards",
+                }}
+              >
+                <h3 className="text-gray-400 text-sm">Publisher</h3>
+                {selectedGame.publishers.map((dev) => (
+                  <p>{dev.company.name}</p>
+                ))}
+              </div>
             </div>
 
-            <div className="bg-gray-800 p-6 rounded-lg transform hover:bg-gray-750 transition-colors duration-300">
-              <h2 className="text-xl font-bold mb-4">About</h2>
-              <p className="text-gray-300">desc</p>
+            <div className="bg-gray-800 h-full mb-10 p-6 rounded-lg transform hover:bg-gray-750 transition-colors duration-300">
+              <Info />
             </div>
+
+            <div className="bg-gray-800 h-full mb-10 p-6 rounded-lg transform hover:bg-gray-750 transition-colors duration-300">
+              <div className="flex flex-row justify-between">
+                <ScoreCircle score={selectedGame.scoreCritic} label="Critic"/>
+                <ScoreCircle score={selectedGame.scoreCommunity} label="Community"/>
+                <ScoreCircle score={selectedGame.scoreUser} label="User"/>
+              </div>
+            </div>
+            <div className="h-20"></div>
           </div>
         );
       case "metadata":
@@ -159,14 +179,7 @@ const GameDetailsContent = () => {
       <Background>
         <div className="absolute inset-0 flex items-center justify-between p-6">
           <Logo />
-          <Button
-            size="lg"
-            className="bg-green-600 hover:bg-green-500 text-white transform hover:scale-105 transition-all duration-300 hover:shadow-lg"
-            onClick={handleOnClick}
-          >
-            <Play className="mr-2 h-5 w-5 animate-pulse" />
-            Play Now
-          </Button>
+          <ButtonPlay />
         </div>
       </Background>
 

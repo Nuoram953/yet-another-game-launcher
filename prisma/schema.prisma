@@ -28,12 +28,17 @@ model Game {
   timePlayedDisconnected Int               @default(0)
   size                   BigInt?           @default(0)
   location               String?
+  scoreCritic            Int?
+  scoreCommunity         Int?
+  scoreUser              Int?
+  summary                String?
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
   activities             GameActivity[]
   achievements           GameAchievement[]
   developers             GameDeveloper[]
   publishers             GamePublisher[]
+  tags                GameTag[]
 
   @@unique([externalId, storefrontId])
 }
@@ -60,6 +65,25 @@ model Company {
   name          String          @unique
   GameDeveloper GameDeveloper[]
   GamePublisher GamePublisher[]
+}
+
+model Tag {
+  id      String    @id @default(uuid())
+  name    String    @unique
+  GameTag GameTag[]
+}
+
+model GameTag {
+  id         String  @id @default(uuid())
+  gameId     String
+  game       Game    @relation(fields: [gameId], references: [id])
+  tagId      String
+  tag        Tag     @relation(fields: [tagId], references: [id])
+  isGenre    Boolean @default(false)
+  isTheme    Boolean @default(false)
+  isGameMode Boolean @default(false)
+
+  @@unique([gameId, tagId])
 }
 
 model GameDeveloper {

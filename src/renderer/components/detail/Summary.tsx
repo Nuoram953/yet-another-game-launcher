@@ -7,12 +7,11 @@ import {
   Clock,
   Trophy,
 } from "lucide-react";
+import { useGames } from "@/context/DatabaseContext";
 
-interface Props {
-  game: Game;
-}
+export const Summary = () => {
+  const {selectedGame} = useGames()
 
-export const Summary = ({ game }: Props) => {
   return (
     <Card className="flex flex-row gap-8 m-6 p-6 bg-stone-700/40 backdrop-blur-md border-white/50 shadow-xl justify-evenly">
       <div className="flex flex-row gap-3 items-center">

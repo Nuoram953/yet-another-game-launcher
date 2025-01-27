@@ -40,6 +40,11 @@ export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
         company: true;
       };
     };
+    tags: {
+      include: {
+        tag: true;
+      };
+    };
   };
 }> | null> {
   return await prisma.game.findFirst({
@@ -59,6 +64,11 @@ export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
       publishers: {
         include: {
           company: true,
+        },
+      },
+      tags: {
+        include: {
+          tag: true,
         },
       },
     },

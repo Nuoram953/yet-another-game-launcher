@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.invoke("get-pictures-directory", id),
   getSteamGames: () => ipcRenderer.invoke("get-steam-games"),
   onReceiveFromMain: (channel, callback) => {
-    const validChannels = ["add-new-game", "is-game-running", "request:games"]; // Define valid channels
+    const validChannels = ["add-new-game", "is-game-running", "request:games", "request:game"]; // Define valid channels
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, data) => {
         callback(data); // Pass data to the provided callback

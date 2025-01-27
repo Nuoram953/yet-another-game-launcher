@@ -4,7 +4,7 @@ import queries from "./dal";
 export async function findOrCreate(gameId: string, name: string) {
   const company = await queries.Company.findOrCreate(name);
 
-  prisma.gameDeveloper.upsert({
+  await prisma.gameDeveloper.upsert({
     where: {
       gameId_companyId: {
         gameId: gameId,
