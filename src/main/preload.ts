@@ -16,11 +16,14 @@ contextBridge.exposeInMainWorld("api", {
   runCommand: (command: any) => ipcRenderer.invoke("run-command", command),
   updateLibraries: (forceReload: boolean) =>
     ipcRenderer.invoke("update-libraries", forceReload),
-  getStoredPicturesDirectory: (id: string) =>
-    ipcRenderer.invoke("get-pictures-directory", id),
   getSteamGames: () => ipcRenderer.invoke("get-steam-games"),
   onReceiveFromMain: (channel, callback) => {
-    const validChannels = ["add-new-game", "is-game-running", "request:games", "request:game"]; // Define valid channels
+    const validChannels = [
+      "add-new-game",
+      "is-game-running",
+      "request:games",
+      "request:game",
+    ]; // Define valid channels
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, data) => {
         callback(data); // Pass data to the provided callback
@@ -48,8 +51,7 @@ contextBridge.exposeInMainWorld("steam", {
 });
 
 contextBridge.exposeInMainWorld("ressource", {
-  getAll: (appid: number) =>
-    ipcRenderer.invoke("ressource:getAll", appid),
+  getAll: (appid: number) => ipcRenderer.invoke("ressource:getAll", appid),
   getSingleBackground: (appid: number) =>
     ipcRenderer.invoke("ressource:singleBackground", appid),
   getSingleLogo: (appid: number) =>
@@ -58,6 +60,8 @@ contextBridge.exposeInMainWorld("ressource", {
     ipcRenderer.invoke("ressource:recentlyPlayedBackground", max),
   getSingleTrailer: (appid: number) =>
     ipcRenderer.invoke("ressource:singleTrailer", appid),
+  getSingleCover: (appid: number) =>
+    ipcRenderer.invoke("ressource:singleCover", appid),
 });
 
 contextBridge.exposeInMainWorld("notifications", {

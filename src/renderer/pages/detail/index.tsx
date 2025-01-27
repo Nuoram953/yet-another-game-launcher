@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Play,
   Trophy,
   Activity,
   PenLine,
@@ -11,25 +10,17 @@ import {
   Download,
   Settings,
   MessageSquare,
-  Award,
-  PictureInPicture,
   Image,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Game } from "@prisma/client";
 import { useParams } from "react-router-dom";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Background } from "./Background";
 import { Logo } from "./Logo";
-import { Trailer } from "./Trailer";
-import { convertToHoursAndMinutes } from "@/utils/util";
 import { useGames } from "@/context/DatabaseContext";
-import { StatsPanel } from "./StatsPanel";
 import { SectionMetadata } from "./SectionMetadata";
-import { Info } from "@/components/detail/Info";
-import { Summary } from "@/components/detail/Summary";
 import { ButtonPlay } from "@/components/button/Play";
-import ScoreCircle from "./ScoreCircle";
+import { SectionOverview } from "./SectionOverview";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -64,11 +55,6 @@ const GameDetailsContent = () => {
     return <div>...</div>;
   }
 
-  const handleOnClick = async () => {
-    await window.steam.launch(selectedGame.externalId);
-  };
-
-  // Define sections array that was missing
   const sections = [
     { id: "overview", icon: BookOpen, label: "Overview" },
     { id: "achievements", icon: Trophy, label: "Achievements" },
@@ -87,85 +73,26 @@ const GameDetailsContent = () => {
     setActiveSection(sectionId);
   };
 
-  const StatCard = ({ icon: Icon, label, value, detail }) => (
-    <div className="bg-gray-800 flex-grow flex-1 rounded-lg p-4 transform hover:scale-105 transition-all duration-300">
-      <div className="flex items-center mb-2">
-        <Icon className="h-5 w-5 mr-2 text-gray-400" />
-        <span className="text-sm text-gray-400">{label}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-xl font-bold">{value}</span>
-        {detail && <span className="text-sm text-gray-400">{detail}</span>}
-      </div>
-    </div>
-  );
-
   const renderContent = () => {
     if (loading) {
       return (
         <div className="animate-pulse space-y-4">
-          <div className="h-64 bg-gray-800 rounded-lg"></div>
-          <div className="h-32 bg-gray-800 rounded-lg"></div>
-          <div className="h-24 bg-gray-800 rounded-lg"></div>
+          <div className="h-64 rounded-lg bg-gray-800"></div>
+          <div className="h-32 rounded-lg bg-gray-800"></div>
+          <div className="h-24 rounded-lg bg-gray-800"></div>
         </div>
       );
     }
 
     switch (activeSection) {
       case "overview":
-        return (
-          <div className="space-y-6 animate-fadeIn min-h-[1500px]">
-            <StatsPanel />
-            <Trailer />
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div
-                className="bg-gray-800 p-4 rounded-lg transform hover:scale-105 transition-all duration-300"
-                style={{
-                  animationDelay: `${1 * 100}ms`,
-                  animation: "slideUp 0.5s ease-out forwards",
-                }}
-              >
-                <h3 className="text-gray-400 text-sm">Developer</h3>
-                {selectedGame.developers.map((dev) => (
-                  <p>{dev.company.name}</p>
-                ))}
-              </div>
-
-              <div
-                className="bg-gray-800 p-4 rounded-lg transform hover:scale-105 transition-all duration-300"
-                style={{
-                  animationDelay: `${2 * 100}ms`,
-                  animation: "slideUp 0.5s ease-out forwards",
-                }}
-              >
-                <h3 className="text-gray-400 text-sm">Publisher</h3>
-                {selectedGame.publishers.map((dev) => (
-                  <p>{dev.company.name}</p>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-gray-800 h-full mb-10 p-6 rounded-lg transform hover:bg-gray-750 transition-colors duration-300">
-              <Info />
-            </div>
-
-            <div className="bg-gray-800 h-full mb-10 p-6 rounded-lg transform hover:bg-gray-750 transition-colors duration-300">
-              <div className="flex flex-row justify-between">
-                <ScoreCircle score={selectedGame.scoreCritic} label="Critic"/>
-                <ScoreCircle score={selectedGame.scoreCommunity} label="Community"/>
-                <ScoreCircle score={selectedGame.scoreUser} label="User"/>
-              </div>
-            </div>
-            <div className="h-20"></div>
-          </div>
-        );
+        return <SectionOverview />;
       case "metadata":
         return <SectionMetadata />;
       default:
         return (
-          <div className="bg-gray-800 p-6 rounded-lg animate-fadeIn">
-            <h2 className="text-xl font-bold mb-4">
+          <div className="animate-fadeIn rounded-lg bg-gray-800 p-6">
+            <h2 className="mb-4 text-xl font-bold">
               {sections.find((s) => s.id === activeSection)?.label}
             </h2>
             <p className="text-gray-400">Content for {activeSection} section</p>
@@ -175,7 +102,7 @@ const GameDetailsContent = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-900 text-white flex flex-col">
+    <div className="flex h-screen flex-col bg-gray-900 text-white">
       <Background>
         <div className="absolute inset-0 flex items-center justify-between p-6">
           <Logo />
@@ -183,15 +110,13 @@ const GameDetailsContent = () => {
         </div>
       </Background>
 
-      {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Secondary Navigation */}
-        <div className="w-48 bg-gray-800 p-2 overflow-y-auto">
+        <div className="w-48 overflow-y-auto bg-gray-800 p-2">
           {sections.map((section, index) => (
             <Button
               key={section.id}
               variant={activeSection === section.id ? "secondary" : "ghost"}
-              className="w-full justify-start mb-1 transform hover:translate-x-1 transition-transform duration-200"
+              className="mb-1 w-full transform justify-start transition-transform duration-200 hover:translate-x-1"
               onClick={() => handleSectionChange(section.id)}
               style={{
                 animation: "slideIn 0.5s ease-out forwards",
@@ -199,7 +124,7 @@ const GameDetailsContent = () => {
               }}
             >
               <section.icon
-                className={`h-4 w-4 mr-2 ${activeSection === section.id ? "animate-bounce" : ""}`}
+                className={`mr-2 h-4 w-4 ${activeSection === section.id ? "animate-bounce" : ""}`}
               />
               {section.label}
             </Button>
@@ -207,7 +132,9 @@ const GameDetailsContent = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 px-6 overflow-y-auto">{renderContent()}</div>
+        <div className="mx-auto max-w-[1500px] flex-1 overflow-y-auto px-6">
+          {renderContent()}
+        </div>
       </div>
 
       <style jsx global>{`

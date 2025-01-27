@@ -14,15 +14,15 @@ const Cover: React.FC<{
     include: { gameStatus: true; storefront: true };
   }>;
 }> = ({ game }) => {
-  const [picturePath, setPicturePath] = useState<string | null>(null);
+  const [coverPicture, setCoverPicture] = useState<string | null>(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
-        const directory = await window.api.getStoredPicturesDirectory(game.id);
-        setPicturePath(directory);
+        const cover = await window.ressource.getSingleCover(game.id);
+        setCoverPicture(cover);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);
@@ -85,7 +85,7 @@ const Cover: React.FC<{
         transformStyle: "preserve-3d",
       }}
     >
-      <ImageWithFallback src={`file://${picturePath}`} />
+      <ImageWithFallback src={coverPicture} />
 
       <StatusBadge status={game.gameStatus.name}  />
 

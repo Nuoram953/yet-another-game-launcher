@@ -150,12 +150,6 @@ class MainWindowManager {
 export const mainApp = new MainWindowManager();
 mainApp.initialize().catch(console.error);
 
-ipcMain.handle("get-pictures-directory", async (event, id) => {
-  const picturesDir = path.join(app.getPath("userData"), id, "cover");
-  const files = fs.readdirSync(picturesDir);
-  return path.join(picturesDir, files[0]);
-});
-
 ipcMain.handle("update-libraries", async (event, forceReload) => {
   if (!hasRunInitialLibrariesUpdate || forceReload) {
     mainApp.sendToRenderer("notification", {

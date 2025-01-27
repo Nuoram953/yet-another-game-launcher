@@ -68,6 +68,16 @@ ipcMain.handle("ressource:singleIcon", async (event, id) => {
   }
 });
 
+ipcMain.handle("ressource:singleCover", async (event, id) => {
+  try {
+    const directory = path.join(app.getPath("userData"), id, IMAGE_TYPE.COVER);
+    const files = fs.readdirSync(directory);
+    return `file://${path.join(directory, files[0])}`;
+  } catch (e) {
+    return "";
+  }
+});
+
 ipcMain.handle("ressource:singleTrailer", async (event, id) => {
   try {
     const videoExtensions = [

@@ -38,6 +38,8 @@
     "fork-ts-checker-webpack-plugin": "^8.0.0",
     "node-loader": "^2.0.0",
     "postcss-loader": "^7.3.3",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.3.0-dev.4",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.4.4",

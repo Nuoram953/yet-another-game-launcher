@@ -1,10 +1,5 @@
-import { Game } from "@prisma/client";
 import React, { useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
-import { PlayIcon, Settings } from "lucide-react";
 import { Badge } from "../ui/badge";
-import VideoPlayer from "../VideoPlayer";
 import { ImageWithFallback } from "../cover/cover";
 import { useGames } from "@/context/DatabaseContext";
 
@@ -16,9 +11,7 @@ export const Info = () => {
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
-        const cover = await window.api.getStoredPicturesDirectory(
-          selectedGame.id,
-        );
+        const cover = await window.ressource.getSingleCover(selectedGame.id);
 
         setCover(cover);
 
@@ -38,7 +31,7 @@ export const Info = () => {
   return (
     <div className="flex flex-row h-fit">
       <div className="w-1/3 py-6">
-        <ImageWithFallback src={`file://${cover}`} />
+        <ImageWithFallback src={cover} />
       </div>
       <div className="flex flex-col w-2/3 px-6">
         <h1 className="text-5xl font-bold ">{selectedGame.name}</h1>
