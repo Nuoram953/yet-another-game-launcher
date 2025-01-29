@@ -13,6 +13,7 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import {NotificationProvider} from "./context/NotificationContext";
 import { Toaster } from "./components/ui/toaster";
+import WebsiteViewer from "./pages/web/Index";
 
 const App = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -57,6 +58,16 @@ const App = () => {
                   element={
                     <Layout>
                       <GameDetail />
+                    </Layout>
+                  }
+                />
+
+                <Route
+                  index
+                  path="/web/:store"
+                  element={
+                    <Layout>
+                      <WebsiteViewer />
                     </Layout>
                   }
                 />

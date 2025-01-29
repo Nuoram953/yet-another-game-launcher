@@ -38,7 +38,8 @@ model Game {
   achievements           GameAchievement[]
   developers             GameDeveloper[]
   publishers             GamePublisher[]
-  tags                GameTag[]
+  tags                   GameTag[]
+  engines                GameEngine[]
 
   @@unique([externalId, storefrontId])
 }
@@ -67,6 +68,22 @@ model Company {
   GamePublisher GamePublisher[]
 }
 
+model Engine {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  GameEngine GameEngine[]
+}
+
+model GameEngine {
+  id       String @id @default(uuid())
+  gameId   String
+  game     Game   @relation(fields: [gameId], references: [id])
+  engineId String
+  engine   Engine @relation(fields: [engineId], references: [id])
+
+  @@unique([gameId, engineId])
+}
+
 model Tag {
   id      String    @id @default(uuid())
   name    String    @unique
@@ -74,14 +91,15 @@ model Tag {
 }
 
 model GameTag {
-  id         String  @id @default(uuid())
-  gameId     String
-  game       Game    @relation(fields: [gameId], references: [id])
-  tagId      String
-  tag        Tag     @relation(fields: [tagId], references: [id])
-  isGenre    Boolean @default(false)
-  isTheme    Boolean @default(false)
-  isGameMode Boolean @default(false)
+  id                  String  @id @default(uuid())
+  gameId              String
+  game                Game    @relation(fields: [gameId], references: [id])
+  tagId               String
+  tag                 Tag     @relation(fields: [tagId], references: [id])
+  isGenre             Boolean @default(false)
+  isTheme             Boolean @default(false)
+  isGameMode          Boolean @default(false)
+  isPlayerPerspective Boolean @default(false)
 
   @@unique([gameId, tagId])
 }

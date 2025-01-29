@@ -8,6 +8,7 @@ import { Game } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
 import * as GameQueries from "../../dal/game";
 import acfParser from "steam-acf2json";
+import { delay } from "../../utils/utils";
 
 class Steam {
   private steamid: string | undefined;
@@ -41,6 +42,8 @@ class Steam {
       };
 
       await createOrUpdateGame(data, Storefront.STEAM);
+
+      await delay(2000)
     }
   }
 
@@ -123,6 +126,47 @@ class Steam {
           gamePath,
         );
       }
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+async getUserAchievementsForGame(game:Game) {
+    try {
+      const response = await axios.get(
+        "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001",
+        {
+          params: {
+            steamid: this.steamid,
+            key: this.apiKey,
+            appid:game.externalId
+          },
+        },
+      );
+
+      console.log(response.data.playerstats.achievements)
+
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  async getAchievementsForGame(game:Game) {
+    try {
+      const response = await axios.get(
+        "https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002",
+        {
+          params: {
+            steamid: this.steamid,
+            key: this.apiKey,
+            appid:game.externalId
+          },
+        },
+      );
+
+      console.log(response.data.game.availableGameStats)
+
     } catch (error) {
       console.log(error);
       return [];

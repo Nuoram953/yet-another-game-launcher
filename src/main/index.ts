@@ -65,7 +65,6 @@ class MainWindowManager {
 
       prisma = new PrismaClient();
 
-
       app.on("activate", async () => {
         if (BrowserWindow.getAllWindows().length === 0) {
           await this.createWindow();
@@ -97,7 +96,13 @@ class MainWindowManager {
           responseHeaders: {
             ...details.responseHeaders,
             "Content-Security-Policy": [
-              "default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' 'http://0.0.0.0:3000'; connect-src 'self' 'http://0.0.0.0:3000'; media-src 'self' file: data:;",
+              "default-src 'self' 'unsafe-inline' 'unsafe-eval';" +
+              "frame-src 'self' https: http:;" +  // Allows iframe content from HTTPS and HTTP
+              "img-src 'self' http: file: data: blob: 'unsafe-inline';" +
+              "media-src 'self' http: file: data: blob: 'unsafe-inline';" +
+              "connect-src 'self' https: wss:;" +
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
+              "style-src 'self' 'unsafe-inline';"
             ],
           },
         });
@@ -114,10 +119,11 @@ class MainWindowManager {
         webPreferences: {
           preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
           webSecurity: false,
+          webviewTag:true
         },
       });
 
-      this.mainWindow.setMenuBarVisibility(false)
+      this.mainWindow.setMenuBarVisibility(false);
 
       await this.setupCSP(this.mainWindow.webContents.session);
 
@@ -128,13 +134,12 @@ class MainWindowManager {
       });
 
       this.mainWindow.on("blur", () => {
-        this.mainWindow?.webContents.send("app-blur")
+        this.mainWindow?.webContents.send("app-blur");
       });
 
       this.mainWindow.on("focus", () => {
-        this.mainWindow?.webContents.send("app-focus")
+        this.mainWindow?.webContents.send("app-focus");
       });
-
     } catch (error) {
       console.error("Failed to create window:", error);
       throw error;

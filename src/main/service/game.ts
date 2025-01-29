@@ -7,6 +7,7 @@ import { getMinutesBetween } from "../utils/utils";
 import { createGameActiviy } from "../dal/gameActiviy";
 import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
+import Steam from "../api/storefront/steam";
 
 export const createOrUpdateGame = async (
   data: Partial<Game>,
@@ -24,10 +25,19 @@ export const createOrUpdateGame = async (
     await sgdb.downloadAllImageType(3, 3);
   }
 
+  switch(store){
+    case Storefront.STEAM:{
+      const storeSteam = new Steam()
+      await storeSteam.getAchievementsForGame(game)
+      await storeSteam.getAchievementsForGame(game)
+    }
+  }
+
   mainApp.sendToRenderer("add-new-game", {
     ...game,
   });
 };
+
 export const preLaunch = async (game: Game) => {
   log.info(`Starting game ${game.id}`);
 

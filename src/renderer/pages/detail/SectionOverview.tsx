@@ -9,7 +9,7 @@ export const SectionOverview = () => {
   const { selectedGame } = useGames();
 
   return (
-    <div className="space-y-6 animate-fadeIn min-h-[1500px]">
+    <div className="space-y-6 animate-fadeIn min-h-[2000px]">
       <StatsPanel />
       <Trailer />
 
@@ -48,7 +48,7 @@ export const SectionOverview = () => {
       </div>
 
       <div className="bg-gray-800 flex-grow flex-1 rounded-lg p-4">
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-evenly">
           <ScoreCircle score={selectedGame.scoreCritic} label="Critic" />
           <ScoreCircle score={selectedGame.scoreCommunity} label="Community" />
           <ScoreCircle score={selectedGame.scoreUser} label="User" />

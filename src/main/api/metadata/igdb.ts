@@ -69,7 +69,7 @@ class Igdb {
 
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
-      `fields *, platforms.*, genres.*, themes.*;  where id=${id};`,
+      `fields *, platforms.*, genres.*, themes.*, game_engines.*, game_modes.*, player_perspectives.*;  where id=${id};`,
       {
         headers: {
           Authorization: `Bearer ${await this.getToken()}`,
@@ -89,16 +89,31 @@ class Igdb {
       .filter((company) => company.developer)
       .map((item) => item.company.name);
 
-    const themes = response.data[0].themes.map((item) => item.name);
-    const genres = response.data[0].genres.map((item) => item.name);
+    const data = response.data[0];
+
+    const themes = data.themes.map((item) => item.name) || [];
+    const genres = data.genres?.map((item) => item.name) || [];
+    const gameModes = data.game_modes?.map((item) => item.name) || [];
+    const engine = data.game_engines?.map((item) => item.name) || [];
+    const playerPerspective =
+      data.player_perspectives?.map((item) => item.name) || [];
 
     const partialGameData: Partial<Game> = {
-      summary: response.data[0].storyline ?? response.data[0].summary,
-      scoreCritic: response.data[0].aggregated_rating ?? null,
-      scoreCommunity: response.data[0].rating ?? null,
+      summary: data.storyline ?? data.summary,
+      scoreCritic: data.aggregated_rating ?? null,
+      scoreCommunity: data.rating ?? null,
     };
 
-    return { publishers, developers, partialGameData, themes, genres };
+    return {
+      publishers,
+      developers,
+      partialGameData,
+      themes,
+      genres,
+      gameModes,
+      engine,
+      playerPerspective,
+    };
   }
 }
 
