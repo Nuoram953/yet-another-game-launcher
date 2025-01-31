@@ -13,7 +13,7 @@ export const SectionOverview = () => {
       <StatsPanel />
       <Trailer />
 
-      <div className="mx-auto py-4">
+      <div className="mx-auto">
         <div className="flex flex-row justify-around gap-4 w-full">
           <div
             className="bg-gray-800 flex-grow flex-1 p-4 rounded-lg transform hover:scale-105 transition-all duration-300"

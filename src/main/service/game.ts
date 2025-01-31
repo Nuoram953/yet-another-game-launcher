@@ -9,6 +9,21 @@ import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
 
+export const updateAchievements = async (game: Game) => {
+  const countAchievements = game.achievements.length;
+  const countAchievementPictures = await metadataManager.getCountAchievementPictures(game);
+
+  switch (game.storefrontId) {
+    case Storefront.STEAM: {
+      const storeSteam = new Steam();
+      if (!countAchievements || countAchievementPictures != countAchievements) {
+        await storeSteam.getAchievementsForGame(game);
+      }
+      await storeSteam.getUserAchievementsForGame(game);
+    }
+  }
+};
+
 export const createOrUpdateGame = async (
   data: Partial<Game>,
   store: Storefront,
@@ -56,12 +71,7 @@ export const postLaunch = async (game: Game) => {
     }
   }
 
-  switch(game.storefrontId){
-    case Storefront.STEAM:{
-      const storeSteam = new Steam()
-      await storeSteam.getUserAchievementsForGame(game)
-    }
-  }
+  await updateAchievements(game);
 
   mainApp.sendToRenderer("is-game-running", {
     isRunning: false,

@@ -12,6 +12,7 @@ import { delay } from "../../utils/utils";
 import queries from "../../dal/dal";
 import { metadataManager } from "../../index";
 import { IMAGE_TYPE } from "../../../common/constant";
+import _ from "lodash";
 
 class Steam {
   private steamid: string | undefined;
@@ -19,7 +20,6 @@ class Steam {
 
   constructor() {
     this.apiKey = process.env.STEAM_API_KEY;
-    this.getSteamUserData();
   }
 
   async initialize(): Promise<void> {
@@ -66,6 +66,7 @@ class Steam {
 
     const user = users[0];
     this.steamid = user[0];
+    return user[0]
   }
 
   async getOwnedGames() {
@@ -74,7 +75,7 @@ class Steam {
         "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001",
         {
           params: {
-            steamid: this.steamid,
+            steamid: await this.getSteamUserData(),
             key: this.apiKey,
             format: "json",
             include_appinfo: 1,
@@ -141,7 +142,7 @@ class Steam {
         "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001",
         {
           params: {
-            steamid: this.steamid,
+            steamid: await this.getSteamUserData(),
             key: this.apiKey,
             appid: game.externalId,
           },
@@ -171,7 +172,7 @@ class Steam {
         "https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002",
         {
           params: {
-            steamid: this.steamid,
+            steamid: await this.getSteamUserData(),
             key: this.apiKey,
             appid: game.externalId,
           },

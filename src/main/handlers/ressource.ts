@@ -130,3 +130,18 @@ ipcMain.handle("ressource:recentlyPlayedBackground", async (event, max) => {
     return "";
   }
 });
+
+ipcMain.handle("ressource:achievements", async (event, id) => {
+  try {
+    const achievements = []
+    const directory = path.join(app.getPath("userData"), id, IMAGE_TYPE.ACHIEVEMENT);
+    const files = fs.readdirSync(directory);
+    for(const file of files){
+      achievements.push(`file://${path.join(directory, file)}`)
+    }
+    return achievements;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+});

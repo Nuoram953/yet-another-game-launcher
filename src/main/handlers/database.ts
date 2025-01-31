@@ -9,6 +9,7 @@ import Igdb from "../api/metadata/igdb";
 import { igdb, mainApp } from "..";
 import { Storefront } from "../constant";
 import Steam from "../api/storefront/steam";
+import { updateAchievements } from "../service/game";
 
 ipcMain.handle("games", async (_event): Promise<Game[]> => {
   return await getAllGames();
@@ -56,13 +57,7 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
 
   await queries.Game.updateGame(game.id, partialGameData)
 
-  switch(game.storefrontId){
-    case Storefront.STEAM:{
-      const storeSteam = new Steam()
-      await storeSteam.getAchievementsForGame(game)
-      await storeSteam.getUserAchievementsForGame(game)
-    }
-  }
+  await updateAchievements(game)
 
   const updatedGame = await getGameById(id);
 

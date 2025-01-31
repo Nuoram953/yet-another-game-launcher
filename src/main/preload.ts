@@ -62,6 +62,8 @@ contextBridge.exposeInMainWorld("ressource", {
     ipcRenderer.invoke("ressource:singleTrailer", appid),
   getSingleCover: (appid: number) =>
     ipcRenderer.invoke("ressource:singleCover", appid),
+  getAchievements: (appid: number) =>
+    ipcRenderer.invoke("ressource:achievements", appid),
 });
 
 contextBridge.exposeInMainWorld("notifications", {

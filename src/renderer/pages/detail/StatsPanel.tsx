@@ -10,8 +10,6 @@ export const StatsPanel = () => {
   const { selectedGame } = useGames();
   const { t } = useTranslation("GameStatus");
 
-  console.log(selectedGame);
-
   const now = Date.now();
   const sevenDaysAgo = BigInt(now - 7 * 24 * 60 * 60 * 1000);
 
@@ -41,8 +39,6 @@ export const StatsPanel = () => {
       const lastPlayedDate = new Date(endedAt);
       detail = `Last played on ${lastPlayedDate.toLocaleDateString()}`;
     }
-
-    console.log(detail);
   } else {
     console.log("No sessions found");
   }
@@ -61,7 +57,7 @@ export const StatsPanel = () => {
             icon={Trophy}
             label="Achievements"
             value={`${selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length}/${selectedGame.achievements.length}`}
-            detail={`${((selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length / selectedGame.achievements.length)*100).toFixed(0)}% Complete`}
+            detail={`${((selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length / selectedGame.achievements.length) * 100).toFixed(0)}% Complete`}
             hide={selectedGame.achievements.length === 0}
           />
           <StatsPanelCard

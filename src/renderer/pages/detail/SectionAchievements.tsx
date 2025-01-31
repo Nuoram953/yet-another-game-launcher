@@ -2,17 +2,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGames } from "@/context/DatabaseContext";
 import { Trophy } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Tile } from "./Tile";
 
 export const SectionAchievements = () => {
-  const [metadata, setMetadata] = useState<string>("");
+  const [achievementLogos, setAchievementLogos] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { selectedGame } = useGames();
 
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const ressources = await window.ressource.getAll(selectedGame.id);
+        const ressources = await window.ressource.getAchievements(selectedGame.id);
         console.log(ressources);
+        setAchievementLogos(ressources)
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);
@@ -53,25 +55,7 @@ export const SectionAchievements = () => {
     },
   ];
 
-  const allAchievements = [
-    ...recentAchievements,
-    {
-      id: 4,
-      name: "First Steps",
-      description: "Complete the tutorial",
-      unlockedAt: "2024-01-01",
-      rarity: "Common",
-    },
-    {
-      id: 5,
-      name: "Warrior",
-      description: "Win 50 battles",
-      unlockedAt: "2024-01-15",
-      rarity: "Uncommon",
-    },
-  ];
-
-  const getRarityColor = (rarity) => {
+  const getRarityColor = (rarity:string) => {
     switch (rarity.toLowerCase()) {
       case "common":
         return "text-gray-500";
@@ -91,19 +75,17 @@ export const SectionAchievements = () => {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 p-4">
-      {/* Progress Graph */}
-      <Card>
+    <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
+      <Tile>
         <CardHeader>
           <CardTitle>Achievement Progress</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-64">chart</div>
         </CardContent>
-      </Card>
+      </Tile>
 
-      {/* Recently Unlocked */}
-      <Card>
+      <Tile>
         <CardHeader>
           <CardTitle>Recently Unlocked</CardTitle>
         </CardHeader>
@@ -135,10 +117,9 @@ export const SectionAchievements = () => {
             ))}
           </div>
         </CardContent>
-      </Card>
+      </Tile>
 
-      {/* All Achievements */}
-      <Card>
+      <Tile>
         <CardHeader>
           <CardTitle>All Achievements</CardTitle>
         </CardHeader>
@@ -147,22 +128,27 @@ export const SectionAchievements = () => {
             {selectedGame.achievements.map((achievement) => (
               <div
                 key={achievement.id}
-                className="flex items-center space-x-4 border-b p-4 last:border-b-0"
+                className="flex items-center space-x-4 border-b border-gray-700 p-4 last:border-b-0"
               >
-                <Trophy className="h-5 w-5 text-gray-400" />
+                <img
+                  src={achievementLogos.find(logo=> logo.includes(achievement.externalId))}
+                  alt={`game name logo`}
+                  className="h-20 w-20 object-contain transform hover:scale-105 transition-transform duration-300"
+                />
                 <div className="flex-grow">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium">{achievement.name}</h3>
+                    <h3 className="font-bold text-xl">{achievement.name}</h3>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-300">
                     {achievement.description}
                   </p>
                 </div>
+                <br />
               </div>
             ))}
           </div>
         </CardContent>
-      </Card>
+      </Tile>
     </div>
   );
 };
