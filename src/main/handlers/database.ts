@@ -7,6 +7,8 @@ import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
 import Igdb from "../api/metadata/igdb";
 import { igdb, mainApp } from "..";
+import { Storefront } from "../constant";
+import Steam from "../api/storefront/steam";
 
 ipcMain.handle("games", async (_event): Promise<Game[]> => {
   return await getAllGames();
@@ -53,6 +55,14 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
   }
 
   await queries.Game.updateGame(game.id, partialGameData)
+
+  switch(game.storefrontId){
+    case Storefront.STEAM:{
+      const storeSteam = new Steam()
+      await storeSteam.getAchievementsForGame(game)
+      await storeSteam.getUserAchievementsForGame(game)
+    }
+  }
 
   const updatedGame = await getGameById(id);
 

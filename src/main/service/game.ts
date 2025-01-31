@@ -25,13 +25,6 @@ export const createOrUpdateGame = async (
     await sgdb.downloadAllImageType(3, 3);
   }
 
-  switch(store){
-    case Storefront.STEAM:{
-      const storeSteam = new Steam()
-      await storeSteam.getAchievementsForGame(game)
-      await storeSteam.getAchievementsForGame(game)
-    }
-  }
 
   mainApp.sendToRenderer("add-new-game", {
     ...game,

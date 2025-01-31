@@ -4,11 +4,12 @@ import path from "path";
 import fs from "fs";
 import vdf from "vdf";
 import { Storefront } from "../../constant";
-import { Game } from "@prisma/client";
+import { Game, GameAchievement } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
 import * as GameQueries from "../../dal/game";
 import acfParser from "steam-acf2json";
 import { delay } from "../../utils/utils";
+import queries from "../../dal/dal"
 
 class Steam {
   private steamid: string | undefined;
@@ -16,6 +17,7 @@ class Steam {
 
   constructor() {
     this.apiKey = process.env.STEAM_API_KEY;
+    this.getSteamUserData()
   }
 
   async initialize(): Promise<void> {
@@ -144,7 +146,16 @@ async getUserAchievementsForGame(game:Game) {
         },
       );
 
-      console.log(response.data.playerstats.achievements)
+      const achievements = response.data.playerstats.achievements
+      for(const achievement of achievements){
+        if(achievement.achieved==1){
+          const data:Partial<GameAchievement> = {
+            isUnlocked: achievement.achieved == 1,
+            externalId : achievement.apiname
+          }
+          await queries.GameAchievements.setAchievementUnlocked(game.id, data)
+        }
+      }
 
     } catch (error) {
       console.log(error);
@@ -165,7 +176,19 @@ async getUserAchievementsForGame(game:Game) {
         },
       );
 
-      console.log(response.data.game.availableGameStats)
+      const achievements = response.data.game.availableGameStats.achievements
+
+      for(const achievement of achievements){
+        console.log(achievement)
+        const data:Partial<GameAchievement> = {
+          description: achievement.description,
+          externalId: achievement.name,
+          isHidden: achievement.hidden == 1,
+          name: achievement.displayName,
+        }
+        await queries.GameAchievements.findOrCreate(game.id, data)
+      }
+
 
     } catch (error) {
       console.log(error);

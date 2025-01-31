@@ -4,6 +4,7 @@ import * as GameDeveloper from "./gameDeveloper"
 import * as GamePublisher from "./gamePublisher"
 import * as Tag from "./tag"
 import * as GameTag from "./gameTag"
+import * as GameAchievements from "./achievement"
 
 
 export default {
@@ -12,5 +13,6 @@ export default {
   GameDeveloper,
   GamePublisher,
   Tag,
-  GameTag
+  GameTag,
+  GameAchievements
 }

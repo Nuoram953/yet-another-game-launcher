@@ -18,8 +18,9 @@ export const StatsPanel = () => {
   const last7DaysSessions = selectedGame.activities.filter(
     (session) => session.startedAt >= sevenDaysAgo,
   );
-    let detail = "Not played recently";
-  const lastSession = selectedGame.activities[selectedGame.activities.length - 1];
+  let detail = "Not played recently";
+  const lastSession =
+    selectedGame.activities[selectedGame.activities.length - 1];
 
   if (lastSession) {
     const now = Date.now();
@@ -48,8 +49,8 @@ export const StatsPanel = () => {
 
   return (
     <div className="bg-gray-850 border-b border-gray-700">
-      <div className=" mx-auto py-4">
-        <div className="flex flex-row justify-around gap-4 w-full">
+      <div className="mx-auto py-4">
+        <div className="flex w-full flex-row justify-around gap-4">
           <StatsPanelCard
             icon={Clock}
             label="Time Played"
@@ -59,7 +60,7 @@ export const StatsPanel = () => {
           <StatsPanelCard
             icon={Trophy}
             label="Achievements"
-            value={`3/15`}
+            value={`${selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length}/${selectedGame.achievements.length}`}
             detail={`33% Complete`}
             hide={selectedGame.achievements.length === 0}
           />

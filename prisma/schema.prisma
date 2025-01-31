@@ -125,14 +125,18 @@ model GamePublisher {
 }
 
 model GameAchievement {
-  id         String  @id @default(uuid())
-  gameId     String
-  game       Game    @relation(fields: [gameId], references: [id])
-  name       String
-  isHidden   Boolean @default(false)
-  isUnlocked Boolean @default(false)
-  unlockedAt BigInt
+  id          String  @id @default(uuid())
+  gameId      String
+  game        Game    @relation(fields: [gameId], references: [id])
+  externalId  String
+  name        String
+  description String?
+  rarity      Int?
+  isHidden    Boolean @default(false)
+  isUnlocked  Boolean @default(false)
+  unlockedAt  BigInt?
 
+  @@unique([gameId, externalId])
   @@index([gameId])
 }
 
