@@ -13,9 +13,7 @@ class MetadataManager {
     this.userPath = app.getPath("userData");
   }
 
-  async downloadMissingImages(game:Game){
-
-  }
+  async downloadMissingImages(game: Game) {}
 
   async getImageDirectoryPath(type: IMAGE_TYPE, game: Game) {
     return `${this.userPath}/${game.id}/${type}`;
@@ -25,43 +23,51 @@ class MetadataManager {
     const folderPath = await this.getImageDirectoryPath(type, game);
 
     if (!fs.existsSync(folderPath)) {
-      fs.mkdirSync(folderPath, {recursive:true});
+      fs.mkdirSync(folderPath, { recursive: true });
       log.info(`Created directory ${folderPath}`);
     }
 
-    return folderPath
+    return folderPath;
   }
 
-  async getNumberOfFiles(path:string){
+  async getNumberOfFiles(path: string) {
     if (!fs.existsSync(path)) {
-      return 0
+      return 0;
     }
 
-    const items = fs.readdirSync(path)
+    const items = fs.readdirSync(path);
 
-    if(_.isNil(items)){
-      return 0
+    if (_.isNil(items)) {
+      return 0;
     }
-    return items.length
+    return items.length;
   }
 
   async downloadImage(
     type: IMAGE_TYPE,
     game: Game,
     url: string,
-    extension:string
+    extension: string,
+    customName?: string,
   ): Promise<void> {
     try {
+
+      const folderPath = await this.getOrCreateImageDirectory(type, game);
+      const countFiles = await this.getNumberOfFiles(folderPath);
+      const fileName = !_.isNil(customName)
+        ? `/${customName}.${extension}`
+        : `/${type}_${countFiles + 1}.${extension}`;
+
+      const destination = folderPath + fileName;
+      if(fs.existsSync(destination)){
+        return
+      }
+
       const response = await axios.get<Buffer>(url, {
         responseType: "arraybuffer",
       });
-
-      const folderPath = await this.getOrCreateImageDirectory(type, game)
-      const countFiles = await this.getNumberOfFiles(folderPath)
-      const fileName = `/${type}_${countFiles+1}.${extension}`
-      const destination = folderPath+fileName
       fs.writeFileSync(destination, response.data);
-      log.info(`Image saved to ${destination}`)
+      log.info(`Image saved to ${destination}`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error(`Axios error: ${error.message}`);
@@ -72,4 +78,4 @@ class MetadataManager {
   }
 }
 
-export default MetadataManager
+export default MetadataManager;

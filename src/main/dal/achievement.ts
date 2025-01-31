@@ -30,7 +30,7 @@ export async function setAchievementUnlocked(
   await prisma.gameAchievement.update({
     data: {
       isUnlocked: achievement.isUnlocked,
-      unlockedAt: new Date().getTime(),
+      unlockedAt: achievement.unlockedAt,
     },
     where: {
       gameId_externalId: {

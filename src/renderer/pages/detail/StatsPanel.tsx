@@ -61,7 +61,7 @@ export const StatsPanel = () => {
             icon={Trophy}
             label="Achievements"
             value={`${selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length}/${selectedGame.achievements.length}`}
-            detail={`33% Complete`}
+            detail={`${((selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length / selectedGame.achievements.length)*100).toFixed(0)}% Complete`}
             hide={selectedGame.achievements.length === 0}
           />
           <StatsPanelCard

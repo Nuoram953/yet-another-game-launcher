@@ -1,5 +1,5 @@
 import { Game } from "@prisma/client";
-import queries from "../dal/dal"
+import queries from "../dal/dal";
 import { Storefront } from "../constant";
 import { mainApp, metadataManager } from "..";
 import { monitorDirectoryProcesses } from "../utils/tracking";
@@ -24,7 +24,6 @@ export const createOrUpdateGame = async (
     await sgdb.getGameIdByExternalId("steam");
     await sgdb.downloadAllImageType(3, 3);
   }
-
 
   mainApp.sendToRenderer("add-new-game", {
     ...game,
@@ -57,17 +56,20 @@ export const postLaunch = async (game: Game) => {
     }
   }
 
+  switch(game.storefrontId){
+    case Storefront.STEAM:{
+      const storeSteam = new Steam()
+      await storeSteam.getUserAchievementsForGame(game)
+    }
+  }
+
   mainApp.sendToRenderer("is-game-running", {
     isRunning: false,
   });
 
-  mainApp.sendToRenderer("request:games", {});
-
   mainApp.sendToRenderer("request:game", {
-    ...await queries.Game.getGameById(game.id)
+    ...(await queries.Game.getGameById(game.id)),
   });
-
-
 };
 
 export const downloadAchievements = () => {};

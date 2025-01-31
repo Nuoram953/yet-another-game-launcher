@@ -21,6 +21,7 @@ import { useGames } from "@/context/DatabaseContext";
 import { SectionMetadata } from "./SectionMetadata";
 import { ButtonPlay } from "@/components/button/Play";
 import { SectionOverview } from "./SectionOverview";
+import { SectionAchievements } from "./SectionAchievements";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -89,6 +90,8 @@ const GameDetailsContent = () => {
         return <SectionOverview />;
       case "metadata":
         return <SectionMetadata />;
+      case "achievements":
+        return <SectionAchievements/>;
       default:
         return (
           <div className="animate-fadeIn rounded-lg bg-gray-800 p-6">

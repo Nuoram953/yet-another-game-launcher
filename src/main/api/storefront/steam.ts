@@ -9,7 +9,9 @@ import { createOrUpdateGame } from "../../service/game";
 import * as GameQueries from "../../dal/game";
 import acfParser from "steam-acf2json";
 import { delay } from "../../utils/utils";
-import queries from "../../dal/dal"
+import queries from "../../dal/dal";
+import { metadataManager } from "../../index";
+import { IMAGE_TYPE } from "../../../common/constant";
 
 class Steam {
   private steamid: string | undefined;
@@ -17,7 +19,7 @@ class Steam {
 
   constructor() {
     this.apiKey = process.env.STEAM_API_KEY;
-    this.getSteamUserData()
+    this.getSteamUserData();
   }
 
   async initialize(): Promise<void> {
@@ -45,7 +47,7 @@ class Steam {
 
       await createOrUpdateGame(data, Storefront.STEAM);
 
-      await delay(2000)
+      await delay(2000);
     }
   }
 
@@ -133,7 +135,7 @@ class Steam {
       return [];
     }
   }
-async getUserAchievementsForGame(game:Game) {
+  async getUserAchievementsForGame(game: Game) {
     try {
       const response = await axios.get(
         "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001",
@@ -141,29 +143,29 @@ async getUserAchievementsForGame(game:Game) {
           params: {
             steamid: this.steamid,
             key: this.apiKey,
-            appid:game.externalId
+            appid: game.externalId,
           },
         },
       );
 
-      const achievements = response.data.playerstats.achievements
-      for(const achievement of achievements){
-        if(achievement.achieved==1){
-          const data:Partial<GameAchievement> = {
+      const achievements = response.data.playerstats.achievements;
+      for (const achievement of achievements) {
+        if (achievement.achieved == 1) {
+          const data: Partial<GameAchievement> = {
             isUnlocked: achievement.achieved == 1,
-            externalId : achievement.apiname
-          }
-          await queries.GameAchievements.setAchievementUnlocked(game.id, data)
+            unlockedAt: achievement.unlocktime,
+            externalId: achievement.apiname,
+          };
+          await queries.GameAchievements.setAchievementUnlocked(game.id, data);
         }
       }
-
     } catch (error) {
       console.log(error);
       return [];
     }
   }
 
-  async getAchievementsForGame(game:Game) {
+  async getAchievementsForGame(game: Game) {
     try {
       const response = await axios.get(
         "https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002",
@@ -171,25 +173,29 @@ async getUserAchievementsForGame(game:Game) {
           params: {
             steamid: this.steamid,
             key: this.apiKey,
-            appid:game.externalId
+            appid: game.externalId,
           },
         },
       );
 
-      const achievements = response.data.game.availableGameStats.achievements
+      const achievements = response.data.game.availableGameStats.achievements;
 
-      for(const achievement of achievements){
-        console.log(achievement)
-        const data:Partial<GameAchievement> = {
+      for (const achievement of achievements) {
+        const data: Partial<GameAchievement> = {
           description: achievement.description,
           externalId: achievement.name,
           isHidden: achievement.hidden == 1,
           name: achievement.displayName,
-        }
-        await queries.GameAchievements.findOrCreate(game.id, data)
+        };
+        await queries.GameAchievements.findOrCreate(game.id, data);
+        await metadataManager.downloadImage(
+          IMAGE_TYPE.ACHIEVEMENT,
+          game,
+          achievement.icon,
+          "jpg",
+          achievement.name,
+        );
       }
-
-
     } catch (error) {
       console.log(error);
       return [];

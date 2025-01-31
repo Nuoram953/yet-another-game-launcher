@@ -3,5 +3,6 @@ export enum IMAGE_TYPE {
   BACKGROUND = "background",
   LOGO = "logo",
   ICON= "icon",
-  TRAILER = "trailer"
+  TRAILER = "trailer",
+  ACHIEVEMENT = "achievement"
 }
