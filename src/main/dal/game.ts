@@ -5,6 +5,18 @@ import log from "electron-log/main";
 import { IMAGE_TYPE } from "../../common/constant";
 import { Game, Prisma } from "@prisma/client";
 
+export type GameWithRelations = Prisma.GameGetPayload<{
+  include: {
+    gameStatus: true;
+    storefront: true;
+    achievements: true;
+    activities: true;
+    developers: { include: { company: true } };
+    publishers: { include: { company: true } };
+    tags: { include: { tag: true } };
+  };
+}>;
+
 export async function updateGame(id: string, newData: Partial<Game>) {
   return await prisma.game.update({
     where: { id },
@@ -24,53 +36,17 @@ export async function getAllGames(limit?: number) {
   return await prisma.game.findMany(where);
 }
 
-export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
-  include: {
-    gameStatus: true;
-    storefront: true;
-    achievements: true;
-    activities: true;
-    developers: {
-      include: {
-        company: true;
-      };
-    };
-    publishers: {
-      include: {
-        company: true;
-      };
-    };
-    tags: {
-      include: {
-        tag: true;
-      };
-    };
-  };
-}> | null> {
-  return await prisma.game.findFirst({
-    where: {
-      id,
-    },
+export async function getGameById(id: string) {
+  return prisma.game.findFirst({
+    where: { id },
     include: {
       gameStatus: true,
       storefront: true,
       achievements: true,
       activities: true,
-      developers: {
-        include: {
-          company: true,
-        },
-      },
-      publishers: {
-        include: {
-          company: true,
-        },
-      },
-      tags: {
-        include: {
-          tag: true,
-        },
-      },
+      developers: { include: { company: true } },
+      publishers: { include: { company: true } },
+      tags: { include: { tag: true } },
     },
   });
 }
@@ -78,7 +54,7 @@ export async function getGameById(id: string): Promise<Prisma.GameGetPayload<{
 export async function getGameByExtenalIdAndStorefront(
   externalId: number,
   storefront: Storefront,
-) {
+):Promise<GameWithRelations | null> {
   return await prisma.game.findFirst({
     where: {
       externalId,
@@ -87,6 +63,11 @@ export async function getGameByExtenalIdAndStorefront(
     include: {
       gameStatus: true,
       storefront: true,
+      achievements: true,
+      activities: true,
+      developers: { include: { company: true } },
+      publishers: { include: { company: true } },
+      tags: { include: { tag: true } },
     },
   });
 }

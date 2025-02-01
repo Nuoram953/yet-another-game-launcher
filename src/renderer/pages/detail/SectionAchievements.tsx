@@ -1,20 +1,55 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGames } from "@/context/DatabaseContext";
-import { Trophy } from "lucide-react";
+import { CheckCircle, EyeOff, Lock, Trophy } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Tile } from "./Tile";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+} from "chart.js";
+import { unixToDate } from "@/utils/util";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+);
 export const SectionAchievements = () => {
   const [achievementLogos, setAchievementLogos] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [hideUnlocked, setHideUnlocked] = useState(false);
+  const [hideHidden, setHideHidden] = useState(false);
+  const [sortBy, setSortBy] = useState("name");
   const { selectedGame } = useGames();
 
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const ressources = await window.ressource.getAchievements(selectedGame.id);
-        console.log(ressources);
-        setAchievementLogos(ressources)
+        const ressources = await window.ressource.getAchievements(
+          selectedGame.id,
+        );
+        setAchievementLogos(ressources);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);
@@ -23,56 +58,40 @@ export const SectionAchievements = () => {
 
     fetchBackgroundPicture();
   }, []);
-  const graphData = [
-    { date: "2024-01-01", total: 5 },
-    { date: "2024-01-15", total: 8 },
-    { date: "2024-01-30", total: 12 },
-    { date: "2024-02-15", total: 15 },
-    { date: "2024-02-28", total: 20 },
-  ];
 
-  const recentAchievements = [
-    {
-      id: 1,
-      name: "Master Explorer",
-      description: "Discover all secret areas",
-      unlockedAt: "2024-02-28",
-      rarity: "Rare",
-    },
-    {
-      id: 2,
-      name: "Speed Demon",
-      description: "Complete level 10 under 2 minutes",
-      unlockedAt: "2024-02-25",
-      rarity: "Epic",
-    },
-    {
-      id: 3,
-      name: "Collector",
-      description: "Find 100 hidden items",
-      unlockedAt: "2024-02-20",
-      rarity: "Common",
-    },
-  ];
-
-  const getRarityColor = (rarity:string) => {
-    switch (rarity.toLowerCase()) {
-      case "common":
-        return "text-gray-500";
-      case "uncommon":
-        return "text-green-500";
-      case "rare":
-        return "text-blue-500";
-      case "epic":
-        return "text-purple-500";
+  const sortAchievements = (a, b) => {
+    switch (sortBy) {
+      case "name":
+        return a.name.localeCompare(b.name);
+      case "date":
+        return b.unlocked - a.unlocked;
       default:
-        return "text-gray-500";
+        return 0;
     }
   };
 
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const totalAchievements = selectedGame.achievements.length;
+  const unlockedAchievements = selectedGame.achievements.filter(
+    (a) => a.isUnlocked,
+  ).length;
+  const completionPercentage = (unlockedAchievements / totalAchievements) * 100;
+
+  const filteredAchievements = selectedGame.achievements
+    .filter((achievement) => {
+      if (hideUnlocked && achievement.isUnlocked) return false;
+      if (hideHidden && achievement.isHidden) return false;
+      return true;
+    })
+    .sort(sortAchievements);
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false, // This ensures it fills the container
+  };
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
@@ -81,71 +100,112 @@ export const SectionAchievements = () => {
           <CardTitle>Achievement Progress</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-64">chart</div>
+          <Line
+            options={options}
+            datasetIdKey="id"
+            data={{
+              labels: ["Jun", "Jul", "Aug"],
+              datasets: [
+                {
+                  id: 1,
+                  label: "",
+                  data: [5, 6, 7],
+                  borderColor: "blue",
+                  backgroundColor: "white",
+                },
+              ],
+            }}
+          />
         </CardContent>
       </Tile>
 
       <Tile>
         <CardHeader>
-          <CardTitle>Recently Unlocked</CardTitle>
-        </CardHeader>
-        <CardContent>
           <div className="space-y-4">
-            {recentAchievements.map((achievement) => (
-              <div
-                key={achievement.id}
-                className="flex items-start space-x-4 rounded-lg bg-gray-50 p-4"
-              >
-                <Trophy className="h-6 w-6 text-yellow-500" />
-                <div>
-                  <h3 className="font-semibold">
-                    {achievement.name}
-                    <span
-                      className={`ml-2 text-sm ${getRarityColor(achievement.rarity)}`}
-                    >
-                      {achievement.rarity}
-                    </span>
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {achievement.description}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Unlocked: {achievement.unlockedAt}
-                  </p>
-                </div>
+            <div className="flex items-center justify-between">
+              <CardTitle>All Achievements</CardTitle>
+              <div className="flex items-center gap-4 text-sm">
+                <label className="flex cursor-pointer items-center gap-2">
+                  <Checkbox
+                    checked={hideUnlocked}
+                    onCheckedChange={setHideUnlocked}
+                  />
+                  <span className="flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    Hide Unlocked
+                  </span>
+                </label>
+                <label className="flex cursor-pointer items-center gap-2">
+                  <Checkbox
+                    checked={hideHidden}
+                    onCheckedChange={setHideHidden}
+                  />
+                  <span className="flex items-center gap-1">
+                    <EyeOff className="h-4 w-4" />
+                    Hide Hidden
+                  </span>
+                </label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Sort by..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="name">Sort by Name</SelectItem>
+                    <SelectItem value="date">Sort by Date</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Tile>
+            </div>
 
-      <Tile>
-        <CardHeader>
-          <CardTitle>All Achievements</CardTitle>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Overall Progress</span>
+                <span className="font-medium text-gray-700">
+                  {unlockedAchievements} of {totalAchievements} (
+                  {completionPercentage.toFixed(1)}%)
+                </span>
+              </div>
+              <Progress value={completionPercentage} className="h-2" />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            {selectedGame.achievements.map((achievement) => (
-              <div
-                key={achievement.id}
-                className="flex items-center space-x-4 border-b border-gray-700 p-4 last:border-b-0"
-              >
-                <img
-                  src={achievementLogos.find(logo=> logo.includes(achievement.externalId))}
-                  alt={`game name logo`}
-                  className="h-20 w-20 object-contain transform hover:scale-105 transition-transform duration-300"
-                />
-                <div className="flex-grow">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-xl">{achievement.name}</h3>
+            {filteredAchievements
+              .map((achievement) => (
+                <div
+                  key={`all-${achievement.id}`}
+                  className="flex items-center space-x-4 border-b border-gray-700 p-4 last:border-b-0"
+                >
+                  {achievement.isUnlocked ? (
+                    <img
+                      src={achievementLogos.find((logo) =>
+                        logo.includes(achievement.externalId),
+                      )}
+                      alt={`game name logo`}
+                      className="h-20 w-20 transform rounded-sm object-contain transition-transform duration-300 hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-20 w-20 items-center justify-center rounded-sm bg-gray-600">
+                      <Lock />
+                    </div>
+                  )}
+                  <div className="flex-grow">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-bold">{achievement.name}</h3>
+                    </div>
+                    <p className="text-sm text-gray-300">
+                      {achievement.description}
+                    </p>
+                    {achievement.isUnlocked && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        Unlocked: {unixToDate(achievement.unlockedAt)}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-sm text-gray-300">
-                    {achievement.description}
-                  </p>
+                  <br />
                 </div>
-                <br />
-              </div>
-            ))}
+              ))}
           </div>
         </CardContent>
       </Tile>

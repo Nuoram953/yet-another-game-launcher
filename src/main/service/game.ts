@@ -8,8 +8,9 @@ import { createGameActiviy } from "../dal/gameActiviy";
 import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
+import { GameWithRelations } from "../dal/game";
 
-export const updateAchievements = async (game: Game) => {
+export const updateAchievements = async (game: GameWithRelations) => {
   const countAchievements = game.achievements.length;
   const countAchievementPictures = await metadataManager.getCountAchievementPictures(game);
 
@@ -54,7 +55,7 @@ export const preLaunch = async (game: Game) => {
   });
 };
 
-export const postLaunch = async (game: Game) => {
+export const postLaunch = async (game: GameWithRelations) => {
   const { startTime, endTime } = await monitorDirectoryProcesses(
     game?.location!,
   );
