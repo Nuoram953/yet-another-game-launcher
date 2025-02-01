@@ -8,3 +8,4 @@ ipcMain.handle("statusAndCount", async (_event): Promise<GameStatus[]> => {
   return await GameStatusQueries.getStatusAndCount()
 });
 
+

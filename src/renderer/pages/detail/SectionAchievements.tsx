@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { GameAchievement } from "@prisma/client";
 
 ChartJS.register(
   CategoryScale,
@@ -40,7 +41,7 @@ export const SectionAchievements = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [hideUnlocked, setHideUnlocked] = useState(false);
   const [hideHidden, setHideHidden] = useState(false);
-  const [sortBy, setSortBy] = useState("name");
+  const [sortBy, setSortBy] = useState("date");
   const { selectedGame } = useGames();
 
   useEffect(() => {
@@ -59,12 +60,15 @@ export const SectionAchievements = () => {
     fetchBackgroundPicture();
   }, []);
 
-  const sortAchievements = (a, b) => {
+  const sortAchievements = (a:GameAchievement, b:GameAchievement) => {
     switch (sortBy) {
       case "name":
         return a.name.localeCompare(b.name);
       case "date":
-        return b.unlocked - a.unlocked;
+        if (a.isUnlocked && b.isUnlocked) {
+          return new Date(Number(b.unlockedAt)) - new Date(Number(a.unlockedAt));
+        }
+        return b.isUnlocked - a.isUnlocked;
       default:
         return 0;
     }
@@ -159,13 +163,13 @@ export const SectionAchievements = () => {
 
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Overall Progress</span>
-                <span className="font-medium text-gray-700">
+                <span className="text-gray-300">Overall Progress</span>
+                <span className="font-medium text-gray-300">
                   {unlockedAchievements} of {totalAchievements} (
-                  {completionPercentage.toFixed(1)}%)
+                  {completionPercentage.toFixed(0)}%)
                 </span>
               </div>
-              <Progress value={completionPercentage} className="h-2" />
+              <Progress value={completionPercentage} className="h-8" />
             </div>
           </div>
         </CardHeader>

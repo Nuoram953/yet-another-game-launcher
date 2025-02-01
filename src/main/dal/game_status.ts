@@ -5,13 +5,13 @@ export async function getStatusAndCount() {
   const countPerStatus = await GameQueries.getCountByStatus();
   const statuses = await getAllStatus();
 
-  const result = countPerStatus.map((status) => {
-    const matchedStatus = statuses.find((gs) => gs.id === status.gameStatusId);
+  const result = statuses.map((status) => {
+    const matchedStatus = countPerStatus.find((gs) => gs.gameStatusId === status.id);
 
     return {
-      id: status.gameStatusId,
-      count: status._count.gameStatusId,
-      name: matchedStatus ? matchedStatus.name : null,
+      id: status.id,
+      count: matchedStatus?._count.gameStatusId,
+      name: status.name,
     };
   });
 

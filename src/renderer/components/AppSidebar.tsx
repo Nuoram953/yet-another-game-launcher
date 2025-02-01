@@ -26,6 +26,7 @@ import { NavStatus } from "./sidebar/nav-status";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGames } from "@/context/DatabaseContext";
 
 const data = {
   user: {
@@ -84,6 +85,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation("GameStatus");
   const navigate = useNavigate()
+  const {games} = useGames()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,7 +103,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     };
 
     fetchData();
-  }, [data]);
+  }, [games]);
 
   return (
     <Sidebar {...props}>

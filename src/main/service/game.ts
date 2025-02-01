@@ -9,10 +9,12 @@ import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
 import { GameWithRelations } from "../dal/game";
+import _ from "lodash";
 
 export const updateAchievements = async (game: GameWithRelations) => {
   const countAchievements = game.achievements.length;
-  const countAchievementPictures = await metadataManager.getCountAchievementPictures(game);
+  const countAchievementPictures =
+    await metadataManager.getCountAchievementPictures(game);
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
@@ -78,9 +80,17 @@ export const postLaunch = async (game: GameWithRelations) => {
     isRunning: false,
   });
 
-  mainApp.sendToRenderer("request:game", {
-    ...(await queries.Game.getGameById(game.id)),
-  });
+  await refreshLibrary(game.id)
 };
 
 export const downloadAchievements = () => {};
+
+export const refreshLibrary = async (gameId?:string) => {
+  if (!_.isUndefined(gameId)) {
+    mainApp.sendToRenderer("request:game", {
+      ...(await queries.Game.getGameById(gameId)),
+    });
+  }
+
+  mainApp.sendToRenderer("request:games", {});
+};

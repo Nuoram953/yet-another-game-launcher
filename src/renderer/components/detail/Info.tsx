@@ -3,6 +3,7 @@ import { Badge } from "../ui/badge";
 import { ImageWithFallback } from "../cover/cover";
 import { useGames } from "@/context/DatabaseContext";
 import { Dna, Eye, Gamepad2, Palette } from "lucide-react";
+import BadgeDropdown from "../dropdown/StatusSelection";
 
 export const Info = () => {
   const [cover, setCover] = useState<string | null>(null);
@@ -56,6 +57,7 @@ export const Info = () => {
     <div className="flex h-fit flex-row">
       <div className="w-1/3 py-6">
         <ImageWithFallback src={cover} />
+        <BadgeDropdown className={"w-full text-center justify-center items-center"}/>
       </div>
       <div className="flex w-2/3 flex-col px-6">
         <h1 className="text-5xl font-bold">{selectedGame.name}</h1>

@@ -24,7 +24,7 @@ export const StatusBadge = ({ status }: Props) => {
     <div className="absolute top-2 left-2">
       <Badge
         variant={"default"}
-        className={`${getStatusColor(status)} shadow-md`}
+        className={`${getStatusColor(status)} shadow-md rounded-xl border-gray-200 border-2`}
       >
         {t(status)}
       </Badge>

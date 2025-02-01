@@ -16,6 +16,7 @@ model Game {
   name                   String
   lastTimePlayed         BigInt?
   isInstalled            Boolean           @default(false)
+  isFavorite             Boolean           @default(false)
   gameStatus             GameStatus        @relation(fields: [gameStatusId], references: [id])
   gameStatusId           Int
   storefront             Storefront?       @relation(fields: [storefrontId], references: [id])

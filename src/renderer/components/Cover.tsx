@@ -7,6 +7,8 @@ import { SkeletonCover } from "./cover/skeleton";
 import { InstallBadge } from "./cover/installBadge";
 import { StatusBadge } from "./cover/statusBadge";
 import { ImageWithFallback } from "./cover/cover";
+import BadgeDropdown from "./dropdown/StatusSelection";
+import { FavoriteBadge } from "./cover/favoriteBadge";
 
 
 const Cover: React.FC<{
@@ -91,6 +93,10 @@ const Cover: React.FC<{
 
       {!game.isInstalled && (
         <InstallBadge handleOnClick={handleOnInstall}/>
+      )}
+
+      {game.isFavorite && (
+        <FavoriteBadge />
       )}
       <div className="flex flex-col truncate w-wull text-left">
         <p className="truncate w-full text-white">{game.name}</p>
