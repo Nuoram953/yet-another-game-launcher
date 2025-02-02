@@ -13,8 +13,6 @@ import fs from "fs";
 import { execSync, exec } from "child_process";
 import { initMainI18n } from "./i18n";
 import Igdb from "./api/metadata/igdb";
-const Store = require('electron-store');
-const store = new Store();
 
 require("dotenv").config();
 
@@ -98,13 +96,13 @@ class MainWindowManager {
           responseHeaders: {
             ...details.responseHeaders,
             "Content-Security-Policy": [
-              "default-src 'self' 'unsafe-inline' 'unsafe-eval';" +
-              "frame-src 'self' https: http:;" +  // Allows iframe content from HTTPS and HTTP
-              "img-src 'self' http: file: data: blob: 'unsafe-inline';" +
-              "media-src 'self' http: file: data: blob: 'unsafe-inline';" +
-              "connect-src 'self' https: wss:;" +
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval';" +
-              "style-src 'self' 'unsafe-inline';"
+              "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
+                "frame-src 'self' https: http: steam: mailto: about: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
+                "img-src 'self' http: https: file: data: blob: 'unsafe-inline' steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
+                "media-src 'self' http: https: file: data: blob: 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
+                "connect-src 'self' https: wss: steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
+                "style-src 'self' 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;",
             ],
           },
         });
@@ -121,7 +119,7 @@ class MainWindowManager {
         webPreferences: {
           preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
           webSecurity: false,
-          webviewTag:true
+          webviewTag: true,
         },
       });
 
@@ -142,7 +140,6 @@ class MainWindowManager {
       this.mainWindow.on("focus", () => {
         this.mainWindow?.webContents.send("app-focus");
       });
-
     } catch (error) {
       console.error("Failed to create window:", error);
       throw error;

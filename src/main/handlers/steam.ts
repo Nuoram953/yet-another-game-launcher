@@ -1,7 +1,7 @@
 import { ipcMain } from "electron";
 import { spawn } from "child_process";
 import log from "electron-log/main";
-import { getGameByExtenalIdAndStorefront, updateTimePlayed } from "../dal/game";
+import { getGameByExtenalIdAndStorefront } from "../dal/game";
 import { Storefront } from "../constant";
 import * as GameService from "../service/game"
 
@@ -11,14 +11,7 @@ ipcMain.handle("steam:launch", async (_event, appid: number) => {
     throw new Error("invalid game")
   }
 
-  await GameService.preLaunch(game)
-
-  spawn("steam", ["-silent", `steam://launch/${appid}`], {
-    detached: true,
-    stdio: "ignore",
-  });
-
-  await GameService.postLaunch(game)
+  await GameService.launch(game)
 });
 
 ipcMain.handle("steam:install", async (_event, appid: number) => {

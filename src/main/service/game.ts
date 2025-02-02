@@ -10,6 +10,7 @@ import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
 import { GameWithRelations } from "../dal/game";
 import _ from "lodash";
+import { spawn } from "child_process";
 
 export const updateAchievements = async (game: GameWithRelations) => {
   const countAchievements = game.achievements.length;
@@ -49,19 +50,36 @@ export const createOrUpdateGame = async (
 };
 
 export const preLaunch = async (game: Game) => {
-  log.info(`Starting game ${game.id}`);
+  log.info(`preLaunch for game ${game.id}`);
+};
+
+export const launch = async (game: GameWithRelations) => {
+  await preLaunch(game)
+  log.info(`Launching game ${game.id}`);
+
+  switch (game.storefrontId) {
+    case Storefront.STEAM: {
+      spawn("steam", ["-silent", `steam://launch/${game.externalId}`], {
+        detached: true,
+        stdio: "ignore",
+      });
+    }
+  }
 
   mainApp.sendToRenderer("is-game-running", {
     isRunning: true,
     game,
   });
-};
 
-export const postLaunch = async (game: GameWithRelations) => {
   const { startTime, endTime } = await monitorDirectoryProcesses(
     game?.location!,
   );
+  await postLaunch(game, startTime, endTime)
 
+};
+
+export const postLaunch = async (game: GameWithRelations, startTime:Date, endTime:Date|null) => {
+  log.info(`postLaunch for game ${game.id}`);
   if (startTime && endTime) {
     const minutes = await getMinutesBetween(startTime, endTime);
     if (minutes > 0) {
@@ -80,17 +98,17 @@ export const postLaunch = async (game: GameWithRelations) => {
     isRunning: false,
   });
 
-  await refreshLibrary(game.id)
+  await refreshLibrary(game.id);
 };
 
 export const downloadAchievements = () => {};
 
-export const refreshLibrary = async (gameId?:string) => {
-  if (!_.isUndefined(gameId)) {
-    mainApp.sendToRenderer("request:game", {
-      ...(await queries.Game.getGameById(gameId)),
-    });
-  }
+export const refreshGame = async (gameId: string) => {
+  mainApp.sendToRenderer("request:game", {
+    ...(await queries.Game.getGameById(gameId)),
+  });
+};
 
+export const refreshLibrary = async (gameId?: string) => {
   mainApp.sendToRenderer("request:games", {});
 };

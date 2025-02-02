@@ -64,7 +64,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
       <DropdownMenuTrigger className={className}>
         <Badge
           className={
-            `cursor-pointer hover:bg-primary/80 ${getStatusColor(currentGame.gameStatus.name)} ` +
+            `cursor-pointer hover:bg-primary/80 ${getStatusColor(selectedOption)} ` +
             className
           }
           variant="default"

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import Cover from "../Cover";
 import _ from "lodash";
 import { useGames } from "@/context/DatabaseContext";
@@ -13,10 +13,14 @@ const ROW_HEIGHT = 520;
 const GAP = 16;
 
 const Grid = () => {
-  const { games, loading, error } = useGames();
+  const { games, loading, error, refreshGames } = useGames();
   const [search, setSearch] = React.useState("");
   const { updateSelectedGame } = useGames();
   const gridRef = useRef(null);
+
+  useEffect(() => {
+    refreshGames()
+  }, []);
 
   useGridScrollPersist("unique-grid-id", gridRef);
 

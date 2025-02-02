@@ -68,8 +68,6 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </header>
 
-            {gameRunning.isRunning && <RunningHeader game={gameRunning.game} />}
-
             <div className="">{children}</div>
           </main>
         </SidebarInset>

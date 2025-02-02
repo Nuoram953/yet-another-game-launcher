@@ -1,15 +1,12 @@
-import { ipcMain, ipcRenderer } from "electron";
+import { ipcMain } from "electron";
 import { getAllGames, getGameById } from "../dal/game";
 import _ from "lodash";
 import { Game } from "@prisma/client";
 import queries from "../dal/dal";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
-import Igdb from "../api/metadata/igdb";
-import { igdb, mainApp } from "..";
-import { Storefront } from "../constant";
-import Steam from "../api/storefront/steam";
-import { refreshLibrary, updateAchievements } from "../service/game";
+import { igdb } from "..";
+import { refreshGame, updateAchievements } from "../service/game";
 
 ipcMain.handle("games", async (_event): Promise<Game[]> => {
   return await getAllGames();
@@ -85,5 +82,5 @@ ipcMain.handle(
 ipcMain.handle("database:setStatus", async (_event, id, statusId) => {
   await queries.Game.updateGame(id, { gameStatusId: statusId });
 
-  await refreshLibrary(id)
+  await refreshGame(id);
 });
