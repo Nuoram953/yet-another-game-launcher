@@ -6,7 +6,6 @@ import { Tile } from "./Tile";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  ArcElement,
   Tooltip,
   Legend,
   CategoryScale,
@@ -26,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { GameAchievement } from "@prisma/client";
+import AchievementTimeline from "./AchievementTimeline";
 
 ChartJS.register(
   CategoryScale,
@@ -92,34 +92,15 @@ export const SectionAchievements = () => {
     })
     .sort(sortAchievements);
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false, // This ensures it fills the container
-  };
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
       <Tile>
         <CardHeader>
-          <CardTitle>Achievement Progress</CardTitle>
+          <CardTitle>Achievement History</CardTitle>
         </CardHeader>
         <CardContent>
-          <Line
-            options={options}
-            datasetIdKey="id"
-            data={{
-              labels: ["Jun", "Jul", "Aug"],
-              datasets: [
-                {
-                  id: 1,
-                  label: "",
-                  data: [5, 6, 7],
-                  borderColor: "blue",
-                  backgroundColor: "white",
-                },
-              ],
-            }}
-          />
+          <AchievementTimeline />
         </CardContent>
       </Tile>
 

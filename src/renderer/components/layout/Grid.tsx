@@ -1,14 +1,12 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import Cover from "../Cover";
 import _ from "lodash";
-import { useGames, useLibraryContext } from "@/context/DatabaseContext";
+import { useGames } from "@/context/DatabaseContext";
 import { Input } from "../ui/input";
-import { useTranslation } from "react-i18next";
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { CarouselRecentlyPlayed } from "../carousel/RecentlyPlayed";
-import GameCarousel from "../carousel/GameCarousel";
 import { RecentlyPlayedCarousel } from "../carousel/recentlyPlayed/RecentlyPlayedCarousel";
+import useGridScrollPersist from "@/hooks/usePersistentScroll";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -17,9 +15,12 @@ const GAP = 16;
 const Grid = () => {
   const { games, loading, error } = useGames();
   const [search, setSearch] = React.useState("");
-  const {updateSelectedGame} = useGames()
+  const { updateSelectedGame } = useGames();
+  const gridRef = useRef(null);
 
-  updateSelectedGame(null)
+  useGridScrollPersist("unique-grid-id", gridRef);
+
+  updateSelectedGame(null);
 
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +66,7 @@ const Grid = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[200px]">
+      <div className="flex min-h-[200px] items-center justify-center">
         <div className="text-lg">Loading games...</div>
       </div>
     );
@@ -73,17 +74,17 @@ const Grid = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-[200px]">
+      <div className="flex min-h-[200px] items-center justify-center">
         <div className="text-red-500">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <RecentlyPlayedCarousel/>
+    <div className="flex h-screen flex-col overflow-hidden">
+      <RecentlyPlayedCarousel />
       <div className="flex-none">
-        <div className="max-w-md mx-auto p-2">
+        <div className="mx-auto max-w-md p-2">
           <Input
             type="search"
             placeholder="Search library..."
@@ -94,7 +95,7 @@ const Grid = () => {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0">
+      <div className="min-h-0 flex-1">
         <AutoSizer>
           {({ height, width }) => {
             const columnCount = Math.max(
@@ -109,6 +110,7 @@ const Grid = () => {
 
             return (
               <FixedSizeGrid
+                ref={gridRef}
                 className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent"
                 columnCount={columnCount}
                 rowCount={rowCount}

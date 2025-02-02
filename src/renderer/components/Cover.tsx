@@ -10,7 +10,6 @@ import { ImageWithFallback } from "./cover/cover";
 import BadgeDropdown from "./dropdown/StatusSelection";
 import { FavoriteBadge } from "./cover/favoriteBadge";
 
-
 const Cover: React.FC<{
   game: Prisma.GameGetPayload<{
     include: { gameStatus: true; storefront: true };
@@ -33,7 +32,6 @@ const Cover: React.FC<{
 
     fetchPicturePath();
   }, [game]);
-
 
   const handleOnInstall = (e) => {
     e.stopPropagation();
@@ -78,7 +76,7 @@ const Cover: React.FC<{
 
   return (
     <div
-      className="w-full relative text-white"
+      className="relative w-full text-white"
       onClick={handleRunCommand}
       onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
       onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
@@ -89,17 +87,16 @@ const Cover: React.FC<{
     >
       <ImageWithFallback src={coverPicture} />
 
-      <StatusBadge status={game.gameStatus.name}  />
 
-      {!game.isInstalled && (
-        <InstallBadge handleOnClick={handleOnInstall}/>
-      )}
+    <div className="absolute top-2 left-2">
+      <BadgeDropdown game={game} />
+      </div>
 
-      {game.isFavorite && (
-        <FavoriteBadge />
-      )}
-      <div className="flex flex-col truncate w-wull text-left">
-        <p className="truncate w-full text-white">{game.name}</p>
+      {!game.isInstalled && <InstallBadge handleOnClick={handleOnInstall} />}
+
+      {game.isFavorite && <FavoriteBadge />}
+      <div className="w-wull flex flex-col truncate text-left">
+        <p className="w-full truncate text-white">{game.name}</p>
         <div className="flex flex-row items-center text-gray-300">
           <Clock className="mr-1" size={16} />
           <p>{convertToHoursAndMinutes(game.timePlayed)}</p>

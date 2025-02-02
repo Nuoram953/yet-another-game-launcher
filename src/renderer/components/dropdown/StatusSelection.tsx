@@ -8,17 +8,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useGames } from "@/context/DatabaseContext";
 import { useTranslation } from "react-i18next";
+import { GameWithRelations } from "src/main/dal/game";
+import _ from "lodash";
 
 interface Props {
   className?: string;
+  game?: GameWithRelations;
 }
 
-const BadgeDropdown = ({ className }: Props) => {
+const BadgeDropdown = ({ className, game }: Props) => {
   const [status, setStatus] = useState<object[]>([]);
   const { selectedGame } = useGames();
+  const [currentGame, setCurrentGame] = useState(
+    _.isUndefined(game) ? selectedGame : game,
+  );
   const { t } = useTranslation("GameStatus");
   const [selectedOption, setSelectedOption] = useState<string>(
-    selectedGame.gameStatus.name,
+    currentGame.gameStatus.name,
   );
 
   useEffect(() => {
@@ -45,9 +51,10 @@ const BadgeDropdown = ({ className }: Props) => {
     return colors[status] || "bg-gray-500";
   };
 
-  const handleOptionSelect = (name: string) => {
-    const newStatus = status.find(item=>item.name == name)
-    window.database.setStatus(selectedGame.id, newStatus.id);
+  const handleOptionSelect = (e,name: string) => {
+    e.stopPropagation();
+    const newStatus = status.find((item) => item.name == name);
+    window.database.setStatus(currentGame.id, newStatus.id);
     setSelectedOption(name);
     console.log("Selected option:", name);
   };
@@ -57,7 +64,7 @@ const BadgeDropdown = ({ className }: Props) => {
       <DropdownMenuTrigger className={className}>
         <Badge
           className={
-            `cursor-pointer hover:bg-primary/80 ${getStatusColor(selectedGame.gameStatus.name)} ` +
+            `cursor-pointer hover:bg-primary/80 ${getStatusColor(currentGame.gameStatus.name)} ` +
             className
           }
           variant="default"
@@ -67,7 +74,7 @@ const BadgeDropdown = ({ className }: Props) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className={className}>
         {status.map((item) => (
-          <DropdownMenuItem onClick={() => handleOptionSelect(item.name)}>
+          <DropdownMenuItem onClick={(e) => handleOptionSelect(e,item.name)}>
             {t(item.name)}
           </DropdownMenuItem>
         ))}

@@ -13,6 +13,8 @@ import fs from "fs";
 import { execSync, exec } from "child_process";
 import { initMainI18n } from "./i18n";
 import Igdb from "./api/metadata/igdb";
+const Store = require('electron-store');
+const store = new Store();
 
 require("dotenv").config();
 
@@ -140,6 +142,7 @@ class MainWindowManager {
       this.mainWindow.on("focus", () => {
         this.mainWindow?.webContents.send("app-focus");
       });
+
     } catch (error) {
       console.error("Failed to create window:", error);
       throw error;

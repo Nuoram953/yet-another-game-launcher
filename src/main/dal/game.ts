@@ -145,7 +145,6 @@ export async function createOrUpdateExternal(
     },
     update: {
       lastTimePlayed: data.lastTimePlayed,
-      gameStatusId: data.gameStatusId,
       timePlayed: data.timePlayed,
     },
     create: {

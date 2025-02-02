@@ -1,4 +1,5 @@
 import { Game, Prisma } from "@prisma/client";
+import _ from "lodash";
 import React, { createContext, useContext, useState, useCallback } from "react";
 
 export interface GameFilters {
@@ -84,17 +85,26 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const fetchGames = useCallback(async () => {
     setLoading(true);
     setError(null);
+
     try {
       const response = await window.database.getGames({
         filters,
         sort: sortConfig,
       });
-      setGames(response as Game[]);
-      console.log(selectedGame);
+
+      const updatedGames = response.map((newGame) => {
+        const existingGame = games.find((g) => g.id === newGame.id);
+        if (existingGame && _.isEqual(existingGame, newGame)) {
+          return existingGame;
+        }
+        return newGame;
+      });
+
+      setGames(updatedGames);
+
       if (selectedGame != null) {
         const game = response.find((game) => game.id === selectedGame.id);
         setSelectedGame(game);
-        console.log(selectedGame);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -128,17 +138,12 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
       fetchGames();
     });
 
-    return () => {
-      window.api.removeListener("request:games");
-    };
-  }, []);
-
-  React.useEffect(() => {
     window.api.onReceiveFromMain("request:game", (game) => {
       setSelectedGame(game);
     });
 
     return () => {
+      window.api.removeListener("request:games");
       window.api.removeListener("request:game");
     };
   }, []);
