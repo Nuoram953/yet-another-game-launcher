@@ -64,7 +64,7 @@ const Cover: React.FC<{
 
   const handleRunCommand = async () => {
     try {
-      navigate(`/game/${game.id}`);
+      navigate(`/game/${game.id}`,{replace:true});
     } catch (err) {
       console.log(err);
     }

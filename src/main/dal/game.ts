@@ -1,9 +1,8 @@
 import _ from "lodash";
 import { GameStatus, Storefront } from "../constant";
-import { mainApp, metadataManager, prisma } from "..";
-import log from "electron-log/main";
-import { IMAGE_TYPE } from "../../common/constant";
+import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
+import queries from "./dal"
 
 export type GameWithRelations = Prisma.GameGetPayload<{
   include: {
@@ -18,6 +17,10 @@ export type GameWithRelations = Prisma.GameGetPayload<{
 }>;
 
 export async function updateGame(id: string, newData: Partial<Game>) {
+  if(newData.hasOwnProperty("gameStatusId")){
+    await queries.GameStatusHistory.create(id, newData.gameStatusId!)
+  }
+
   return await prisma.game.update({
     where: { id },
     data: newData,

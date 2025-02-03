@@ -98,7 +98,7 @@ export const postLaunch = async (game: GameWithRelations, startTime:Date, endTim
     isRunning: false,
   });
 
-  await refreshLibrary(game.id);
+  await refreshGame(game.id);
 };
 
 export const downloadAchievements = () => {};
@@ -109,6 +109,6 @@ export const refreshGame = async (gameId: string) => {
   });
 };
 
-export const refreshLibrary = async (gameId?: string) => {
+export const refreshLibrary = async () => {
   mainApp.sendToRenderer("request:games", {});
 };

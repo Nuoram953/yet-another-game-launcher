@@ -26,44 +26,44 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
 
   await YouTubeDownloader.searchAndDownloadVideos(game);
 
-  const {
-    developers,
-    publishers,
-    partialGameData,
-    themes,
-    genres,
-    gameModes,
-    engine,
-    playerPerspective,
-  } = await igdb.getGame(game.externalId!);
-
-  for (const developer of developers) {
-    await queries.GameDeveloper.findOrCreate(game.id, developer);
-  }
-
-  for (const publisher of publishers) {
-    await queries.GamePublisher.findOrCreate(game.id, publisher);
-  }
-
-  for (const theme of themes) {
-    await queries.GameTag.findOrCreate(game.id, theme, { isTheme: true });
-  }
-
-  for (const genre of genres) {
-    await queries.GameTag.findOrCreate(game.id, genre, { isGenre: true });
-  }
-
-  for (const mode of gameModes) {
-    await queries.GameTag.findOrCreate(game.id, mode, { isGameMode: true });
-  }
-
-  for (const perspective of playerPerspective) {
-    await queries.GameTag.findOrCreate(game.id, perspective, {
-      isPlayerPerspective: true,
-    });
-  }
-
-  await queries.Game.updateGame(game.id, partialGameData);
+  // const {
+  //   developers,
+  //   publishers,
+  //   partialGameData,
+  //   themes,
+  //   genres,
+  //   gameModes,
+  //   engine,
+  //   playerPerspective,
+  // } = await igdb.getGame(game.externalId!);
+  //
+  // for (const developer of developers) {
+  //   await queries.GameDeveloper.findOrCreate(game.id, developer);
+  // }
+  //
+  // for (const publisher of publishers) {
+  //   await queries.GamePublisher.findOrCreate(game.id, publisher);
+  // }
+  //
+  // for (const theme of themes) {
+  //   await queries.GameTag.findOrCreate(game.id, theme, { isTheme: true });
+  // }
+  //
+  // for (const genre of genres) {
+  //   await queries.GameTag.findOrCreate(game.id, genre, { isGenre: true });
+  // }
+  //
+  // for (const mode of gameModes) {
+  //   await queries.GameTag.findOrCreate(game.id, mode, { isGameMode: true });
+  // }
+  //
+  // for (const perspective of playerPerspective) {
+  //   await queries.GameTag.findOrCreate(game.id, perspective, {
+  //     isPlayerPerspective: true,
+  //   });
+  // }
+  //
+  // await queries.Game.updateGame(game.id, partialGameData);
 
   await updateAchievements(game);
 

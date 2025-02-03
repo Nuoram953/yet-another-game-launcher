@@ -25,7 +25,7 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-    //https://wireframe.cc/nFc2yR
+//https://wireframe.cc/nFc2yR
 
 export function NavPlatform({
   items,
@@ -41,7 +41,7 @@ export function NavPlatform({
     }[];
   }[];
 }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -70,8 +70,22 @@ export function NavPlatform({
                             <span>{subItem.title}</span>
                           </a>
                           <div className="flex flex-row gap-1">
-                            <ExternalLink size={18}/>
-                            <Globe size={18} onClick={()=>navigate("web/steam")}/>
+                            <ExternalLink
+                              className="hover:bg-gray-600 hover:rounded-md"
+                              size={18}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate("/web/steam");
+                              }}
+                            />
+                            <Globe
+                              className="hover:bg-gray-600 hover:rounded-md"
+                              size={18}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate("/web/steam");
+                              }}
+                            />
                           </div>
                         </div>
                       </SidebarMenuSubButton>

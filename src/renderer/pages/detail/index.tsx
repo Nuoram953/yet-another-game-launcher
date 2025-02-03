@@ -22,13 +22,14 @@ import { SectionMetadata } from "./SectionMetadata";
 import { ButtonPlay } from "@/components/button/Play";
 import { SectionOverview } from "./SectionOverview";
 import { SectionAchievements } from "./SectionAchievements";
+import { SectionSession } from "./SectionSession";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const { setBreadcrumbs } = useBreadcrumbsContext();
-  const { selectedGame, updateSelectedGame } = useGames();
+  const { selectedGame, updateSelectedGame, gameRunning } = useGames();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,7 +43,7 @@ const GameDetailsContent = () => {
 
         setBreadcrumbs([
           { path: "/", label: "Library" },
-          { path: `/${result.id}`, label: result.name },
+          { path: `/game/${result.id}`, label: result.name },
         ]);
       } catch (error) {
         console.error("Error fetching picture path:", error);
@@ -57,17 +58,18 @@ const GameDetailsContent = () => {
   }
 
   const sections = [
-    { id: "overview", icon: BookOpen, label: "Overview" },
-    { id: "achievements", icon: Trophy, label: "Achievements" },
-    { id: "activities", icon: Activity, label: "Activities" },
-    { id: "notes", icon: PenLine, label: "Notes" },
-    { id: "reviews", icon: Star, label: "Reviews" },
-    { id: "playtime", icon: Clock, label: "Playtime" },
-    { id: "multiplayer", icon: Users, label: "Multiplayer" },
-    { id: "updates", icon: Download, label: "Updates" },
-    { id: "settings", icon: Settings, label: "Settings" },
-    { id: "community", icon: MessageSquare, label: "Community" },
-    { id: "metadata", icon: Image, label: "Metadata" },
+    { id: "session", icon: BookOpen, label: "Active session" , show:gameRunning.isRunning},
+    { id: "overview", icon: BookOpen, label: "Overview" , show:true},
+    { id: "achievements", icon: Trophy, label: "Achievements" , show:selectedGame.achievements.length},
+    { id: "activities", icon: Activity, label: "Activities" , show:true},
+    { id: "notes", icon: PenLine, label: "Notes" , show:true},
+    { id: "reviews", icon: Star, label: "Reviews" , show:true},
+    { id: "playtime", icon: Clock, label: "Playtime" , show:true},
+    { id: "multiplayer", icon: Users, label: "Multiplayer" , show:true},
+    { id: "updates", icon: Download, label: "Updates" , show:true},
+    { id: "settings", icon: Settings, label: "Settings" , show:true},
+    { id: "community", icon: MessageSquare, label: "Community" , show:true},
+    { id: "metadata", icon: Image, label: "Metadata" , show:true},
   ];
 
   const handleSectionChange = (sectionId) => {
@@ -86,6 +88,8 @@ const GameDetailsContent = () => {
     }
 
     switch (activeSection) {
+      case "session":
+        return <SectionSession/>;
       case "overview":
         return <SectionOverview />;
       case "metadata":
@@ -115,7 +119,7 @@ const GameDetailsContent = () => {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="w-48 overflow-y-auto bg-gray-800 p-2">
-          {sections.map((section, index) => (
+          {sections.filter(section=>section.show).map((section, index) => (
             <Button
               key={section.id}
               variant={activeSection === section.id ? "secondary" : "ghost"}

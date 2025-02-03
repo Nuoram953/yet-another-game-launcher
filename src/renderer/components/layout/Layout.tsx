@@ -3,7 +3,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Separator } from "@radix-ui/react-separator";
 import { AppSidebar } from "../AppSidebar";
 import {
@@ -16,31 +16,29 @@ import {
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { useNavigate } from "react-router-dom";
 import NotificationList from "../notification/NotificationList";
-import { RunningHeader } from "../runningHeader";
-import { useGames } from "@/context/DatabaseContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const {gameRunning} = useGames()
   const { breadcrumbs, setBreadcrumbs } = useBreadcrumbsContext();
   const navigate = useNavigate();
 
-
   const handleClickBreadcrumbs = (path: string) => {
     const index = breadcrumbs.findIndex((item) => item.path === path);
-    setBreadcrumbs(breadcrumbs.splice(0, index));
-    navigate(path);
+    if (index != breadcrumbs.length - 1) {
+      setBreadcrumbs(breadcrumbs.splice(0, index));
+    }
+    navigate(path, { replace: true });
   };
 
   return (
     <SidebarProvider>
-      <div className="h-screen w-screen flex overflow-hidden">
+      <div className="flex h-screen w-screen overflow-hidden">
         <AppSidebar />
-        <SidebarInset className="flex-1 flex flex-col min-h-0">
-          <main className="flex-1 flex flex-col min-h-0 bg-gray-900">
+        <SidebarInset className="flex min-h-0 flex-1 flex-col">
+          <main className="flex min-h-0 flex-1 flex-col bg-gray-900">
             <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800">
               <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger className="dark" />

@@ -7,6 +7,7 @@ import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { RecentlyPlayedCarousel } from "../carousel/recentlyPlayed/RecentlyPlayedCarousel";
 import useGridScrollPersist from "@/hooks/usePersistentScroll";
+import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -16,9 +17,11 @@ const Grid = () => {
   const { games, loading, error, refreshGames } = useGames();
   const [search, setSearch] = React.useState("");
   const { updateSelectedGame } = useGames();
+  const {setBreadcrumbs} = useBreadcrumbsContext()
   const gridRef = useRef(null);
 
   useEffect(() => {
+    setBreadcrumbs([])
     refreshGames()
   }, []);
 

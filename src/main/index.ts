@@ -1,4 +1,11 @@
-import { app, BrowserWindow, ipcMain, nativeTheme, Session } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  nativeTheme,
+  session,
+  Session,
+} from "electron";
 import * as path from "path";
 import "./handlers/database";
 import "./handlers/steam";
@@ -52,6 +59,21 @@ class MainWindowManager {
       await app.whenReady();
       log.warn("App is ready");
 
+      const steamSession = session.fromPartition("persist:steamstore");
+
+      await steamSession.cookies.set({
+        url: "https://store.steampowered.com",
+        name: "SteamLogin",
+        value: "YOUR_COOKIE_VALUE_HERE", // Replace with a real cookie
+        domain: ".steampowered.com",
+        path: "/",
+        secure: true,
+        httpOnly: true,
+        sameSite: "no_restriction", // Ensures cross-site access
+      });
+
+      console.log("Steam store cookies set successfully");
+
       i18n = await initMainI18n();
 
       await this.createWindow();
@@ -96,13 +118,13 @@ class MainWindowManager {
           responseHeaders: {
             ...details.responseHeaders,
             "Content-Security-Policy": [
-              "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
-                "frame-src 'self' https: http: steam: mailto: about: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
-                "img-src 'self' http: https: file: data: blob: 'unsafe-inline' steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
-                "media-src 'self' http: https: file: data: blob: 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
-                "connect-src 'self' https: wss: steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;" +
-                "style-src 'self' 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com;",
+              "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
+                "frame-src 'self' https: http: steam: mailto: about: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
+                "img-src 'self' http: https: file: data: blob: 'unsafe-inline' steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com;" +
+                "media-src 'self' http: https: file: data: blob: 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com;" +
+                "connect-src 'self' https: wss: steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
+                "style-src 'self' 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com;",
             ],
           },
         });
