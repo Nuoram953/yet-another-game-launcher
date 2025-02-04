@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import React from "react";
 import { Badge } from "../ui/badge";
+import { useGames } from "@/context/DatabaseContext";
 
 export function NavStatus({
   items,
@@ -29,12 +30,14 @@ export function NavStatus({
     icon?: LucideIcon;
     isActive?: boolean;
     items?: {
+        id:number;
       title: string;
       url: string;
       count?: number;
     }[];
   }[];
 }) {
+  const {updateFilters} = useGames()
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -62,9 +65,11 @@ export function NavStatus({
                     >
                       <SidebarMenuSubButton asChild>
                         <>
-                          <a href={subItem.url}>
+                          <div onClick={()=>{
+                            updateFilters({gameStatusId:subItem.id})
+                          }}>
                             <span>{subItem.title}</span>
-                          </a>
+                          </div>
                           {subItem.count && <Badge>{subItem.count}</Badge>}
                         </>
                       </SidebarMenuSubButton>

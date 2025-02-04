@@ -8,8 +8,8 @@ import { YouTubeDownloader } from "../api/video/youtube";
 import { igdb } from "..";
 import { refreshGame, updateAchievements } from "../service/game";
 
-ipcMain.handle("games", async (_event): Promise<Game[]> => {
-  return await getAllGames();
+ipcMain.handle("games", async (_event, filters, sort): Promise<Game[]> => {
+  return await getAllGames(null,filters);
 });
 
 //TODO: Fix types

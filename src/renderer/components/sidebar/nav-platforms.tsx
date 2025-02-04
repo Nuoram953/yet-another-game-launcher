@@ -75,7 +75,7 @@ export function NavPlatform({
                               size={18}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                navigate("/web/steam");
+                                window.store.launch(subItem.title);
                               }}
                             />
                             <Globe

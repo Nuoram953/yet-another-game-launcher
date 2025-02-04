@@ -2,6 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 //
 
+import { object } from "prop-types";
 import { IGame } from "src/common/types";
 
 //
@@ -38,7 +39,7 @@ contextBridge.exposeInMainWorld("api", {
 });
 
 contextBridge.exposeInMainWorld("database", {
-  getGames: () => ipcRenderer.invoke("games"),
+  getGames: (filters?:object, sort?:object) => ipcRenderer.invoke("games", filters, sort),
   getGame: (id: string) => ipcRenderer.invoke("game", id),
   getStatus: () => ipcRenderer.invoke("statusAndCount"),
   getRecentlyPlayed: (max: number) =>
@@ -49,6 +50,10 @@ contextBridge.exposeInMainWorld("database", {
 contextBridge.exposeInMainWorld("steam", {
   launch: (appid: number) => ipcRenderer.invoke("steam:launch", appid),
   install: (appid: number) => ipcRenderer.invoke("steam:install", appid),
+});
+
+contextBridge.exposeInMainWorld("store", {
+  launch: (storeName: string) => ipcRenderer.invoke("store:launch", storeName),
 });
 
 contextBridge.exposeInMainWorld("ressource", {

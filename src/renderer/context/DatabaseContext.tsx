@@ -3,10 +3,7 @@ import _ from "lodash";
 import React, { createContext, useContext, useState, useCallback } from "react";
 
 export interface GameFilters {
-  search: string;
-  genre: string;
-  platform: string;
-  minRating: number;
+  gameStatusId:number|null;
 }
 
 export interface SortConfig {
@@ -70,10 +67,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<GameFilters>({
-    search: "",
-    genre: "",
-    platform: "",
-    minRating: 0,
+    gameStatusId:null
   });
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     field: "name",

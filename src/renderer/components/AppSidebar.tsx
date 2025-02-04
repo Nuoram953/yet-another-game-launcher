@@ -93,6 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         const status = await window.database.getStatus();
         console.log(status);
         data.NavStatus[0].items = status.map((gameStatus) => ({
+          id: gameStatus.id,
           title: t(gameStatus.name),
           url: gameStatus.name,
           count: gameStatus.count,

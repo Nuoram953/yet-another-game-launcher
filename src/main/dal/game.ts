@@ -2,7 +2,7 @@ import _ from "lodash";
 import { GameStatus, Storefront } from "../constant";
 import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
-import queries from "./dal"
+import queries from "./dal";
 
 export type GameWithRelations = Prisma.GameGetPayload<{
   include: {
@@ -17,8 +17,8 @@ export type GameWithRelations = Prisma.GameGetPayload<{
 }>;
 
 export async function updateGame(id: string, newData: Partial<Game>) {
-  if(newData.hasOwnProperty("gameStatusId")){
-    await queries.GameStatusHistory.create(id, newData.gameStatusId!)
+  if (newData.hasOwnProperty("gameStatusId")) {
+    await queries.GameStatusHistory.create(id, newData.gameStatusId!);
   }
 
   return await prisma.game.update({
@@ -27,16 +27,28 @@ export async function updateGame(id: string, newData: Partial<Game>) {
   });
 }
 
-export async function getAllGames(limit?: number) {
-  const where = {
+export async function getAllGames(
+  limit?: number | null,
+  filters?: Record<string, any>,
+  sort?: Record<string, Prisma.SortOrder>,
+) {
+  const where = filters
+    ? Object.fromEntries(
+        Object.entries(filters.filters).filter(([_, value]) => value !== null),
+      )
+    : undefined;
+
+  return await prisma.game.findMany({
+    where,
     include: {
       gameStatus: true,
       storefront: true,
     },
-    orderBy: [{ lastTimePlayed: "desc" as Prisma.SortOrder }],
+    orderBy: sort
+      ? Object.entries(sort).map(([key, value]) => ({ [key]: value }))
+      : [{ lastTimePlayed: "desc" }],
     ...(limit && { take: limit }),
-  };
-  return await prisma.game.findMany(where);
+  });
 }
 
 export async function getGameById(id: string) {
@@ -57,7 +69,7 @@ export async function getGameById(id: string) {
 export async function getGameByExtenalIdAndStorefront(
   externalId: number,
   storefront: Storefront,
-):Promise<GameWithRelations | null> {
+): Promise<GameWithRelations | null> {
   return await prisma.game.findFirst({
     where: {
       externalId,
