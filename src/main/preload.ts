@@ -2,10 +2,8 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 //
 
-import { object } from "prop-types";
-import { IGame } from "src/common/types";
+import { RouteMedia } from "../common/constant";
 
-//
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("appControl", {
@@ -58,20 +56,21 @@ contextBridge.exposeInMainWorld("store", {
   launch: (storeName: string) => ipcRenderer.invoke("store:launch", storeName),
 });
 
-contextBridge.exposeInMainWorld("ressource", {
-  getAllMedia: (appid: number) => ipcRenderer.invoke("ressource:getAll", appid),
-  getSingleBackground: (appid: number) =>
-    ipcRenderer.invoke("ressource:singleBackground", appid),
-  getSingleLogo: (appid: number) =>
-    ipcRenderer.invoke("ressource:singleLogo", appid),
-  getRecentlyPlayedBackgrounds: (max: number) =>
-    ipcRenderer.invoke("ressource:recentlyPlayedBackground", max),
-  getSingleTrailer: (appid: number) =>
-    ipcRenderer.invoke("ressource:singleTrailer", appid),
-  getSingleCover: (appid: number) =>
-    ipcRenderer.invoke("ressource:singleCover", appid),
-  getAchievements: (appid: number) =>
-    ipcRenderer.invoke("ressource:achievements", appid),
+contextBridge.exposeInMainWorld("media", {
+  getAllMedia: (gameId: string) =>
+    ipcRenderer.invoke(RouteMedia.GET_ALL_MEDIA, gameId),
+  getBackgrounds: (gameId: string, count?: number) =>
+    ipcRenderer.invoke(RouteMedia.GET_BACKGROUNDS, gameId, count),
+  getRecentlyPlayedBackgrounds: (count: number) =>
+    ipcRenderer.invoke(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, count),
+  getLogos: (gameId: string, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_LOGOS, gameId, count),
+  getTrailers: (gameId: string, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_TRAILERS, gameId, count),
+  getCovers: (gameId: string, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_COVERS, gameId, count),
+  getAchievements: (gameId: number, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
 });
 
 contextBridge.exposeInMainWorld("notifications", {

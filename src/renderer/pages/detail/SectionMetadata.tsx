@@ -9,10 +9,9 @@ export const SectionMetadata = () => {
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const ressources = await window.ressource.getAll(
-          selectedGame.id,
+        const ressources = await window.media.getAllMedia(
+          selectedGame!.id,
         );
-        console.log(ressources)
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);

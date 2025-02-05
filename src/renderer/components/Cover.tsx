@@ -22,8 +22,8 @@ const Cover: React.FC<{
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
-        const cover = await window.ressource.getSingleCover(game.id);
-        setCoverPicture(cover);
+        const cover = await window.media.getCovers(game.id, 1);
+        setCoverPicture(cover[0]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);

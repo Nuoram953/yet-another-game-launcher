@@ -10,7 +10,7 @@ import * as path from "path";
 import "./handlers/database";
 import "./handlers/steam";
 import "./handlers/status";
-import "./handlers/ressource";
+import "./handlers/media";
 import "./handlers/store";
 import "reflect-metadata";
 import Steam from "./api/storefront/steam";

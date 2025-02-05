@@ -16,8 +16,8 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await window.ressource.getSingleBackground(game.id);
-        setBackgroundPicture(data);
+        const data = await window.media.getBackgrounds(game.id);
+        setBackgroundPicture(data[0]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);

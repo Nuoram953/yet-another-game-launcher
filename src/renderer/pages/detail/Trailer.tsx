@@ -10,8 +10,8 @@ export const Trailer = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const logo = await window.ressource.getSingleTrailer(selectedGame.id);
-        setTrailer(logo);
+        const trailers = await window.media.getTrailers(selectedGame!.id);
+        setTrailer(trailers[0]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);

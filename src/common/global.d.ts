@@ -3,9 +3,9 @@ interface Window {
     getStoredPicturesDirectory: (id: string) => Promise<string>;
   };
   media: {
-    getAllMedia: () => Promise<string[][]>;
+    getAllMedia: (gameId:string) => Promise<string[][]>;
     getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
-    getRecentlyPlayedBackground: () => Promise<string[]>;
+    getRecentlyPlayedBackgrounds: (count:number) => Promise<string[]>;
     getLogos: (gameId: string, count?: number) => Promise<string[]>;
     getIcons: (gameId: string, count?: number) => Promise<string[]>;
     getCovers: (gameId: string, count?: number) => Promise<string[]>;

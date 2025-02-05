@@ -47,8 +47,8 @@ export const SectionAchievements = () => {
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const ressources = await window.ressource.getAchievements(
-          selectedGame.id,
+        const ressources = await window.media.getAchievements(
+          selectedGame!.id,
         );
         setAchievementLogos(ressources);
         setLoading(false);

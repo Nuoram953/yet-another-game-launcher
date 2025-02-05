@@ -13,11 +13,10 @@ export const Info = () => {
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
-        const cover = await window.ressource.getSingleCover(selectedGame.id);
-
-        setCover(cover);
-
+        const covers = await window.media.getCovers(selectedGame.id);
+        setCover(covers[0]);
         setLoading(false);
+
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }

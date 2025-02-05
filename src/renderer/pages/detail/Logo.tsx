@@ -9,8 +9,8 @@ export const Logo = () => {
   useEffect(() => {
     const fetchLogoPicture = async () => {
       try {
-        const logo = await window.ressource.getSingleLogo(selectedGame.id);
-        setLogoPicture(logo);
+        const logos = await window.media.getLogos(selectedGame!.id);
+        setLogoPicture(logos[0]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);

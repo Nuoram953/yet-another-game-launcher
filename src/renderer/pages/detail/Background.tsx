@@ -13,10 +13,10 @@ export const Background = ({ children }: Props) => {
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const background = await window.ressource.getSingleBackground(
-          selectedGame.id,
+        const backgrounds = await window.media.getBackgrounds(
+          selectedGame!.id,
         );
-        setBackgroundPicture(background);
+        setBackgroundPicture(backgrounds[0]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);

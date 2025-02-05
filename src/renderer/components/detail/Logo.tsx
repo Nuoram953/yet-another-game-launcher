@@ -12,8 +12,8 @@ export const Logo = ({ gameId, size }: Props) => {
   useEffect(() => {
     const fetchLogoPicture = async () => {
       try {
-        const logo = await window.ressource.getSingleLogo(gameId);
-        setLogoPicture(logo);
+        const logos = await window.media.getLogos(gameId);
+        setLogoPicture(logos[0]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);

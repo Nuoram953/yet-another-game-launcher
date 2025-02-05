@@ -10,8 +10,6 @@ export const SectionSession = () => {
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const ressources = await window.ressource.getAll(selectedGame.id);
-        console.log(ressources);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching picture path:", error);
