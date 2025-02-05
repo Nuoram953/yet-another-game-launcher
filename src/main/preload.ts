@@ -39,12 +39,14 @@ contextBridge.exposeInMainWorld("api", {
 });
 
 contextBridge.exposeInMainWorld("database", {
-  getGames: (filters?:object, sort?:object) => ipcRenderer.invoke("games", filters, sort),
+  getGames: (filters?: object, sort?: object) =>
+    ipcRenderer.invoke("games", filters, sort),
   getGame: (id: string) => ipcRenderer.invoke("game", id),
   getStatus: () => ipcRenderer.invoke("statusAndCount"),
   getRecentlyPlayed: (max: number) =>
     ipcRenderer.invoke("database:recentlyPlayed", max),
-  setStatus: (id:string, status:number) => ipcRenderer.invoke("database:setStatus", id, status)
+  setStatus: (id: string, status: number) =>
+    ipcRenderer.invoke("database:setStatus", id, status),
 });
 
 contextBridge.exposeInMainWorld("steam", {
@@ -57,7 +59,7 @@ contextBridge.exposeInMainWorld("store", {
 });
 
 contextBridge.exposeInMainWorld("ressource", {
-  getAll: (appid: number) => ipcRenderer.invoke("ressource:getAll", appid),
+  getAllMedia: (appid: number) => ipcRenderer.invoke("ressource:getAll", appid),
   getSingleBackground: (appid: number) =>
     ipcRenderer.invoke("ressource:singleBackground", appid),
   getSingleLogo: (appid: number) =>

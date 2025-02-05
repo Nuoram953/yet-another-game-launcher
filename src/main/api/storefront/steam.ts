@@ -66,7 +66,7 @@ class Steam {
 
     const user = users[0];
     this.steamid = user[0];
-    return user[0]
+    return user[0];
   }
 
   async getOwnedGames() {
@@ -112,9 +112,17 @@ class Steam {
         })
         .filter((item) => item !== undefined) as number[];
 
-      await GameQueries.updateIsInstalled(appIds, Storefront.STEAM, true);
-
       for (const appId of appIds) {
+        const game = await queries.Game.getGameByExtenalIdAndStorefront(
+          appId,
+          Storefront.STEAM,
+        );
+
+        if (!game) {
+          continue
+        }
+        await queries.Game.update(game.id, { isInstalled: true });
+
         const fileName = `/appmanifest_${appId}.acf`;
         const filePath = path.join(steamConfigDirectory, fileName);
         const file = fs.readFileSync(filePath, "utf-8");
@@ -124,12 +132,11 @@ class Steam {
           "../../.local/share/Steam/steamapps/common",
           decode.AppState.installdir,
         );
-        await GameQueries.updateSizeAndLocation(
-          appId,
-          Storefront.STEAM,
-          Number(decode.AppState.SizeOnDisk),
-          gamePath,
-        );
+
+        await queries.Game.update(game.id, {
+          size: decode.AppState.SizeOnDisk,
+          location: gamePath,
+        });
       }
     } catch (error) {
       console.log(error);

@@ -3,20 +3,19 @@ import { GameStatus, Storefront } from "../constant";
 import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";
+import { GameWithRelations } from "../../common/types";
 
-export type GameWithRelations = Prisma.GameGetPayload<{
-  include: {
-    gameStatus: true;
-    storefront: true;
-    achievements: true;
-    activities: true;
-    developers: { include: { company: true } };
-    publishers: { include: { company: true } };
-    tags: { include: { tag: true } };
-  };
-}>;
+const include = {
+  gameStatus: true,
+  storefront: true,
+  achievements: true,
+  activities: true,
+  developers: { include: { company: true } },
+  publishers: { include: { company: true } },
+  tags: { include: { tag: true } },
+};
 
-export async function updateGame(id: string, newData: Partial<Game>) {
+export async function update(id: string, newData: Partial<Game>) {
   if (newData.hasOwnProperty("gameStatusId")) {
     await queries.GameStatusHistory.create(id, newData.gameStatusId!);
   }
@@ -27,7 +26,7 @@ export async function updateGame(id: string, newData: Partial<Game>) {
   });
 }
 
-export async function getAllGames(
+export async function getGames(
   limit?: number | null,
   filters?: Record<string, any>,
   sort?: Record<string, Prisma.SortOrder>,
@@ -40,10 +39,7 @@ export async function getAllGames(
 
   return await prisma.game.findMany({
     where,
-    include: {
-      gameStatus: true,
-      storefront: true,
-    },
+    include,
     orderBy: sort
       ? Object.entries(sort).map(([key, value]) => ({ [key]: value }))
       : [{ lastTimePlayed: "desc" }],
@@ -51,18 +47,12 @@ export async function getAllGames(
   });
 }
 
-export async function getGameById(id: string) {
+export async function getGameById(
+  id: string,
+): Promise<GameWithRelations | null> {
   return prisma.game.findFirst({
     where: { id },
-    include: {
-      gameStatus: true,
-      storefront: true,
-      achievements: true,
-      activities: true,
-      developers: { include: { company: true } },
-      publishers: { include: { company: true } },
-      tags: { include: { tag: true } },
-    },
+    include
   });
 }
 
@@ -75,15 +65,7 @@ export async function getGameByExtenalIdAndStorefront(
       externalId,
       storefrontId: storefront,
     },
-    include: {
-      gameStatus: true,
-      storefront: true,
-      achievements: true,
-      activities: true,
-      developers: { include: { company: true } },
-      publishers: { include: { company: true } },
-      tags: { include: { tag: true } },
-    },
+    include
   });
 }
 

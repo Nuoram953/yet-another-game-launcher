@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { getAllGames, getGameById } from "../dal/game";
+import { getGames, getGameById } from "../dal/game";
 import _ from "lodash";
 import { Game } from "@prisma/client";
 import queries from "../dal/dal";
@@ -7,13 +7,14 @@ import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
 import { igdb } from "..";
 import { refreshGame, updateAchievements } from "../service/game";
+import { GameWithRelations } from "src/common/types";
 
 ipcMain.handle("games", async (_event, filters, sort): Promise<Game[]> => {
-  return await getAllGames(null,filters);
+  return await getGames(null, filters);
 });
 
 //TODO: Fix types
-ipcMain.handle("game", async (_event, id): Promise<any | void> => {
+ipcMain.handle("game", async (_event, id): Promise<GameWithRelations> => {
   const game = await getGameById(id);
 
   if (_.isNil(game)) {
@@ -69,18 +70,22 @@ ipcMain.handle("game", async (_event, id): Promise<any | void> => {
 
   const updatedGame = await getGameById(id);
 
+  if (_.isNil(updatedGame)) {
+    throw new Error("Invalid game id ${id}");
+  }
+
   return updatedGame;
 });
 
 ipcMain.handle(
   "database:recentlyPlayed",
   async (_event, max): Promise<Game[]> => {
-    return await queries.Game.getAllGames(max);
+    return await queries.Game.getGames(max);
   },
 );
 
 ipcMain.handle("database:setStatus", async (_event, id, statusId) => {
-  await queries.Game.updateGame(id, { gameStatusId: statusId });
+  await queries.Game.update(id, { gameStatusId: statusId });
 
   await refreshGame(id);
 });

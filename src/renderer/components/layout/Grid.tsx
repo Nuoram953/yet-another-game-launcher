@@ -14,7 +14,7 @@ const ROW_HEIGHT = 520;
 const GAP = 16;
 
 const Grid = () => {
-  const { games, loading, error, refreshGames } = useGames();
+  const { games, loading, error, refreshGames, updateFilters } = useGames();
   const [search, setSearch] = React.useState("");
   const { updateSelectedGame } = useGames();
   const {setBreadcrumbs} = useBreadcrumbsContext()

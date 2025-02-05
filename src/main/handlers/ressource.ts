@@ -112,7 +112,7 @@ ipcMain.handle("ressource:singleTrailer", async (event, id) => {
 ipcMain.handle("ressource:recentlyPlayedBackground", async (event, max) => {
   try {
     const gamePictures: string[] = [];
-    const games = await GameQueries.getAllGames(max);
+    const games = await GameQueries.getGames(max);
     for (const game of games) {
       const directory = path.join(
         app.getPath("userData"),

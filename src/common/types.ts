@@ -1,25 +1,22 @@
-export interface IGame {
-  id: number;
-  name: string;
-  timePlayed: number;
-  status: number,
-  playtimeWindows?:string,
-  playtimeMac?:string,
-  playtimeLinux?:string,
-  playtimeSteamDeck?:string,
-  lastPlayed?:number,
-  playtimeDisconnected?:string
+import { Game, Prisma } from "@prisma/client";
+
+export type GameWithRelations = Prisma.GameGetPayload<{
+  include: {
+    gameStatus: true;
+    storefront: true;
+    achievements: true;
+    activities: true;
+    developers: { include: { company: true } };
+    publishers: { include: { company: true } };
+    tags: { include: { tag: true } };
+  };
+}>;
+
+export interface GameFilters {
+  gameStatusId?: keyof Game;
 }
 
-export interface ISteamGame {
-  id: number;
-  name: string;
-  timePlayed: number;
-  status: number,
-  playtimeWindows?:string,
-  playtimeMac?:string,
-  playtimeLinux?:string,
-  playtimeSteamDeck?:string,
-  lastPlayed?:number,
-  playtimeDisconnected?:string
+export interface SortConfig extends Partial<GameWithRelations> {
+  field: keyof Game;
+  direction: "asc" | "desc";
 }

@@ -1,49 +1,19 @@
 import { Game, Prisma } from "@prisma/client";
 import _ from "lodash";
 import React, { createContext, useContext, useState, useCallback } from "react";
-
-export interface GameFilters {
-  gameStatusId:number|null;
-}
-
-export interface SortConfig {
-  field: keyof Game;
-  direction: "asc" | "desc";
-}
+import { GameFilters, GameWithRelations, SortConfig } from "../../common/types";
 
 interface GamesContextValue {
   games: Game[];
   gameRunning: object;
   loading: boolean;
   error: string | null;
-  filters: GameFilters;
-  sortConfig: SortConfig;
+  filters: GameFilters | {};
+  sortConfig: SortConfig | {};
   updateFilters: (newFilters: Partial<GameFilters>) => void;
   updateSort: (field: keyof Game) => void;
   refreshGames: () => Promise<void>;
-  selectedGame: Prisma.GameGetPayload<{
-    include: {
-      gameStatus: true;
-      storefront: true;
-      achievements: true;
-      activities: true;
-      developers: {
-        include: {
-          company: true;
-        };
-      };
-      publishers: {
-        include: {
-          company: true;
-        };
-      };
-      tags: {
-        include: {
-          tag: true;
-        };
-      };
-    };
-  }>;
+  selectedGame: GameWithRelations | null;
   updateSelectedGame: (game: Game | null) => Promise<void>;
 }
 
@@ -66,15 +36,11 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [gameRunning, setGameRunning] = useState<object>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<GameFilters>({
-    gameStatusId:null
-  });
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    field: "name",
-    direction: "asc",
-  });
-
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [filters, setFilters] = useState<GameFilters | {}>({});
+  const [sortConfig, setSortConfig] = useState<SortConfig | {}>({});
+  const [selectedGame, setSelectedGame] = useState<GameWithRelations | null>(
+    null,
+  );
 
   const fetchGames = useCallback(async () => {
     setLoading(true);
@@ -136,13 +102,6 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
       setSelectedGame(game);
     });
 
-    return () => {
-      window.api.removeListener("request:games");
-      window.api.removeListener("request:game");
-    };
-  }, []);
-
-  React.useEffect(() => {
     window.api.onReceiveFromMain(
       "is-game-running",
       (data: { isRunning: boolean }) => {
@@ -152,6 +111,8 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     );
 
     return () => {
+      window.api.removeListener("request:games");
+      window.api.removeListener("request:game");
       window.api.removeListener("is-game-running");
     };
   }, []);
