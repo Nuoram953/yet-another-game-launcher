@@ -2,9 +2,31 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 //
 
-import { RouteMedia } from "../common/constant";
+import { RouteLibrary, RouteMedia } from "../common/constant";
 
 const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld("media", {
+  getAllMedia: (gameId: string) =>
+    ipcRenderer.invoke(RouteMedia.GET_ALL_MEDIA, gameId),
+  getBackgrounds: (gameId: string, count?: number) =>
+    ipcRenderer.invoke(RouteMedia.GET_BACKGROUNDS, gameId, count),
+  getRecentlyPlayedBackgrounds: (count: number) =>
+    ipcRenderer.invoke(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, count),
+  getLogos: (gameId: string, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_LOGOS, gameId, count),
+  getTrailers: (gameId: string, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_TRAILERS, gameId, count),
+  getCovers: (gameId: string, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_COVERS, gameId, count),
+  getAchievements: (gameId: number, count?:number) =>
+    ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
+});
+
+contextBridge.exposeInMainWorld("library", {
+  getCountForAllStatus: () =>
+    ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
+});
 
 contextBridge.exposeInMainWorld("appControl", {
   onAppBlur: (callback) => ipcRenderer.on("app-blur", callback),
@@ -40,7 +62,6 @@ contextBridge.exposeInMainWorld("database", {
   getGames: (filters?: object, sort?: object) =>
     ipcRenderer.invoke("games", filters, sort),
   getGame: (id: string) => ipcRenderer.invoke("game", id),
-  getStatus: () => ipcRenderer.invoke("statusAndCount"),
   getRecentlyPlayed: (max: number) =>
     ipcRenderer.invoke("database:recentlyPlayed", max),
   setStatus: (id: string, status: number) =>
@@ -56,22 +77,6 @@ contextBridge.exposeInMainWorld("store", {
   launch: (storeName: string) => ipcRenderer.invoke("store:launch", storeName),
 });
 
-contextBridge.exposeInMainWorld("media", {
-  getAllMedia: (gameId: string) =>
-    ipcRenderer.invoke(RouteMedia.GET_ALL_MEDIA, gameId),
-  getBackgrounds: (gameId: string, count?: number) =>
-    ipcRenderer.invoke(RouteMedia.GET_BACKGROUNDS, gameId, count),
-  getRecentlyPlayedBackgrounds: (count: number) =>
-    ipcRenderer.invoke(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, count),
-  getLogos: (gameId: string, count?:number) =>
-    ipcRenderer.invoke(RouteMedia.GET_LOGOS, gameId, count),
-  getTrailers: (gameId: string, count?:number) =>
-    ipcRenderer.invoke(RouteMedia.GET_TRAILERS, gameId, count),
-  getCovers: (gameId: string, count?:number) =>
-    ipcRenderer.invoke(RouteMedia.GET_COVERS, gameId, count),
-  getAchievements: (gameId: number, count?:number) =>
-    ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
-});
 
 contextBridge.exposeInMainWorld("notifications", {
   send: (notification) => ipcRenderer.send("send-notification", notification),

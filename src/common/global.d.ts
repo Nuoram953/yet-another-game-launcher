@@ -12,4 +12,7 @@ interface Window {
     getTrailers: (gameId: string, count?: number) => Promise<string[]>;
     getAchievements: (gameId: string, count?: number) => Promise<string[]>;
   };
+  library:{
+    getCountForAllStatus: () => Promise<object[]>;
+  }
 }

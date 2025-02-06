@@ -1,7 +1,7 @@
 import { prisma } from "..";
 import * as GameQueries from "./game";
 
-export async function getStatusAndCount() {
+export async function getCountForAllStatus() {
   const countPerStatus = await GameQueries.getCountByStatus();
   const statuses = await getAllStatus();
 

@@ -7,6 +7,11 @@ export enum IMAGE_TYPE {
   ACHIEVEMENT = "achievement",
 }
 
+export enum RouteLibrary {
+  GET_COUNT_STATUS = "library:countStatus",
+  GET_COUNT_PLATFORM = "library:countPlatform",
+}
+
 export enum RouteMedia {
   GET_ALL_MEDIA = "media:getAll",
   GET_BACKGROUNDS = "media:getBackgrounds",
@@ -15,5 +20,5 @@ export enum RouteMedia {
   GET_ICONS = "media:getIcons",
   GET_COVERS = "media:getCovers",
   GET_TRAILERS = "media:getTrailer",
-  GET_ACHIEVEMENTS = "media:getAchievements"
+  GET_ACHIEVEMENTS = "media:getAchievements",
 }
