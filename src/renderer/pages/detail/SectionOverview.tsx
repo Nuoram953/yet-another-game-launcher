@@ -54,7 +54,12 @@ export const SectionOverview = () => {
         <div className="flex flex-row justify-evenly">
           <ScoreCircle score={selectedGame.scoreCritic} label="Critic" />
           <ScoreCircle score={selectedGame.scoreCommunity} label="Community" />
-          <ScoreCircle score={selectedGame.scoreUser} label="User" />
+          {selectedGame?.review?.score && (
+            <ScoreCircle
+              score={selectedGame?.review?.score * 10 ?? null}
+              label="User"
+            />
+          )}
         </div>
       </div>
 

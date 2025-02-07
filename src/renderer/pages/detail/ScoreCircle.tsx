@@ -14,7 +14,7 @@ const ScoreCircle = ({
   label = "Score",
 }: Props) => {
   const percentage =
-    score !== null ? Math.round((score / maxScore) * 100) : null;
+    score !== null && !isNaN(score) ? Math.round((score / maxScore) * 100) : null;
 
   const getColors = (percentage: number | null) => {
     if (percentage === null) {
