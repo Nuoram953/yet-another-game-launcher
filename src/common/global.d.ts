@@ -1,10 +1,7 @@
-import type { GameReview } from "@prisma/client";
-
+import type { Game, GameReview, GameStatus } from "@prisma/client";
+import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
   interface Window {
-    api: {
-      getStoredPicturesDirectory: (id: string) => Promise<string>;
-    };
     media: {
       getAllMedia: (gameId: string) => Promise<string[][]>;
       getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
@@ -16,10 +13,14 @@ declare global {
       getAchievements: (gameId: string, count?: number) => Promise<string[]>;
     };
     library: {
+      getGame: (id:string) => Promise<GameWithRelations>;
+      getGames: (filters?:FilterConfig, sort?:SortConfig) => Promise<Game[]>;
       getCountForAllStatus: () => Promise<object[]>;
+      getStatus: () => Promise<GameStatus[]>;
     };
     game: {
       setReview: (data: Partial<GameReview>) => Promise<void>;
+      setStatus: (data: Partial<Game>) => Promise<void>;
     };
   }
 }

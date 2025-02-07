@@ -10,6 +10,7 @@ import { useGames } from "@/context/DatabaseContext";
 import { useTranslation } from "react-i18next";
 import { GameWithRelations } from "src/main/dal/game";
 import _ from "lodash";
+import { Game, GameStatus } from "@prisma/client";
 
 interface Props {
   className?: string;
@@ -17,7 +18,7 @@ interface Props {
 }
 
 const BadgeDropdown = ({ className, game }: Props) => {
-  const [status, setStatus] = useState<object[]>([]);
+  const [status, setStatus] = useState<GameStatus[]>([]);
   const { selectedGame } = useGames();
   const [currentGame, setCurrentGame] = useState(
     _.isUndefined(game) ? selectedGame : game,
@@ -30,7 +31,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await window.database.getStatus();
+        const data = await window.library.getStatus();
         setStatus(data);
       } catch (error) {
         console.error("Error fetching picture path:", error);
@@ -54,9 +55,12 @@ const BadgeDropdown = ({ className, game }: Props) => {
   const handleOptionSelect = (e,name: string) => {
     e.stopPropagation();
     const newStatus = status.find((item) => item.name == name);
-    window.database.setStatus(currentGame.id, newStatus.id);
+    const data:Partial<Game> ={
+      id: currentGame.id,
+      gameStatusId: newStatus!.id
+    }
+    window.game.setStatus(data);
     setSelectedOption(name);
-    console.log("Selected option:", name);
   };
 
   return (

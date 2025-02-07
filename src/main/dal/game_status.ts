@@ -3,7 +3,7 @@ import * as GameQueries from "./game";
 
 export async function getCountForAllStatus() {
   const countPerStatus = await GameQueries.getCountByStatus();
-  const statuses = await getAllStatus();
+  const statuses = await getAll();
 
   const result = statuses.map((status) => {
     const matchedStatus = countPerStatus.find((gs) => gs.gameStatusId === status.id);
@@ -18,6 +18,6 @@ export async function getCountForAllStatus() {
   return result
 }
 
-export async function getAllStatus() {
+export async function getAll() {
   return await prisma.gameStatus.findMany();
 }

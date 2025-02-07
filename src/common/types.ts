@@ -13,7 +13,7 @@ export type GameWithRelations = Prisma.GameGetPayload<{
   };
 }>;
 
-export interface GameFilters {
+export interface FilterConfig {
   gameStatusId?: keyof Game;
 }
 

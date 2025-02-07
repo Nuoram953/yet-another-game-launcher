@@ -13,6 +13,8 @@ class MetadataManager {
     this.userPath = app.getPath("userData");
   }
 
+  async downloadMissing(game:Game){}
+
   async getCountAchievementPictures(game: Game) {
     const path = await this.getImageDirectoryPath(IMAGE_TYPE.ACHIEVEMENT, game)
     return await this.getNumberOfFiles(path)

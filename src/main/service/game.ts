@@ -54,7 +54,7 @@ export const preLaunch = async (game: Game) => {
 };
 
 export const launch = async (game: GameWithRelations) => {
-  await preLaunch(game)
+  await preLaunch(game);
   log.info(`Launching game ${game.id}`);
 
   switch (game.storefrontId) {
@@ -74,11 +74,14 @@ export const launch = async (game: GameWithRelations) => {
   const { startTime, endTime } = await monitorDirectoryProcesses(
     game?.location!,
   );
-  await postLaunch(game, startTime, endTime)
-
+  await postLaunch(game, startTime, endTime);
 };
 
-export const postLaunch = async (game: GameWithRelations, startTime:Date, endTime:Date|null) => {
+export const postLaunch = async (
+  game: GameWithRelations,
+  startTime: Date,
+  endTime: Date | null,
+) => {
   log.info(`postLaunch for game ${game.id}`);
   if (startTime && endTime) {
     const minutes = await getMinutesBetween(startTime, endTime);
@@ -113,16 +116,30 @@ export const refreshLibrary = async () => {
   mainApp.sendToRenderer("request:games", {});
 };
 
-export const setReview = async (data: Partial<GameReview>) =>{
-  if(_.isUndefined(data.gameId)){
-    throw new Error("No game Id found")
+export const setReview = async (data: Partial<GameReview>) => {
+  if (_.isUndefined(data.gameId)) {
+    throw new Error("No game Id found");
   }
 
-  const game = queries.Game.getGameById(data.gameId)
+  const game = queries.Game.getGameById(data.gameId);
 
-  if(_.isNil(game)){
-    throw new Error("Invalid game")
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
   }
 
-  await queries.GameReview.createOrUpdate(data)
-}
+  await queries.GameReview.createOrUpdate(data);
+};
+
+export const setStatus = async (data: Partial<Game>) => {
+  if (_.isUndefined(data.id)) {
+    throw new Error("No game Id found");
+  }
+
+  const game = queries.Game.getGameById(data.id);
+
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  await queries.Game.update(data.id, { gameStatusId: data.gameStatusId });
+};

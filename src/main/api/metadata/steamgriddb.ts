@@ -1,7 +1,7 @@
 import { Game } from "@prisma/client";
 import axios from "axios";
 import { IMAGE_TYPE } from "../../../common/constant";
-import { mainApp, metadataManager, metadataManager } from "../../index";
+import { mainApp, metadataManager } from "../../index";
 import log from "electron-log/main";
 import { delay } from "../../utils/utils";
 
@@ -54,7 +54,7 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.info(`${this.game.id} has ${files} cover and the max was ${max}. Skipping`)
+      log.debug(`${this.game.id} has ${files} cover and the max was ${max}. Skipping`)
       return
     };
 
@@ -117,7 +117,7 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.info(`${this.game.id} has ${files} background and the max was ${max}. Skipping`)
+      log.debug(`${this.game.id} has ${files} background and the max was ${max}. Skipping`)
       return
     };
 
@@ -174,7 +174,7 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.info(`${this.game.id} has ${files} logo and the max was ${max}. Skipping`)
+      log.debug(`${this.game.id} has ${files} logo and the max was ${max}. Skipping`)
       return
     };
 

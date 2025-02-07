@@ -22,7 +22,7 @@ const App = () => {
   useEffect(() => {
     const fetchPicturePath = async () => {
       try {
-        setGames(await window.database.getGames());
+        setGames(await window.library.getGames());
 
         window.api.updateLibraries();
       } catch (error) {

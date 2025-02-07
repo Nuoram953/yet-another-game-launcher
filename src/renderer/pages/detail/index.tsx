@@ -36,9 +36,8 @@ const GameDetailsContent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await window.database.getGame(id);
+        const result = await window.library.getGame(id!);
         if (result) {
-          console.log(result);
           await updateSelectedGame(result);
           setLoading(false);
         }

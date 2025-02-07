@@ -3,7 +3,7 @@ import { GameStatus, Storefront } from "../constant";
 import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";
-import { GameWithRelations } from "../../common/types";
+import { FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
 
 const include = {
   gameStatus: true,
@@ -29,12 +29,12 @@ export async function update(id: string, newData: Partial<Game>) {
 
 export async function getGames(
   limit?: number | null,
-  filters?: Record<string, any>,
-  sort?: Record<string, Prisma.SortOrder>,
+  filters?: FilterConfig,
+  sort?: SortConfig,
 ) {
   const where = filters
     ? Object.fromEntries(
-        Object.entries(filters.filters).filter(([_, value]) => value !== null),
+        Object.entries(filters).filter(([_, value]) => value !== null),
       )
     : undefined;
 

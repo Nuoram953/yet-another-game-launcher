@@ -1,16 +1,16 @@
 import { Game, Prisma } from "@prisma/client";
 import _ from "lodash";
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { GameFilters, GameWithRelations, SortConfig } from "../../common/types";
+import { FiltersConfig, GameWithRelations, SortConfig } from "../../common/types";
 
 interface GamesContextValue {
   games: Game[];
   gameRunning: object;
   loading: boolean;
   error: string | null;
-  filters: GameFilters | {};
+  filters: FiltersConfig | {};
   sortConfig: SortConfig | {};
-  updateFilters: (newFilters: Partial<GameFilters>) => void;
+  updateFilters: (newFilters: Partial<FiltersConfig>) => void;
   updateSort: (field: keyof Game) => void;
   refreshGames: () => Promise<void>;
   selectedGame: GameWithRelations | null;
@@ -36,7 +36,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [gameRunning, setGameRunning] = useState<object>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<GameFilters | {}>({});
+  const [filters, setFilters] = useState<FiltersConfig | {}>({});
   const [sortConfig, setSortConfig] = useState<SortConfig | {}>({});
   const [selectedGame, setSelectedGame] = useState<GameWithRelations | null>(
     null,
@@ -47,7 +47,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     setError(null);
 
     try {
-      const response = await window.database.getGames({
+      const response = await window.library.getGames({
         filters,
         sort: sortConfig,
       });
@@ -73,7 +73,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     }
   }, [filters, sortConfig]);
 
-  const updateFilters = useCallback((newFilters: Partial<GameFilters>) => {
+  const updateFilters = useCallback((newFilters: Partial<FiltersConfig>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 

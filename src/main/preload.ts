@@ -2,8 +2,9 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 //
 
-import { GameReview } from "@prisma/client";
+import { Game, GameReview } from "@prisma/client";
 import { RouteGame, RouteLibrary, RouteMedia } from "../common/constant";
+import { FilterConfig, SortConfig } from "../common/types";
 
 const { contextBridge, ipcRenderer } = require("electron");
 
@@ -25,12 +26,18 @@ contextBridge.exposeInMainWorld("media", {
 });
 
 contextBridge.exposeInMainWorld("library", {
+  getGame: (id: string) => ipcRenderer.invoke(RouteLibrary.GET_GAME, id),
+  getGames: (filters?: FilterConfig, sort?: SortConfig) =>
+    ipcRenderer.invoke(RouteLibrary.GET_GAMES, filters, sort),
   getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
+  getStatus: () => ipcRenderer.invoke(RouteLibrary.GET_STATUS),
 });
 
 contextBridge.exposeInMainWorld("game", {
   setReview: (data: Partial<GameReview>) =>
     ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
+  setStatus: (data: Partial<Game>) =>
+    ipcRenderer.invoke(RouteGame.SET_STATUS, data),
 });
 
 contextBridge.exposeInMainWorld("appControl", {
@@ -64,9 +71,6 @@ contextBridge.exposeInMainWorld("api", {
 });
 
 contextBridge.exposeInMainWorld("database", {
-  getGames: (filters?: object, sort?: object) =>
-    ipcRenderer.invoke("games", filters, sort),
-  getGame: (id: string) => ipcRenderer.invoke("game", id),
   getRecentlyPlayed: (max: number) =>
     ipcRenderer.invoke("database:recentlyPlayed", max),
   setStatus: (id: string, status: number) =>
