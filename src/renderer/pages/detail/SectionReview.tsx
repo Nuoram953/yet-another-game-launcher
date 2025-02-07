@@ -6,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Tile } from './Tile';
+import { GameReview } from '@prisma/client';
+import { useGames } from '@/context/DatabaseContext';
 
 const StarRating = ({ value, hover, onHover, onClick }) => {
   const renderStar = (starNumber) => {
@@ -64,21 +66,22 @@ const StarRating = ({ value, hover, onHover, onClick }) => {
 };
 
 export const SectionReview = () => {
-  const [isAdvanced, setIsAdvanced] = useState(false);
-  const [review, setReview] = useState('');
+  const {selectedGame} = useGames()
+  const [isAdvanced, setIsAdvanced] = useState(selectedGame?.review?.isAdvanceReview ?? false);
+  const [review, setReview] = useState(selectedGame?.review?.review);
   const [submitted, setSubmitted] = useState(false);
   
   // Basic score
-  const [overallScore, setOverallScore] = useState(0);
+  const [overallScore, setOverallScore] = useState(selectedGame?.review?.score);
   const [overallHover, setOverallHover] = useState(0);
   
   // Advanced scores
   const [advancedScores, setAdvancedScores] = useState({
-    graphics: { score: 0, hover: 0 },
-    gameplay: { score: 0, hover: 0 },
-    story: { score: 0, hover: 0 },
-    sound: { score: 0, hover: 0 },
-    content: { score: 0, hover: 0 }
+    graphics: { score: selectedGame?.review?.scoreGraphic, hover: 0 },
+    gameplay: { score: selectedGame?.review?.scoreGameplay, hover: 0 },
+    story: { score: selectedGame?.review?.scoreStory, hover: 0 },
+    sound: { score: selectedGame?.review?.scoreSound, hover: 0 },
+    content: { score: selectedGame?.review?.scoreContent, hover: 0 }
   });
 
   const updateAdvancedScore = (category, value, isHover = false) => {
@@ -99,27 +102,21 @@ export const SectionReview = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!isAdvanced && overallScore === 0) {
-      alert('Please provide an overall score');
-      return;
+    const data:Partial<GameReview> = {
+      gameId: selectedGame!.id,
+      score: overallScore,
+      isAdvanceReview: isAdvanced,
+      scoreGameplay: advancedScores.graphics.score,
+      scoreContent: advancedScores.content.score,
+      scoreSound: advancedScores.sound.score,
+      scoreStory: advancedScores.story.score,
+      scoreGraphic: advancedScores.graphics.score,
+      review: review
     }
-    if (isAdvanced && Object.values(advancedScores).some(s => s.score === 0)) {
-      alert('Please provide scores for all categories');
-      return;
-    }
-    if (review.trim() === '') {
-      alert('Please write a review');
-      return;
-    }
-    
-    const reviewData = {
-      review,
-      isAdvanced,
-      overallScore: calculateOverallScore(),
-      ...(isAdvanced && { categoryScores: advancedScores })
-    };
-    console.log(reviewData);
-    setSubmitted(true);
+
+    console.log(data)
+
+    window.game.setReview(data)
   };
 
   const handleReset = () => {

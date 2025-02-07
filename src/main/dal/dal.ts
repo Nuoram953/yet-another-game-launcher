@@ -7,6 +7,7 @@ import * as GameTag from "./gameTag";
 import * as GameAchievements from "./achievement";
 import * as GameStatusHistory from "./gameStatusHistory";
 import * as GameStatus from "./game_status";
+import * as GameReview from "./gameReview"
 
 export default {
   Game,
@@ -17,5 +18,6 @@ export default {
   GameTag,
   GameAchievements,
   GameStatusHistory,
-  GameStatus
+  GameStatus,
+  GameReview
 };

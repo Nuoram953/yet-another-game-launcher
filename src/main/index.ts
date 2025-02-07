@@ -12,6 +12,7 @@ import "./handlers/steam";
 import "./handlers/media";
 import "./handlers/store";
 import "./handlers/library";
+import "./handlers/game";
 import "reflect-metadata";
 import Steam from "./api/storefront/steam";
 import log from "electron-log/main";

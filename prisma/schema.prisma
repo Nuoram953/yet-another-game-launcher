@@ -42,6 +42,7 @@ model Game {
   tags                   GameTag[]
   engines                GameEngine[]
   statusHistory          GameStatusHistory[]
+  review             GameReview?
 
   @@unique([externalId, storefrontId])
 }
@@ -149,6 +150,23 @@ model GameAchievement {
   unlockedAt  BigInt?
 
   @@unique([gameId, externalId])
+  @@index([gameId])
+}
+
+model GameReview {
+  id              String  @id @default(uuid())
+  gameId          String
+  game            Game    @relation(fields: [gameId], references: [id])
+  isAdvanceReview Boolean @default(false)
+  score           Int
+  scoreGraphic    Int?
+  scoreGameplay   Int?
+  scoreStory      Int?
+  scoreSound      Int?
+  scoreContent    Int?
+  review          String?
+
+  @@unique([gameId])
   @@index([gameId])
 }
 

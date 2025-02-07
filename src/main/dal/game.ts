@@ -13,6 +13,7 @@ const include = {
   developers: { include: { company: true } },
   publishers: { include: { company: true } },
   tags: { include: { tag: true } },
+  review: true,
 };
 
 export async function update(id: string, newData: Partial<Game>) {
@@ -52,7 +53,7 @@ export async function getGameById(
 ): Promise<GameWithRelations | null> {
   return prisma.game.findFirst({
     where: { id },
-    include
+    include,
   });
 }
 
@@ -65,7 +66,7 @@ export async function getGameByExtenalIdAndStorefront(
       externalId,
       storefrontId: storefront,
     },
-    include
+    include,
   });
 }
 
@@ -163,6 +164,15 @@ export async function getCountByStatus() {
     by: ["gameStatusId"],
     _count: {
       gameStatusId: true,
+    },
+  });
+}
+
+export async function getCountByStore() {
+  return await prisma.game.groupBy({
+    by: ["storefrontId"],
+    _count: {
+      storefrontId: true,
     },
   });
 }

@@ -4,6 +4,7 @@
   "description": "Ready-to-use project template for building cross-platform desktop applications with Electron, React, TypeScript, and Tailwind CSS.",
   "main": ".webpack/main",
   "scripts": {
+    "build": "webpack --mode production",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",

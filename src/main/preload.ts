@@ -2,7 +2,8 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 //
 
-import { RouteLibrary, RouteMedia } from "../common/constant";
+import { GameReview } from "@prisma/client";
+import { RouteGame, RouteLibrary, RouteMedia } from "../common/constant";
 
 const { contextBridge, ipcRenderer } = require("electron");
 
@@ -13,19 +14,23 @@ contextBridge.exposeInMainWorld("media", {
     ipcRenderer.invoke(RouteMedia.GET_BACKGROUNDS, gameId, count),
   getRecentlyPlayedBackgrounds: (count: number) =>
     ipcRenderer.invoke(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, count),
-  getLogos: (gameId: string, count?:number) =>
+  getLogos: (gameId: string, count?: number) =>
     ipcRenderer.invoke(RouteMedia.GET_LOGOS, gameId, count),
-  getTrailers: (gameId: string, count?:number) =>
+  getTrailers: (gameId: string, count?: number) =>
     ipcRenderer.invoke(RouteMedia.GET_TRAILERS, gameId, count),
-  getCovers: (gameId: string, count?:number) =>
+  getCovers: (gameId: string, count?: number) =>
     ipcRenderer.invoke(RouteMedia.GET_COVERS, gameId, count),
-  getAchievements: (gameId: number, count?:number) =>
+  getAchievements: (gameId: number, count?: number) =>
     ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
 });
 
 contextBridge.exposeInMainWorld("library", {
-  getCountForAllStatus: () =>
-    ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
+  getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
+});
+
+contextBridge.exposeInMainWorld("game", {
+  setReview: (data: Partial<GameReview>) =>
+    ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
 });
 
 contextBridge.exposeInMainWorld("appControl", {
@@ -76,7 +81,6 @@ contextBridge.exposeInMainWorld("steam", {
 contextBridge.exposeInMainWorld("store", {
   launch: (storeName: string) => ipcRenderer.invoke("store:launch", storeName),
 });
-
 
 contextBridge.exposeInMainWorld("notifications", {
   send: (notification) => ipcRenderer.send("send-notification", notification),

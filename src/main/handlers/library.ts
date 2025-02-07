@@ -13,3 +13,13 @@ ipcMain.handle(RouteLibrary.GET_COUNT_STATUS, async (_event) => {
     return [];
   }
 });
+
+ipcMain.handle(RouteLibrary.GET_COUNT_STORE, async (_event) => {
+  try {
+    return LibraryService.getCountForAllStatus();
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});

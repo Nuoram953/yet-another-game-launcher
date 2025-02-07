@@ -1,4 +1,4 @@
-import { Game } from "@prisma/client";
+import { Game, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../constant";
 import { mainApp, metadataManager } from "..";
@@ -8,9 +8,9 @@ import { createGameActiviy } from "../dal/gameActiviy";
 import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
-import { GameWithRelations } from "../dal/game";
 import _ from "lodash";
 import { spawn } from "child_process";
+import { GameWithRelations } from "../../common/types";
 
 export const updateAchievements = async (game: GameWithRelations) => {
   const countAchievements = game.achievements.length;
@@ -112,3 +112,17 @@ export const refreshGame = async (gameId: string) => {
 export const refreshLibrary = async () => {
   mainApp.sendToRenderer("request:games", {});
 };
+
+export const setReview = async (data: Partial<GameReview>) =>{
+  if(_.isUndefined(data.gameId)){
+    throw new Error("No game Id found")
+  }
+
+  const game = queries.Game.getGameById(data.gameId)
+
+  if(_.isNil(game)){
+    throw new Error("Invalid game")
+  }
+
+  await queries.GameReview.createOrUpdate(data)
+}

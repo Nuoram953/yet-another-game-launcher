@@ -9,6 +9,7 @@ export type GameWithRelations = Prisma.GameGetPayload<{
     developers: { include: { company: true } };
     publishers: { include: { company: true } };
     tags: { include: { tag: true } };
+    review: true
   };
 }>;
 
