@@ -22,7 +22,7 @@ export const getGame = async (id:string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  // await metadataManager.downloadMissing(game)
+  await metadataManager.downloadMissing(game)
   await updateAchievements(game)
 
   return await queries.Game.getGameById(id);

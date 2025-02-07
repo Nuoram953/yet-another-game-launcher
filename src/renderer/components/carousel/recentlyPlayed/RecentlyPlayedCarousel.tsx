@@ -13,6 +13,7 @@ export const RecentlyPlayedCarousel = () => {
     const fetchData = async () => {
       try {
         const data = await window.database.getRecentlyPlayed(10);
+        console.log(data)
         setRecentGames(data);
         setLoading(false);
       } catch (error) {

@@ -32,14 +32,14 @@ export async function getGames(
   filters?: FilterConfig,
   sort?: SortConfig,
 ) {
-  const where = filters
-    ? Object.fromEntries(
-        Object.entries(filters).filter(([_, value]) => value !== null),
-      )
-    : undefined;
+  // const where = filters
+  //   ? Object.fromEntries(
+  //       Object.entries(filters).filter(([_, value]) => value !== null),
+  //     )
+  //   : undefined;
 
   return await prisma.game.findMany({
-    where,
+    // where,
     include,
     orderBy: sort
       ? Object.entries(sort).map(([key, value]) => ({ [key]: value }))
