@@ -15,7 +15,6 @@ import {
 } from "../ui/breadcrumb";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { useNavigate } from "react-router-dom";
-import NotificationList from "../notification/NotificationList";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -70,7 +69,6 @@ export default function Layout({ children }: LayoutProps) {
           </main>
         </SidebarInset>
 
-        <NotificationList />
       </div>
     </SidebarProvider>
   );

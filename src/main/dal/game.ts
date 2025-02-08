@@ -3,7 +3,11 @@ import { GameStatus, Storefront } from "../constant";
 import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";
-import { FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
+import {
+  FilterConfig,
+  GameWithRelations,
+  SortConfig,
+} from "../../common/types";
 
 const include = {
   gameStatus: true,
@@ -174,5 +178,13 @@ export async function getCountByStore() {
     _count: {
       storefrontId: true,
     },
+  });
+}
+
+export async function getGamesLastPlayed(limit?: number) {
+  return await prisma.game.findMany({
+    include,
+    orderBy: [{ lastTimePlayed: "desc" }],
+    ...(limit && { take: limit }),
   });
 }

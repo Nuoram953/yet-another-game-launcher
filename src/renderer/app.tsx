@@ -11,9 +11,9 @@ import { Breadcrumb } from "./types";
 import "./i18n";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
-import {NotificationProvider} from "./context/NotificationContext";
 import { Toaster } from "./components/ui/toaster";
 import WebsiteViewer from "./pages/web/Index";
+import NotificationSystem from "./components/NotificationSystem";
 
 const App = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -38,7 +38,7 @@ const App = () => {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <NotificationProvider>
+      <NotificationSystem/>
         <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
           <GamesProvider>
             <HashRouter>
@@ -76,7 +76,6 @@ const App = () => {
             <Toaster />
           </GamesProvider>
         </BreadcrumbContext.Provider>
-      </NotificationProvider>
     </I18nextProvider>
   );
 };

@@ -23,6 +23,16 @@ ipcMain.handle(RouteLibrary.GET_GAMES, async (_event, filters, sort) => {
   }
 });
 
+ipcMain.handle(RouteLibrary.GET_LAST_PLAYED, async (_event, max) => {
+  try {
+    return await LibraryService.getLastPlayed(max);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});
+
 ipcMain.handle(RouteLibrary.GET_COUNT_STATUS, async (_event) => {
   try {
     return await LibraryService.getCountForAllStatus();

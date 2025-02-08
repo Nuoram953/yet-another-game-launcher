@@ -52,15 +52,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
         sort: sortConfig,
       });
 
-      const updatedGames = response.map((newGame) => {
-        const existingGame = games.find((g) => g.id === newGame.id);
-        if (existingGame && _.isEqual(existingGame, newGame)) {
-          return existingGame;
-        }
-        return newGame;
-      });
-
-      setGames(updatedGames);
+      setGames(response);
 
       if (selectedGame != null) {
         const game = response.find((game) => game.id === selectedGame.id);

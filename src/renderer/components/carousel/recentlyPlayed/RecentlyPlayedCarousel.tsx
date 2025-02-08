@@ -12,8 +12,7 @@ export const RecentlyPlayedCarousel = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await window.database.getRecentlyPlayed(10);
-        console.log(data)
+        const data = await window.library.getLastPlayed(10);
         setRecentGames(data);
         setLoading(false);
       } catch (error) {

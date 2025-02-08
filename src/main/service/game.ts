@@ -12,6 +12,81 @@ import _ from "lodash";
 import { spawn } from "child_process";
 import { GameWithRelations } from "../../common/types";
 
+export const preLaunch = async (game: GameWithRelations) => {
+  log.info(`preLaunch for game ${game.id}`);
+};
+
+export const launch = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("game not found");
+  }
+  await preLaunch(game);
+  log.info(`Launching game ${game.id}`);
+
+  switch (game.storefrontId) {
+    case Storefront.STEAM: {
+      spawn("steam", ["-silent", `steam://launch/${game.externalId}`], {
+        detached: true,
+        stdio: "ignore",
+      });
+    }
+  }
+
+  mainApp.sendToRenderer("is-game-running", {
+    isRunning: true,
+    game,
+  });
+
+  const { startTime, endTime } = await monitorDirectoryProcesses(
+    game?.location!,
+  );
+  await postLaunch(game, startTime, endTime);
+};
+
+export const install = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("game not found");
+  }
+
+  switch (game.storefrontId) {
+    case Storefront.STEAM: {
+      spawn("steam", [`steam://install/${game.externalId}`], {
+        detached: true,
+        stdio: "ignore",
+      });
+    }
+  }
+};
+
+export const postLaunch = async (
+  game: GameWithRelations,
+  startTime: Date,
+  endTime: Date | null,
+) => {
+  log.info(`postLaunch for game ${game.id}`);
+  if (startTime && endTime) {
+    const minutes = await getMinutesBetween(startTime, endTime);
+    if (minutes > 0) {
+      await createGameActiviy(game.id, startTime, endTime);
+      await queries.Game.updateTimePlayed(game.id, minutes + 1);
+    } else {
+      log.warn(
+        `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
+      );
+    }
+  }
+
+  await updateAchievements(game);
+
+  mainApp.sendToRenderer("is-game-running", {
+    isRunning: false,
+  });
+
+  await refreshGame(game.id);
+};
+
 export const updateAchievements = async (game: GameWithRelations) => {
   const countAchievements = game.achievements.length;
   const countAchievementPictures =
@@ -47,61 +122,6 @@ export const createOrUpdateGame = async (
   mainApp.sendToRenderer("add-new-game", {
     ...game,
   });
-};
-
-export const preLaunch = async (game: Game) => {
-  log.info(`preLaunch for game ${game.id}`);
-};
-
-export const launch = async (game: GameWithRelations) => {
-  await preLaunch(game);
-  log.info(`Launching game ${game.id}`);
-
-  switch (game.storefrontId) {
-    case Storefront.STEAM: {
-      spawn("steam", ["-silent", `steam://launch/${game.externalId}`], {
-        detached: true,
-        stdio: "ignore",
-      });
-    }
-  }
-
-  mainApp.sendToRenderer("is-game-running", {
-    isRunning: true,
-    game,
-  });
-
-  const { startTime, endTime } = await monitorDirectoryProcesses(
-    game?.location!,
-  );
-  await postLaunch(game, startTime, endTime);
-};
-
-export const postLaunch = async (
-  game: GameWithRelations,
-  startTime: Date,
-  endTime: Date | null,
-) => {
-  log.info(`postLaunch for game ${game.id}`);
-  if (startTime && endTime) {
-    const minutes = await getMinutesBetween(startTime, endTime);
-    if (minutes > 0) {
-      await createGameActiviy(game.id, startTime, endTime);
-      await queries.Game.updateTimePlayed(game.id, minutes + 1);
-    } else {
-      log.warn(
-        `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
-      );
-    }
-  }
-
-  await updateAchievements(game);
-
-  mainApp.sendToRenderer("is-game-running", {
-    isRunning: false,
-  });
-
-  await refreshGame(game.id);
 };
 
 export const downloadAchievements = () => {};

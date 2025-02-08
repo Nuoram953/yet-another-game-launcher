@@ -35,7 +35,7 @@ const Cover: React.FC<{
 
   const handleOnInstall = (e) => {
     e.stopPropagation();
-    window.steam.install(game.externalId);
+    window.game.install(game.id);
   };
 
   const handleMouseMove = (e, cardElement) => {

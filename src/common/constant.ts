@@ -10,10 +10,11 @@ export enum IMAGE_TYPE {
 export enum RouteLibrary {
   GET_GAME = "library:getGame",
   GET_GAMES = "library:getGames",
+  GET_LAST_PLAYED = "library:getLastPlayed",
   GET_COUNT_STATUS = "library:countStatus",
   GET_COUNT_PLATFORM = "library:countPlatform",
   GET_COUNT_STORE = "library:countStore",
-  GET_STATUS = "library:getStatus"
+  GET_STATUS = "library:getStatus",
 }
 
 export enum RouteMedia {
@@ -28,6 +29,8 @@ export enum RouteMedia {
 }
 
 export enum RouteGame {
+  LAUNCH = "game:launch",
+  INSTALL = "game:install",
   SET_REVIEW = "game:setReview",
   SET_STATUS = "game:setStatus",
 }

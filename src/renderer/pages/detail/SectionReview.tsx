@@ -161,7 +161,7 @@ export const SectionReview = () => {
               {!isAdvanced ? (
                 <div className="space-y-2">
                   <label className="block text-sm font-medium">
-                    Overall Score: {(overallHover || overallScore).toFixed(1)}
+                    Overall Score: {((overallHover || overallScore) ?? 0).toFixed(1)}
                     /10
                   </label>
                   <StarRating

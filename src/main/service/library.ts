@@ -31,3 +31,7 @@ export const getGame = async (id:string) => {
 export const getGames = async (filters?:FilterConfig, sort?:SortConfig) => {
   return await queries.Game.getGames(null, filters, sort);
 };
+
+export const getLastPlayed = async (max:number) => {
+  return await queries.Game.getGamesLastPlayed(max);
+};

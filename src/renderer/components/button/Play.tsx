@@ -7,7 +7,7 @@ export const ButtonPlay = () => {
   const { gameRunning, selectedGame } = useGames();
 
   const handleOnPlay = async () => {
-    await window.steam.launch(selectedGame.externalId);
+    await window.game.launch(selectedGame.id);
   };
 
   const handleOnStop = async () => {

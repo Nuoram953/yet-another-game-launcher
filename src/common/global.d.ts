@@ -15,10 +15,13 @@ declare global {
     library: {
       getGame: (id:string) => Promise<GameWithRelations>;
       getGames: (filters?:FilterConfig, sort?:SortConfig) => Promise<Game[]>;
+      getLastPlayed: (max:number) => Promise<Game[]>;
       getCountForAllStatus: () => Promise<object[]>;
       getStatus: () => Promise<GameStatus[]>;
     };
     game: {
+      launch: (id:string) => Promise<void>
+      install: (id:string) => Promise<void>
       setReview: (data: Partial<GameReview>) => Promise<void>;
       setStatus: (data: Partial<Game>) => Promise<void>;
     };

@@ -7,7 +7,6 @@ import {
   Session,
 } from "electron";
 import * as path from "path";
-import "./handlers/database";
 import "./handlers/steam";
 import "./handlers/media";
 import "./handlers/store";
@@ -22,6 +21,7 @@ import fs from "fs";
 import { execSync, exec } from "child_process";
 import { initMainI18n } from "./i18n";
 import Igdb from "./api/metadata/igdb";
+import notificationManager from "./manager/notificationManager";
 
 require("dotenv").config();
 
@@ -147,6 +147,8 @@ class MainWindowManager {
         },
       });
 
+      notificationManager.setMainWindow(this.mainWindow);
+
       this.mainWindow.setMenuBarVisibility(false);
 
       await this.setupCSP(this.mainWindow.webContents.session);
@@ -181,11 +183,17 @@ mainApp.initialize().catch(console.error);
 
 ipcMain.handle("update-libraries", async (event, forceReload) => {
   if (!hasRunInitialLibrariesUpdate || forceReload) {
-    mainApp.sendToRenderer("notification", {
-      title: "Updating libraries",
+    notificationManager.show({
+      id: "update",
+      title: "Updating libraries test",
       message: "You can continue to use the app while it's updating",
-      useToast: true,
+      type: 'progress',
+      current: 0,
+      total:100,
+      autoClose:true
     });
+
+      // notificationManager.updateProgress("udate", 25, "Connecting to Steam...");
     hasRunInitialLibrariesUpdate = true;
     const steam = new Steam();
     const games = await steam.initialize();

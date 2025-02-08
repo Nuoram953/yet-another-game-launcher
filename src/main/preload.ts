@@ -29,11 +29,17 @@ contextBridge.exposeInMainWorld("library", {
   getGame: (id: string) => ipcRenderer.invoke(RouteLibrary.GET_GAME, id),
   getGames: (filters?: FilterConfig, sort?: SortConfig) =>
     ipcRenderer.invoke(RouteLibrary.GET_GAMES, filters, sort),
+  getLastPlayed: (max:number) =>
+    ipcRenderer.invoke(RouteLibrary.GET_LAST_PLAYED, max),
   getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
   getStatus: () => ipcRenderer.invoke(RouteLibrary.GET_STATUS),
 });
 
 contextBridge.exposeInMainWorld("game", {
+  launch: (id:string) => 
+    ipcRenderer.invoke(RouteGame.LAUNCH, id),
+  install: (id:string) => 
+    ipcRenderer.invoke(RouteGame.INSTALL, id),
   setReview: (data: Partial<GameReview>) =>
     ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
   setStatus: (data: Partial<Game>) =>
@@ -70,22 +76,6 @@ contextBridge.exposeInMainWorld("api", {
   },
 });
 
-contextBridge.exposeInMainWorld("database", {
-  getRecentlyPlayed: (max: number) =>
-    ipcRenderer.invoke("database:recentlyPlayed", max),
-  setStatus: (id: string, status: number) =>
-    ipcRenderer.invoke("database:setStatus", id, status),
-});
-
-contextBridge.exposeInMainWorld("steam", {
-  launch: (appid: number) => ipcRenderer.invoke("steam:launch", appid),
-  install: (appid: number) => ipcRenderer.invoke("steam:install", appid),
-});
-
-contextBridge.exposeInMainWorld("store", {
-  launch: (storeName: string) => ipcRenderer.invoke("store:launch", storeName),
-});
-
 contextBridge.exposeInMainWorld("notifications", {
   send: (notification) => ipcRenderer.send("send-notification", notification),
   onReceive: (callback) => {
@@ -97,3 +87,15 @@ contextBridge.exposeInMainWorld("notifications", {
     ipcRenderer.removeAllListeners("notification");
   },
 });
+
+contextBridge.exposeInMainWorld(
+  'electron',
+  {
+    on: (channel: string, callback: Function) => {
+      ipcRenderer.on(channel, (_, ...args) => callback(...args));
+    },
+    removeAllListeners: (channel: string) => {
+      ipcRenderer.removeAllListeners(channel);
+    }
+  }
+);
