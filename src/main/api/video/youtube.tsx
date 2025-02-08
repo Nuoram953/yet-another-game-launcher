@@ -55,7 +55,6 @@ export class YouTubeDownloader {
           cookies: cookiePath,
           addHeader: ["referer:youtube.com", "user-agent:firefox"],
         },
-      ).then((output) => console.log("test"));
     } catch (error) {
       console.error("Search or download error:", error);
     }

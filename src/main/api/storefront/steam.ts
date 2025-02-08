@@ -46,8 +46,6 @@ class Steam {
       };
 
       await createOrUpdateGame(data, Storefront.STEAM);
-
-      await delay(2000);
     }
   }
 

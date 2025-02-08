@@ -11,7 +11,6 @@ export const ButtonPlay = () => {
   };
 
   const handleOnStop = async () => {
-    console.log("stop");
   };
 
   if (gameRunning.isRunning) {

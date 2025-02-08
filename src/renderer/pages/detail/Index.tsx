@@ -25,6 +25,7 @@ import { SectionAchievements } from "./SectionAchievements";
 import { SectionSession } from "./SectionSession";
 import { SectionSettings } from "./SectionSettings";
 import { SectionReview } from "./SectionReview";
+import { SectionActivities } from "./SectionActivities";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -32,6 +33,7 @@ const GameDetailsContent = () => {
   const { id } = useParams();
   const { setBreadcrumbs } = useBreadcrumbsContext();
   const { selectedGame, updateSelectedGame, gameRunning } = useGames();
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,12 +67,9 @@ const GameDetailsContent = () => {
     { id: "activities", icon: Activity, label: "Activities" , show:true},
     { id: "notes", icon: PenLine, label: "Notes" , show:true},
     { id: "reviews", icon: Star, label: "Reviews" , show:true},
-    { id: "playtime", icon: Clock, label: "Playtime" , show:true},
-    { id: "multiplayer", icon: Users, label: "Multiplayer" , show:true},
-    { id: "updates", icon: Download, label: "Updates" , show:true},
-    { id: "settings", icon: Settings, label: "Settings" , show:true},
     { id: "community", icon: MessageSquare, label: "Community" , show:true},
     { id: "metadata", icon: Image, label: "Metadata" , show:true},
+    { id: "settings", icon: Settings, label: "Settings" , show:true},
   ];
 
   const handleSectionChange = (sectionId) => {
@@ -101,6 +100,8 @@ const GameDetailsContent = () => {
         return <SectionSettings/>;
       case "reviews":
         return <SectionReview/>;
+      case "activities":
+        return <SectionActivities/>;
       default:
         return (
           <div className="animate-fadeIn rounded-lg bg-gray-800 p-6">

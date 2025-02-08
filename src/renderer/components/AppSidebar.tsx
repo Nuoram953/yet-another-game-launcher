@@ -69,7 +69,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const fetchData = async () => {
       try {
         const status = await window.library.getCountForAllStatus();
-        console.log(status);
         data.NavStatus[0].items = status.map((gameStatus) => ({
           id: gameStatus.id,
           title: t(gameStatus.name),

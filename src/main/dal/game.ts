@@ -148,6 +148,10 @@ export async function createOrUpdateExternal(
     update: {
       lastTimePlayed: data.lastTimePlayed,
       timePlayed: data.timePlayed,
+      timePlayedLinux: data.timePlayedLinux,
+      timePlayedWindows: data.timePlayedWindows,
+      timePlayedMac: data.timePlayedMac,
+      timePlayedSteamdeck: data.timePlayedSteamdeck,
     },
     create: {
       name: data.name!,
@@ -157,6 +161,10 @@ export async function createOrUpdateExternal(
       storefrontId: storefront,
       externalId: data.externalId!,
       timePlayed: data.timePlayed,
+      timePlayedLinux: data.timePlayedLinux,
+      timePlayedWindows: data.timePlayedWindows,
+      timePlayedMac: data.timePlayedMac,
+      timePlayedSteamdeck: data.timePlayedSteamdeck,
     },
   });
 

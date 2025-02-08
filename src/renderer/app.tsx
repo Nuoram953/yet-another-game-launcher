@@ -4,7 +4,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import Grid from "./components/layout/Grid";
 import Layout from "./components/layout/Layout";
 import { GamesProvider } from "./context/DatabaseContext";
-import GameDetail from "./pages/detail/index";
+import GameDetail from "./pages/detail/Index";
 import { Game } from "@prisma/client";
 import { BreadcrumbContext } from "./context/BreadcrumbsContext";
 import { Breadcrumb } from "./types";

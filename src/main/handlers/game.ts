@@ -22,6 +22,16 @@ ipcMain.handle(RouteGame.INSTALL, async (_event, id) => {
   }
 });
 
+ipcMain.handle(RouteGame.UNINSTALL, async (_event, id) => {
+  try {
+    await GameService.launch(id)
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});
+
+
 ipcMain.handle(RouteGame.SET_REVIEW, async (_event, data) => {
   try {
     await GameService.setReview(data);

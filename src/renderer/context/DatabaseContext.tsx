@@ -97,7 +97,6 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     window.api.onReceiveFromMain(
       "is-game-running",
       (data: { isRunning: boolean }) => {
-        console.log(`is running? : ${data.isRunning}`);
         setGameRunning(data);
       },
     );

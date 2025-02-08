@@ -40,7 +40,6 @@ export const StatsPanel = () => {
       detail = `Last played on ${lastPlayedDate.toLocaleDateString()}`;
     }
   } else {
-    console.log("No sessions found");
   }
 
   return (

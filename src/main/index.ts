@@ -1,24 +1,14 @@
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  nativeTheme,
-  session,
-  Session,
-} from "electron";
+import { app, BrowserWindow, session, Session } from "electron";
 import * as path from "path";
-import "./handlers/steam";
 import "./handlers/media";
 import "./handlers/store";
 import "./handlers/library";
 import "./handlers/game";
 import "reflect-metadata";
-import Steam from "./api/storefront/steam";
 import log from "electron-log/main";
 import MetadataManager from "./manager/metadataManager";
 import { PrismaClient } from "@prisma/client";
-import fs from "fs";
-import { execSync, exec } from "child_process";
+import { execSync } from "child_process";
 import { initMainI18n } from "./i18n";
 import Igdb from "./api/metadata/igdb";
 import notificationManager from "./manager/notificationManager";
@@ -30,7 +20,6 @@ require("dotenv").config();
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-let hasRunInitialLibrariesUpdate: boolean = false;
 export let metadataManager: MetadataManager;
 export let igdb: Igdb;
 export let prisma: PrismaClient;
@@ -58,12 +47,7 @@ class MainWindowManager {
 
       metadataManager = new MetadataManager();
       igdb = new Igdb();
-
-      nativeTheme.themeSource = "dark";
-
-      await app.whenReady();
-      log.warn("App is ready");
-
+      i18n = await initMainI18n();
       config = new ConfigManager<AppConfig>();
 
       await config.init({
@@ -73,6 +57,9 @@ class MainWindowManager {
           },
         },
       });
+
+      await app.whenReady();
+      log.warn("App is ready");
 
       if (config.get("store.steam.enable")) {
         const steamSession = session.fromPartition("persist:steamstore");
@@ -91,8 +78,6 @@ class MainWindowManager {
         console.log("Steam store cookies set successfully");
       }
 
-      i18n = await initMainI18n();
-
       await this.createWindow();
       log.info("Window created");
 
@@ -109,13 +94,6 @@ class MainWindowManager {
           await this.createWindow();
         }
       });
-
-      //app.on("before-quit", () => {
-      //  fs.copyFileSync("../../.webpack/database.sqlite", app.getPath('userData')+"/db_back.db");
-      //  console.log("Database backup saved.");
-      //});
-      //
-      //
 
       app.on("window-all-closed", () => {
         if (process.platform !== "darwin") {

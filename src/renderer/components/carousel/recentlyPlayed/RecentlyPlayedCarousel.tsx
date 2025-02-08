@@ -25,7 +25,6 @@ export const RecentlyPlayedCarousel = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      console.log()
       setCurrentIndex((prevIndex) =>
         prevIndex === recentGames.length - 1 ? 0 : prevIndex + 1,
       );

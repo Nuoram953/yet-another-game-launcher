@@ -64,10 +64,8 @@ const Cover: React.FC<{
 
   const handleRunCommand = async () => {
     try {
-      navigate(`/game/${game.id}`,{replace:true});
-    } catch (err) {
-      console.log(err);
-    }
+      navigate(`/game/${game.id}`, { replace: true });
+    } catch (err) {}
   };
 
   if (loading) {
@@ -87,9 +85,8 @@ const Cover: React.FC<{
     >
       <ImageWithFallback src={coverPicture} />
 
-
-    <div className="absolute top-2 left-2">
-      <BadgeDropdown game={game} />
+      <div className="absolute left-2 top-2">
+        <BadgeDropdown game={game} />
       </div>
 
       {!game.isInstalled && <InstallBadge handleOnClick={handleOnInstall} />}
