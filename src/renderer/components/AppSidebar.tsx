@@ -29,31 +29,9 @@ import { useNavigate } from "react-router-dom";
 import { useGames } from "@/context/DatabaseContext";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   NavPlatform: [
     {
-      title: "Platforms",
+      title: "Store",
       url: "/steam",
       icon: SquareTerminal,
       isActive: true,

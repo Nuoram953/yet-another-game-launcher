@@ -7,7 +7,12 @@ export enum IMAGE_TYPE {
   ACHIEVEMENT = "achievement",
 }
 
+export enum NotificationType {
+  REFRESH = "library:refresh",
+}
+
 export enum RouteLibrary {
+  REFRESH = "library:refresh",
   GET_GAME = "library:getGame",
   GET_GAMES = "library:getGames",
   GET_LAST_PLAYED = "library:getLastPlayed",

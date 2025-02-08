@@ -4,6 +4,16 @@ import { RouteLibrary } from "../../common/constant";
 import { ErrorMessage } from "../../common/error";
 import * as LibraryService from "../service/library";
 
+ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {
+  try {
+    await LibraryService.refresh();
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});
+
+
 ipcMain.handle(RouteLibrary.GET_GAME, async (_event, id) => {
   try {
     return await LibraryService.getGame(id);

@@ -23,8 +23,8 @@ const App = () => {
     const fetchPicturePath = async () => {
       try {
         setGames(await window.library.getGames());
+        window.library.refresh();
 
-        window.api.updateLibraries();
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }

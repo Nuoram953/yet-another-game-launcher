@@ -13,6 +13,7 @@ declare global {
       getAchievements: (gameId: string, count?: number) => Promise<string[]>;
     };
     library: {
+      refresh: () => Promise<void>;
       getGame: (id:string) => Promise<GameWithRelations>;
       getGames: (filters?:FilterConfig, sort?:SortConfig) => Promise<Game[]>;
       getLastPlayed: (max:number) => Promise<Game[]>;

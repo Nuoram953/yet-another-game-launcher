@@ -22,6 +22,8 @@ import { execSync, exec } from "child_process";
 import { initMainI18n } from "./i18n";
 import Igdb from "./api/metadata/igdb";
 import notificationManager from "./manager/notificationManager";
+import ConfigManager from "./manager/configManager";
+import { AppConfig } from "../common/interface";
 
 require("dotenv").config();
 
@@ -34,6 +36,7 @@ export let igdb: Igdb;
 export let prisma: PrismaClient;
 export let dbPath: string;
 export let i18n: Awaited<ReturnType<typeof initMainI18n>>;
+export let config: ConfigManager<AppConfig>;
 
 class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
@@ -61,20 +64,32 @@ class MainWindowManager {
       await app.whenReady();
       log.warn("App is ready");
 
-      const steamSession = session.fromPartition("persist:steamstore");
+      config = new ConfigManager<AppConfig>();
 
-      await steamSession.cookies.set({
-        url: "https://store.steampowered.com",
-        name: "SteamLogin",
-        value: "YOUR_COOKIE_VALUE_HERE", // Replace with a real cookie
-        domain: ".steampowered.com",
-        path: "/",
-        secure: true,
-        httpOnly: true,
-        sameSite: "no_restriction", // Ensures cross-site access
+      await config.init({
+        store: {
+          steam: {
+            enable: true,
+          },
+        },
       });
 
-      console.log("Steam store cookies set successfully");
+      if (config.get("store.steam.enable")) {
+        const steamSession = session.fromPartition("persist:steamstore");
+
+        await steamSession.cookies.set({
+          url: "https://store.steampowered.com",
+          name: "SteamLogin",
+          value: "YOUR_COOKIE_VALUE_HERE", // Replace with a real cookie
+          domain: ".steampowered.com",
+          path: "/",
+          secure: true,
+          httpOnly: true,
+          sameSite: "no_restriction", // Ensures cross-site access
+        });
+
+        console.log("Steam store cookies set successfully");
+      }
 
       i18n = await initMainI18n();
 
@@ -180,36 +195,3 @@ class MainWindowManager {
 
 export const mainApp = new MainWindowManager();
 mainApp.initialize().catch(console.error);
-
-ipcMain.handle("update-libraries", async (event, forceReload) => {
-  if (!hasRunInitialLibrariesUpdate || forceReload) {
-    notificationManager.show({
-      id: "update",
-      title: "Updating libraries test",
-      message: "You can continue to use the app while it's updating",
-      type: 'progress',
-      current: 0,
-      total:100,
-      autoClose:true
-    });
-
-      // notificationManager.updateProgress("udate", 25, "Connecting to Steam...");
-    hasRunInitialLibrariesUpdate = true;
-    const steam = new Steam();
-    const games = await steam.initialize();
-    return games;
-  }
-});
-
-ipcMain.handle("dark-mode:toggle", () => {
-  if (nativeTheme.shouldUseDarkColors) {
-    nativeTheme.themeSource = "light";
-  } else {
-    nativeTheme.themeSource = "dark";
-  }
-  return nativeTheme.shouldUseDarkColors;
-});
-
-ipcMain.handle("dark-mode:system", () => {
-  nativeTheme.themeSource = "system";
-});
