@@ -27,6 +27,7 @@ import { useGames } from "@/context/DatabaseContext";
 import { StatsPanelCard } from "./StatsPanelCard";
 import YearlyHeatmap from "./YearlyHeatmap";
 import { Calendar } from "@/components/ui/calendar";
+import HeatmapCalendar from "./HeatmapCalendar";
 
 ChartJS.register(
   CategoryScale,
@@ -151,8 +152,6 @@ export const SectionActivities = () => {
     ],
   };
 
-  console.log(chartOsData);
-
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -181,6 +180,9 @@ export const SectionActivities = () => {
       },
     },
   };
+
+  const dates = selectedGame?.activities.map(item=>unixToDate(item.endedAt))
+
 
   const formatDuration = (minutes) => {
     const hours = Math.floor(minutes / 60);
@@ -262,12 +264,7 @@ export const SectionActivities = () => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center">
-              <Calendar
-                mode="multiple"
-                selected={[date]}
-                onSelect={setDate}
-                className="rounded-md border"
-              />
+              <HeatmapCalendar/>
             </div>
           </CardContent>
         </Tile>

@@ -1,6 +1,6 @@
 import { Game, Prisma } from "@prisma/client";
 import _ from "lodash";
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { FiltersConfig, GameWithRelations, SortConfig } from "../../common/types";
 
 interface GamesContextValue {
@@ -86,7 +86,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   }, [filters, sortConfig, fetchGames]);
 
   React.useEffect(() => {
-    window.api.onReceiveFromMain("request:games", (data) => {
+    window.data.on("request:games", (payload) => {
       fetchGames();
     });
 
@@ -107,6 +107,11 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
       window.api.removeListener("is-game-running");
     };
   }, []);
+
+  useEffect(()=>{
+    fetchGames();
+    window.library.refresh();
+  },[])
 
   const value: GamesContextValue = {
     games,

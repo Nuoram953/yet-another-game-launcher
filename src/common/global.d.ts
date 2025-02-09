@@ -26,5 +26,12 @@ declare global {
       setReview: (data: Partial<GameReview>) => Promise<void>;
       setStatus: (data: Partial<Game>) => Promise<void>;
     };
+    data: {
+      on: (channel: string, callback: (data: any) => void) => (event: any, payload: any) => void;
+      off: (channel: string, callback: (data: any) => void) => void;
+      removeAllListeners: (channel: string) => void;
+      subscribe: (channel: string, interval?: number) => Promise<void>;
+      unsubscribe: (channel: string) => Promise<void>;
+    }
   }
 }

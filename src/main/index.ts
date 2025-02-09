@@ -14,6 +14,7 @@ import Igdb from "./api/metadata/igdb";
 import notificationManager from "./manager/notificationManager";
 import ConfigManager from "./manager/configManager";
 import { AppConfig } from "../common/interface";
+import dataChannelManager from "./manager/dataChannelManager";
 
 require("dotenv").config();
 
@@ -141,6 +142,7 @@ class MainWindowManager {
       });
 
       notificationManager.setMainWindow(this.mainWindow);
+      dataChannelManager.setMainWindow(this.mainWindow);
 
       this.mainWindow.setMenuBarVisibility(false);
 

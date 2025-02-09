@@ -11,6 +11,7 @@ import Steam from "../api/storefront/steam";
 import _ from "lodash";
 import { spawn } from "child_process";
 import { GameWithRelations } from "../../common/types";
+import dataManager from "../manager/dataChannelManager";
 
 export const preLaunch = async (game: GameWithRelations) => {
   log.info(`preLaunch for game ${game.id}`);
@@ -127,13 +128,13 @@ export const createOrUpdateGame = async (
 export const downloadAchievements = () => {};
 
 export const refreshGame = async (gameId: string) => {
-  mainApp.sendToRenderer("request:game", {
+  dataManager.send("request:game",{
     ...(await queries.Game.getGameById(gameId)),
-  });
+  })
 };
 
 export const refreshLibrary = async () => {
-  mainApp.sendToRenderer("request:games", {});
+  dataManager.send("request:games",{})
 };
 
 export const setReview = async (data: Partial<GameReview>) => {

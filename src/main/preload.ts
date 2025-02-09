@@ -46,6 +46,31 @@ contextBridge.exposeInMainWorld("game", {
     ipcRenderer.invoke(RouteGame.SET_STATUS, data),
 });
 
+contextBridge.exposeInMainWorld("data", {
+  on: (channel: string, callback: (data: any) => void) => {
+    const subscription = (_event: any, payload: any) => callback(payload);
+    ipcRenderer.on(channel, subscription);
+    return subscription;
+  },
+
+  off: (channel: string, callback: (data: any) => void) => {
+    ipcRenderer.removeListener(channel, callback);
+  },
+
+  removeAllListeners: (channel: string) => {
+    ipcRenderer.removeAllListeners(channel);
+  },
+
+  // Add methods for controlling subscriptions
+  subscribe: (channel: string, interval?: number) => {
+    return ipcRenderer.invoke("start-realtime-updates", { channel, interval });
+  },
+
+  unsubscribe: (channel: string) => {
+    return ipcRenderer.invoke("stop-realtime-updates", { channel });
+  },
+});
+
 contextBridge.exposeInMainWorld("appControl", {
   onAppBlur: (callback) => ipcRenderer.on("app-blur", callback),
   onAppFocus: (callback) => ipcRenderer.on("app-focus", callback),

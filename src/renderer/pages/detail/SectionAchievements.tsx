@@ -50,6 +50,7 @@ export const SectionAchievements = () => {
         const ressources = await window.media.getAchievements(
           selectedGame!.id,
         );
+        console.log(ressources)
         setAchievementLogos(ressources);
         setLoading(false);
       } catch (error) {
@@ -165,7 +166,7 @@ export const SectionAchievements = () => {
                   {achievement.isUnlocked ? (
                     <img
                       src={achievementLogos.find((logo) =>
-                        logo.includes(achievement.externalId),
+                        logo.includes(`achievement/${achievement.externalId}.`),
                       )}
                       alt={`game name logo`}
                       className="h-20 w-20 transform rounded-sm object-contain transition-transform duration-300 hover:scale-105"
