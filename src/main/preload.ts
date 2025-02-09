@@ -39,6 +39,7 @@ contextBridge.exposeInMainWorld("library", {
 contextBridge.exposeInMainWorld("game", {
   launch: (id: string) => ipcRenderer.invoke(RouteGame.LAUNCH, id),
   install: (id: string) => ipcRenderer.invoke(RouteGame.INSTALL, id),
+  kill: (id: string) => ipcRenderer.invoke(RouteGame.KILL, id),
   uninstall: (id: string) => ipcRenderer.invoke(RouteGame.UNINSTALL, id),
   setReview: (data: Partial<GameReview>) =>
     ipcRenderer.invoke(RouteGame.SET_REVIEW, data),

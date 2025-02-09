@@ -11,6 +11,7 @@ export const ButtonPlay = () => {
   };
 
   const handleOnStop = async () => {
+    window.game.kill(selectedGame.id)
   };
 
   if (running.includes(selectedGame.id)) {

@@ -23,6 +23,7 @@ declare global {
     game: {
       launch: (id:string) => Promise<void>
       install: (id:string) => Promise<void>
+      kill: (id:string) => Promise<void>
       setReview: (data: Partial<GameReview>) => Promise<void>;
       setStatus: (data: Partial<Game>) => Promise<void>;
     };

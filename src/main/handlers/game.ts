@@ -31,6 +31,15 @@ ipcMain.handle(RouteGame.UNINSTALL, async (_event, id) => {
   }
 });
 
+ipcMain.handle(RouteGame.KILL, async (_event, id) => {
+  try {
+    await GameService.kill(id)
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});
+
 
 ipcMain.handle(RouteGame.SET_REVIEW, async (_event, data) => {
   try {

@@ -42,6 +42,7 @@ export enum RouteMedia {
 export enum RouteGame {
   LAUNCH = "game:launch",
   INSTALL = "game:install",
+  KILL = "game:kill",
   UNINSTALL = "game:uninstall",
   SET_REVIEW = "game:setReview",
   SET_STATUS = "game:setStatus",

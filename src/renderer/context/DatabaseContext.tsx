@@ -102,9 +102,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     });
 
     window.data.on(DataRoute.REQUEST_GAME, (payload) => {
-      setLoading(true);
       setSelectedGame(payload.data);
-      setLoading(false);
     });
 
     window.data.on(DataRoute.RUNNING_GAME, (payload) => {

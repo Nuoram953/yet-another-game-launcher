@@ -2,7 +2,10 @@ import { Game, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../constant";
 import { mainApp, metadataManager } from "..";
-import { monitorDirectoryProcesses } from "../utils/tracking";
+import {
+  killDirectoyProcess,
+  monitorDirectoryProcesses,
+} from "../utils/tracking";
 import { getMinutesBetween } from "../utils/utils";
 import { createGameActiviy } from "../dal/gameActiviy";
 import log from "electron-log/main";
@@ -60,6 +63,20 @@ export const install = async (id: string) => {
       });
     }
   }
+};
+
+export const kill = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("game not found");
+  }
+
+  await killDirectoyProcess(game.location!);
+
+  dataManager.send(DataRoute.RUNNING_GAME, {
+    isRunning: true,
+    id: game.id,
+  });
 };
 
 export const postLaunch = async (
