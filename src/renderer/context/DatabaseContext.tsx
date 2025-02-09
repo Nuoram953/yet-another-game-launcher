@@ -1,16 +1,27 @@
 import { Game, Prisma } from "@prisma/client";
 import _ from "lodash";
-import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
-import { FiltersConfig, GameWithRelations, SortConfig } from "../../common/types";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import {
+  FilterConfig,
+  GameWithRelations,
+  SortConfig,
+} from "../../common/types";
+import { DataRoute } from "../../common/constant";
 
 interface GamesContextValue {
   games: Game[];
-  gameRunning: object;
+  running: string[];
   loading: boolean;
   error: string | null;
-  filters: FiltersConfig | {};
+  filters: FilterConfig | {};
   sortConfig: SortConfig | {};
-  updateFilters: (newFilters: Partial<FiltersConfig>) => void;
+  updateFilters: (newFilters: Partial<FilterConfig>) => void;
   updateSort: (field: keyof Game) => void;
   refreshGames: () => Promise<void>;
   selectedGame: GameWithRelations | null;
@@ -33,10 +44,10 @@ export const useGames = (): GamesContextValue => {
 
 export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [games, setGames] = useState<Game[]>([]);
-  const [gameRunning, setGameRunning] = useState<object>({});
+  const [running, setRunning] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<FiltersConfig | {}>({});
+  const [filters, setFilters] = useState<FilterConfig | {}>({});
   const [sortConfig, setSortConfig] = useState<SortConfig | {}>({});
   const [selectedGame, setSelectedGame] = useState<GameWithRelations | null>(
     null,
@@ -65,7 +76,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     }
   }, [filters, sortConfig]);
 
-  const updateFilters = useCallback((newFilters: Partial<FiltersConfig>) => {
+  const updateFilters = useCallback((newFilters: Partial<FilterConfig>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
@@ -83,39 +94,44 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
   React.useEffect(() => {
     fetchGames();
-  }, [filters, sortConfig, fetchGames]);
+  }, [filters, sortConfig]);
 
   React.useEffect(() => {
-    window.data.on("request:games", (payload) => {
+    window.data.on(DataRoute.REQUEST_GAMES, (payload) => {
       fetchGames();
     });
 
-    window.api.onReceiveFromMain("request:game", (game) => {
-      setSelectedGame(game);
+    window.data.on(DataRoute.REQUEST_GAME, (payload) => {
+      setLoading(true);
+      setSelectedGame(payload.data);
+      setLoading(false);
     });
 
-    window.api.onReceiveFromMain(
-      "is-game-running",
-      (data: { isRunning: boolean }) => {
-        setGameRunning(data);
-      },
-    );
+    window.data.on(DataRoute.RUNNING_GAME, (payload) => {
+      if (payload.data.isRunning) {
+        setRunning((prevItems) => [...prevItems, payload.data.id]);
+      } else {
+        setRunning((prevItems) =>
+          prevItems.filter((item) => item !== payload.data.id),
+        );
+      }
+    });
 
     return () => {
-      window.api.removeListener("request:games");
-      window.api.removeListener("request:game");
-      window.api.removeListener("is-game-running");
+      window.data.removeAllListeners(DataRoute.REQUEST_GAME);
+      window.data.removeAllListeners(DataRoute.REQUEST_GAMES);
+      window.data.removeAllListeners(DataRoute.RUNNING_GAME);
     };
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchGames();
     window.library.refresh();
-  },[])
+  }, []);
 
   const value: GamesContextValue = {
     games,
-    gameRunning,
+    running,
     loading,
     error,
     filters,

@@ -32,7 +32,7 @@ const GameDetailsContent = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const { setBreadcrumbs } = useBreadcrumbsContext();
-  const { selectedGame, updateSelectedGame, gameRunning } = useGames();
+  const { selectedGame, updateSelectedGame, running } = useGames();
 
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const GameDetailsContent = () => {
   }
 
   const sections = [
-    { id: "session", icon: BookOpen, label: "Active session" , show:gameRunning.isRunning},
+    { id: "session", icon: BookOpen, label: "Active session" , show:running.includes(selectedGame.id)},
     { id: "overview", icon: BookOpen, label: "Overview" , show:true},
     { id: "achievements", icon: Trophy, label: "Achievements" , show:selectedGame.achievements.length},
     { id: "activities", icon: Activity, label: "Activities" , show:true},

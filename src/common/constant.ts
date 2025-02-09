@@ -11,6 +11,12 @@ export enum NotificationType {
   REFRESH = "library:refresh",
 }
 
+export enum DataRoute{
+  REQUEST_GAMES="data:request:games",
+  REQUEST_GAME="data:request:game",
+  RUNNING_GAME="data:running:game"
+}
+
 export enum RouteLibrary {
   REFRESH = "library:refresh",
   GET_GAME = "library:getGame",

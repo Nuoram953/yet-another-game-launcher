@@ -12,6 +12,7 @@ import _ from "lodash";
 import { spawn } from "child_process";
 import { GameWithRelations } from "../../common/types";
 import dataManager from "../manager/dataChannelManager";
+import { DataRoute } from "../../common/constant";
 
 export const preLaunch = async (game: GameWithRelations) => {
   log.info(`preLaunch for game ${game.id}`);
@@ -34,9 +35,9 @@ export const launch = async (id: string) => {
     }
   }
 
-  mainApp.sendToRenderer("is-game-running", {
+  dataManager.send(DataRoute.RUNNING_GAME, {
     isRunning: true,
-    game,
+    id: game.id,
   });
 
   const { startTime, endTime } = await monitorDirectoryProcesses(
@@ -81,8 +82,9 @@ export const postLaunch = async (
 
   await updateAchievements(game);
 
-  mainApp.sendToRenderer("is-game-running", {
+  dataManager.send(DataRoute.RUNNING_GAME, {
     isRunning: false,
+    id: game.id,
   });
 
   await refreshGame(game.id);
@@ -128,13 +130,13 @@ export const createOrUpdateGame = async (
 export const downloadAchievements = () => {};
 
 export const refreshGame = async (gameId: string) => {
-  dataManager.send("request:game",{
+  dataManager.send(DataRoute.REQUEST_GAME, {
     ...(await queries.Game.getGameById(gameId)),
-  })
+  });
 };
 
 export const refreshLibrary = async () => {
-  dataManager.send("request:games",{})
+  dataManager.send("request:games", {});
 };
 
 export const setReview = async (data: Partial<GameReview>) => {

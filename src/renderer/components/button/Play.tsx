@@ -4,7 +4,7 @@ import React from "react";
 import { useGames } from "@/context/DatabaseContext";
 
 export const ButtonPlay = () => {
-  const { gameRunning, selectedGame } = useGames();
+  const { running, selectedGame } = useGames();
 
   const handleOnPlay = async () => {
     await window.game.launch(selectedGame.id);
@@ -13,7 +13,7 @@ export const ButtonPlay = () => {
   const handleOnStop = async () => {
   };
 
-  if (gameRunning.isRunning) {
+  if (running.includes(selectedGame.id)) {
     return (
       <Button
         size="lg"
