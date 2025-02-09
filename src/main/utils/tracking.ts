@@ -2,7 +2,7 @@ import psList from "ps-list";
 import path from "path";
 import { delay, normalizePath } from "./utils";
 import log from "electron-log/main";
-import treeKill from "tree-kill"; // You'll need to install this package
+import treeKill from "tree-kill";
 
 interface ProcessInfo {
   startTime: Date;
@@ -18,7 +18,6 @@ export async function killDirectoyProcess(directoryPath: string) {
       try {
         return (
           (proc.cmd && normalizePath(proc.cmd).includes(resolvedPath)) ||
-          // Add additional checks for related processes
           (proc.name && /game|unity|unreal|renderer|display/i.test(proc.name))
         );
       } catch (error) {
@@ -31,19 +30,16 @@ export async function killDirectoyProcess(directoryPath: string) {
       return { success: true, message: "No processes found" };
     }
 
-    // Kill all matching processes and their children
     const killPromises = directoryProcesses.map(
       (proc) =>
         new Promise<void>((resolve) => {
           try {
-            // First try tree-kill to handle process trees
             treeKill(proc.pid, "SIGTERM", (err) => {
               if (err) {
                 log.warn(
                   `tree-kill failed for ${proc.pid}, attempting force kill`,
                 );
                 try {
-                  // Fallback to force kill
                   process.kill(proc.pid, "SIGKILL");
                   log.info(`Force killed process ${proc.pid}`);
                 } catch (killError) {
@@ -66,7 +62,6 @@ export async function killDirectoyProcess(directoryPath: string) {
 
     await Promise.all(killPromises);
 
-    // Double check if any processes remain
     const remainingProcesses = (await psList()).filter((proc) => {
       try {
         return proc.cmd && normalizePath(proc.cmd).includes(resolvedPath);
@@ -77,7 +72,6 @@ export async function killDirectoyProcess(directoryPath: string) {
 
     if (remainingProcesses.length > 0) {
       log.warn(`${remainingProcesses.length} processes still remaining`);
-      // Try one more time with SIGKILL
       for (const proc of remainingProcesses) {
         try {
           process.kill(proc.pid, "SIGKILL");

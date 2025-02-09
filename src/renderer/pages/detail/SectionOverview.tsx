@@ -12,7 +12,7 @@ export const SectionOverview = () => {
   const { selectedGame } = useGames();
 
   return (
-    <div className="animate-fadeIn min-h-[2000px] space-y-6">
+    <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
       <StatsPanel />
       <Trailer />
 

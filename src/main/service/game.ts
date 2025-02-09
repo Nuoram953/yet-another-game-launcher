@@ -74,7 +74,7 @@ export const kill = async (id: string) => {
   await killDirectoyProcess(game.location!);
 
   dataManager.send(DataRoute.RUNNING_GAME, {
-    isRunning: true,
+    isRunning: false,
     id: game.id,
   });
 };
