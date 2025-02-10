@@ -6,6 +6,7 @@ import ScoreCircle from "./ScoreCircle";
 import { Info } from "@/components/detail/Info";
 import { Tile } from "./Tile";
 import { Calendar } from "@/components/ui/calendar";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const SectionOverview = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -15,6 +16,12 @@ export const SectionOverview = () => {
     <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
       <StatsPanel />
       <Trailer />
+
+      <Tile>
+        <CardContent>
+          <Info/>
+        </CardContent>
+      </Tile>
 
       <div className="mx-auto">
         <div className="flex w-full flex-row justify-around gap-4">
@@ -46,22 +53,28 @@ export const SectionOverview = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex-grow rounded-lg bg-gray-800 p-4">
-        <Info />
-      </div>
 
-      <div className="flex-1 flex-grow rounded-lg bg-gray-800 p-4">
-        <div className="flex flex-row justify-evenly">
-          <ScoreCircle score={selectedGame.scoreCritic} label="Critic" />
-          <ScoreCircle score={selectedGame.scoreCommunity} label="Community" />
-          {selectedGame?.review?.score && (
+
+      <Tile>
+        <CardHeader>
+          <CardTitle>Score</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-row justify-evenly">
+            <ScoreCircle score={selectedGame.scoreCritic} label="Critic" />
             <ScoreCircle
-              score={selectedGame?.review?.score * 10 ?? null}
-              label="User"
+              score={selectedGame.scoreCommunity}
+              label="Community"
             />
-          )}
-        </div>
-      </div>
+            {selectedGame?.review?.score && (
+              <ScoreCircle
+                score={selectedGame?.review?.score * 10 ?? null}
+                label="User"
+              />
+            )}
+          </div>
+        </CardContent>
+      </Tile>
 
       <Tile>
         <div className="flew-row flex justify-evenly">

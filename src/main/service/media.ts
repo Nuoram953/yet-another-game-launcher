@@ -17,32 +17,35 @@ export const getMediaByType = async (
     throw new Error(ErrorMessage.INVALID_GAME);
   }
 
-  const paths = [];
-  const directory = path.join(app.getPath("userData"), game.id, type);
+  try {
+    const paths = [];
+    const directory = path.join(app.getPath("userData"), game.id, type);
 
-  const files = fs.readdirSync(directory);
+    const files = fs.readdirSync(directory);
 
-  if (_.isUndefined(count)) {
-    for (const file of files) {
-      paths.push(`file://${path.join(directory, file)}`);
+    if (_.isUndefined(count)) {
+      for (const file of files) {
+        paths.push(`file://${path.join(directory, file)}`);
+      }
+    } else {
+      const slicedFiles = files.slice(0, count);
+      for (const file of slicedFiles) {
+        paths.push(`file://${path.join(directory, file)}`);
+      }
     }
-  } else {
-    const slicedFiles = files.slice(0, count);
-    for (const file of slicedFiles) {
-      paths.push(`file://${path.join(directory, file)}`);
-    }
+
+    return paths;
+  } catch (e) {
+    return [];
   }
-
-  return paths;
 };
 
-export const getRecentlyPlayedBackgrounds = async (count:number) =>{
+export const getRecentlyPlayedBackgrounds = async (count: number) => {
   const paths = [];
 
   const games = await queries.Game.getGames(count);
   for (const game of games) {
-    const backgrounds = await getMediaByType(IMAGE_TYPE.BACKGROUND, game.id, 1)
-    paths.push(backgrounds[0])
+    const backgrounds = await getMediaByType(IMAGE_TYPE.BACKGROUND, game.id, 1);
+    paths.push(backgrounds[0]);
   }
-
-}
+};

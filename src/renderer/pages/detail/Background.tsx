@@ -29,7 +29,7 @@ export const Background = ({ children }: Props) => {
   }
 
   return (
-    <div className="relative flex h-96 transform items-center justify-between bg-cover bg-center transition-transform duration-700 hover:scale-[1.02]"
+    <div className="relative flex h-96 transform items-center justify-evenly bg-cover bg-center transition-transform duration-700 hover:scale-[1.02] gap-32"
       style={{
         backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url(${backgroundPicture})`,
         backgroundAttachment: "fixed",

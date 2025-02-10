@@ -34,7 +34,6 @@ const GameDetailsContent = () => {
   const { setBreadcrumbs } = useBreadcrumbsContext();
   const { selectedGame, updateSelectedGame, running } = useGames();
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,15 +60,25 @@ const GameDetailsContent = () => {
   }
 
   const sections = [
-    { id: "session", icon: BookOpen, label: "Active session" , show:running.includes(selectedGame.id)},
-    { id: "overview", icon: BookOpen, label: "Overview" , show:true},
-    { id: "achievements", icon: Trophy, label: "Achievements" , show:selectedGame.achievements.length},
-    { id: "activities", icon: Activity, label: "Activities" , show:true},
-    { id: "notes", icon: PenLine, label: "Notes" , show:true},
-    { id: "reviews", icon: Star, label: "Reviews" , show:true},
-    { id: "community", icon: MessageSquare, label: "Community" , show:true},
-    { id: "metadata", icon: Image, label: "Metadata" , show:true},
-    { id: "settings", icon: Settings, label: "Settings" , show:true},
+    {
+      id: "session",
+      icon: BookOpen,
+      label: "Active session",
+      show: running.map((item) => item.id).includes(selectedGame.id),
+    },
+    { id: "overview", icon: BookOpen, label: "Overview", show: true },
+    {
+      id: "achievements",
+      icon: Trophy,
+      label: "Achievements",
+      show: selectedGame.achievements.length,
+    },
+    { id: "activities", icon: Activity, label: "Activities", show: true },
+    { id: "notes", icon: PenLine, label: "Notes", show: true },
+    { id: "reviews", icon: Star, label: "Reviews", show: true },
+    { id: "community", icon: MessageSquare, label: "Community", show: true },
+    { id: "metadata", icon: Image, label: "Metadata", show: true },
+    { id: "settings", icon: Settings, label: "Settings", show: true },
   ];
 
   const handleSectionChange = (sectionId) => {
@@ -89,19 +98,19 @@ const GameDetailsContent = () => {
 
     switch (activeSection) {
       case "session":
-        return <SectionSession/>;
+        return <SectionSession />;
       case "overview":
         return <SectionOverview />;
       case "metadata":
         return <SectionMetadata />;
       case "achievements":
-        return <SectionAchievements/>;
+        return <SectionAchievements />;
       case "settings":
-        return <SectionSettings/>;
+        return <SectionSettings />;
       case "reviews":
-        return <SectionReview/>;
+        return <SectionReview />;
       case "activities":
-        return <SectionActivities/>;
+        return <SectionActivities />;
       default:
         return (
           <div className="animate-fadeIn rounded-lg bg-gray-800 p-6">
@@ -117,29 +126,33 @@ const GameDetailsContent = () => {
   return (
     <div className="flex h-screen flex-col bg-gray-900 text-white">
       <Background>
+        <div className="flex gap-8 w-1/2 flex-col items-center justify-center">
           <Logo />
           <ButtonPlay />
+        </div>
       </Background>
 
       <div className="flex flex-1 overflow-hidden">
         <div className="w-48 overflow-y-auto bg-gray-800 p-2">
-          {sections.filter(section=>section.show).map((section, index) => (
-            <Button
-              key={section.id}
-              variant={activeSection === section.id ? "secondary" : "ghost"}
-              className="mb-1 w-full transform justify-start transition-transform duration-200 hover:translate-x-1"
-              onClick={() => handleSectionChange(section.id)}
-              style={{
-                animation: "slideIn 0.5s ease-out forwards",
-                animationDelay: `${index * 50}ms`,
-              }}
-            >
-              <section.icon
-                className={`mr-2 h-4 w-4 ${activeSection === section.id ? "animate-bounce" : ""}`}
-              />
-              {section.label}
-            </Button>
-          ))}
+          {sections
+            .filter((section) => section.show)
+            .map((section, index) => (
+              <Button
+                key={section.id}
+                variant={activeSection === section.id ? "secondary" : "ghost"}
+                className="mb-1 w-full transform justify-start transition-transform duration-200 hover:translate-x-1"
+                onClick={() => handleSectionChange(section.id)}
+                style={{
+                  animation: "slideIn 0.5s ease-out forwards",
+                  animationDelay: `${index * 50}ms`,
+                }}
+              >
+                <section.icon
+                  className={`mr-2 h-4 w-4 ${activeSection === section.id ? "animate-bounce" : ""}`}
+                />
+                {section.label}
+              </Button>
+            ))}
         </div>
 
         {/* Content Area */}

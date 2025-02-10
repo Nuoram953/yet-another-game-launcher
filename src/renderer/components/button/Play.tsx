@@ -35,12 +35,12 @@ export const ButtonPlay = () => {
     setOpen(true);
   };
 
-  if (running.includes(selectedGame.id)) {
+  if (running.map(item=>item.id).includes(selectedGame.id)) {
     return (
       <>
         <Button
           size="lg"
-          className="mr-24 transform bg-blue-600 text-white transition-all duration-300 hover:scale-105 hover:bg-blue-500 hover:shadow-lg"
+          className="transform bg-blue-600 text-white transition-all duration-300 hover:scale-105 hover:bg-blue-500 hover:shadow-lg"
           onClick={handleOnStop}
         >
           <CircleX className="mr-2 h-5 w-5 animate-pulse" />
@@ -70,7 +70,7 @@ export const ButtonPlay = () => {
   return (
     <Button
       size="lg"
-      className="mr-24 transform bg-green-600 text-white transition-all duration-300 hover:scale-105 hover:bg-green-500 hover:shadow-lg"
+      className="transform bg-green-600 text-white transition-all duration-300 hover:scale-105 hover:bg-green-500 hover:shadow-lg"
       onClick={handleOnPlay}
     >
       <Play className="mr-2 h-5 w-5 animate-pulse" />

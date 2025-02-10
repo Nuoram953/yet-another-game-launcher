@@ -6,9 +6,7 @@ import vdf from "vdf";
 import { Storefront } from "../../constant";
 import { Game, GameAchievement } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
-import * as GameQueries from "../../dal/game";
 import acfParser from "steam-acf2json";
-import { delay } from "../../utils/utils";
 import queries from "../../dal/dal";
 import { metadataManager } from "../../index";
 import { IMAGE_TYPE } from "../../../common/constant";
@@ -117,7 +115,7 @@ class Steam {
         );
 
         if (!game) {
-          continue
+          continue;
         }
         await queries.Game.update(game.id, { isInstalled: true });
 

@@ -62,7 +62,6 @@ contextBridge.exposeInMainWorld("data", {
     ipcRenderer.removeAllListeners(channel);
   },
 
-  // Add methods for controlling subscriptions
   subscribe: (channel: string, interval?: number) => {
     return ipcRenderer.invoke("start-realtime-updates", { channel, interval });
   },

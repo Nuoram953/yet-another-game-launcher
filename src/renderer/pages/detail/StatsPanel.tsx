@@ -43,37 +43,33 @@ export const StatsPanel = () => {
   }
 
   return (
-    <div className="bg-gray-850 border-b border-gray-700">
-      <div className="mx-auto py-4">
-        <div className="flex w-full flex-row justify-around gap-4">
-          <StatsPanelCard
-            icon={Clock}
-            label="Time Played"
-            value={`${convertToHoursAndMinutes(selectedGame?.timePlayed)}`}
-            detail={detail}
-          />
-          <StatsPanelCard
-            icon={Trophy}
-            label="Achievements"
-            value={`${selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length}/${selectedGame.achievements.length}`}
-            detail={`${((selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length / selectedGame.achievements.length) * 100).toFixed(0)}% Complete`}
-            hide={selectedGame.achievements.length === 0}
-          />
-          <StatsPanelCard
-            icon={Calendar}
-            label="Activity"
-            value={`${selectedGame.activities.length} Sessions`}
-            detail={`${last7DaysSessions.length} sessions in the last 7 days`}
-          />
-          <StatsPanelCard
-            icon={Activity}
-            label="Status"
-            value={t(selectedGame.gameStatus.name)}
-            detail=""
-            hide={true}
-          />
-        </div>
-      </div>
+    <div className="flex w-full flex-row justify-around gap-4">
+      <StatsPanelCard
+        icon={Clock}
+        label="Time Played"
+        value={`${convertToHoursAndMinutes(selectedGame?.timePlayed)}`}
+        detail={detail}
+      />
+      <StatsPanelCard
+        icon={Trophy}
+        label="Achievements"
+        value={`${selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length}/${selectedGame.achievements.length}`}
+        detail={`${((selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length / selectedGame.achievements.length) * 100).toFixed(0)}% Complete`}
+        hide={selectedGame.achievements.length === 0}
+      />
+      <StatsPanelCard
+        icon={Calendar}
+        label="Activity"
+        value={`${selectedGame.activities.length} Sessions`}
+        detail={`${last7DaysSessions.length} sessions in the last 7 days`}
+      />
+      <StatsPanelCard
+        icon={Activity}
+        label="Status"
+        value={t(selectedGame.gameStatus.name)}
+        detail=""
+        hide={true}
+      />
     </div>
   );
 };

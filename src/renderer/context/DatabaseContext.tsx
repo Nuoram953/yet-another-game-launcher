@@ -16,7 +16,7 @@ import { DataRoute } from "../../common/constant";
 
 interface GamesContextValue {
   games: Game[];
-  running: string[];
+  running: {id:string, time:number}[];
   loading: boolean;
   error: string | null;
   filters: FilterConfig | {};
@@ -44,7 +44,7 @@ export const useGames = (): GamesContextValue => {
 
 export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [games, setGames] = useState<Game[]>([]);
-  const [running, setRunning] = useState<string[]>([]);
+  const [running, setRunning] = useState<{id:string,time:number}[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterConfig | {}>({});
@@ -107,10 +107,10 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
     window.data.on(DataRoute.RUNNING_GAME, (payload) => {
       if (payload.data.isRunning) {
-        setRunning((prevItems) => [...prevItems, payload.data.id]);
+        setRunning((prevItems) => [...prevItems, {id:payload.data.id, time:0}]);
       } else {
         setRunning((prevItems) =>
-          prevItems.filter((item) => item !== payload.data.id),
+          prevItems.filter((item) => item.id !== payload.data.id),
         );
       }
     });

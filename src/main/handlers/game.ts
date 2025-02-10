@@ -15,7 +15,7 @@ ipcMain.handle(RouteGame.LAUNCH, async (_event, id) => {
 
 ipcMain.handle(RouteGame.INSTALL, async (_event, id) => {
   try {
-    await GameService.launch(id)
+    await GameService.install(id)
   } catch (e) {
     log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
     log.debug(e);
