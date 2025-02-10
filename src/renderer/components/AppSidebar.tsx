@@ -2,9 +2,11 @@
 
 import * as React from "react";
 import {
+    Activity,
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  HardDriveDownload,
   House,
   SquareTerminal,
 } from "lucide-react";
@@ -19,6 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { NavPlatform } from "./sidebar/nav-platforms";
@@ -97,7 +100,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem key={"Home"}>
+              <SidebarMenuButton asChild>
+                <a onClick={()=>navigate("/downloads")}>
+                  <HardDriveDownload />
+                  <span>Downloads</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem key={"Home"}>
+              <SidebarMenuButton asChild>
+                <a onClick={()=>navigate("/activity")}>
+                  <Activity />
+                  <span>Activity</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
+          <SidebarSeparator className="mt-8"/>
         </SidebarGroup>
         <NavPlatform items={data.NavPlatform} />
         <NavStatus items={data.NavStatus} />

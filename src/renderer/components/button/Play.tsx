@@ -22,6 +22,10 @@ export const ButtonPlay = () => {
     await window.game.launch(selectedGame.id);
   };
 
+  const handleOnInstall = async () => {
+    await window.game.install(selectedGame.id);
+  };
+
   const handleOnAlertDialogPositif = async () => {
     window.game.kill(selectedGame.id);
     setOpen(false);
@@ -35,7 +39,7 @@ export const ButtonPlay = () => {
     setOpen(true);
   };
 
-  if (running.map(item=>item.id).includes(selectedGame.id)) {
+  if (running.map((item) => item.id).includes(selectedGame.id)) {
     return (
       <>
         <Button
@@ -56,7 +60,9 @@ export const ButtonPlay = () => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={handleOnAlertDialogNegatif}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel onClick={handleOnAlertDialogNegatif}>
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction onClick={handleOnAlertDialogPositif}>
                 Continue
               </AlertDialogAction>
@@ -64,6 +70,19 @@ export const ButtonPlay = () => {
           </AlertDialogContent>
         </AlertDialog>
       </>
+    );
+  }
+
+  if (!selectedGame?.isInstalled) {
+    return (
+      <Button
+        size="lg"
+        className="transform bg-yellow-600 text-white transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:shadow-lg"
+        onClick={handleOnInstall}
+      >
+        <Play className="mr-2 h-5 w-5 animate-pulse" />
+        Install
+      </Button>
     );
   }
 
