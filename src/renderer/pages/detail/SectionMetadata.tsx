@@ -1,5 +1,7 @@
 import { useGames } from "@/context/DatabaseContext";
 import React, { useEffect, useState } from "react";
+import { Tile } from "./Tile";
+import { CardContent, CardHeader } from "@/components/ui/card";
 
 export const SectionMetadata = () => {
   const [media, setMedia] = useState<object>();
@@ -26,14 +28,28 @@ export const SectionMetadata = () => {
   }
 
   return (
-    <div className="flex flex-col">
-      <h1>backgrounds</h1>
+    <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
+        <Tile>
+          <CardHeader>Background</CardHeader>
+          <CardContent>
+            <div className="flex flex-row gap-4 overflow-x-auto">
+              {media.backgrounds.map((item) => (
+                <img src={item} className="h-[100px] w-[300px]" />
+              ))}
+            </div>
+          </CardContent>
+        </Tile>
 
-      <div className="flex flex-row gap-4">
-        {media.backgrounds.map((item) => (
-          <img src={item} className="h-45 w-45" />
-        ))}
+        <Tile>
+          <CardHeader>Cover</CardHeader>
+          <CardContent>
+            <div className="flex flex-row gap-4 overflow-x-auto">
+              {media.covers.map((item) => (
+                <img src={item} className="h-[300px] w-[200px]" />
+              ))}
+            </div>
+          </CardContent>
+        </Tile>
       </div>
-    </div>
   );
 };

@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { IconButton } from "../button/IconButton";
 
 //https://wireframe.cc/nFc2yR
 
@@ -70,14 +71,9 @@ export function NavPlatform({
                             <span>{subItem.title}</span>
                           </a>
                           <div className="flex flex-row gap-1">
-                            <ExternalLink
-                              className="hover:bg-gray-600 hover:rounded-md"
-                              size={18}
-                              onClick={(e) => {
-                                e.stopPropagation();
+                            <IconButton icon={ExternalLink} onClick={(e)=>{
                                 window.store.launch(subItem.title);
-                              }}
-                            />
+                            }}/>
                             <Globe
                               className="hover:bg-gray-600 hover:rounded-md"
                               size={18}
