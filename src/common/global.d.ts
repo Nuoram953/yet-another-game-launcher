@@ -3,7 +3,7 @@ import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
   interface Window {
     media: {
-      getAllMedia: (gameId: string) => Promise<string[][]>;
+      getAllMedia: (gameId: string) => Promise<object>;
       getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
       getRecentlyPlayedBackgrounds: (count: number) => Promise<string[]>;
       getLogos: (gameId: string, count?: number) => Promise<string[]>;

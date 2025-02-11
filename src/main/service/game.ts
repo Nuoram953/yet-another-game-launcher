@@ -6,7 +6,7 @@ import {
   killDirectoyProcess,
   monitorDirectoryProcesses,
 } from "../utils/tracking";
-import { getMinutesBetween } from "../utils/utils";
+import { delay, getMinutesBetween } from "../utils/utils";
 import { createGameActiviy } from "../dal/gameActiviy";
 import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
@@ -16,6 +16,7 @@ import { spawn } from "child_process";
 import { GameWithRelations } from "../../common/types";
 import dataManager from "../manager/dataChannelManager";
 import { DataRoute } from "../../common/constant";
+import { createDownloadTracker } from "../storefront/steam/monitor";
 
 export const preLaunch = async (game: GameWithRelations) => {
   log.info(`preLaunch for game ${game.id}`);
@@ -63,6 +64,11 @@ export const install = async (id: string) => {
       });
     }
   }
+
+  await delay(10000)
+  const tracker = createDownloadTracker(game.externalId!.toString());
+  tracker.registerWithDataManager();
+  tracker.stop();
 };
 
 export const kill = async (id: string) => {

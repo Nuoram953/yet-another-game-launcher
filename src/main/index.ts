@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, Session } from "electron";
+import { app, BrowserWindow, globalShortcut, session, Session } from "electron";
 import * as path from "path";
 import "./handlers/media";
 import "./handlers/store";
@@ -138,6 +138,7 @@ class MainWindowManager {
           preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
           webSecurity: false,
           webviewTag: true,
+          nodeIntegration: true,
         },
       });
 
@@ -161,6 +162,12 @@ class MainWindowManager {
       this.mainWindow.on("focus", () => {
         this.mainWindow?.webContents.send("app-focus");
       });
+
+      globalShortcut.register("F5", () => {
+        console.log("F5 was pressed!");
+        this.mainWindow?.reload(); // Example: Reload the window
+      });
+
     } catch (error) {
       console.error("Failed to create window:", error);
       throw error;

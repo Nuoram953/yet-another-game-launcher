@@ -16,7 +16,7 @@ import { DataRoute } from "../../common/constant";
 
 interface GamesContextValue {
   games: Game[];
-  running: {id:string, time:number}[];
+  running: { id: string; time: number }[];
   loading: boolean;
   error: string | null;
   filters: FilterConfig | {};
@@ -44,7 +44,7 @@ export const useGames = (): GamesContextValue => {
 
 export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [games, setGames] = useState<Game[]>([]);
-  const [running, setRunning] = useState<{id:string,time:number}[]>([]);
+  const [running, setRunning] = useState<{ id: string; time: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterConfig | {}>({});
@@ -107,12 +107,19 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
     window.data.on(DataRoute.RUNNING_GAME, (payload) => {
       if (payload.data.isRunning) {
-        setRunning((prevItems) => [...prevItems, {id:payload.data.id, time:0}]);
+        setRunning((prevItems) => [
+          ...prevItems,
+          { id: payload.data.id, time: 0 },
+        ]);
       } else {
         setRunning((prevItems) =>
           prevItems.filter((item) => item.id !== payload.data.id),
         );
       }
+    });
+
+    window.electron.on("steam-download-1931730", (payload: DataPayload) => {
+      console.log(payload.data)
     });
 
     return () => {
