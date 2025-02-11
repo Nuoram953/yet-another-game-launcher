@@ -7,6 +7,7 @@ import { Info } from "@/components/detail/Info";
 import { Tile } from "./Tile";
 import { Calendar } from "@/components/ui/calendar";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export const SectionOverview = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -16,6 +17,8 @@ export const SectionOverview = () => {
     <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
       <StatsPanel />
       <Trailer />
+
+      <Button onClick={()=>{window.game.uninstall(selectedGame.id)}}>Uninstall</Button>
 
       <Tile>
         <CardContent>

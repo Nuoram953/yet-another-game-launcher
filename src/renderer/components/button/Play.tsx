@@ -1,4 +1,4 @@
-import { CircleX, Play } from "lucide-react";
+import { ArrowDownToLine, CircleX, Play } from "lucide-react";
 import { Button } from "../ui/button";
 import React, { useState } from "react";
 import { useGames } from "@/context/DatabaseContext";
@@ -80,7 +80,7 @@ export const ButtonPlay = () => {
         className="transform bg-yellow-600 text-white transition-all duration-300 hover:scale-105 hover:bg-yellow-500 hover:shadow-lg"
         onClick={handleOnInstall}
       >
-        <Play className="mr-2 h-5 w-5 animate-pulse" />
+        <ArrowDownToLine className="mr-2 h-5 w-5 animate-pulse" />
         Install
       </Button>
     );

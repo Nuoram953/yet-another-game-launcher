@@ -14,25 +14,29 @@ declare global {
     };
     library: {
       refresh: () => Promise<void>;
-      getGame: (id:string) => Promise<GameWithRelations>;
-      getGames: (filters?:FilterConfig, sort?:SortConfig) => Promise<Game[]>;
-      getLastPlayed: (max:number) => Promise<Game[]>;
+      getGame: (id: string) => Promise<GameWithRelations>;
+      getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<Game[]>;
+      getLastPlayed: (max: number) => Promise<Game[]>;
       getCountForAllStatus: () => Promise<object[]>;
       getStatus: () => Promise<GameStatus[]>;
     };
     game: {
-      launch: (id:string) => Promise<void>
-      install: (id:string) => Promise<void>
-      kill: (id:string) => Promise<void>
+      launch: (id: string) => Promise<void>;
+      install: (id: string) => Promise<void>;
+      uninstall: (id: string) => Promise<void>;
+      kill: (id: string) => Promise<void>;
       setReview: (data: Partial<GameReview>) => Promise<void>;
       setStatus: (data: Partial<Game>) => Promise<void>;
     };
     data: {
-      on: (channel: string, callback: (data: any) => void) => (event: any, payload: any) => void;
+      on: (
+        channel: string,
+        callback: (data: any) => void,
+      ) => (event: any, payload: any) => void;
       off: (channel: string, callback: (data: any) => void) => void;
       removeAllListeners: (channel: string) => void;
       subscribe: (channel: string, interval?: number) => Promise<void>;
       unsubscribe: (channel: string) => Promise<void>;
-    }
+    };
   }
 }

@@ -1,16 +1,13 @@
 import fs from "fs";
 import path from "path";
-import { promisify } from "util";
 import log from "electron-log/main";
 import dataManager from "../../manager/dataChannelManager";
 import { getDefaultSteamPath } from "./utils";
 import acfParser from "steam-acf2json";
-import getFolderSize from "get-folder-size"
-
-import vdf from "vdf";
-
-const stat = promisify(fs.stat);
-const readdir = promisify(fs.readdir);
+import getFolderSize from "get-folder-size";
+import queries from "../../dal/dal";
+import { GameWithRelations } from "src/common/types";
+import { refreshGame } from "../../service/game";
 
 interface DownloadStats {
   progress: number;
@@ -26,10 +23,12 @@ class DownloadTracker {
   private previousSize: number = 0;
   private lastUpdate: number = Date.now();
   private totalBytes: number = 0;
+  private game: GameWithRelations;
 
-  constructor(gameId: string) {
-    this.gameId = gameId;
+  constructor(game: GameWithRelations) {
+    this.gameId = game.externalId!.toString();
     this.estimateTotalSize();
+    this.game = game;
   }
 
   private async estimateTotalSize() {
@@ -42,8 +41,8 @@ class DownloadTracker {
 
       const file = fs.readFileSync(manifestPath, "utf-8");
       const decode = acfParser.decode(file);
-      console.log(decode)
-      this.totalBytes = decode.AppState.BytesToStage
+      console.log(decode);
+      this.totalBytes = decode.AppState.BytesToStage;
     } catch (error) {
       log.error(`Error reading manifest file for game ${this.gameId}:`, error);
     }
@@ -57,11 +56,15 @@ class DownloadTracker {
         this.gameId,
       );
 
-      if(this.totalBytes == null || this.totalBytes == 0){
-        this.estimateTotalSize()
+      if (!fs.existsSync(downloadingFolder)) {
+        await this.stop();
       }
 
-      const totalSize = await getFolderSize.loose(downloadingFolder)
+      if (this.totalBytes == null || this.totalBytes == 0) {
+        this.estimateTotalSize();
+      }
+
+      const totalSize = await getFolderSize.loose(downloadingFolder);
 
       const now = Date.now();
       const elapsedTime = (now - this.lastUpdate) / 1000; // seconds
@@ -72,8 +75,6 @@ class DownloadTracker {
         speed > 0 && this.totalBytes > 0
           ? (this.totalBytes - totalSize) / speed
           : 0;
-
-      log.info(totalSize, this.totalBytes )
 
       this.previousSize = totalSize;
       this.lastUpdate = now;
@@ -90,7 +91,7 @@ class DownloadTracker {
         `Error getting Steam download stats for game ${this.gameId}:`,
         error,
       );
-      this.stop()
+      await this.stop();
     }
   }
 
@@ -103,12 +104,23 @@ class DownloadTracker {
     log.info(`Registered and started monitoring for game ${this.gameId}.`);
   }
 
-  stop() {
+  async stop() {
+    const manifestPath = path.join(
+      getDefaultSteamPath(),
+      "steamapps",
+      `appmanifest_${this.gameId}.acf`,
+    );
+    if (fs.existsSync(manifestPath)) {
+      await queries.Game.update(this.game.id, { isInstalled: true });
+      await refreshGame(this.game.id);
+    }
     dataManager.stopRealtimeUpdates(`steam-download-${this.gameId}`);
     log.info(`Stopped monitoring Steam download for game ${this.gameId}.`);
   }
 }
 
-export function createDownloadTracker(gameId: string): DownloadTracker {
-  return new DownloadTracker(gameId);
+export function createDownloadTracker(
+  game: GameWithRelations,
+): DownloadTracker {
+  return new DownloadTracker(game);
 }

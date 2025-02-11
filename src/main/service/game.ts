@@ -58,7 +58,7 @@ export const install = async (id: string) => {
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      spawn("steam", [`steam://install/${game.externalId}`], {
+      spawn("steam", ["-silent",`steam://install/${game.externalId}`], {
         detached: true,
         stdio: "ignore",
       });
@@ -66,9 +66,27 @@ export const install = async (id: string) => {
   }
 
   await delay(10000)
-  const tracker = createDownloadTracker(game.externalId!.toString());
+  const tracker = createDownloadTracker(game);
   tracker.registerWithDataManager();
-  tracker.stop();
+};
+
+export const uninstall = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("game not found");
+  }
+
+  switch (game.storefrontId) {
+    case Storefront.STEAM: {
+      spawn("steam", ["-slient", `steam://uninstall/${game.externalId}`], {
+        detached: true,
+        stdio: "ignore",
+      });
+    }
+  }
+
+  await queries.Game.update(game.id, {isInstalled:false})
+  await refreshGame(game.id)
 };
 
 export const kill = async (id: string) => {
