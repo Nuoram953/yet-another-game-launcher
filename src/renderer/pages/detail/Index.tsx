@@ -11,6 +11,7 @@ import {
   Settings,
   MessageSquare,
   Image,
+  Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
@@ -130,7 +131,6 @@ const GameDetailsContent = () => {
           <Logo />
           <ButtonPlay />
         </div>
-
       </Background>
 
       <div className="flex flex-1 overflow-hidden">
@@ -154,6 +154,23 @@ const GameDetailsContent = () => {
                 {section.label}
               </Button>
             ))}
+          {selectedGame.isInstalled && (
+            <Button
+              key={"delete"}
+              variant={"destructive"}
+              className="mb-1 w-full transform justify-start text-white transition-transform duration-200 hover:translate-x-1"
+              onClick={() => {
+                window.game.uninstall(selectedGame.id);
+              }}
+              style={{
+                animation: "slideIn 0.5s ease-out forwards",
+                animationDelay: `${sections.length + 1 * 50}ms`,
+              }}
+            >
+              <Trash className={`mr-2 h-4 w-4`} />
+              Uninstall
+            </Button>
+          )}
         </div>
 
         {/* Content Area */}

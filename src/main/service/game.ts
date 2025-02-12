@@ -77,7 +77,7 @@ export const uninstall = async (id: string) => {
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      spawn("steam", ["-slient", `steam://uninstall/${game.externalId}`], {
+      spawn("steam", ["-silent", `steam://uninstall/${game.externalId}`], {
         detached: true,
         stdio: "ignore",
       });

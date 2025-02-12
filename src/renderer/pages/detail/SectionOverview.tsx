@@ -18,8 +18,6 @@ export const SectionOverview = () => {
       <StatsPanel />
       <Trailer />
 
-      <Button onClick={()=>{window.game.uninstall(selectedGame.id)}}>Uninstall</Button>
-
       <Tile>
         <CardContent>
           <Info/>
