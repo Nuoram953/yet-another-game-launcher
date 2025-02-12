@@ -8,8 +8,9 @@ import getFolderSize from "get-folder-size";
 import queries from "../../dal/dal";
 import { GameWithRelations } from "src/common/types";
 import { refreshGame } from "../../service/game";
-import { RouteDownload } from "../../../common/constant";
+import { NotificationType, RouteDownload } from "../../../common/constant";
 import { delay } from "../../utils/utils";
+import notificationManager from "../../manager/notificationManager";
 
 interface DownloadStats {
   id: string;
@@ -32,7 +33,7 @@ class DownloadTracker {
     this.gameId = game.externalId!.toString();
     this.estimateTotalSize();
     this.game = game;
-    this.getDownloadStats()
+    this.getDownloadStats();
   }
 
   private async estimateTotalSize() {
@@ -94,7 +95,7 @@ class DownloadTracker {
         totalBytes: this.totalBytes,
       });
 
-      await delay(3000)
+      await delay(3000);
     }
     await this.stop();
   }
@@ -108,6 +109,12 @@ class DownloadTracker {
     if (fs.existsSync(manifestPath)) {
       await queries.Game.update(this.game.id, { isInstalled: true });
       await refreshGame(this.game.id);
+      notificationManager.show({
+        id: NotificationType.INSTALLED,
+        title: `Download complete`,
+        message: `${this.game.name} has been installed.`,
+        type: "info",
+      });
     }
 
     dataManager.send(RouteDownload.ON_DOWNLOAD_STOP, {

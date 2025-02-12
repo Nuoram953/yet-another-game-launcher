@@ -9,6 +9,7 @@ export enum IMAGE_TYPE {
 
 export enum NotificationType {
   REFRESH = "library:refresh",
+  INSTALLED = "library:game:installed",
 }
 
 export enum RouteDownload{

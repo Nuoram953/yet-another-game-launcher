@@ -134,7 +134,7 @@ const GameDetailsContent = () => {
       </Background>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-48 overflow-y-auto bg-gray-800 p-2">
+        <div className="w-48 bg-gray-800 p-2">
           {sections
             .filter((section) => section.show)
             .map((section, index) => (
@@ -174,7 +174,7 @@ const GameDetailsContent = () => {
         </div>
 
         {/* Content Area */}
-        <div className="mx-auto max-w-[1500px] flex-1 overflow-y-auto px-6">
+        <div className="mx-auto flex-1 overflow-y-auto px-6">
           {renderContent()}
         </div>
       </div>
