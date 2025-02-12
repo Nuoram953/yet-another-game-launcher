@@ -8,14 +8,16 @@ import React, {
   useEffect,
 } from "react";
 import {
+  DownloadStats,
   FilterConfig,
   GameWithRelations,
   SortConfig,
 } from "../../common/types";
-import { DataRoute } from "../../common/constant";
+import { DataRoute, RouteDownload } from "../../common/constant";
 
 interface GamesContextValue {
   games: Game[];
+  downloading: DownloadStats[];
   running: { id: string; time: number }[];
   loading: boolean;
   error: string | null;
@@ -44,6 +46,7 @@ export const useGames = (): GamesContextValue => {
 
 export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [games, setGames] = useState<Game[]>([]);
+  const [downloading, setDownloading] = useState<DownloadStats[]>([]);
   const [running, setRunning] = useState<{ id: string; time: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -118,9 +121,31 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
       }
     });
 
-    window.electron.on("steam-download-1931730", (payload: DataPayload) => {
-      console.log(payload.data)
-    });
+    window.electron.on(
+      RouteDownload.ON_DOWNLOAD_STATUS,
+      (payload: { data: DownloadStats }) => {
+        setDownloading((prevData) => {
+          const exists = prevData.some((item) => item.id === payload.data.id);
+
+          if (exists) {
+            return prevData.map((item) =>
+              item.id === payload.data.id ? { ...item, ...payload.data } : item,
+            );
+          } else {
+            return [...prevData, payload.data];
+          }
+        });
+      },
+    );
+
+    window.electron.on(
+      RouteDownload.ON_DOWNLOAD_STOP,
+      (payload: { id: string }) => {
+        setDownloading((prevData) =>
+          prevData.filter((item) => item.id !== payload.data.id),
+        );
+      },
+    );
 
     return () => {
       window.data.removeAllListeners(DataRoute.REQUEST_GAME);
@@ -137,6 +162,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const value: GamesContextValue = {
     games,
     running,
+    downloading,
     loading,
     error,
     filters,

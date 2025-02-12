@@ -15,7 +15,7 @@ import _ from "lodash";
 import { spawn } from "child_process";
 import { GameWithRelations } from "../../common/types";
 import dataManager from "../manager/dataChannelManager";
-import { DataRoute } from "../../common/constant";
+import { DataRoute, RouteDownload } from "../../common/constant";
 import { createDownloadTracker } from "../storefront/steam/monitor";
 
 export const preLaunch = async (game: GameWithRelations) => {
@@ -66,8 +66,7 @@ export const install = async (id: string) => {
   }
 
   await delay(10000)
-  const tracker = createDownloadTracker(game);
-  tracker.registerWithDataManager();
+  createDownloadTracker(game);
 };
 
 export const uninstall = async (id: string) => {

@@ -8,8 +8,11 @@ import getFolderSize from "get-folder-size";
 import queries from "../../dal/dal";
 import { GameWithRelations } from "src/common/types";
 import { refreshGame } from "../../service/game";
+import { RouteDownload } from "../../../common/constant";
+import { delay } from "../../utils/utils";
 
 interface DownloadStats {
+  id: string;
   progress: number;
   speed: number;
   timeRemaining: number;
@@ -29,6 +32,7 @@ class DownloadTracker {
     this.gameId = game.externalId!.toString();
     this.estimateTotalSize();
     this.game = game;
+    this.getDownloadStats()
   }
 
   private async estimateTotalSize() {
@@ -48,8 +52,9 @@ class DownloadTracker {
     }
   }
 
-  async getDownloadStats(): Promise<DownloadStats> {
-    try {
+  async getDownloadStats() {
+    let isDownloadInProgress = true;
+    while (isDownloadInProgress) {
       const downloadingFolder = path.join(
         getDefaultSteamPath(),
         "steamapps/downloading",
@@ -57,7 +62,8 @@ class DownloadTracker {
       );
 
       if (!fs.existsSync(downloadingFolder)) {
-        await this.stop();
+        isDownloadInProgress = false;
+        break;
       }
 
       if (this.totalBytes == null || this.totalBytes == 0) {
@@ -79,29 +85,18 @@ class DownloadTracker {
       this.previousSize = totalSize;
       this.lastUpdate = now;
 
-      return {
+      dataManager.send(RouteDownload.ON_DOWNLOAD_STATUS, {
+        id: this.game.id,
         progress,
         speed,
         timeRemaining,
         downloadedBytes: totalSize,
         totalBytes: this.totalBytes,
-      };
-    } catch (error) {
-      log.error(
-        `Error getting Steam download stats for game ${this.gameId}:`,
-        error,
-      );
-      await this.stop();
-    }
-  }
+      });
 
-  registerWithDataManager() {
-    dataManager.registerProvider(
-      `steam-download-${this.gameId}`,
-      this.getDownloadStats.bind(this),
-    );
-    dataManager.startRealtimeUpdates(`steam-download-${this.gameId}`, 1000);
-    log.info(`Registered and started monitoring for game ${this.gameId}.`);
+      await delay(3000)
+    }
+    await this.stop();
   }
 
   async stop() {
@@ -114,7 +109,10 @@ class DownloadTracker {
       await queries.Game.update(this.game.id, { isInstalled: true });
       await refreshGame(this.game.id);
     }
-    dataManager.stopRealtimeUpdates(`steam-download-${this.gameId}`);
+
+    dataManager.send(RouteDownload.ON_DOWNLOAD_STOP, {
+      id: this.game.id,
+    });
     log.info(`Stopped monitoring Steam download for game ${this.gameId}.`);
   }
 }

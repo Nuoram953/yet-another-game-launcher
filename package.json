@@ -101,6 +101,7 @@
     "react-router-dom": "^7.1.1",
     "react-virtualized-auto-sizer": "^1.0.25",
     "react-window": "^1.8.11",
+    "recharts": "^2.15.1",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
     "steam-acf2json": "^0.1.1",

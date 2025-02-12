@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import {
-    Activity,
+  Activity,
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
   HardDriveDownload,
   House,
+  Settings,
   SquareTerminal,
 } from "lucide-react";
 
@@ -30,6 +31,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGames } from "@/context/DatabaseContext";
+import { Badge } from "./ui/badge";
 
 const data = {
   NavPlatform: [
@@ -65,8 +67,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation("GameStatus");
-  const navigate = useNavigate()
-  const {games} = useGames()
+  const navigate = useNavigate();
+  const { games, downloading } = useGames();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,30 +96,42 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem key={"Home"}>
               <SidebarMenuButton asChild>
-                <a onClick={()=>navigate("/")}>
+                <a onClick={() => navigate("/")}>
                   <House />
                   <span>Home</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem key={"Home"}>
+            <SidebarMenuItem key={"Home"} className="flex justify-between">
               <SidebarMenuButton asChild>
-                <a onClick={()=>navigate("/downloads")}>
-                  <HardDriveDownload />
-                  <span>Downloads</span>
-                </a>
+                <div className="flex justify-between">
+                  <a className="flex flex-row gap-2" onClick={() => navigate("/download")}>
+                    <HardDriveDownload />
+                    <span className="flex content-center items-center">Downloads</span>
+                  </a>
+                  {downloading.length > 0 && <Badge>{downloading.length}</Badge>}
+                </div>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem key={"Home"}>
               <SidebarMenuButton asChild>
-                <a onClick={()=>navigate("/activity")}>
+                <a onClick={() => navigate("/activity")}>
                   <Activity />
                   <span>Activity</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
+
+            <SidebarMenuItem key={"Settings"}>
+              <SidebarMenuButton asChild>
+                <a onClick={() => navigate("/settings")}>
+                  <Settings />
+                  <span>Settings</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
-          <SidebarSeparator className="mt-8"/>
+          <SidebarSeparator className="mt-8" />
         </SidebarGroup>
         <NavPlatform items={data.NavPlatform} />
         <NavStatus items={data.NavStatus} />

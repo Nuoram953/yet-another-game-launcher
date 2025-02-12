@@ -11,6 +11,11 @@ export enum NotificationType {
   REFRESH = "library:refresh",
 }
 
+export enum RouteDownload{
+  ON_DOWNLOAD_STATUS="data:download:status",
+  ON_DOWNLOAD_STOP="data:download:stop",
+}
+
 export enum DataRoute{
   REQUEST_GAMES="data:request:games",
   REQUEST_GAME="data:request:game",

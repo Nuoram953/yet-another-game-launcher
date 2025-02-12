@@ -14,6 +14,7 @@ import i18n from "./i18n";
 import { Toaster } from "./components/ui/toaster";
 import WebsiteViewer from "./pages/web/Index";
 import NotificationSystem from "./components/NotificationSystem";
+import DownloadViewer from "./pages/download/Index";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
@@ -40,6 +41,16 @@ const App = () => {
                 element={
                   <Layout>
                     <GameDetail />
+                  </Layout>
+                }
+              />
+
+              <Route
+                index
+                path="/download"
+                element={
+                  <Layout>
+                    <DownloadViewer />
                   </Layout>
                 }
               />

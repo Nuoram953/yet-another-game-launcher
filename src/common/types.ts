@@ -21,3 +21,12 @@ export interface SortConfig extends Partial<GameWithRelations> {
   field: keyof Game;
   direction: "asc" | "desc";
 }
+
+export interface DownloadStats {
+  id:string,
+  progress: number;
+  speed: number;
+  timeRemaining: number;
+  downloadedBytes: number;
+  totalBytes: number;
+}

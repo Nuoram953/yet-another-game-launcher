@@ -71,14 +71,16 @@ export function NavPlatform({
                             <span>{subItem.title}</span>
                           </a>
                           <div className="flex flex-row gap-1">
-                            <IconButton icon={ExternalLink} onClick={(e)=>{
-                                window.store.launch(subItem.title);
-                            }}/>
-                            <Globe
-                              className="hover:bg-gray-600 hover:rounded-md"
-                              size={18}
+                            <IconButton
+                              icon={ExternalLink}
                               onClick={(e) => {
-                                e.stopPropagation();
+                                window.store.launch(subItem.title);
+                              }}
+                            />
+
+                            <IconButton
+                              icon={Globe}
+                              onClick={(e) => {
                                 navigate("/web/steam");
                               }}
                             />

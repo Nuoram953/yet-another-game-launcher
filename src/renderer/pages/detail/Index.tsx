@@ -126,10 +126,11 @@ const GameDetailsContent = () => {
   return (
     <div className="flex h-screen flex-col bg-gray-900 text-white">
       <Background>
-        <div className="flex gap-8 flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-8">
           <Logo />
           <ButtonPlay />
         </div>
+
       </Background>
 
       <div className="flex flex-1 overflow-hidden">
