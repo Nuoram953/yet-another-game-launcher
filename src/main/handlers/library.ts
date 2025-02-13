@@ -13,6 +13,15 @@ ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {
   }
 });
 
+ipcMain.handle(RouteLibrary.GET_DOWNLOAD_HISTORY, async (_event) => {
+  try {
+    return await LibraryService.getDownloadHistory();
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});
+
 
 ipcMain.handle(RouteLibrary.GET_GAME, async (_event, id) => {
   try {

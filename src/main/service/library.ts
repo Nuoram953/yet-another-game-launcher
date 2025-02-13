@@ -1,6 +1,6 @@
 import _ from "lodash";
 import queries from "../dal/dal";
-import { config, metadataManager } from "../index";
+import { config, igdb, metadataManager } from "../index";
 import { updateAchievements } from "./game";
 import { FilterConfig, SortConfig } from "../../common/types";
 import Steam from "../api/storefront/steam";
@@ -44,12 +44,18 @@ export const getStatus = async () => {
   return await queries.GameStatus.getAll();
 };
 
+export const getDownloadHistory = async () => {
+  return await queries.DownloadHistory.getAll(10);
+};
+
 export const getGame = async (id: string) => {
   let game = await queries.Game.getGameById(id);
   if (_.isNil(game)) {
     throw new Error("Invalid game id ${id}");
   }
 
+  const {developers, publishers} = await igdb.getGame(game.externalId!, game.storefrontId!)
+  console.log(developers)
   await metadataManager.downloadMissing(game);
   await updateAchievements(game);
 

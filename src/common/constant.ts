@@ -32,6 +32,7 @@ export enum RouteLibrary {
   GET_COUNT_PLATFORM = "library:countPlatform",
   GET_COUNT_STORE = "library:countStore",
   GET_STATUS = "library:getStatus",
+  GET_DOWNLOAD_HISTORY = "library:getDownloadHistory",
 }
 
 export enum RouteMedia {

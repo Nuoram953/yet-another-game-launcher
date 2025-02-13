@@ -34,6 +34,7 @@ contextBridge.exposeInMainWorld("library", {
     ipcRenderer.invoke(RouteLibrary.GET_LAST_PLAYED, max),
   getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
   getStatus: () => ipcRenderer.invoke(RouteLibrary.GET_STATUS),
+  getDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
 });
 
 contextBridge.exposeInMainWorld("game", {

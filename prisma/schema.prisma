@@ -42,7 +42,8 @@ model Game {
   tags                   GameTag[]
   engines                GameEngine[]
   statusHistory          GameStatusHistory[]
-  review             GameReview?
+  review                 GameReview?
+  downloadHistory        DownloadHistory[]
 
   @@unique([externalId, storefrontId])
 }
@@ -70,6 +71,15 @@ model GameActivity {
   startedAt BigInt
   endedAt   BigInt
   duration  Int
+
+  @@index([gameId])
+}
+
+model DownloadHistory {
+  id        Int    @id @default(autoincrement())
+  gameId    String
+  game      Game   @relation(fields: [gameId], references: [id])
+  createdAt BigInt
 
   @@index([gameId])
 }

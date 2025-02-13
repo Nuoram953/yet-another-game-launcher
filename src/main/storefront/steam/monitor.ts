@@ -107,6 +107,7 @@ class DownloadTracker {
       `appmanifest_${this.gameId}.acf`,
     );
     if (fs.existsSync(manifestPath)) {
+      await queries.DownloadHistory.create(this.game.id)
       await queries.Game.update(this.game.id, { isInstalled: true });
       await refreshGame(this.game.id);
       notificationManager.show({

@@ -83,15 +83,13 @@ class Igdb {
 
     const publishers = company
       .filter((company) => company.publisher)
-      .map((item) => item.company.name);
 
     const developers = company
       .filter((company) => company.developer)
-      .map((item) => item.company.name);
 
     const data = response.data[0];
 
-    const themes = data.themes.map((item) => item.name) || [];
+    const themes = data.themes?.map((item) => item.name) || [];
     const genres = data.genres?.map((item) => item.name) || [];
     const gameModes = data.game_modes?.map((item) => item.name) || [];
     const engine = data.game_engines?.map((item) => item.name) || [];

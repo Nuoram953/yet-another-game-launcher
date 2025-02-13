@@ -1,4 +1,4 @@
-import type { Game, GameReview, GameStatus } from "@prisma/client";
+import type { DownloadHistory, Game, GameReview, GameStatus } from "@prisma/client";
 import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
   interface Window {
@@ -19,6 +19,7 @@ declare global {
       getLastPlayed: (max: number) => Promise<Game[]>;
       getCountForAllStatus: () => Promise<object[]>;
       getStatus: () => Promise<GameStatus[]>;
+      getDownloadHistory: () => Promise<DownloadHistory[]>;
     };
     game: {
       launch: (id: string) => Promise<void>;
