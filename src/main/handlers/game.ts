@@ -60,3 +60,12 @@ ipcMain.handle(RouteGame.SET_STATUS, async (_event, data) => {
     log.debug(e);
   }
 });
+
+ipcMain.handle(RouteGame.SET_SETTING_GAMESCOPE, async (_event, data) => {
+  try {
+    await GameService.setGamescope(data);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});

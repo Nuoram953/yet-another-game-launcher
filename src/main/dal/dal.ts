@@ -9,6 +9,7 @@ import * as GameStatusHistory from "./gameStatusHistory";
 import * as GameStatus from "./game_status";
 import * as GameReview from "./gameReview"
 import * as DownloadHistory from "./downloadHistory"
+import * as GameConfigGamescope from "./gameConfigGamescope"
 
 export default {
   Game,
@@ -21,5 +22,6 @@ export default {
   GameStatusHistory,
   GameStatus,
   GameReview,
-  DownloadHistory
+  DownloadHistory,
+  GameConfigGamescope
 };

@@ -11,30 +11,30 @@ datasource db {
 }
 
 model Game {
-  id                     String              @id @default(uuid())
+  id                     String               @id @default(uuid())
   externalId             Int?
   name                   String
   lastTimePlayed         BigInt?
-  isInstalled            Boolean             @default(false)
-  isFavorite             Boolean             @default(false)
-  gameStatus             GameStatus          @relation(fields: [gameStatusId], references: [id])
+  isInstalled            Boolean              @default(false)
+  isFavorite             Boolean              @default(false)
+  gameStatus             GameStatus           @relation(fields: [gameStatusId], references: [id])
   gameStatusId           Int
-  storefront             Storefront?         @relation(fields: [storefrontId], references: [id])
+  storefront             Storefront?          @relation(fields: [storefrontId], references: [id])
   storefrontId           Int?
-  timePlayed             Int                 @default(0)
-  timePlayedWindows      Int                 @default(0)
-  timePlayedLinux        Int                 @default(0)
-  timePlayedMac          Int                 @default(0)
-  timePlayedSteamdeck    Int                 @default(0)
-  timePlayedDisconnected Int                 @default(0)
-  size                   BigInt?             @default(0)
+  timePlayed             Int                  @default(0)
+  timePlayedWindows      Int                  @default(0)
+  timePlayedLinux        Int                  @default(0)
+  timePlayedMac          Int                  @default(0)
+  timePlayedSteamdeck    Int                  @default(0)
+  timePlayedDisconnected Int                  @default(0)
+  size                   BigInt?              @default(0)
   location               String?
   scoreCritic            Int?
   scoreCommunity         Int?
   scoreUser              Int?
   summary                String?
-  createdAt              DateTime            @default(now())
-  updatedAt              DateTime            @updatedAt
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
   activities             GameActivity[]
   achievements           GameAchievement[]
   developers             GameDeveloper[]
@@ -44,6 +44,7 @@ model Game {
   statusHistory          GameStatusHistory[]
   review                 GameReview?
   downloadHistory        DownloadHistory[]
+  gamescope              GameConfigGamescope?
 
   @@unique([externalId, storefrontId])
 }
@@ -184,4 +185,22 @@ model Storefront {
   id   Int    @id @default(autoincrement())
   name String @unique
   Game Game[]
+}
+
+model GameConfigGamescope {
+  id                   String  @id @default(uuid())
+  gameId               String
+  game                 Game    @relation(fields: [gameId], references: [id])
+  isEnabled           Boolean @default(false)
+  isBorderless         Boolean @default(false)
+  isFullscreen         Boolean @default(false)
+  isFsr                Boolean @default(false)
+  isAllowUnfocused     Boolean @default(false)
+  isEnableSteamOverlay Boolean @default(false)
+  isForceGrabCursor    Boolean @default(false)
+  width                Int
+  height               Int
+  refreshRate          Int
+
+  @@unique([gameId])
 }

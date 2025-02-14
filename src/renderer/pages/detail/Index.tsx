@@ -24,7 +24,7 @@ import { ButtonPlay } from "@/components/button/Play";
 import { SectionOverview } from "./SectionOverview";
 import { SectionAchievements } from "./SectionAchievements";
 import { SectionSession } from "./SectionSession";
-import { SectionSettings } from "./SectionSettings";
+import { SectionSettings } from "./settings/Index";
 import { SectionReview } from "./SectionReview";
 import { SectionActivities } from "./SectionActivities";
 

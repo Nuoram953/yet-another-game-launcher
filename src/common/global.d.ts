@@ -1,4 +1,10 @@
-import type { DownloadHistory, Game, GameReview, GameStatus } from "@prisma/client";
+import type {
+  DownloadHistory,
+  Game,
+  GameConfigGamescope,
+  GameReview,
+  GameStatus,
+} from "@prisma/client";
 import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
   interface Window {
@@ -28,6 +34,7 @@ declare global {
       kill: (id: string) => Promise<void>;
       setReview: (data: Partial<GameReview>) => Promise<void>;
       setStatus: (data: Partial<Game>) => Promise<void>;
+      setGamescope: (data: GameConfigGamescope) => Promise<void>;
     };
     data: {
       on: (

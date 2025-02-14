@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 //
 
-import { Game, GameReview } from "@prisma/client";
+import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import { RouteGame, RouteLibrary, RouteMedia } from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
 
@@ -46,6 +46,8 @@ contextBridge.exposeInMainWorld("game", {
     ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
   setStatus: (data: Partial<Game>) =>
     ipcRenderer.invoke(RouteGame.SET_STATUS, data),
+  setGamescope: (data: GameConfigGamescope) =>
+    ipcRenderer.invoke(RouteGame.SET_SETTING_GAMESCOPE, data),
 });
 
 contextBridge.exposeInMainWorld("data", {

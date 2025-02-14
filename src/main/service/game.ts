@@ -1,4 +1,4 @@
-import { Game, GameReview } from "@prisma/client";
+import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../constant";
 import { mainApp, metadataManager } from "..";
@@ -12,11 +12,11 @@ import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
 import _ from "lodash";
-import { spawn } from "child_process";
 import { GameWithRelations } from "../../common/types";
 import dataManager from "../manager/dataChannelManager";
-import { DataRoute, RouteDownload } from "../../common/constant";
+import { DataRoute } from "../../common/constant";
 import { createDownloadTracker } from "../storefront/steam/monitor";
+import * as SteamCommand from "../storefront/steam/commands";
 
 export const preLaunch = async (game: GameWithRelations) => {
   log.info(`preLaunch for game ${game.id}`);
@@ -32,10 +32,7 @@ export const launch = async (id: string) => {
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      spawn("steam", ["-silent", `steam://launch/${game.externalId}`], {
-        detached: true,
-        stdio: "ignore",
-      });
+      SteamCommand.run(game.externalId!);
     }
   }
 
@@ -58,15 +55,11 @@ export const install = async (id: string) => {
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      spawn("steam", ["-silent",`steam://install/${game.externalId}`], {
-        detached: true,
-        stdio: "ignore",
-      });
+      SteamCommand.install(game.externalId!);
+      await delay(10000);
+      createDownloadTracker(game);
     }
   }
-
-  await delay(10000)
-  createDownloadTracker(game);
 };
 
 export const uninstall = async (id: string) => {
@@ -77,15 +70,12 @@ export const uninstall = async (id: string) => {
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      spawn("steam", ["-silent", `steam://uninstall/${game.externalId}`], {
-        detached: true,
-        stdio: "ignore",
-      });
+      SteamCommand.uninstall(game.externalId!);
     }
   }
 
-  await queries.Game.update(game.id, {isInstalled:false})
-  await refreshGame(game.id)
+  await queries.Game.update(game.id, { isInstalled: false });
+  await refreshGame(game.id);
 };
 
 export const kill = async (id: string) => {
@@ -205,4 +195,15 @@ export const setStatus = async (data: Partial<Game>) => {
   }
 
   await queries.Game.update(data.id, { gameStatusId: data.gameStatusId });
+};
+
+export const setGamescope = async (data: GameConfigGamescope) => {
+  const game = await queries.Game.getGameById(data.gameId);
+
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  await queries.GameConfigGamescope.createOrUpdate(data);
+  await refreshGame(game.id)
 };
