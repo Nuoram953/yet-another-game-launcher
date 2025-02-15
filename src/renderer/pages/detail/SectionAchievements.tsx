@@ -47,10 +47,8 @@ export const SectionAchievements = () => {
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const ressources = await window.media.getAchievements(
-          selectedGame!.id,
-        );
-        console.log(ressources)
+        const ressources = await window.media.getAchievements(selectedGame!.id);
+        console.log(ressources);
         setAchievementLogos(ressources);
         setLoading(false);
       } catch (error) {
@@ -61,13 +59,15 @@ export const SectionAchievements = () => {
     fetchBackgroundPicture();
   }, []);
 
-  const sortAchievements = (a:GameAchievement, b:GameAchievement) => {
+  const sortAchievements = (a: GameAchievement, b: GameAchievement) => {
     switch (sortBy) {
       case "name":
         return a.name.localeCompare(b.name);
       case "date":
         if (a.isUnlocked && b.isUnlocked) {
-          return new Date(Number(b.unlockedAt)) - new Date(Number(a.unlockedAt));
+          return (
+            new Date(Number(b.unlockedAt)) - new Date(Number(a.unlockedAt))
+          );
         }
         return b.isUnlocked - a.isUnlocked;
       default:
@@ -93,17 +93,18 @@ export const SectionAchievements = () => {
     })
     .sort(sortAchievements);
 
-
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
-      <Tile>
-        <CardHeader>
-          <CardTitle>Achievement History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <AchievementTimeline />
-        </CardContent>
-      </Tile>
+      {selectedGame?.achievements.filter(item=>item.isUnlocked).length > 0 && (
+        <Tile>
+          <CardHeader>
+            <CardTitle>Achievement History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AchievementTimeline />
+          </CardContent>
+        </Tile>
+      )}
 
       <Tile>
         <CardHeader>
@@ -157,41 +158,40 @@ export const SectionAchievements = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            {filteredAchievements
-              .map((achievement) => (
-                <div
-                  key={`all-${achievement.id}`}
-                  className="flex items-center space-x-4 border-b border-gray-700 p-4 last:border-b-0"
-                >
-                  {achievement.isUnlocked ? (
-                    <img
-                      src={achievementLogos.find((logo) =>
-                        logo.includes(`achievement/${achievement.externalId}.`),
-                      )}
-                      alt={`game name logo`}
-                      className="h-20 w-20 transform rounded-sm object-contain transition-transform duration-300 hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-20 w-20 items-center justify-center rounded-sm bg-gray-600">
-                      <Lock />
-                    </div>
-                  )}
-                  <div className="flex-grow">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-bold">{achievement.name}</h3>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      {achievement.description}
-                    </p>
-                    {achievement.isUnlocked && (
-                      <p className="mt-1 text-xs text-gray-500">
-                        Unlocked: {unixToDate(achievement.unlockedAt)}
-                      </p>
+            {filteredAchievements.map((achievement) => (
+              <div
+                key={`all-${achievement.id}`}
+                className="flex items-center space-x-4 border-b border-gray-700 p-4 last:border-b-0"
+              >
+                {achievement.isUnlocked ? (
+                  <img
+                    src={achievementLogos.find((logo) =>
+                      logo.includes(`achievement/${achievement.externalId}.`),
                     )}
+                    alt={`game name logo`}
+                    className="h-20 w-20 transform rounded-sm object-contain transition-transform duration-300 hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex h-20 w-20 items-center justify-center rounded-sm bg-gray-600">
+                    <Lock />
                   </div>
-                  <br />
+                )}
+                <div className="flex-grow">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold">{achievement.name}</h3>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    {achievement.description}
+                  </p>
+                  {achievement.isUnlocked && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      Unlocked: {unixToDate(achievement.unlockedAt)}
+                    </p>
+                  )}
                 </div>
-              ))}
+                <br />
+              </div>
+            ))}
           </div>
         </CardContent>
       </Tile>

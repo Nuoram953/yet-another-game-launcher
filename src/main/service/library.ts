@@ -55,6 +55,9 @@ export const getGame = async (id: string) => {
   }
 
   const {developers, publishers} = await igdb.getGame(game.externalId!, game.storefrontId!)
+  for(const developer of developers){
+    await queries.GameDeveloper.findOrCreate(game.id, developer)
+  }
   console.log(developers)
   await metadataManager.downloadMissing(game);
   await updateAchievements(game);

@@ -1,16 +1,18 @@
 import { useGames } from "@/context/DatabaseContext";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StatsPanel } from "./StatsPanel";
 import { Trailer } from "./Trailer";
 import ScoreCircle from "./ScoreCircle";
-import { Info } from "@/components/detail/Info";
 import { Tile } from "./Tile";
 import { Calendar } from "@/components/ui/calendar";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import DeveloperShowcase, { Company } from "./overview/Company";
+import Info from "@/components/detail/Info";
 
 export const SectionOverview = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  // const [loading, setLoading] = useState(true);
   const { selectedGame } = useGames();
 
   return (
@@ -18,43 +20,19 @@ export const SectionOverview = () => {
       <StatsPanel />
       <Trailer />
 
-      <Tile>
-        <CardContent>
-          <Info/>
-        </CardContent>
-      </Tile>
+      <Info />
 
-      <div className="mx-auto">
-        <div className="flex w-full flex-row justify-around gap-4">
-          <div
-            className="flex-1 flex-grow transform rounded-lg bg-gray-800 p-4 transition-all duration-300 hover:scale-105"
-            style={{
-              animationDelay: `${1 * 100}ms`,
-              animation: "slideUp 0.5s ease-out forwards",
-            }}
-          >
-            <h3 className="text-sm text-gray-400">Developer</h3>
-            {selectedGame.developers.map((dev) => (
-              <p>{dev.company.name}</p>
-            ))}
-          </div>
+      {/*
+      <div className="flex flex-1 flex-row">
+        {selectedGame.developers.map((dev) => (
+          <DeveloperShowcase developer={dev.company} />
+        ))}
 
-          <div
-            className="flex-1 flex-grow transform rounded-lg bg-gray-800 p-4 transition-all duration-300 hover:scale-105"
-            style={{
-              animationDelay: `${2 * 100}ms`,
-              animation: "slideUp 0.5s ease-out forwards",
-            }}
-          >
-            <h3 className="text-sm text-gray-400">Publisher</h3>
-            {selectedGame.publishers.map((dev) => (
-              <p>{dev.company.name}</p>
-            ))}
-          </div>
-        </div>
+        {selectedGame?.publishers.map((dev) => (
+          <DeveloperShowcase developer={dev.company} />
+        ))}
       </div>
-
-
+      */}
 
       <Tile>
         <CardHeader>

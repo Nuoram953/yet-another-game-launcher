@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Badge } from "../ui/badge";
-import { ImageWithFallback } from "../cover/cover";
-import { useGames } from "@/context/DatabaseContext";
-import { Dna, Eye, Gamepad2, Palette } from "lucide-react";
-import BadgeDropdown from "../dropdown/StatusSelection";
+import React, {useState, useEffect} from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Star, Calendar, Trophy } from 'lucide-react';
+import Tile from '../Tile';
+import { Card } from '../card/Card';
+import { CardContent } from '../ui/card';
+import { useGames } from '@/context/DatabaseContext';
+import { ImageWithFallback } from '../cover/cover';
 
-export const Info = () => {
+const Info = () => {
   const [cover, setCover] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { selectedGame } = useGames();
@@ -28,55 +30,91 @@ export const Info = () => {
   if (loading) {
     return <div>loading...</div>;
   }
-
-  const tags = [
-    {
-      name: "Genre",
-      items: selectedGame.tags.filter((tag) => tag.isGenre),
-      icon: Dna,
-    },
-    {
-      name: "Themes",
-      items: selectedGame.tags.filter((tag) => tag.isTheme),
-      icon: Palette,
-    },
-    {
-      name: "Game modes",
-      items: selectedGame.tags.filter((tag) => tag.isGameMode),
-      icon: Gamepad2,
-    },
-    {
-      name: "Player perspective",
-      items: selectedGame.tags.filter((tag) => tag.isPlayerPerspective),
-      icon: Eye,
-    },
-  ];
-
   return (
-    <div className="flex h-fit flex-row">
-      <div className="w-1/3 py-6">
-        <ImageWithFallback src={cover} />
-        <BadgeDropdown className={"w-full text-center justify-center items-center"}/>
-      </div>
-      <div className="flex w-2/3 flex-col px-6">
-        <h1 className="text-5xl font-bold">{selectedGame.name}</h1>
-        <p className="mt-2">{selectedGame.summary}</p>
-        <div className="flex flex-col gap-6 mt-4">
-          {tags.map((group) => (
-            <div className="">
-              <div className="flex flex-row gap-2">
-                <group.icon />
-                <p className="font-bold">{group.name}</p>
+      <Card title={""}>
+        <CardContent className="pt-6">
+          {/* Header with Cover and Title */}
+          <div className="flex flex-col md:flex-row gap-6 mb-6">
+            {/* Cover Image */}
+
+            {/* Title and Basic Info */}
+            <div className="flex-grow">
+              <h1 className="text-3xl font-bold mb-2">{selectedGame.name}</h1>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-gray-600">{selectedGame?.developers[0].company.name}</span>
+                <span className="text-gray-400">•</span>
+                <span className="text-gray-600">{selectedGame?.publishers[0].company.name}</span>
               </div>
-              <div className="ml-1">
-                {group.items.map((item) => (
-                  <Badge className="mx-1 h-fit">{item.tag.name}</Badge>
-                ))}
+
+              {/* Genres and Themes */}
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {selectedGame?.tags.filter((item)=>item.isGenre).map(genre => (
+                    <Badge key={genre.tag.name} variant="secondary" className="text-sm">
+                      {genre.tag.name}
+                    </Badge>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {selectedGame?.tags.filter((item)=>item.isTheme).map(item => (
+                    <Badge key={item.tag.name} variant="secondary" className="text-sm">
+                      {item.tag.name}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
+          </div>
+
+          {/* Description */}
+          <div className="mb-6">
+            <p className="text-gray-700">{selectedGame?.summary}</p>
+          </div>
+
+          {/* Scores and Release Info */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="flex items-center gap-2">
+              <Star className="text-yellow-500" />
+              <div>
+                <div className="text-2xl font-bold">{selectedGame?.scoreCritic}</div>
+                <div className="text-sm text-gray-600">Metacritic</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="text-blue-500" />
+              <div>
+                <div className="text-lg font-semibold">
+                  {new Date(selectedGame?.createdAt).toLocaleDateString()}
+                </div>
+                <div className="text-sm text-gray-600">Release Date</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Platforms */}
+          <div className="border-t pt-4">
+            <h3 className="text-lg font-semibold mb-2">Available Platforms</h3>
+            <div className="flex flex-wrap gap-2">
+              {[].map(platform => (
+                <Badge key={platform} variant="secondary">
+                  {platform}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Awards */}
+          <div className="border-t mt-4 pt-4">
+            <h3 className="text-lg font-semibold mb-2">Awards & Recognition</h3>
+            <ul className="list-disc list-inside text-gray-700">
+              {[].map(award => (
+                <li key={award}>{award}</li>
+              ))}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
   );
 };
+
+export default Info;

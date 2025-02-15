@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
+import vdf from "vdf";
 
 export const getDefaultSteamPath = (): string => {
   const platform = os.platform();

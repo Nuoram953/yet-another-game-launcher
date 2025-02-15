@@ -88,17 +88,15 @@ class Igdb {
         description: item.description,
         country: item.country,
         startedAt: item.start_date,
-        url: item.company.url,
       }));
 
     const developers = company
       .filter((company) => company.developer)
       .map((item) => ({
-        name: item.company.name,
-        description: item.company.description,
-        country: item.company.country,
-        startedAt: item.company.start_date,
-        url: item.company.url,
+        name: item.name,
+        description: item.description,
+        country: item.country,
+        startedAt: item.start_date,
       }));
 
     console.log(publishers, developers)

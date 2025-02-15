@@ -17,6 +17,8 @@ import dataManager from "../manager/dataChannelManager";
 import { DataRoute } from "../../common/constant";
 import { createDownloadTracker } from "../storefront/steam/monitor";
 import * as SteamCommand from "../storefront/steam/commands";
+import { spawn } from "child_process";
+import { setGameLaunchOptions } from "../storefront/steam/utils";
 
 export const preLaunch = async (game: GameWithRelations) => {
   log.info(`preLaunch for game ${game.id}`);
@@ -32,7 +34,12 @@ export const launch = async (id: string) => {
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      SteamCommand.run(game.externalId!);
+      await SteamCommand.run(game)
+      break
+      // spawn("steam", ["-silent", `steam://launch/${game.externalId}`], {
+      //   detached: true,
+      //   stdio: "ignore",
+      // });
     }
   }
 

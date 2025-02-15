@@ -8,11 +8,9 @@ import {
   Tooltip,
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Download, Clock, HardDrive, ChevronRight } from "lucide-react";
+import { Download} from "lucide-react";
 import { useGames } from "@/context/DatabaseContext";
-import { DownloadStats, GameWithRelations } from "src/common/types";
-import { DownloadHistory } from "@prisma/client";
-import { Tile } from "../detail/Tile";
+import DownloadHistory from "./History";
 
 const formatBytes = (bytes, decimals = 2) => {
   if (!bytes) return "0 Bytes";
@@ -106,56 +104,35 @@ const GameDownloadRow = ({ data, title, speedHistory }) => {
 
 const DownloadView = () => {
   const { downloading } = useGames();
-  const [downloadHistory, setDownloadHistory] = useState<DownloadHistory[]>([]);
-
-  useEffect(() => {
-    const fetchDownloadHistory = async () => {
-      try {
-        const games = await window.library.getDownloadHistory();
-        setDownloadHistory(games);
-      } catch (error) {
-        console.error("Error fetching picture paths:", error);
-      }
-    };
-
-    fetchDownloadHistory();
-  }, []);
 
   return (
     <div className="w-full p-4">
-      <Tile>
-        <div className="w-full">
-          <Card>
-            <CardHeader className="border-b">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Download className="h-5 w-5" />
-                  Downloads
-                </CardTitle>
-                <div className="text-sm">
-                  Total Speed:{" "}
-                  <span className="font-bold text-blue-600">
-                    {formatSpeed(0)}
-                  </span>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              {downloading.map((download) => (
-                <GameDownloadRow
-                  key={download.id}
-                  title={download.id}
-                  data={download}
-                  speedHistory={0}
-                />
-              ))}
-            </CardContent>
-          </Card>
-          {downloadHistory.map((item) => (
-            <div>{item.gameId}</div>
+      <Card>
+        <CardHeader className="border-b">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Download className="h-5 w-5" />
+              Downloads
+            </CardTitle>
+            <div className="text-sm">
+              Total Speed:{" "}
+              <span className="font-bold text-blue-600">{formatSpeed(0)}</span>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          {downloading.map((download) => (
+            <GameDownloadRow
+              key={download.id}
+              title={download.id}
+              data={download}
+              speedHistory={0}
+            />
           ))}
-        </div>
-      </Tile>
+        </CardContent>
+      </Card>
+
+      <DownloadHistory />
     </div>
   );
 };

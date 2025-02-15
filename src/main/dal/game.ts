@@ -18,7 +18,8 @@ const include = {
   publishers: { include: { company: true } },
   tags: { include: { tag: true } },
   review: true,
-  gamescope:true
+  gamescope:true,
+  downloadHistory:true
 };
 
 export async function update(id: string, newData: Partial<Game>) {

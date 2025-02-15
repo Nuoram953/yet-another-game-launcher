@@ -88,6 +88,10 @@ model DownloadHistory {
 model Company {
   id            String          @id @default(uuid())
   name          String          @unique
+  description   String?
+  country       Int?
+  url           String?
+  startedAt     BigInt?
   GameDeveloper GameDeveloper[]
   GamePublisher GamePublisher[]
 }
@@ -191,7 +195,7 @@ model GameConfigGamescope {
   id                   String  @id @default(uuid())
   gameId               String
   game                 Game    @relation(fields: [gameId], references: [id])
-  isEnabled           Boolean @default(false)
+  isEnabled            Boolean @default(false)
   isBorderless         Boolean @default(false)
   isFullscreen         Boolean @default(false)
   isFsr                Boolean @default(false)

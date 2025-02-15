@@ -1,16 +1,13 @@
 import { spawn } from "child_process";
+import { GameWithRelations } from "../../../common/types";
 
-export const run = (id: number) => {
+export const run = (game: GameWithRelations) => {
   spawn(
-    "gamescope",
-    [`-e -W 3840 -H 1600 -r 144 --force-grab-cursor -- steam steam://runappid/${id}`],
+    "steam",
+    [`steam://rungameid/${game.externalId!}`],
     {
       detached: true,
       stdio: "ignore",
-      env: {
-        ...process.env,
-        VKD3D_DISABLE_EXTENSIONS: "VK_KHR_present_wait",
-      },
     },
   );
 };
