@@ -7,6 +7,7 @@ export const createOrUpdate = async (data:Partial<GameReview>)=>{
       gameId: data.gameId
     },
     update: {
+      gameId: data.gameId!,
       score: data.score,
       isAdvanceReview: data.isAdvanceReview,
       scoreGraphic: data.scoreGraphic,

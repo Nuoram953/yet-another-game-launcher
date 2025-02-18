@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { unixToDate } from "@/utils/util";
 import { useGames } from "@/context/DatabaseContext";
-import { StatsPanelCard } from "./StatsPanelCard";
+import { StatsCard } from "./StatsCard";
 import YearlyHeatmap from "./YearlyHeatmap";
 import { Calendar } from "@/components/ui/calendar";
 import HeatmapCalendar from "./HeatmapCalendar";
@@ -197,22 +197,22 @@ export const SectionActivities = () => {
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
       <div className="flex w-full flex-row justify-around gap-4">
-        <StatsPanelCard
+        <StatsCard
           icon={CalendarIcon}
           label="Total Sessions"
           value={String(processedData.stats.totalSessions)}
         />
-        <StatsPanelCard
+        <StatsCard
           icon={Clock}
           label="Average Session"
           value={formatDuration(processedData.stats.averageDuration)}
         />
-        <StatsPanelCard
+        <StatsCard
           icon={Timer}
           label="Longest Session"
           value={formatDuration(processedData.stats.longestSession)}
         />
-        <StatsPanelCard
+        <StatsCard
           icon={Activity}
           label="Total Playtime"
           value={formatDuration(processedData.stats.totalPlaytime)}

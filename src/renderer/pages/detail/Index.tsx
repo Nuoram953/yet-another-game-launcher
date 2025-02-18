@@ -9,8 +9,6 @@ import {
   MessageSquare,
   Image,
   Trash,
-  Menu,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
@@ -20,7 +18,7 @@ import { Logo } from "./Logo";
 import { useGames } from "@/context/DatabaseContext";
 import { SectionMetadata } from "./SectionMetadata";
 import { ButtonPlay } from "@/components/button/Play";
-import { SectionOverview } from "./SectionOverview";
+import { SectionOverview } from "./overview/Index";
 import { SectionAchievements } from "./SectionAchievements";
 import { SectionSession } from "./SectionSession";
 import { SectionSettings } from "./settings/Index";
@@ -32,7 +30,6 @@ import { ImageWithFallback } from "@/components/cover/cover";
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [loading, setLoading] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { id } = useParams();
   const { setBreadcrumbs } = useBreadcrumbsContext();
   const [cover, setCover] = useState<string | null>(null);
@@ -135,27 +132,9 @@ const GameDetailsContent = () => {
       </Background>
 
       <div className="relative flex flex-1 overflow-hidden">
-        {/* Mobile menu button */}
-        <Button
-          variant="ghost"
-          className="absolute left-4 top-4 lg:hidden"
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
-          {isSidebarOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </Button>
-
-        {/* Sidebar */}
-        <div
-          className={`${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } absolute inset-y-0 left-0 z-30 w-64 transform bg-gray-800/50 p-4 backdrop-blur-lg transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0`}
-        >
-          <ImageWithFallback src={cover} />
-          <hr />
+        {/* Sidebar - Now always visible */}
+        <div className="w-64 bg-gray-800/50 backdrop-blur-lg">
+          <ImageWithFallback src={cover} className={"!rounded-none"} />
           <div className="space-y-2">
             {sections
               .filter((section) => section.show)
@@ -166,7 +145,6 @@ const GameDetailsContent = () => {
                   className="w-full justify-start rounded-lg transition-all duration-200 hover:bg-gray-700/50"
                   onClick={() => {
                     setActiveSection(section.id);
-                    if (window.innerWidth < 1024) setIsSidebarOpen(false);
                   }}
                   style={{
                     animation: "slideIn 0.5s ease-out forwards",
@@ -196,10 +174,8 @@ const GameDetailsContent = () => {
         </div>
 
         {/* Content Area */}
-        <Container className="relative z-20 flex-1 overflow-y-auto p-4 lg:p-6">
-          <div className="rounded-xl bg-gray-800/30 backdrop-blur-lg">
-            {renderContent()}
-          </div>
+        <Container className="relative z-20 flex-1 overflow-y-auto p-2">
+          {renderContent()}
         </Container>
       </div>
 

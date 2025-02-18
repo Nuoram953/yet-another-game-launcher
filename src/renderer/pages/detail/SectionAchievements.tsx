@@ -94,7 +94,7 @@ export const SectionAchievements = () => {
     .sort(sortAchievements);
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
+    <div className="mx-auto w-full space-y-4 py-4">
       {selectedGame?.achievements.filter(item=>item.isUnlocked).length > 0 && (
         <Tile>
           <CardHeader>

@@ -27,7 +27,7 @@ export const Trailer = () => {
   }
 
   return (
-    <div className="aspect-video max-h-[1080px] max-w-[1500px] mx-auto">
+    <div className="aspect-video max-h-[1080px] mx-auto">
       <VideoPlayer path={trailer} />
     </div>
   );

@@ -41,9 +41,9 @@ const Info = () => {
             <div className="flex-grow">
               <h1 className="text-3xl font-bold mb-2">{selectedGame.name}</h1>
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="text-gray-600">{selectedGame?.developers[0].company.name}</span>
+                <span className="text-gray-600">{selectedGame?.developers.length && selectedGame?.developers[0].company.name}</span>
                 <span className="text-gray-400">•</span>
-                <span className="text-gray-600">{selectedGame?.publishers[0].company.name}</span>
+                <span className="text-gray-600">{selectedGame?.publishers.length && selectedGame?.publishers[0].company.name}</span>
               </div>
 
               {/* Genres and Themes */}

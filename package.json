@@ -111,7 +111,6 @@
     "tailwindcss-animate": "^1.0.7",
     "tree-kill": "^1.2.2",
     "typeorm": "^0.3.20",
-    "use-resize-observer": "^9.1.0",
     "uuid": "^11.0.5",
     "vdf": "^0.0.2",
     "youtube-dl-exec": "^3.0.13",

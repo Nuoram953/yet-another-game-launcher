@@ -1,6 +1,6 @@
 import { useGames } from "@/context/DatabaseContext";
 import React from "react";
-import { StatsPanelCard } from "./StatsPanelCard";
+import { StatsCard } from "../StatsCard";
 import { Activity, Calendar, Clock, Trophy } from "lucide-react";
 import { convertToHoursAndMinutes } from "@/utils/util";
 import { useTranslation } from "react-i18next";
@@ -44,26 +44,26 @@ export const StatsPanel = () => {
 
   return (
     <div className="flex w-full flex-row justify-around gap-4">
-      <StatsPanelCard
+      <StatsCard
         icon={Clock}
         label="Time Played"
         value={`${convertToHoursAndMinutes(selectedGame?.timePlayed)}`}
         detail={detail}
       />
-      <StatsPanelCard
+      <StatsCard
         icon={Trophy}
         label="Achievements"
         value={`${selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length}/${selectedGame.achievements.length}`}
         detail={`${((selectedGame.achievements.filter((achievement) => achievement.isUnlocked).length / selectedGame.achievements.length) * 100).toFixed(0)}% Complete`}
         hide={selectedGame.achievements.length === 0}
       />
-      <StatsPanelCard
+      <StatsCard
         icon={Calendar}
         label="Activity"
         value={`${selectedGame.activities.length} Sessions`}
         detail={`${last7DaysSessions.length} sessions in the last 7 days`}
       />
-      <StatsPanelCard
+      <StatsCard
         icon={Activity}
         label="Status"
         value={t(selectedGame.gameStatus.name)}
