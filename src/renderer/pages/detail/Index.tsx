@@ -23,7 +23,7 @@ import { SectionAchievements } from "./SectionAchievements";
 import { SectionSession } from "./SectionSession";
 import { SectionSettings } from "./settings/Index";
 import { SectionReview } from "./SectionReview";
-import { SectionActivities } from "./SectionActivities";
+import { SectionActivities } from "./activities/Index";
 import { Container } from "@/components/Container";
 import { ImageWithFallback } from "@/components/cover/cover";
 

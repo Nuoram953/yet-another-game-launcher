@@ -14,7 +14,7 @@ import {
 import { Bar, Doughnut } from "react-chartjs-2";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Clock, Calendar as CalendarIcon, Timer, Activity } from "lucide-react";
-import { Tile } from "./Tile";
+import { Tile } from "../Tile";
 import {
   Select,
   SelectContent,
@@ -24,10 +24,8 @@ import {
 } from "@/components/ui/select";
 import { unixToDate } from "@/utils/util";
 import { useGames } from "@/context/DatabaseContext";
-import { StatsCard } from "./StatsCard";
-import YearlyHeatmap from "./YearlyHeatmap";
-import { Calendar } from "@/components/ui/calendar";
-import HeatmapCalendar from "./HeatmapCalendar";
+import { StatsCard } from "../StatsCard";
+import HeatmapCalendar from "../HeatmapCalendar";
 
 ChartJS.register(
   CategoryScale,
@@ -195,7 +193,7 @@ export const SectionActivities = () => {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-4 py-4">
+    <div className="mx-auto w-full space-y-4 py-4">
       <div className="flex w-full flex-row justify-around gap-4">
         <StatsCard
           icon={CalendarIcon}
