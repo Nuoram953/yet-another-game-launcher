@@ -26,6 +26,9 @@ import { unixToDate } from "@/utils/util";
 import { useGames } from "@/context/DatabaseContext";
 import { StatsCard } from "../StatsCard";
 import HeatmapCalendar from "../HeatmapCalendar";
+import { ChartActiviy } from "./ChartActiviy";
+import { ChartActivityOs } from "./ChartActiviyOs";
+import { HeatMap } from "./HeatMap";
 
 ChartJS.register(
   CategoryScale,
@@ -150,38 +153,6 @@ export const SectionActivities = () => {
     ],
   };
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: false,
-      },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            let label = context.dataset.label || "";
-            if (label.includes("Playtime")) {
-              return `${label}: ${context.parsed.y.toFixed(2)}`;
-            }
-            return `${label}: ${context.parsed.y}`;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
-  const dates = selectedGame?.activities.map(item=>unixToDate(item.endedAt))
-
-
   const formatDuration = (minutes) => {
     const hours = Math.floor(minutes / 60);
     const mins = Math.round(minutes % 60);
@@ -217,55 +188,13 @@ export const SectionActivities = () => {
         />
       </div>
 
-      <Tile>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Activity</CardTitle>
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Time range..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[400px]">
-            <Bar data={chartData} options={chartOptions} />
-          </div>
-        </CardContent>
-      </Tile>
+      <ChartActiviy chartData={chartData} />
 
       <div className="flex flex-row gap-4">
-        <Tile>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Activity per OS</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="mx-auto flex items-center justify-center">
-            <div className="mx-auto max-h-[400px]">
-              <Doughnut data={chartOsData} />
-            </div>
-          </CardContent>
-        </Tile>
+        <ChartActivityOs chartData={chartOsData}/>
 
-        <Tile>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Monthly Heatmap</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center">
-              <HeatmapCalendar/>
-            </div>
-          </CardContent>
-        </Tile>
+        <HeatMap />
+
       </div>
 
       <div className="h-20"></div>

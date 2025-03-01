@@ -22,14 +22,7 @@ class SteamGridDB {
   }
 
   async getGameIdByExternalId(
-    platform:
-      | "steam"
-      | "origin"
-      | "egs"
-      | "bnet"
-      | "uplay"
-      | "flashpoint"
-      | "eshop",
+    platform:string
   ) {
     const response = await axios.get(
       `https://www.steamgriddb.com/api/v2/games/${platform}/${this.game.externalId}`,

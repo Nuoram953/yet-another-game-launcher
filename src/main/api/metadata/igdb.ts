@@ -32,10 +32,18 @@ class Igdb {
     return isValid ? this.token : await this.authentication();
   }
 
-  async getExternalGame(externalId: number, store?: Storefront) {
+  async getExternalGame(externalId: string, store?: Storefront) {
+    let category = -1;
+    switch (store) {
+      case Storefront.STEAM:
+        category = 1;
+        break;
+      case Storefront.EPIC:
+        category = 26;
+    }
     const response = await axios.post(
       "https://api.igdb.com/v4/external_games",
-      `fields *; where uid="${externalId}" & category=${1};`,
+      `fields *; where uid="${externalId}" & external_game_source=${category};`,
       {
         headers: {
           Authorization: `Bearer ${await this.getToken()}`,
@@ -44,6 +52,8 @@ class Igdb {
         },
       },
     );
+
+    console.log(response.data)
 
     return response.data[0].game;
   }
@@ -64,7 +74,7 @@ class Igdb {
     return response.data;
   }
 
-  async getGame(externalId: number, store?: Storefront) {
+  async getGame(externalId: string, store?: Storefront) {
     const id = await this.getExternalGame(externalId, store);
 
     const response = await axios.post(
@@ -100,8 +110,6 @@ class Igdb {
         startedAt: item.company.start_date,
         url: item.company.url,
       }));
-
-    console.log(publishers, developers)
 
     const data = response.data[0];
 

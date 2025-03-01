@@ -8,8 +8,6 @@ import { Game, GameAchievement } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
 import acfParser from "steam-acf2json";
 import queries from "../../dal/dal";
-import { metadataManager } from "../../index";
-import { IMAGE_TYPE } from "../../../common/constant";
 import _ from "lodash";
 
 class Steam {
@@ -29,7 +27,7 @@ class Steam {
   async parseResponse(response: AxiosResponse): Promise<void> {
     for (const entry of response.data.response.games) {
       const data: Partial<Game> = {
-        externalId: entry.appid,
+        externalId: entry.appid.toString(),
         name: entry.name,
         storefrontId: Storefront.STEAM,
         gameStatusId: entry.playtime_forever > 0 ? 2 : 1,
@@ -110,7 +108,7 @@ class Steam {
 
       for (const appId of appIds) {
         const game = await queries.Game.getGameByExtenalIdAndStorefront(
-          appId,
+          appId.toString(),
           Storefront.STEAM,
         );
 
@@ -191,14 +189,15 @@ class Steam {
           isHidden: achievement.hidden == 1,
           name: achievement.displayName,
         };
+        console.log(data)
         await queries.GameAchievements.findOrCreate(game.id, data);
-        await metadataManager.downloadImage(
-          IMAGE_TYPE.ACHIEVEMENT,
-          game,
-          achievement.icon,
-          "jpg",
-          achievement.name,
-        );
+        // await metadataManager.downloadImage(
+        //   IMAGE_TYPE.ACHIEVEMENT,
+        //   game,
+        //   achievement.icon,
+        //   "jpg",
+        //   achievement.name,
+        // );
       }
     } catch (error) {
       console.log(error);

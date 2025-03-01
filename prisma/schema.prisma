@@ -12,7 +12,7 @@ datasource db {
 
 model Game {
   id                     String               @id @default(uuid())
-  externalId             Int?
+  externalId             String?
   name                   String
   lastTimePlayed         BigInt?
   isInstalled            Boolean              @default(false)

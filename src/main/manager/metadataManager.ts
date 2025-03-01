@@ -7,6 +7,7 @@ import _ from "lodash";
 import { Game } from "@prisma/client";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
+import { GameWithRelations } from "src/common/types";
 
 class MetadataManager {
   private userPath: string;
@@ -15,9 +16,9 @@ class MetadataManager {
     this.userPath = app.getPath("userData");
   }
 
-  async downloadMissing(game:Game){
+  async downloadMissing(game:GameWithRelations){
     const sgdb = new SteamGridDB(game);
-    await sgdb.getGameIdByExternalId("steam");
+    await sgdb.getGameIdByExternalId(game.storefront!.name);
     await sgdb.downloadAllImageType(1, 1);
 
     await YouTubeDownloader.searchAndDownloadVideos(game);

@@ -54,7 +54,8 @@ export const getGame = async (id: string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  // const {developers, publishers} = await igdb.getGame(game.externalId!, game.storefrontId!)
+  // const {developers, publishers, partialGameData} = await igdb.getGame(game.externalId!, game.storefrontId!)
+  // await queries.Game.update(game.id, partialGameData)
   // for(const developer of developers){
   //   await queries.GameDeveloper.findOrCreate(game.id, developer)
   // }

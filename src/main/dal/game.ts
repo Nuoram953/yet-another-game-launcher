@@ -64,7 +64,7 @@ export async function getGameById(
 }
 
 export async function getGameByExtenalIdAndStorefront(
-  externalId: number,
+  externalId: string,
   storefront: Storefront,
 ): Promise<GameWithRelations | null> {
   return await prisma.game.findFirst({
@@ -77,7 +77,7 @@ export async function getGameByExtenalIdAndStorefront(
 }
 
 export async function updateSizeAndLocation(
-  externalId: number,
+  externalId: string,
   storefront: Storefront,
   size: number,
   location: string,
@@ -109,7 +109,7 @@ export async function updateTimePlayed(gameId: string, timePlayed: number) {
 }
 
 export async function updateIsInstalled(
-  installedExternalIds: number[],
+  installedExternalIds: string[],
   storefront: Storefront,
   isInstalled: boolean,
 ) {

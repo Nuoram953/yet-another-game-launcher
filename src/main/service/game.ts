@@ -17,8 +17,7 @@ import dataManager from "../manager/dataChannelManager";
 import { DataRoute } from "../../common/constant";
 import { createDownloadTracker } from "../storefront/steam/monitor";
 import * as SteamCommand from "../storefront/steam/commands";
-import { spawn } from "child_process";
-import { setGameLaunchOptions } from "../storefront/steam/utils";
+import * as EpicCommand from "../storefront/epic/commands";
 
 export const preLaunch = async (game: GameWithRelations) => {
   log.info(`preLaunch for game ${game.id}`);
@@ -36,10 +35,10 @@ export const launch = async (id: string) => {
     case Storefront.STEAM: {
       await SteamCommand.run(game)
       break
-      // spawn("steam", ["-silent", `steam://launch/${game.externalId}`], {
-      //   detached: true,
-      //   stdio: "ignore",
-      // });
+    }
+    case Storefront.EPIC: {
+      await EpicCommand.run(game)
+      break
     }
   }
 
@@ -135,9 +134,7 @@ export const updateAchievements = async (game: GameWithRelations) => {
   switch (game.storefrontId) {
     case Storefront.STEAM: {
       const storeSteam = new Steam();
-      if (!countAchievements || countAchievementPictures != countAchievements) {
-        await storeSteam.getAchievementsForGame(game);
-      }
+      await storeSteam.getAchievementsForGame(game);
       await storeSteam.getUserAchievementsForGame(game);
     }
   }

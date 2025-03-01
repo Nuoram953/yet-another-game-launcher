@@ -37,7 +37,7 @@ export class YouTubeDownloader {
       const cookiePath = path.join(app.getPath("userData"), "yt-cookies.txt")
 
       const searchResults = await YouTube.search(
-        `${game.name} ${IMAGE_TYPE.TRAILER}`,
+        `${game.name} game ${IMAGE_TYPE.TRAILER}`,
         {
           limit: maxResults,
         },

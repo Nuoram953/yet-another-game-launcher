@@ -12,14 +12,14 @@ export const run = (game: GameWithRelations) => {
   );
 };
 
-export const install = (id: number) => {
+export const install = (id: string) => {
   spawn("steam", ["-silent", `steam://install/${id}`], {
     detached: true,
     stdio: "ignore",
   });
 };
 
-export const uninstall = (id: number) => {
+export const uninstall = (id: string) => {
   spawn("steam", ["-silent", `steam://uninstall/${id}`], {
     detached: true,
     stdio: "ignore",

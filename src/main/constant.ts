@@ -7,4 +7,5 @@ export enum GameStatus {
 
 export enum Storefront {
   STEAM = 1,
+  EPIC = 2,
 }
