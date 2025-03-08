@@ -21,11 +21,25 @@ class SteamGridDB {
     await this.downloadLogosForGame(countPerType, max);
   }
 
-  async getGameIdByExternalId(
-    platform:string
-  ) {
+  async getGameIdByExternalId(platform: string) {
     const response = await axios.get(
       `https://www.steamgriddb.com/api/v2/games/${platform}/${this.game.externalId}`,
+      {
+        headers: { Authorization: `Bearer ${this.apikey}` },
+        validateStatus: (status) => true,
+      },
+    );
+
+    if (response.status == 404) {
+      this.gameId = await this.searchByGameName(this.game.name);
+    } else {
+      this.gameId = response.data.data.id;
+    }
+  }
+
+  async searchByGameName(name: string) {
+    const response = await axios.get(
+      `https://www.steamgriddb.com/api/v2/search/autocomplete/${name}`,
       { headers: { Authorization: `Bearer ${this.apikey}` } },
     );
 
@@ -33,7 +47,7 @@ class SteamGridDB {
       throw new Error("invalid api call");
     }
 
-    this.gameId = response.data.data.id;
+    return response.data.data[0].id;
   }
 
   async downloadGridForGame(count: number, max: number) {
@@ -47,9 +61,11 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.debug(`${this.game.id} has ${files} cover and the max was ${max}. Skipping`)
-      return
-    };
+      log.debug(
+        `${this.game.id} has ${files} cover and the max was ${max}. Skipping`,
+      );
+      return;
+    }
 
     mainApp.sendToRenderer("notification", {
       title: "Downloading cover images",
@@ -99,7 +115,7 @@ class SteamGridDB {
     }
   }
 
-  async downladHeroesForGame(count: number, max:number) {
+  async downladHeroesForGame(count: number, max: number) {
     let images: any[] = [];
     let hasAllImages: boolean = false;
     let page: number = 0;
@@ -110,9 +126,11 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.debug(`${this.game.id} has ${files} background and the max was ${max}. Skipping`)
-      return
-    };
+      log.debug(
+        `${this.game.id} has ${files} background and the max was ${max}. Skipping`,
+      );
+      return;
+    }
 
     while (!hasAllImages) {
       const response = await axios.get(
@@ -156,7 +174,7 @@ class SteamGridDB {
     }
   }
 
-  async downloadLogosForGame(count: number, max:number) {
+  async downloadLogosForGame(count: number, max: number) {
     let images: any[] = [];
     let hasAllImages: boolean = false;
     let page: number = 0;
@@ -167,9 +185,11 @@ class SteamGridDB {
     );
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.debug(`${this.game.id} has ${files} logo and the max was ${max}. Skipping`)
-      return
-    };
+      log.debug(
+        `${this.game.id} has ${files} logo and the max was ${max}. Skipping`,
+      );
+      return;
+    }
 
     while (!hasAllImages) {
       const response = await axios.get(

@@ -127,15 +127,20 @@ export const postLaunch = async (
 };
 
 export const updateAchievements = async (game: GameWithRelations) => {
-  const countAchievements = game.achievements.length;
-  const countAchievementPictures =
-    await metadataManager.getCountAchievementPictures(game);
+  // const countAchievements = game.achievements.length;
+  // const countAchievementPictures =
+  //   await metadataManager.getCountAchievementPictures(game);
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
       const storeSteam = new Steam();
       await storeSteam.getAchievementsForGame(game);
       await storeSteam.getUserAchievementsForGame(game);
+    }
+    case Storefront.EPIC: {
+      // const storeEpic = new Steam();
+      // await storeEpic.getAchievementsForGame(game);
+      // await storeEpic.getUserAchievementsForGame(game);
     }
   }
 };
@@ -150,11 +155,11 @@ export const createOrUpdateGame = async (
     throw new Error("invalid game");
   }
 
-  if (game.updatedAt.getTime() === game.createdAt.getTime()) {
-    const sgdb = new SteamGridDB(game);
-    await sgdb.getGameIdByExternalId("steam");
-    await sgdb.downloadAllImageType(3, 3);
-  }
+  // if (game.updatedAt.getTime() === game.createdAt.getTime()) {
+  //   const sgdb = new SteamGridDB(game);
+  //   await sgdb.getGameIdByExternalId("steam");
+  //   await sgdb.downloadAllImageType(3, 3);
+  // }
 
   mainApp.sendToRenderer("add-new-game", {
     ...game,

@@ -6,6 +6,7 @@ import { FilterConfig, SortConfig } from "../../common/types";
 import Steam from "../api/storefront/steam";
 import notificationManager from "../manager/notificationManager";
 import { NotificationType } from "../../common/constant";
+import { Epic } from "../storefront/epic/api";
 
 export const refresh = async () => {
   notificationManager.show({
@@ -22,6 +23,12 @@ export const refresh = async () => {
     const steam = new Steam();
     await steam.initialize();
     notificationManager.updateProgress(NotificationType.REFRESH, 25);
+  }
+
+  if (config.get("store.epic.enable")) {
+    const epic = new Epic();
+    await epic.initialize();
+    notificationManager.updateProgress(NotificationType.REFRESH, 35);
   }
 
   notificationManager.updateProgress(NotificationType.REFRESH, 100);

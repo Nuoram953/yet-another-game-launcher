@@ -3,5 +3,8 @@ export interface AppConfig {
     steam: {
       enable: boolean;
     };
+    epic: {
+      enable: boolean;
+    };
   };
 }

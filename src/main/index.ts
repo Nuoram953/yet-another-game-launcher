@@ -56,6 +56,9 @@ class MainWindowManager {
           steam: {
             enable: true,
           },
+          epic: {
+            enable: true,
+          },
         },
       });
 
