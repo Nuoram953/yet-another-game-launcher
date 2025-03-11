@@ -1,6 +1,6 @@
 import { Game } from "@prisma/client";
 import axios from "axios";
-import { IMAGE_TYPE } from "../../../common/constant";
+import { MEDIA_TYPE } from "../../../common/constant";
 import { mainApp, metadataManager } from "../../index";
 import log from "electron-log/main";
 import { delay } from "../../utils/utils";
@@ -56,7 +56,7 @@ class SteamGridDB {
     let page: number = 0;
 
     let path = await metadataManager.getImageDirectoryPath(
-      IMAGE_TYPE.COVER,
+      MEDIA_TYPE.COVER,
       this.game,
     );
     let files = await metadataManager.getNumberOfFiles(path);
@@ -107,7 +107,7 @@ class SteamGridDB {
 
     for (const image of data) {
       await metadataManager.downloadImage(
-        IMAGE_TYPE.COVER,
+        MEDIA_TYPE.COVER,
         this.game,
         image.url,
         image.mime.split("image/")[1],
@@ -121,7 +121,7 @@ class SteamGridDB {
     let page: number = 0;
 
     let path = await metadataManager.getImageDirectoryPath(
-      IMAGE_TYPE.BACKGROUND,
+      MEDIA_TYPE.BACKGROUND,
       this.game,
     );
     let files = await metadataManager.getNumberOfFiles(path);
@@ -166,7 +166,7 @@ class SteamGridDB {
 
     for (const image of data) {
       await metadataManager.downloadImage(
-        IMAGE_TYPE.BACKGROUND,
+        MEDIA_TYPE.BACKGROUND,
         this.game,
         image.url,
         image.mime.split("image/")[1],
@@ -180,7 +180,7 @@ class SteamGridDB {
     let page: number = 0;
 
     let path = await metadataManager.getImageDirectoryPath(
-      IMAGE_TYPE.LOGO,
+      MEDIA_TYPE.LOGO,
       this.game,
     );
     let files = await metadataManager.getNumberOfFiles(path);
@@ -224,7 +224,7 @@ class SteamGridDB {
 
     for (const image of data) {
       await metadataManager.downloadImage(
-        IMAGE_TYPE.LOGO,
+        MEDIA_TYPE.LOGO,
         this.game,
         image.url,
         image.mime.split("image/")[1],

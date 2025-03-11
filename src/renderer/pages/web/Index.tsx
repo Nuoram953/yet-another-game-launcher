@@ -1,23 +1,19 @@
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 const WebpageViewer = () => {
-  const { store } = useParams();
-  const [url, setUrl] = useState<string | null>(null);
   const { setBreadcrumbs } = useBreadcrumbsContext();
   const webviewRef = useRef(null);
+  const location = useLocation();
+  const { url } = location.state || {};
 
   useEffect(() => {
-    switch (store) {
-      case "steam":
-        setUrl("https://store.steampowered.com/");
-    }
-
     setBreadcrumbs([
       { path: "/", label: "Web" },
       { path: `/web/steam`, label: "Steam" },
     ]);
+
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 import axios from "axios";
 import fs from "fs";
-import { IMAGE_TYPE } from "../../common/constant";
+import { MEDIA_TYPE } from "../../common/constant";
 import { app } from "electron";
 import log from "electron-log";
 import _ from "lodash";
@@ -8,6 +8,7 @@ import { Game } from "@prisma/client";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
 import { GameWithRelations } from "src/common/types";
+import { igdb } from "..";
 
 class MetadataManager {
   private userPath: string;
@@ -21,19 +22,21 @@ class MetadataManager {
     await sgdb.getGameIdByExternalId(game.storefront!.name);
     await sgdb.downloadAllImageType(1, 1);
 
+    await igdb.downloadScreenshotsForGame(game, 10)
+
     await YouTubeDownloader.searchAndDownloadVideos(game);
   }
 
   async getCountAchievementPictures(game: Game) {
-    const path = await this.getImageDirectoryPath(IMAGE_TYPE.ACHIEVEMENT, game)
+    const path = await this.getImageDirectoryPath(MEDIA_TYPE.ACHIEVEMENT, game)
     return await this.getNumberOfFiles(path)
   }
 
-  async getImageDirectoryPath(type: IMAGE_TYPE, game: Game) {
+  async getImageDirectoryPath(type: MEDIA_TYPE, game: Game) {
     return `${this.userPath}/${game.id}/${type}`;
   }
 
-  async getOrCreateImageDirectory(type: IMAGE_TYPE, game: Game) {
+  async getOrCreateImageDirectory(type: MEDIA_TYPE, game: Game) {
     const folderPath = await this.getImageDirectoryPath(type, game);
 
     if (!fs.existsSync(folderPath)) {
@@ -58,7 +61,7 @@ class MetadataManager {
   }
 
   async downloadImage(
-    type: IMAGE_TYPE,
+    type: MEDIA_TYPE,
     game: Game,
     url: string,
     extension: string,

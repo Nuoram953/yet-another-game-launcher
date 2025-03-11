@@ -81,6 +81,7 @@
     "electron-log": "^5.2.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^10.0.1",
+    "embla-carousel-autoplay": "^8.5.2",
     "embla-carousel-react": "^8.5.2",
     "get-folder-size": "^5.0.0",
     "i18next": "^24.2.1",

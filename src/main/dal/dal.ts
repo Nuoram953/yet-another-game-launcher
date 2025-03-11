@@ -10,6 +10,7 @@ import * as GameStatus from "./game_status";
 import * as GameReview from "./gameReview"
 import * as DownloadHistory from "./downloadHistory"
 import * as GameConfigGamescope from "./gameConfigGamescope"
+import * as Storefront from "./storefront"
 
 export default {
   Game,
@@ -23,5 +24,6 @@ export default {
   GameStatus,
   GameReview,
   DownloadHistory,
-  GameConfigGamescope
+  GameConfigGamescope,
+  Storefront
 };

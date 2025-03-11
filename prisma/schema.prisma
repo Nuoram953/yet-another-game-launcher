@@ -186,9 +186,11 @@ model GameReview {
 }
 
 model Storefront {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  Game Game[]
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  url         String?
+  hasLauncher Boolean @default(false)
+  Game        Game[]
 }
 
 model GameConfigGamescope {

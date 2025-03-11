@@ -8,6 +8,10 @@ import notificationManager from "../manager/notificationManager";
 import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
 
+export const getStorefronts = async () => {
+  return await queries.Storefront.getAll()
+};
+
 export const refresh = async () => {
   notificationManager.show({
     id: NotificationType.REFRESH,

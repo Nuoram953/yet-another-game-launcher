@@ -23,6 +23,8 @@ contextBridge.exposeInMainWorld("media", {
     ipcRenderer.invoke(RouteMedia.GET_COVERS, gameId, count),
   getAchievements: (gameId: number, count?: number) =>
     ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
+  getScreenshots: (gameId: number, count?: number) =>
+    ipcRenderer.invoke(RouteMedia.GET_SCREENSHOTS, gameId, count),
 });
 
 contextBridge.exposeInMainWorld("library", {
@@ -34,7 +36,9 @@ contextBridge.exposeInMainWorld("library", {
     ipcRenderer.invoke(RouteLibrary.GET_LAST_PLAYED, max),
   getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
   getStatus: () => ipcRenderer.invoke(RouteLibrary.GET_STATUS),
-  getDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
+  getDownloadHistory: () =>
+    ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
+  getStorefronts: () => ipcRenderer.invoke(RouteLibrary.GET_STOREFRONTS),
 });
 
 contextBridge.exposeInMainWorld("game", {
@@ -82,6 +86,13 @@ contextBridge.exposeInMainWorld("appControl", {
 contextBridge.exposeInMainWorld("api", {
   runCommand: (command: any) => ipcRenderer.invoke("run-command", command),
   getSteamGames: () => ipcRenderer.invoke("get-steam-games"),
+  openWindow: (id) => {
+    ipcRenderer.send("webview-dom-ready", id);
+  },
+
+  openExternal: (url) => {
+    ipcRenderer.invoke("open-external", url);
+  },
   onReceiveFromMain: (channel, callback) => {
     const validChannels = [
       "add-new-game",

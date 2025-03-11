@@ -13,6 +13,15 @@ ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {
   }
 });
 
+ipcMain.handle(RouteLibrary.GET_STOREFRONTS, async (_event) => {
+  try {
+    return await LibraryService.getStorefronts();
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});
+
 ipcMain.handle(RouteLibrary.GET_DOWNLOAD_HISTORY, async (_event) => {
   try {
     return await LibraryService.getDownloadHistory();

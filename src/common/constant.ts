@@ -1,10 +1,11 @@
-export enum IMAGE_TYPE {
+export enum MEDIA_TYPE {
   COVER = "cover",
   BACKGROUND = "background",
   LOGO = "logo",
   ICON = "icon",
   TRAILER = "trailer",
   ACHIEVEMENT = "achievement",
+  SCREENSHOT = "screenshot",
 }
 
 export enum NotificationType {
@@ -33,6 +34,7 @@ export enum RouteLibrary {
   GET_COUNT_STORE = "library:countStore",
   GET_STATUS = "library:getStatus",
   GET_DOWNLOAD_HISTORY = "library:getDownloadHistory",
+  GET_STOREFRONTS = "library:storefront",
 }
 
 export enum RouteMedia {
@@ -44,6 +46,7 @@ export enum RouteMedia {
   GET_COVERS = "media:getCovers",
   GET_TRAILERS = "media:getTrailer",
   GET_ACHIEVEMENTS = "media:getAchievements",
+  GET_SCREENSHOTS = "media:getScreenshots",
 }
 
 export enum RouteGame {

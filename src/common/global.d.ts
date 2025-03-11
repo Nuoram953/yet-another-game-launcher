@@ -4,6 +4,7 @@ import type {
   GameConfigGamescope,
   GameReview,
   GameStatus,
+  Storefront,
 } from "@prisma/client";
 import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
@@ -17,6 +18,7 @@ declare global {
       getCovers: (gameId: string, count?: number) => Promise<string[]>;
       getTrailers: (gameId: string, count?: number) => Promise<string[]>;
       getAchievements: (gameId: string, count?: number) => Promise<string[]>;
+      getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
     };
     library: {
       refresh: () => Promise<void>;
@@ -26,6 +28,7 @@ declare global {
       getCountForAllStatus: () => Promise<object[]>;
       getStatus: () => Promise<GameStatus[]>;
       getDownloadHistory: () => Promise<DownloadHistory[]>;
+      getStorefronts: () => Promise<Storefront[]>;
     };
     game: {
       launch: (id: string) => Promise<void>;

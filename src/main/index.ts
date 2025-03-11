@@ -1,4 +1,13 @@
-import { app, BrowserWindow, globalShortcut, session, Session } from "electron";
+import {
+  app,
+  BrowserWindow,
+  globalShortcut,
+  webContents,
+  session,
+  Session,
+  shell,
+  ipcMain,
+} from "electron";
 import * as path from "path";
 import "./handlers/media";
 import "./handlers/store";
@@ -82,6 +91,23 @@ class MainWindowManager {
         console.log("Steam store cookies set successfully");
       }
 
+      if (config.get("store.epic.enable")) {
+        const epicSession = session.fromPartition("persist:epic");
+
+        await epicSession.cookies.set({
+          url: "https://store.epicgames.com/en-US/",
+          name: "epicLogin",
+          value: "YOUR_COOKIE_VALUE_HERE", // Replace with a real cookie
+          domain: ".epicgames.com",
+          path: "/",
+          secure: true,
+          httpOnly: true,
+          sameSite: "no_restriction", // Ensures cross-site access
+        });
+
+        console.log("Epic store cookies set successfully");
+      }
+
       await this.createWindow();
       log.info("Window created");
 
@@ -97,6 +123,13 @@ class MainWindowManager {
         if (BrowserWindow.getAllWindows().length === 0) {
           await this.createWindow();
         }
+      });
+
+      app.on("web-contents-created", (e, wc) => {
+        wc.setWindowOpenHandler((handler) => {
+          console.log("test");
+          return { action: "allow" }; // deny or allow
+        });
       });
 
       app.on("window-all-closed", () => {
@@ -117,13 +150,13 @@ class MainWindowManager {
           responseHeaders: {
             ...details.responseHeaders,
             "Content-Security-Policy": [
-              "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
-                "frame-src 'self' https: http: steam: mailto: about: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
-                "img-src 'self' http: https: file: data: blob: 'unsafe-inline' steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com;" +
-                "media-src 'self' http: https: file: data: blob: 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com;" +
-                "connect-src 'self' https: wss: steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com;" +
-                "style-src 'self' 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com;",
+              "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com https://*.epicgames.com https://www.epicgames.com https://*.store.epicgames.com;" +
+                "frame-src 'self' https: http: steam: mailto: about: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com https://*.epicgames.com https://www.epicgames.com https://*.store.epicgames.com;" +
+                "img-src 'self' http: https: file: data: blob: 'unsafe-inline' steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://*.epicgames.com https://www.epicgames.com https://*.store.epicgames.com;" +
+                "media-src 'self' http: https: file: data: blob: 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://*.epicgames.com https://www.epicgames.com https://*.store.epicgames.com;" +
+                "connect-src 'self' https: wss: steam: https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com https://*.epicgames.com https://www.epicgames.com https://*.store.epicgames.com;" +
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://login.steampowered.com https://*.epicgames.com https://www.epicgames.com https://*.store.epicgames.com;" +
+                "style-src 'self' 'unsafe-inline' https://*.steamcontent.com https://*.steamstatic.com https://*.steamcdn.com https://*.steampowered.com https://steamcommunity.com https://*.steamcommunity.com https://help.steampowered.com https://*.epicgames.com https://www.epicgames.com https://*.store.epicgames.com;",
             ],
           },
         });
@@ -170,7 +203,6 @@ class MainWindowManager {
         console.log("F5 was pressed!");
         this.mainWindow?.reload(); // Example: Reload the window
       });
-
     } catch (error) {
       console.error("Failed to create window:", error);
       throw error;

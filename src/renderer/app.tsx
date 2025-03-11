@@ -57,7 +57,7 @@ const App = () => {
 
               <Route
                 index
-                path="/web/:store"
+                path="/web"
                 element={
                   <Layout>
                     <WebsiteViewer />

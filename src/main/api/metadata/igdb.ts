@@ -2,6 +2,9 @@ import log from "electron-log/main";
 import { Storefront } from "../../constant";
 import axios from "../../../common/axiosConfig";
 import { Game } from "@prisma/client";
+import { metadataManager } from "../../../main";
+import { MEDIA_TYPE } from "../../../common/constant";
+import { GameWithRelations } from "../../../common/types";
 
 class Igdb {
   private expirationInSeconds: number;
@@ -32,6 +35,24 @@ class Igdb {
     return isValid ? this.token : await this.authentication();
   }
 
+  async getGameById(id: number) {
+    const response = await axios.post(
+      "https://api.igdb.com/v4/games",
+      `fields *, screenshots.*; where id = ${id};`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getToken()}`,
+          Accept: "application/json",
+          "Client-ID": process.env.IGDB_CLIENT_ID,
+        },
+      },
+    );
+
+    console.log(response.data);
+
+    return response
+  }
+
   async getExternalGame(externalId: string, store?: Storefront) {
     let category = -1;
     switch (store) {
@@ -53,7 +74,7 @@ class Igdb {
       },
     );
 
-    console.log(response.data)
+    console.log(response.data);
 
     return response.data[0].game;
   }
@@ -136,6 +157,61 @@ class Igdb {
       engine,
       playerPerspective,
     };
+  }
+
+  async search(name: string) {
+    const response = await axios.post(
+      "https://api.igdb.com/v4/search",
+      `fields *; where name="${name}";`,
+      {
+        headers: {
+          Authorization: `Bearer ${await this.getToken()}`,
+          Accept: "application/json",
+          "Client-ID": process.env.IGDB_CLIENT_ID,
+        },
+      },
+    );
+
+    console.log(response.data);
+
+    return response.data[0].game;
+  }
+
+  async downloadScreenshotsForGame(
+    game: GameWithRelations,
+    max: number,
+  ) {
+
+    let path = await metadataManager.getImageDirectoryPath(
+      MEDIA_TYPE.SCREENSHOT,
+      game,
+    );
+    let files = await metadataManager.getNumberOfFiles(path);
+    if (files >= max) {
+      log.debug(
+        `${game.id} has ${files} ${MEDIA_TYPE.SCREENSHOT} and the max was ${max}. Skipping`,
+      );
+      return;
+    }
+
+    const id = await this.search(game.name);
+    const response = await this.getGameById(id);
+
+    if (response.status !== 200) {
+      log.error(response.data.errors);
+    }
+
+    console.log(response.data[0].screenshots);
+
+    for (const image of response.data[0].screenshots) {
+      const url = `https:${image.url}`
+      await metadataManager.downloadImage(
+        MEDIA_TYPE.SCREENSHOT,
+        game,
+        url.replace("t_thumb", "t_1080p"),
+        "jpg",
+      );
+    }
   }
 }
 

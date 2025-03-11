@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight, SquareTerminal, type LucideIcon } from "lucide-react";
 
 import {
   Collapsible,
@@ -25,61 +25,56 @@ export function NavStatus({
   items,
 }: {
   items: {
+    id: number;
     title: string;
     url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-        id:number;
-      title: string;
-      url: string;
-      count?: number;
-    }[];
+    count?: number;
   }[];
 }) {
-  const {updateFilters} = useGames()
+  const { updateFilters } = useGames();
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon size={20} />}
-                  <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem
-                      key={subItem.title}
-                      className="flex justify-between"
-                    >
-                      <SidebarMenuSubButton asChild>
-                        <>
-                          <div onClick={()=>{
-                            updateFilters({gameStatusId:subItem.id})
-                          }}>
-                            <span>{subItem.title}</span>
-                          </div>
-                          {subItem.count && <Badge>{subItem.count}</Badge>}
-                        </>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        ))}
+        <Collapsible
+          key={"status"}
+          asChild
+          defaultOpen={true}
+          className="group/collapsible"
+        >
+          <SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton tooltip="status">
+                <SquareTerminal />
+                <span>Status</span>
+                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                {items?.map((subItem) => (
+                  <SidebarMenuSubItem
+                    key={subItem.title}
+                    className="flex justify-between"
+                  >
+                    <SidebarMenuSubButton asChild>
+                      <>
+                        <div
+                          onClick={() => {
+                            updateFilters({ gameStatusId: subItem.id });
+                          }}
+                        >
+                          <span>{subItem.title}</span>
+                        </div>
+                        {subItem.count && <Badge>{subItem.count}</Badge>}
+                      </>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </SidebarMenuItem>
+        </Collapsible>
+        
       </SidebarMenu>
     </SidebarGroup>
   );

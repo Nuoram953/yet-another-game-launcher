@@ -189,7 +189,6 @@ class Steam {
           isHidden: achievement.hidden == 1,
           name: achievement.displayName,
         };
-        console.log(data)
         await queries.GameAchievements.findOrCreate(game.id, data);
         // await metadataManager.downloadImage(
         //   IMAGE_TYPE.ACHIEVEMENT,

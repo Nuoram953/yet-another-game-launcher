@@ -14,7 +14,7 @@ export const Card = ({
       className={`overflow-hidden rounded-lg bg-gray-800 shadow-lg ${className}`}
     >
       {/* Card Header */}
-      <div className="flex items-center justify-between border-gray-700 px-6 py-4">
+      <div className="flex items-center justify-between border-gray-700 px-6">
         <h3 className="text-lg font-medium text-gray-100">{title}</h3>
         {onClose && (
           <button

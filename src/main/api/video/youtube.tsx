@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { Game } from "@prisma/client";
 import { metadataManager } from "../../index";
-import { IMAGE_TYPE } from "../../../common/constant";
+import { MEDIA_TYPE } from "../../../common/constant";
 import  log  from "electron-log/main";
 import { app } from "electron";
 
@@ -24,7 +24,7 @@ export class YouTubeDownloader {
 
     try {
       const outputDir = await metadataManager.getOrCreateImageDirectory(
-        IMAGE_TYPE.TRAILER,
+        MEDIA_TYPE.TRAILER,
         game,
       );
 
@@ -37,7 +37,7 @@ export class YouTubeDownloader {
       const cookiePath = path.join(app.getPath("userData"), "yt-cookies.txt")
 
       const searchResults = await YouTube.search(
-        `${game.name} game ${IMAGE_TYPE.TRAILER}`,
+        `${game.name} game ${MEDIA_TYPE.TRAILER}`,
         {
           limit: maxResults,
         },

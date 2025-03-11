@@ -7,6 +7,9 @@ export class Epic {
   async initialize(): Promise<void> {
     await this.getOwnedGames();
   }
+  async getGameInfo(appId:string){
+
+  }
   async getOwnedGames() {
     return new Promise((resolve, reject) => {
       const legendary = spawn("legendary", ["list", "--json"]);
@@ -33,12 +36,16 @@ export class Epic {
         try {
           const jsonOutput = JSON.parse(stdout);
           for (const entry of jsonOutput) {
+            // if (entry.app_title == "World War Z") {
+            //   console.log(JSON.stringify(entry, null, 4));
+            // }
             const data: Partial<Game> = {
               externalId: entry.metadata.namespace,
               name: entry.app_title,
               storefrontId: Storefront.EPIC,
               gameStatusId: entry.playtime_forever > 0 ? 2 : 1,
               isInstalled: false,
+              location: "",
             };
 
             createOrUpdateGame(data, Storefront.EPIC);

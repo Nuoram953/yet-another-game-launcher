@@ -1,4 +1,6 @@
 {
-  "test":"allo en"
+  "storefront": {
+    "steam": "Steam",
+    "egs": "Epic"
+  }
 }
-

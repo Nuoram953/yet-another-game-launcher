@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { IMAGE_TYPE } from "../../common/constant";
+import { MEDIA_TYPE } from "../../common/constant";
 import queries from "../dal/dal";
 import { app } from "electron";
 import path from "path";
@@ -7,7 +7,7 @@ import fs from "fs";
 import { ErrorMessage } from "../../common/error";
 
 export const getMediaByType = async (
-  type: IMAGE_TYPE,
+  type: MEDIA_TYPE,
   gameId: string,
   count?: number,
 ) => {
@@ -45,7 +45,7 @@ export const getRecentlyPlayedBackgrounds = async (count: number) => {
 
   const games = await queries.Game.getGames(count);
   for (const game of games) {
-    const backgrounds = await getMediaByType(IMAGE_TYPE.BACKGROUND, game.id, 1);
+    const backgrounds = await getMediaByType(MEDIA_TYPE.BACKGROUND, game.id, 1);
     paths.push(backgrounds[0]);
   }
 };
