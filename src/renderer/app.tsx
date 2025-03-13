@@ -1,7 +1,6 @@
 import * as ReactDOM from "react-dom/client";
 import React, { useEffect, useState } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import Grid from "./components/layout/Grid";
 import Layout from "./components/layout/Layout";
 import { GamesProvider, useGames } from "./context/DatabaseContext";
 import GameDetail from "./pages/detail/Index";
@@ -15,6 +14,7 @@ import { Toaster } from "./components/ui/toaster";
 import WebsiteViewer from "./pages/web/Index";
 import NotificationSystem from "./components/NotificationSystem";
 import DownloadViewer from "./pages/download/Index";
+import { Grid } from "./pages/grid/Index";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
@@ -31,7 +31,7 @@ const App = () => {
                 path="/"
                 element={
                   <Layout>
-                    <Grid />
+                    <Grid/>
                   </Layout>
                 }
               />

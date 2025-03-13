@@ -1,19 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import Cover from "../Cover";
+import Cover from "../../components/Cover";
 import _ from "lodash";
 import { useGames } from "@/context/DatabaseContext";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { RecentlyPlayedCarousel } from "../carousel/recentlyPlayed/RecentlyPlayedCarousel";
+import { RecentlyPlayedCarousel } from "../../components/carousel/recentlyPlayed/RecentlyPlayedCarousel";
 import useGridScrollPersist from "@/hooks/usePersistentScroll";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { Filters } from "./Filter";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
 const GAP = 16;
 
-const Grid = () => {
+export const Grid = () => {
   const { games, loading, error, refreshGames, updateFilters } = useGames();
   const [search, setSearch] = React.useState("");
   const { updateSelectedGame } = useGames();
@@ -141,5 +142,3 @@ const Grid = () => {
     </div>
   );
 };
-
-export default Grid;

@@ -2,11 +2,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useGames } from "@/context/DatabaseContext";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/card/Card";
 import Autoplay from "embla-carousel-autoplay";
@@ -35,30 +32,34 @@ export const Screenshots = () => {
   }
 
   return (
-    <Card title={""}>
-      <Carousel
-        className="mx-auto flex w-[90%] items-center justify-center"
-        plugins={[
-          Autoplay({
-            delay: 5000,
-          }),
-        ]}
-      >
-        <CarouselContent className="min-h-48">
-          {screenshots.map((screenshot, index) => (
-            <CarouselItem key={index} className="md:basis-1/3">
-              <img
-                src={screenshot}
-                alt="Image"
-                className="max-w-1/2 min-h-[96px] rounded-md object-cover"
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-    </Card>
+    <>
+      {screenshots.length > 0 && (
+        <Card title={""}>
+          <Carousel
+            className="mx-auto flex items-center justify-center"
+            plugins={[
+              Autoplay({
+                delay: 5000,
+              }),
+            ]}
+          >
+            <CarouselContent className="min-h-48">
+              {screenshots.map((screenshot, index) => (
+                <CarouselItem
+                  key={index}
+                  className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                >
+                  <img
+                    src={screenshot}
+                    alt="Image"
+                    className="h-[150px] w-[300px] rounded-md object-cover"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </Card>
+      )}
+    </>
   );
 };

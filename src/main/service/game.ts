@@ -157,7 +157,7 @@ export const createOrUpdateGame = async (
 
   // if (game.updatedAt.getTime() === game.createdAt.getTime()) {
   //   const sgdb = new SteamGridDB(game);
-  //   await sgdb.getGameIdByExternalId("steam");
+  //   await sgdb.getGameIdByExternalId(game.storefront!.name);
   //   await sgdb.downloadAllImageType(3, 3);
   // }
 

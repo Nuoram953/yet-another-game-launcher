@@ -70,7 +70,6 @@ export const getGame = async (id: string) => {
   // for(const developer of developers){
   //   await queries.GameDeveloper.findOrCreate(game.id, developer)
   // }
-  // console.log(developers)
   await metadataManager.downloadMissing(game);
   await updateAchievements(game);
 

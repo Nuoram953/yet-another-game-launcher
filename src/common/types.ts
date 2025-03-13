@@ -12,6 +12,7 @@ export type GameWithRelations = Prisma.GameGetPayload<{
     review: true
     gamescope:true
     downloadHistory:true
+    statusHistory: {include: {gameStatus:true}}
   };
 }>;
 

@@ -19,7 +19,8 @@ const include = {
   tags: { include: { tag: true } },
   review: true,
   gamescope:true,
-  downloadHistory:true
+  downloadHistory:true,
+  statusHistory: {include: {gameStatus:true}}
 };
 
 export async function update(id: string, newData: Partial<Game>) {

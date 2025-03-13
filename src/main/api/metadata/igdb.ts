@@ -5,6 +5,7 @@ import { Game } from "@prisma/client";
 import { metadataManager } from "../../../main";
 import { MEDIA_TYPE } from "../../../common/constant";
 import { GameWithRelations } from "../../../common/types";
+import _ from "lodash";
 
 class Igdb {
   private expirationInSeconds: number;
@@ -161,8 +162,8 @@ class Igdb {
 
   async search(name: string) {
     const response = await axios.post(
-      "https://api.igdb.com/v4/search",
-      `fields *; where name="${name}";`,
+      "https://api.igdb.com/v4/games",
+      `fields *; search "${name}"; where version_parent = null;`,
       {
         headers: {
           Authorization: `Bearer ${await this.getToken()}`,
@@ -172,9 +173,7 @@ class Igdb {
       },
     );
 
-    console.log(response.data);
-
-    return response.data[0].game;
+    return response.data[0].id;
   }
 
   async downloadScreenshotsForGame(
@@ -201,7 +200,13 @@ class Igdb {
       log.error(response.data.errors);
     }
 
-    console.log(response.data[0].screenshots);
+    if(_.isUndefined(response.data[0].screenshots)){
+      return
+    }
+
+    if(response.data[0].screenshots.length <= max && files != 0){
+      return
+    }
 
     for (const image of response.data[0].screenshots) {
       const url = `https:${image.url}`
