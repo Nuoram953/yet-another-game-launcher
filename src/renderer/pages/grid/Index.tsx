@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Cover from "../../components/Cover";
 import _ from "lodash";
 import { useGames } from "@/context/DatabaseContext";
@@ -9,6 +15,8 @@ import { RecentlyPlayedCarousel } from "../../components/carousel/recentlyPlayed
 import useGridScrollPersist from "@/hooks/usePersistentScroll";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Filters } from "./Filter";
+import { Button } from "@/components/button/Button";
+import { CalendarFoldIcon, FilterIcon } from "lucide-react";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -17,13 +25,14 @@ const GAP = 16;
 export const Grid = () => {
   const { games, loading, error, refreshGames, updateFilters } = useGames();
   const [search, setSearch] = React.useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
   const { updateSelectedGame } = useGames();
-  const {setBreadcrumbs} = useBreadcrumbsContext()
+  const { setBreadcrumbs } = useBreadcrumbsContext();
   const gridRef = useRef(null);
 
   useEffect(() => {
-    setBreadcrumbs([])
-    refreshGames()
+    setBreadcrumbs([]);
+    refreshGames();
   }, []);
 
   useGridScrollPersist("unique-grid-id", gridRef);
@@ -39,6 +48,10 @@ export const Grid = () => {
     },
     [search],
   );
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   const filteredGames = useMemo(() => {
     const uniqueGames = Array.from(
@@ -92,7 +105,7 @@ export const Grid = () => {
     <div className="flex h-screen flex-col overflow-hidden">
       <RecentlyPlayedCarousel />
       <div className="flex-none">
-        <div className="mx-auto max-w-md p-2">
+        <div className="mx-auto flex max-w-md flex-row p-2">
           <Input
             type="search"
             placeholder="Search library..."
@@ -100,7 +113,15 @@ export const Grid = () => {
             onChange={handleSearch}
             className="text-white"
           />
+          <Button
+            intent={"primary"}
+            icon={FilterIcon}
+            onClick={() => {
+              setIsExpanded(!isExpanded);
+            }}
+          />
         </div>
+        <Filters expand={isExpanded} />
       </div>
 
       <div className="min-h-0 flex-1">

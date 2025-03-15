@@ -2,8 +2,8 @@ import { Company } from "@prisma/client";
 import { prisma } from "..";
 import queries from "./dal";
 
-export async function findOrCreate(gameId: string, name: string, data:Partial<Company>) {
-  const company = await queries.Company.findOrCreate(name, data);
+export async function findOrCreate(gameId: string, data:Partial<Company>) {
+  const company = await queries.Company.findOrCreate(data);
 
   await prisma.gamePublisher.upsert({
     where: {

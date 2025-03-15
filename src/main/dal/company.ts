@@ -23,3 +23,7 @@ export async function findOrCreate(data: Partial<Company>): Promise<Company> {
     },
   });
 }
+
+export async function findAll(): Promise<Company[]> {
+  return await prisma.company.findMany()
+}

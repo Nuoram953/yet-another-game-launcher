@@ -4,11 +4,15 @@ import path from "path";
 import fs from "fs";
 import vdf from "vdf";
 import { Storefront } from "../../constant";
-import { Game, GameAchievement } from "@prisma/client";
+import { Game, GameAchievement, GameConfigGamescope } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
 import acfParser from "steam-acf2json";
 import queries from "../../dal/dal";
 import _ from "lodash";
+import { metadataManager } from "../../../main";
+import { MEDIA_TYPE } from "../../../common/constant";
+import { GameWithRelations } from "src/common/types";
+const VDF = require('vdf-parser');
 
 class Steam {
   private steamid: string | undefined;
@@ -190,18 +194,71 @@ class Steam {
           name: achievement.displayName,
         };
         await queries.GameAchievements.findOrCreate(game.id, data);
-        // await metadataManager.downloadImage(
-        //   IMAGE_TYPE.ACHIEVEMENT,
-        //   game,
-        //   achievement.icon,
-        //   "jpg",
-        //   achievement.name,
-        // );
+        await metadataManager.downloadImage(
+          MEDIA_TYPE.ACHIEVEMENT,
+          game,
+          achievement.icon,
+          "jpg",
+          achievement.name,
+        );
       }
     } catch (error) {
       console.log(error);
       return [];
     }
+  }
+
+  async updateLaunchOptions(
+    game: GameWithRelations,
+    gamescope: GameConfigGamescope,
+  ) {
+    try {
+      const steamConfigDirectory = path.join(
+        app.getPath("userData"),
+        `../../.steam/steam/userdata`,
+      );
+
+      const data = await fs.promises.readFile(
+        `${steamConfigDirectory}/${await this.steamId64ToSteamId3()}/config/localconfig.vdf`,
+        "utf8",
+      );
+
+      const dataJson = await vdf.parse(data);
+
+      const gameConfigSteam =
+        dataJson.UserLocalConfigStore.Software.Valve.Steam.apps[
+          game.externalId
+        ];
+
+      if (gameConfigSteam) {
+        gameConfigSteam.LaunchOptions = "VKD3D_DISABLE_EXTENSIONS=VK_KHR_present_wait gamescope -e -W 3840 -H 1600 -r 144 --force-grab-cursor -- gamemoderun %command%";
+
+        const updatedVdfContent = VDF.stringify(dataJson);
+
+        await fs.promises.writeFile(
+          `${steamConfigDirectory}/${await this.steamId64ToSteamId3()}/config/localconfig.vdf`,
+          updatedVdfContent,
+          "utf8",
+        );
+
+        console.log("LaunchOptions updated successfully");
+      } else {
+        console.log("Game configuration not found.");
+      }
+    } catch (error) {
+      console.log("Error updating LaunchOptions:", error);
+      return [];
+    }
+  }
+
+  async steamId64ToSteamId3(): Promise<string> {
+    const steamId64BigInt = BigInt(await this.getSteamUserData());
+
+    const baseOffset = 76561197960265728n;
+
+    const steamId3Number = steamId64BigInt - baseOffset;
+
+    return steamId3Number.toString();
   }
 }
 

@@ -1,95 +1,56 @@
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import MultiSelectCombobox from "@/components/combobox/MultiSelectCombobox";
+import { Input } from "@/components/input/Input";
+import { Company } from "@prisma/client";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 
-export const Filters = () => {
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     try {
-  //       const response = await ;
-  //       set(response);
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error:", error);
-  //     }
-  //   };
-  //   fetch();
-  // }, []);
+interface Props {
+  expand: boolean;
+}
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+export const Filters = ({ expand }: Props) => {
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState<{ companies: Company[] }>({
+    companies: [],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await window.library.getFilters();
+        console.log(data);
+        setFilters(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching picture path:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading</div>;
+  }
 
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <a
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                    href="/"
-                  >
-                    <div className="mb-2 mt-4 text-lg font-medium">
-                      shadcn/ui
-                    </div>
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Beautifully designed components built with Radix UI and
-                      Tailwind CSS.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                    href="/"
-                  >
-                    <div className="mb-2 mt-4 text-lg font-medium">
-                      shadcn/ui
-                    </div>
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Beautifully designed components built with Radix UI and
-                      Tailwind CSS.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <a
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                    href="/"
-                  >
-                    <div className="mb-2 mt-4 text-lg font-medium">
-                      shadcn/ui
-                    </div>
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Beautifully designed components built with Radix UI and
-                      Tailwind CSS.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+    <div className={expand ? `mb-4` : ""}>
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          expand ? " mt-4 max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="border border-gray-200 bg-gray-100 p-4">
+          <h3 className="mb-2 text-lg font-bold">Filters</h3>
+          <Input placeholder="Game's name" />
+          <MultiSelectCombobox
+            options={filters.companies.map((company) => ({
+              label: company.name!,
+              value: company.id,
+            }))}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

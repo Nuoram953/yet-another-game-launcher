@@ -7,7 +7,7 @@ export const ImageWithFallback = ({ src, alt, style, className }) => {
     <div
       style={{
         ...style,
-        display: "inline-block",
+        display: "block",
         backgroundColor: hasError ? "grey" : "transparent",
       }}
       className="rounded-xl rounded-b-none w-full"

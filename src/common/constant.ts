@@ -35,6 +35,7 @@ export enum RouteLibrary {
   GET_STATUS = "library:getStatus",
   GET_DOWNLOAD_HISTORY = "library:getDownloadHistory",
   GET_STOREFRONTS = "library:storefront",
+  GET_FILTERS = "library:getFilters",
 }
 
 export enum RouteMedia {

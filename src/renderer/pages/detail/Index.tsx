@@ -26,6 +26,7 @@ import { SectionReview } from "./SectionReview";
 import { SectionActivities } from "./activities/Index";
 import { Container } from "@/components/Container";
 import { ImageWithFallback } from "@/components/cover/cover";
+import { NavigationMenuDemo } from "./Navigation";
 
 const GameDetailsContent = () => {
   const [activeSection, setActiveSection] = useState("overview");

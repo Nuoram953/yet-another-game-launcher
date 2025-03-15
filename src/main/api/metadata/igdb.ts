@@ -116,10 +116,10 @@ class Igdb {
     const publishers = company
       .filter((company) => company.publisher)
       .map((item) => ({
-        name: item.name,
-        description: item.description,
-        country: item.country,
-        startedAt: item.start_date,
+        name: item.company.name,
+        description: item.company.description,
+        country: item.company.country,
+        startedAt: item.company.start_date,
         url: item.company.url,
       }));
 
@@ -173,6 +173,10 @@ class Igdb {
       },
     );
 
+    if(_.isEmpty(response.data)){
+      return null
+    }
+
     return response.data[0].id;
   }
 
@@ -194,6 +198,9 @@ class Igdb {
     }
 
     const id = await this.search(game.name);
+    if(_.isNull(id)){
+      return
+    }
     const response = await this.getGameById(id);
 
     if (response.status !== 200) {

@@ -214,5 +214,9 @@ export const setGamescope = async (data: GameConfigGamescope) => {
   }
 
   await queries.GameConfigGamescope.createOrUpdate(data);
+  if(game.storefrontId == Storefront.STEAM){
+      const storeSteam = new Steam();
+      await storeSteam.updateLaunchOptions(game, data);
+  }
   await refreshGame(game.id)
 };

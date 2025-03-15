@@ -9,7 +9,7 @@ import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
 
 export const getStorefronts = async () => {
-  return await queries.Storefront.getAll()
+  return await queries.Storefront.getAll();
 };
 
 export const refresh = async () => {
@@ -65,11 +65,20 @@ export const getGame = async (id: string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  // const {developers, publishers, partialGameData} = await igdb.getGame(game.externalId!, game.storefrontId!)
-  // await queries.Game.update(game.id, partialGameData)
-  // for(const developer of developers){
-  //   await queries.GameDeveloper.findOrCreate(game.id, developer)
+  // if (_.isNil(game.developers) || _.isNil(game.publishers) || _.isNull(game.summary)) {
+  //   const { developers, publishers, partialGameData } = await igdb.getGame(
+  //     game.externalId!,
+  //     game.storefrontId!,
+  //   );
+  //   await queries.Game.update(game.id, partialGameData);
+  //   for (const developer of developers) {
+  //     await queries.GameDeveloper.findOrCreate(game.id, developer);
+  //   }
+  //   for (const publisher of publishers) {
+  //     await queries.GamePublisher.findOrCreate(game.id, publisher);
+  //   }
   // }
+
   await metadataManager.downloadMissing(game);
   await updateAchievements(game);
 
@@ -82,4 +91,10 @@ export const getGames = async (filters?: FilterConfig, sort?: SortConfig) => {
 
 export const getLastPlayed = async (max: number) => {
   return await queries.Game.getGamesLastPlayed(max);
+};
+
+export const getFilters = async () => {
+  const companies = await queries.Company.findAll()
+
+  return {companies}
 };

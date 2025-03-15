@@ -1,4 +1,5 @@
 import type {
+    Company,
   DownloadHistory,
   Game,
   GameConfigGamescope,
@@ -29,6 +30,7 @@ declare global {
       getStatus: () => Promise<GameStatus[]>;
       getDownloadHistory: () => Promise<DownloadHistory[]>;
       getStorefronts: () => Promise<Storefront[]>;
+      getFilters: () => Promise<{companies:Company[]}>;
     };
     game: {
       launch: (id: string) => Promise<void>;

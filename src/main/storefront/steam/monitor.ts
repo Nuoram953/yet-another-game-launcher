@@ -116,7 +116,9 @@ class DownloadTracker {
         message: `${this.game.name} has been installed.`,
         type: "info",
       });
+      //update location foldder
     }
+
 
     dataManager.send(RouteDownload.ON_DOWNLOAD_STOP, {
       id: this.game.id,

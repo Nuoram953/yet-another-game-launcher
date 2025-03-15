@@ -132,7 +132,6 @@ const DownloadView = () => {
         </CardContent>
       </Card>
 
-      <DownloadHistory />
     </div>
   );
 };

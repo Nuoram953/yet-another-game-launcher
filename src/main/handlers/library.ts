@@ -90,3 +90,13 @@ ipcMain.handle(RouteLibrary.GET_STATUS, async (_event) => {
     return [];
   }
 });
+
+ipcMain.handle(RouteLibrary.GET_FILTERS, async (_event) => {
+  try {
+    return await LibraryService.getFilters();
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});

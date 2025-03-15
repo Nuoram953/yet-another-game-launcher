@@ -39,6 +39,7 @@ contextBridge.exposeInMainWorld("library", {
   getDownloadHistory: () =>
     ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
   getStorefronts: () => ipcRenderer.invoke(RouteLibrary.GET_STOREFRONTS),
+  getFilters: () => ipcRenderer.invoke(RouteLibrary.GET_FILTERS),
 });
 
 contextBridge.exposeInMainWorld("game", {
