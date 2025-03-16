@@ -18,9 +18,9 @@ const include = {
   publishers: { include: { company: true } },
   tags: { include: { tag: true } },
   review: true,
-  gamescope:true,
-  downloadHistory:true,
-  statusHistory: {include: {gameStatus:true}}
+  gamescope: true,
+  downloadHistory: true,
+  statusHistory: { include: { gameStatus: true } },
 };
 
 export async function update(id: string, newData: Partial<Game>) {
@@ -39,20 +39,35 @@ export async function getGames(
   filters?: FilterConfig,
   sort?: SortConfig,
 ) {
-  // const where = filters
-  //   ? Object.fromEntries(
-  //       Object.entries(filters).filter(([_, value]) => value !== null),
-  //     )
-  //   : undefined;
+  console.log(filters)
+  const where = filters
+    ? {
+        developers: !_.isNil(filters.filters.developpers)
+          ? {
+              some: {
+                companyId: {
+                  in: filters.filters.developpers.map((developer) => developer.value),
+                },
+              },
+            }
+          : undefined,
+      }
+    : undefined;
 
-  return await prisma.game.findMany({
-    // where,
+  console.log(sort)
+
+  const games = await prisma.game.findMany({
+    where,
     include,
     orderBy: sort
       ? Object.entries(sort).map(([key, value]) => ({ [key]: value }))
       : [{ lastTimePlayed: "desc" }],
     ...(limit && { take: limit }),
   });
+
+  console.log(games.length);
+
+  return games;
 }
 
 export async function getGameById(

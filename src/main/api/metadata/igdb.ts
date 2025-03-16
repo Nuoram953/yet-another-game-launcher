@@ -75,7 +75,9 @@ class Igdb {
       },
     );
 
-    console.log(response.data);
+    if(_.isEmpty(response.data)){
+      return null
+    }
 
     return response.data[0].game;
   }
@@ -96,8 +98,12 @@ class Igdb {
     return response.data;
   }
 
-  async getGame(externalId: string, store?: Storefront) {
-    const id = await this.getExternalGame(externalId, store);
+  async getGame(game:GameWithRelations) {
+    let id = await this.getExternalGame(game.externalId!, game.storefrontId!);
+
+    if(_.isNil(id)){
+      id = await this.search(game.name)
+    }
 
     const response = await axios.post(
       "https://api.igdb.com/v4/games",
@@ -110,6 +116,9 @@ class Igdb {
         },
       },
     );
+
+    console.log(response.data)
+
 
     const company: object[] = await this.getInvolvedCompany(id);
 
@@ -172,6 +181,8 @@ class Igdb {
         },
       },
     );
+
+    console.log(response.data)
 
     if(_.isEmpty(response.data)){
       return null

@@ -18,6 +18,8 @@ export type GameWithRelations = Prisma.GameGetPayload<{
 
 export interface FilterConfig {
   gameStatusId?: keyof Game;
+  developpers?: {value:string, label:string}[]
+  publishers?: {value:string, label:string}[]
 }
 
 export interface SortConfig extends Partial<GameWithRelations> {

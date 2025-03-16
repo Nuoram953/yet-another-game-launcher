@@ -21,7 +21,7 @@ interface GamesContextValue {
   running: { id: string; time: number }[];
   loading: boolean;
   error: string | null;
-  filters: FilterConfig | {};
+  filters: FilterConfig;
   sortConfig: SortConfig | {};
   updateFilters: (newFilters: Partial<FilterConfig>) => void;
   updateSort: (field: keyof Game) => void;
@@ -62,7 +62,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
     try {
       const response = await window.library.getGames({
-        filters,
+        filters: filters,
         sort: sortConfig,
       });
 
@@ -80,7 +80,17 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   }, [filters, sortConfig]);
 
   const updateFilters = useCallback((newFilters: Partial<FilterConfig>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }));
+    setFilters((prev) => {
+      const combinedFilters = { ...prev, ...newFilters };
+
+      const cleanedFilters = Object.fromEntries(
+        Object.entries(combinedFilters).filter(([_, value]) => {
+          return !(Array.isArray(value) && value.length === 0);
+        }),
+      );
+
+      return cleanedFilters;
+    });
   }, []);
 
   const updateSelectedGame = useCallback(async (game: Game | null) => {

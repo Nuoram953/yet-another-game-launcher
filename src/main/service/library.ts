@@ -65,19 +65,20 @@ export const getGame = async (id: string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  // if (_.isNil(game.developers) || _.isNil(game.publishers) || _.isNull(game.summary)) {
-  //   const { developers, publishers, partialGameData } = await igdb.getGame(
-  //     game.externalId!,
-  //     game.storefrontId!,
-  //   );
-  //   await queries.Game.update(game.id, partialGameData);
-  //   for (const developer of developers) {
-  //     await queries.GameDeveloper.findOrCreate(game.id, developer);
-  //   }
-  //   for (const publisher of publishers) {
-  //     await queries.GamePublisher.findOrCreate(game.id, publisher);
-  //   }
-  // }
+  try {
+    const { developers, publishers, partialGameData } = await igdb.getGame(
+      game,
+    );
+    await queries.Game.update(game.id, partialGameData);
+    for (const developer of developers) {
+      await queries.GameDeveloper.findOrCreate(game.id, developer);
+    }
+    for (const publisher of publishers) {
+      await queries.GamePublisher.findOrCreate(game.id, publisher);
+    }
+  } catch (e) {
+    console.log(e);
+  }
 
   await metadataManager.downloadMissing(game);
   await updateAchievements(game);
@@ -94,7 +95,7 @@ export const getLastPlayed = async (max: number) => {
 };
 
 export const getFilters = async () => {
-  const companies = await queries.Company.findAll()
+  const companies = await queries.Company.findAll();
 
-  return {companies}
+  return { companies };
 };

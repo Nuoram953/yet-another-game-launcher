@@ -65,6 +65,10 @@ export const install = async (id: string) => {
       await delay(10000);
       createDownloadTracker(game);
     }
+
+    case Storefront.EPIC: {
+      EpicCommand.install(game);
+    }
   }
 };
 

@@ -37,7 +37,7 @@ export class Epic {
           const jsonOutput = JSON.parse(stdout);
           for (const entry of jsonOutput) {
             const data: Partial<Game> = {
-              externalId: entry.metadata.namespace,
+              externalId: entry.app_name,
               name: entry.app_title,
               storefrontId: Storefront.EPIC,
               gameStatusId: entry.playtime_forever > 0 ? 2 : 1,
