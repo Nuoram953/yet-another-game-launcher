@@ -1,136 +1,132 @@
-import React, { useState, useRef, useEffect } from "react";
-import { X } from "lucide-react";
-import { Input } from "../input/Input";
+import React, { useState } from "react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface Props {
-  items: [];
+  name: string;
+  placeholder: string;
+  emptyText: string;
   options: {
     value: string;
     label: string;
   }[];
+  selectedItems: string[]; // Fixed: properly typed as string[]
+  setSelectedItems: (newItems: string[]) => void;
 }
 
-const MultiSelectCombobox = ({ items, options }: Props) => {
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [filteredOptions, setFilteredOptions] = useState([]);
-  const inputRef = useRef(null);
-  const dropdownRef = useRef(null);
+const MultiSelectCombobox = ({
+  name,
+  placeholder,
+  emptyText,
+  options,
+  selectedItems = [], // Added default value to prevent undefined errors
+  setSelectedItems,
+}: Props) => {
+  const [open, setOpen] = useState(false);
 
-  // Update filtered options whenever input changes or selected items change
-  useEffect(() => {
-    const filtered = options.filter(
-      (option) =>
-        option.label.toLowerCase().includes(inputValue.toLowerCase()) &&
-        !selectedItems.some((item) => item.value === option.value),
-    );
-
-    setFilteredOptions(filtered);
-  }, [inputValue, selectedItems]);
-
-  // Handle selection of an item
-  const handleSelect = (option) => {
-    const newSelectedItems = [...selectedItems, option];
-    setSelectedItems(newSelectedItems);
-    setInputValue("");
+  // Use null check to prevent "undefined is not iterable" error
+  const handleSelect = (currentValue: string) => {
+    setOpen(false);
+    
+    // Make sure selectedItems is an array before using array methods
+    const currentItems = Array.isArray(selectedItems) ? selectedItems : [];
+    
+    if (currentItems.includes(currentValue)) {
+      // If item is already selected, remove it
+      setSelectedItems(currentItems.filter((item) => item !== currentValue));
+    } else {
+      // Otherwise add it
+      setSelectedItems([...currentItems, currentValue]);
+    }
   };
 
-  // Handle removal of an item
-  const handleRemove = (value) => {
-    const newSelectedItems = selectedItems.filter(
-      (item) => item.value !== value,
-    );
-    setSelectedItems(newSelectedItems);
+  const handleRemoveItem = (item: string) => {
+    // Make sure selectedItems is an array before using array methods
+    const currentItems = Array.isArray(selectedItems) ? selectedItems : [];
+    setSelectedItems(currentItems.filter((i) => i !== item));
   };
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  // Safe check for rendering selected items
+  const selectedItemsArray = Array.isArray(selectedItems) ? selectedItems : [];
 
   return (
-    <div>
-      <h2 className="mb-2 text-lg font-medium">Select Frameworks</h2>
-
-      <div className="relative" ref={dropdownRef} style={{ zIndex: 50 }}>
-        {/* Selected items */}
-        <div className="flex flex-row gap-1">
-          {selectedItems.map((item) => (
-            <div
-              key={item.value}
-              className="w-fit items-center gap-2 rounded-md bg-blue-100 px-2 py-1 text-sm text-blue-800"
-            >
-              {item.label}
-              <button
-                type="button"
-                className="text-blue-600 hover:text-blue-800 focus:outline-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemove(item.value);
-                }}
-              >
-                <X size={14} />
-              </button>
-            </div>
-          ))}
-        </div>
-
-        {/* Input field */}
-        <Input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-            setIsOpen(true);
-          }}
-          onFocus={() => setIsOpen(true)}
-          placeholder={selectedItems.length === 0 ? "Select frameworks..." : ""}
-        />
-
-        {/* Dropdown options with fixed positioning */}
-        {isOpen && (
-          <div
-            className="fixed max-h-60 overflow-auto rounded-md border border-gray-300 bg-white shadow-lg"
-            style={{
-              zIndex: 999,
-              width: dropdownRef.current?.offsetWidth,
-              top:
-                dropdownRef.current?.getBoundingClientRect().bottom +
-                window.scrollY,
-              left:
-                dropdownRef.current?.getBoundingClientRect().left +
-                window.scrollX,
-            }}
+    <div className="w-full space-y-1">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between"
           >
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <div
+            <span className="truncate">
+              {selectedItemsArray
+                ? `${selectedItemsArray.length} item${selectedItemsArray.length > 1 ? "s" : ""} selected`
+                : placeholder}
+            </span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0">
+          <Command>
+            <CommandInput placeholder={`Search ${name}...`} />
+            <CommandEmpty>{emptyText}</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
                   key={option.value}
-                  className="cursor-pointer px-4 py-2 hover:bg-blue-100"
-                  onClick={() => handleSelect(option)}
+                  value={option.value}
+                  onSelect={() => handleSelect(option.value)}
                 >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      selectedItemsArray.includes(option.value) ? "opacity-100" : "opacity-0"
+                    )}
+                  />
                   {option.label}
-                </div>
-              ))
-            ) : (
-              <div className="px-4 py-2 text-gray-500">
-                No options available
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
+      {/* Display selected items with null safety */}
+      {selectedItemsArray.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {selectedItemsArray.map((item) => {
+            const option = options.find((o) => o.value === item);
+            return (
+              <Badge key={item} variant="secondary" className="text-sm">
+                {option?.label || item}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-4 w-4 p-0 ml-1"
+                  onClick={() => handleRemoveItem(item)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </Badge>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

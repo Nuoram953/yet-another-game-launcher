@@ -37,7 +37,7 @@ export interface ButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled">,
     VariantProps<typeof button> {
   text?: string;
-  onClick: () => void;
+  onClick?: () => void;
   icon?: Icon;
 }
 
