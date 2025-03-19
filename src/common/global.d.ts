@@ -6,6 +6,7 @@ import type {
   GameReview,
   GameStatus,
   Storefront,
+  Tag,
 } from "@prisma/client";
 import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
@@ -30,7 +31,7 @@ declare global {
       getStatus: () => Promise<GameStatus[]>;
       getDownloadHistory: () => Promise<DownloadHistory[]>;
       getStorefronts: () => Promise<Storefront[]>;
-      getFilters: () => Promise<{companies:Company[]}>;
+      getFilters: () => Promise<{companies:Company[], tags:Tag[]}>;
     };
     game: {
       launch: (id: string) => Promise<void>;

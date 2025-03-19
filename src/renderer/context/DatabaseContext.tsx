@@ -22,9 +22,9 @@ interface GamesContextValue {
   loading: boolean;
   error: string | null;
   filters: FilterConfig;
-  sortConfig: SortConfig | {};
+  sortConfig: SortConfig;
   updateFilters: (newFilters: Partial<FilterConfig>) => void;
-  updateSort: (field: keyof Game) => void;
+  updateSort: (newSort: SortConfig) => void;
   refreshGames: () => Promise<void>;
   selectedGame: GameWithRelations | null;
   updateSelectedGame: (game: Game | null) => Promise<void>;
@@ -51,7 +51,10 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterConfig | {}>({});
-  const [sortConfig, setSortConfig] = useState<SortConfig | {}>({});
+  const [sort, setSortConfig] = useState<SortConfig>({
+    field: "lastTimePlayed",
+    direction: "desc",
+  });
   const [selectedGame, setSelectedGame] = useState<GameWithRelations | null>(
     null,
   );
@@ -61,10 +64,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     setError(null);
 
     try {
-      const response = await window.library.getGames({
-        filters: filters,
-        sort: sortConfig,
-      });
+      const response = await window.library.getGames(filters, sort);
 
       setGames(response);
 
@@ -77,7 +77,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [filters, sortConfig]);
+  }, [filters, sort]);
 
   const updateFilters = useCallback((newFilters: Partial<FilterConfig>) => {
     setFilters((prev) => {
@@ -97,17 +97,13 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     setSelectedGame(game);
   }, []);
 
-  const updateSort = useCallback((field: keyof Game) => {
-    setSortConfig((prev) => ({
-      field,
-      direction:
-        prev.field === field && prev.direction === "asc" ? "desc" : "asc",
-    }));
+  const updateSort = useCallback((newSort: SortConfig) => {
+    setSortConfig(newSort);
   }, []);
 
   React.useEffect(() => {
     fetchGames();
-  }, [filters, sortConfig]);
+  }, [filters, sort]);
 
   React.useEffect(() => {
     window.data.on(DataRoute.REQUEST_GAMES, (payload) => {
@@ -176,7 +172,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     loading,
     error,
     filters,
-    sortConfig,
+    sortConfig: sort,
     updateFilters,
     updateSort,
     refreshGames: fetchGames,

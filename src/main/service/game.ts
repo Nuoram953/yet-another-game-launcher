@@ -1,7 +1,7 @@
 import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../constant";
-import { mainApp, metadataManager } from "..";
+import { igdb, mainApp, metadataManager } from "..";
 import {
   killDirectoyProcess,
   monitorDirectoryProcesses,
@@ -33,12 +33,12 @@ export const launch = async (id: string) => {
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      await SteamCommand.run(game)
-      break
+      await SteamCommand.run(game);
+      break;
     }
     case Storefront.EPIC: {
-      await EpicCommand.run(game)
-      break
+      await EpicCommand.run(game);
+      break;
     }
   }
 
@@ -159,11 +159,26 @@ export const createOrUpdateGame = async (
     throw new Error("invalid game");
   }
 
-  // if (game.updatedAt.getTime() === game.createdAt.getTime()) {
-  //   const sgdb = new SteamGridDB(game);
-  //   await sgdb.getGameIdByExternalId(game.storefront!.name);
-  //   await sgdb.downloadAllImageType(3, 3);
-  // }
+  if (game.updatedAt.getTime() === game.createdAt.getTime()) {
+    const sgdb = new SteamGridDB(game);
+    await sgdb.getGameIdByExternalId(game.storefront!.name);
+    await sgdb.downloadAllImageType(1, 1);
+
+    try {
+      const { developers, publishers, partialGameData } =
+        await igdb.getGame(game);
+      await queries.Game.update(game.id, partialGameData);
+      for (const developer of developers) {
+        await queries.GameDeveloper.findOrCreate(game.id, developer);
+      }
+      for (const publisher of publishers) {
+        await queries.GamePublisher.findOrCreate(game.id, publisher);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    await delay(2000)
+  }
 
   mainApp.sendToRenderer("add-new-game", {
     ...game,
@@ -218,9 +233,9 @@ export const setGamescope = async (data: GameConfigGamescope) => {
   }
 
   await queries.GameConfigGamescope.createOrUpdate(data);
-  if(game.storefrontId == Storefront.STEAM){
-      const storeSteam = new Steam();
-      await storeSteam.updateLaunchOptions(game, data);
+  if (game.storefrontId == Storefront.STEAM) {
+    const storeSteam = new Steam();
+    await storeSteam.updateLaunchOptions(game, data);
   }
-  await refreshGame(game.id)
+  await refreshGame(game.id);
 };

@@ -21,3 +21,7 @@ export async function getCountForAllStatus() {
 export async function getAll() {
   return await prisma.gameStatus.findMany();
 }
+
+export async function findAll() {
+  return await prisma.gameStatus.findMany();
+}

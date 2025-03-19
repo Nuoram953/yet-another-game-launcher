@@ -11,6 +11,7 @@ import { refreshGame } from "../../service/game";
 import { NotificationType, RouteDownload } from "../../../common/constant";
 import { delay } from "../../utils/utils";
 import notificationManager from "../../manager/notificationManager";
+import Steam from "../../api/storefront/steam";
 
 interface DownloadStats {
   id: string;
@@ -116,7 +117,8 @@ class DownloadTracker {
         message: `${this.game.name} has been installed.`,
         type: "info",
       });
-      //update location foldder
+      const steam = new Steam()
+      steam.getInstalledGames()
     }
 
 

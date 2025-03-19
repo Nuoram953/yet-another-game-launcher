@@ -12,3 +12,7 @@ export async function findOrCreate(name: string):Promise<Tag> {
     },
   });
 }
+
+export async function findAll(): Promise<Tag[]> {
+  return await prisma.tag.findMany()
+}

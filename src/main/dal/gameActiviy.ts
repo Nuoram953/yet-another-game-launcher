@@ -9,8 +9,8 @@ export async function createGameActiviy(
   await prisma.gameActivity.create({
     data: {
       gameId: gameId,
-      startedAt: new Date(startedAt).getTime(),
-      endedAt: new Date(endedAt).getTime(),
+      startedAt: parseInt((new Date().getTime()/1000).toFixed(0)),
+      endedAt: parseInt((new Date().getTime()/1000).toFixed(0)),
       duration: await getMinutesBetween(startedAt, endedAt),
     },
   });

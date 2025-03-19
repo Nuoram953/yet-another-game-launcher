@@ -16,7 +16,8 @@ import useGridScrollPersist from "@/hooks/usePersistentScroll";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Filters } from "./Filter";
 import { Button } from "@/components/button/Button";
-import { CalendarFoldIcon, FilterIcon } from "lucide-react";
+import { ArrowUpDown, CalendarFoldIcon, FilterIcon } from "lucide-react";
+import { Sort } from "./Sort";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -48,10 +49,6 @@ export const Grid = () => {
     },
     [search],
   );
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
 
   const filteredGames = useMemo(() => {
     const uniqueGames = Array.from(
@@ -120,6 +117,9 @@ export const Grid = () => {
               setIsExpanded(!isExpanded);
             }}
           />
+
+          <Sort/>
+
         </div>
         <Filters expand={isExpanded} />
       </div>

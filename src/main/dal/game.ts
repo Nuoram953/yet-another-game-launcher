@@ -39,14 +39,33 @@ export async function getGames(
   filters?: FilterConfig,
   sort?: SortConfig,
 ) {
-  console.log(filters)
   const where = filters
     ? {
-        developers: !_.isNil(filters.filters.developpers)
+        developers: !_.isNil(filters.developpers)
           ? {
               some: {
                 companyId: {
-                  in: filters.filters.developpers.map((developer) => developer.value),
+                  in: filters.developpers.map((developer) => developer.value),
+                },
+              },
+            }
+          : undefined,
+
+        publishers: !_.isNil(filters.publishers)
+          ? {
+              some: {
+                companyId: {
+                  in: filters.publishers.map((publisher) => publisher.value),
+                },
+              },
+            }
+          : undefined,
+
+        tags: !_.isNil(filters.tags)
+          ? {
+              some: {
+                tagId: {
+                  in: filters.tags.map((tag) => tag.value),
                 },
               },
             }
@@ -54,18 +73,14 @@ export async function getGames(
       }
     : undefined;
 
-  console.log(sort)
-
   const games = await prisma.game.findMany({
     where,
     include,
     orderBy: sort
-      ? Object.entries(sort).map(([key, value]) => ({ [key]: value }))
+      ? { [sort.field]: sort.direction }
       : [{ lastTimePlayed: "desc" }],
     ...(limit && { take: limit }),
   });
-
-  console.log(games.length);
 
   return games;
 }
@@ -116,7 +131,7 @@ export async function updateTimePlayed(gameId: string, timePlayed: number) {
       timePlayed: {
         increment: timePlayed,
       },
-      lastTimePlayed: new Date().getTime(),
+      lastTimePlayed: parseInt((new Date().getTime()/1000).toFixed(0)),
     },
     where: {
       id: gameId,
@@ -164,7 +179,7 @@ export async function createOrUpdateExternal(
       },
     },
     update: {
-      lastTimePlayed: data.lastTimePlayed,
+      lastTimePlayed: data?.lastTimePlayed,
       timePlayed: data.timePlayed,
       timePlayedLinux: data.timePlayedLinux,
       timePlayedWindows: data.timePlayedWindows,
@@ -173,7 +188,7 @@ export async function createOrUpdateExternal(
     },
     create: {
       name: data.name!,
-      lastTimePlayed: data.lastTimePlayed,
+      lastTimePlayed: data?.lastTimePlayed,
       isInstalled: false,
       gameStatusId: data.gameStatusId ?? GameStatus.UNPLAYED,
       storefrontId: storefront,

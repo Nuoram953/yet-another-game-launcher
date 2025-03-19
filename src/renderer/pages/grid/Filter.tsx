@@ -1,11 +1,9 @@
-import MultiSelectCombobox from "@/components/combobox/MultiSelectCombobox";
 import { Input } from "@/components/input/Input";
 import { useGames } from "@/context/DatabaseContext";
-import { Company } from "@prisma/client";
+import { Company, Tag } from "@prisma/client";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import Select, { MultiValue, MultiValueProps } from "react-select";
-import { FilterConfig } from "src/common/types";
+import Select from "react-select";
 
 interface Props {
   expand: boolean;
@@ -14,8 +12,12 @@ interface Props {
 export const Filters = ({ expand }: Props) => {
   const { updateFilters, filters } = useGames();
   const [loading, setLoading] = useState(true);
-  const [filtersData, setFiltersData] = useState<{ companies: Company[] }>({
+  const [filtersData, setFiltersData] = useState<{
+    companies: Company[];
+    tags: Tag[];
+  }>({
     companies: [],
+    tags: [],
   });
 
   useEffect(() => {
@@ -59,9 +61,10 @@ export const Filters = ({ expand }: Props) => {
                 className="basic-multi-select z-9999"
                 classNamePrefix="select"
                 onChange={(choice) => {
-                  console.log(choice)
+                  console.log(choice);
 
-                  updateFilters({developpers:choice})}}
+                  updateFilters({ developpers: choice });
+                }}
                 value={filters.developpers}
               />
             </div>
@@ -76,11 +79,27 @@ export const Filters = ({ expand }: Props) => {
                 }))}
                 className="basic-multi-select z-9999"
                 classNamePrefix="select"
-                onChange={(choice) => updateFilters({publishers:choice})}
+                onChange={(choice) => updateFilters({ publishers: choice })}
                 value={filters.publishers}
               />
             </div>
           </div>
+
+            <div className="w-full">
+              <h2>Tags</h2>
+              <Select
+                isMulti
+                name="colors"
+                options={filtersData.tags.map((company) => ({
+                  value: company.id,
+                  label: company.name,
+                }))}
+                className="basic-multi-select z-9999"
+                classNamePrefix="select"
+                onChange={(choice) => updateFilters({ tags: choice })}
+                value={filters.tags}
+              />
+            </div>
         </div>
       </div>
     </div>

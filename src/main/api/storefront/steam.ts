@@ -12,7 +12,7 @@ import _ from "lodash";
 import { metadataManager } from "../../../main";
 import { MEDIA_TYPE } from "../../../common/constant";
 import { GameWithRelations } from "src/common/types";
-const VDF = require('vdf-parser');
+const VDF = require("vdf-parser");
 
 class Steam {
   private steamid: string | undefined;
@@ -94,25 +94,23 @@ class Steam {
         app.getPath("userData"),
         "../../.steam/steam/steamapps",
       );
-      const data = await fs.promises.readFile(
-        `${steamConfigDirectory}/libraryfolders.vdf`,
-        "utf8",
+
+      const files = await fs.promises.readdir(steamConfigDirectory);
+      const appManifestFiles = files.filter((file) =>
+        /^appmanifest_\d+\.acf$/.test(file),
       );
 
-      const dataJson = await vdf.parse(data);
+      for (const file of appManifestFiles) {
+        let appId;
+        const match = file.match(/^appmanifest_(\d+)\.acf$/);
+        if (match) {
+          appId = match[1];
+        } else {
+          throw new Error();
+        }
 
-      const appIds: number[] = Object.keys(dataJson.libraryfolders[0].apps)
-        .map((key) => {
-          const fileName = `/appmanifest_${key}.acf`;
-          if (fs.existsSync(path.join(steamConfigDirectory, fileName))) {
-            return Number(key);
-          }
-        })
-        .filter((item) => item !== undefined) as number[];
-
-      for (const appId of appIds) {
         const game = await queries.Game.getGameByExtenalIdAndStorefront(
-          appId.toString(),
+          appId,
           Storefront.STEAM,
         );
 
@@ -121,10 +119,9 @@ class Steam {
         }
         await queries.Game.update(game.id, { isInstalled: true });
 
-        const fileName = `/appmanifest_${appId}.acf`;
-        const filePath = path.join(steamConfigDirectory, fileName);
-        const file = fs.readFileSync(filePath, "utf-8");
-        const decode = acfParser.decode(file);
+        const filePath = path.join(steamConfigDirectory, file);
+        const appManifestFile = fs.readFileSync(filePath, "utf-8");
+        const decode = acfParser.decode(appManifestFile);
         const gamePath = path.join(
           app.getPath("userData"),
           "../../.local/share/Steam/steamapps/common",
@@ -134,6 +131,7 @@ class Steam {
         await queries.Game.update(game.id, {
           size: decode.AppState.SizeOnDisk,
           location: gamePath,
+          isInstalled: true,
         });
       }
     } catch (error) {
@@ -231,7 +229,8 @@ class Steam {
         ];
 
       if (gameConfigSteam) {
-        gameConfigSteam.LaunchOptions = "VKD3D_DISABLE_EXTENSIONS=VK_KHR_present_wait gamescope -e -W 3840 -H 1600 -r 144 --force-grab-cursor -- gamemoderun %command%";
+        gameConfigSteam.LaunchOptions =
+          "VKD3D_DISABLE_EXTENSIONS=VK_KHR_present_wait LD_PRELOAD=\"\" gamescope -e -W 3840 -H 1600 -r 144 --force-grab-cursor -- gamemoderun %command%";
 
         const updatedVdfContent = VDF.stringify(dataJson);
 

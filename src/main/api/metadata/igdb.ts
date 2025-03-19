@@ -98,7 +98,7 @@ class Igdb {
     return response.data;
   }
 
-  async getGame(game:GameWithRelations) {
+  async getGame(game:GameWithRelations|Game) {
     let id = await this.getExternalGame(game.externalId!, game.storefrontId!);
 
     if(_.isNil(id)){

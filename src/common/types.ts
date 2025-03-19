@@ -20,11 +20,13 @@ export interface FilterConfig {
   gameStatusId?: keyof Game;
   developpers?: {value:string, label:string}[]
   publishers?: {value:string, label:string}[]
+  tags?: {value:string, label:string}[]
 }
 
 export interface SortConfig extends Partial<GameWithRelations> {
   field: keyof Game;
   direction: "asc" | "desc";
+  label?: string
 }
 
 export interface DownloadStats {

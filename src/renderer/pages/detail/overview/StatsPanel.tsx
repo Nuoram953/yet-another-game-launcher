@@ -23,7 +23,7 @@ export const StatsPanel = () => {
   if (lastSession) {
     const now = Date.now();
     const endedAt = Number(lastSession.endedAt); // Convert BigInt to Number for compatibility
-    const diffInMs = now - endedAt;
+    const diffInMs = now - (endedAt * 1000);
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
@@ -36,7 +36,7 @@ export const StatsPanel = () => {
           : `Last played ${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
     } else {
       // Format as "Last played on dd/mm/yyyy"
-      const lastPlayedDate = new Date(endedAt);
+      const lastPlayedDate = new Date(endedAt*1000);
       detail = `Last played on ${lastPlayedDate.toLocaleDateString()}`;
     }
   } else {
