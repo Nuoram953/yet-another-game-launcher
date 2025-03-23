@@ -5,7 +5,12 @@ import _ from "lodash";
 const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
   variants: {
     intent: {
-      primary: ["bg-grey-500", "text-white", "border-transparent"],
+      primary: [
+        "bg-gray-600",
+        "text-white",
+        "border-transparent",
+        "hover:bg-gray-700",
+      ],
       secondary: ["bg-white", "text-gray-800", "border-gray-400"],
       install: ["bg-yellow-500", "text-white", "border-yellow-400"],
       play: [
@@ -16,10 +21,12 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
       ],
       running: ["animate-pulse"],
       destroy: ["bg-red", "text-gray-800", "border-gray-400"],
+      icon: ["text-white", "border-transparent", "hover:opacity-50"],
     },
     size: {
       small: ["text-sm", "py-1", "px-2"],
       medium: ["text-base", "py-2", "px-4"],
+      fit: ["text-base"],
     },
     disabled: {
       false: null,

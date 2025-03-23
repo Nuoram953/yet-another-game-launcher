@@ -45,7 +45,11 @@ export const Background = ({ children }: Props) => {
   }, [backgroundPictures, currentIndex]);
 
   if (backgroundPictures.length === 0) {
-    return <div>Loading...</div>;
+    return (
+      <div className="space-y-4 p-6">
+        <div className="h-64 animate-pulse rounded-xl bg-gray-800"></div>
+      </div>
+    );
   }
 
   return (

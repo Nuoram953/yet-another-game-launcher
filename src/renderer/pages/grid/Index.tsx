@@ -16,7 +16,13 @@ import useGridScrollPersist from "@/hooks/usePersistentScroll";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Filters } from "./Filter";
 import { Button } from "@/components/button/Button";
-import { ArrowUpDown, CalendarFoldIcon, FilterIcon } from "lucide-react";
+import {
+  ArrowUpDown,
+  CalendarFoldIcon,
+  Filter,
+  FilterIcon,
+  Plus,
+} from "lucide-react";
 import { Sort } from "./Sort";
 
 const COLUMN_WIDTH = 275;
@@ -102,24 +108,35 @@ export const Grid = () => {
     <div className="flex h-screen flex-col overflow-hidden">
       <RecentlyPlayedCarousel />
       <div className="flex-none">
-        <div className="mx-auto flex max-w-md flex-row p-2">
-          <Input
-            type="search"
-            placeholder="Search library..."
-            value={search}
-            onChange={handleSearch}
-            className="text-white"
-          />
-          <Button
-            intent={"primary"}
-            icon={FilterIcon}
-            onClick={() => {
-              setIsExpanded(!isExpanded);
-            }}
-          />
-
-          <Sort/>
-
+        <div className="flex flex-row items-center justify-between p-2 align-middle">
+          <div className="w-1/3 flex flex-row items-center align-middle">
+            <Input
+              type="search"
+              placeholder="Search library..."
+              value={search}
+              onChange={handleSearch}
+              className="mr-2 text-white"
+            />
+            <Button
+              intent={"icon"}
+              icon={Filter}
+              size={"fit"}
+              onClick={() => {
+                setIsExpanded(!isExpanded);
+              }}
+            />
+            <Sort />
+          </div>
+          <div>
+            <Button
+              intent={"primary"}
+              text="Add game"
+              icon={Plus}
+              size={"small"}
+              className="w-fit"
+              onClick={() => {}}
+            />
+          </div>
         </div>
         <Filters expand={isExpanded} />
       </div>

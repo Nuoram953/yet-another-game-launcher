@@ -29,6 +29,7 @@ import HeatmapCalendar from "../HeatmapCalendar";
 import { ChartActiviy } from "./ChartActiviy";
 import { ChartActivityOs } from "./ChartActiviyOs";
 import { HeatMap } from "./HeatMap";
+import { EventTimeline } from "./Timeline";
 
 ChartJS.register(
   CategoryScale,

@@ -21,6 +21,7 @@ export interface FilterConfig {
   developpers?: {value:string, label:string}[]
   publishers?: {value:string, label:string}[]
   tags?: {value:string, label:string}[]
+  status?: {value:string|number, label:string}[]
 }
 
 export interface SortConfig extends Partial<GameWithRelations> {

@@ -70,6 +70,12 @@ export async function getGames(
               },
             }
           : undefined,
+
+        gameStatusId: !_.isNil(filters.status)
+          ? {
+              in: filters.status.map((status) => status.id),
+            }
+          : undefined,
       }
     : undefined;
 
@@ -131,7 +137,7 @@ export async function updateTimePlayed(gameId: string, timePlayed: number) {
       timePlayed: {
         increment: timePlayed,
       },
-      lastTimePlayed: parseInt((new Date().getTime()/1000).toFixed(0)),
+      lastTimePlayed: parseInt((new Date().getTime() / 1000).toFixed(0)),
     },
     where: {
       id: gameId,

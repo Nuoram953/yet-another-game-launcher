@@ -31,7 +31,7 @@ declare global {
       getStatus: () => Promise<GameStatus[]>;
       getDownloadHistory: () => Promise<DownloadHistory[]>;
       getStorefronts: () => Promise<Storefront[]>;
-      getFilters: () => Promise<{companies:Company[], tags:Tag[]}>;
+      getFilters: () => Promise<{companies:Company[], tags:Tag[], status:GameStatus[]}>;
     };
     game: {
       launch: (id: string) => Promise<void>;

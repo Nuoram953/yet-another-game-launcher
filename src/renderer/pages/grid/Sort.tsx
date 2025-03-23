@@ -10,7 +10,7 @@ import {
 import { useGames } from "@/context/DatabaseContext";
 import { Game } from "@prisma/client";
 import _ from "lodash";
-import { ArrowDown, ArrowUp, ArrowUpDown, FilterIcon } from "lucide-react";
+import { ArrowDown, ArrowDownUp, ArrowUp, ArrowUpDown, FilterIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { SortConfig } from "src/common/types";
 
@@ -35,6 +35,10 @@ export const Sort = () => {
       field: "name",
       label: "Name",
     },
+    {
+      field: "timePlayed",
+      label: "Time played",
+    },
   ];
 
   const handleOnClick = (option: (typeof options)[0]) => {
@@ -43,7 +47,7 @@ export const Sort = () => {
         ? direction === "asc"
           ? "desc"
           : "asc"
-        : direction;
+        : "desc" ;
 
     setSelected({
       field: option.field,
@@ -67,8 +71,9 @@ export const Sort = () => {
     <DropdownMenu open={isOpen}>
       <DropdownMenuTrigger>
         <Button
-          intent={"primary"}
-          icon={FilterIcon}
+          intent={"icon"}
+          icon={ArrowDownUp}
+          size={"fit"}
           onClick={() => {
             setIsOpen(!isOpen);
           }}
@@ -78,7 +83,7 @@ export const Sort = () => {
         className="w-56"
         onInteractOutside={() => setIsOpen(false)}
       >
-        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+        <DropdownMenuLabel>Sort</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {options.map((option) => (
           <DropdownMenuCheckboxItem

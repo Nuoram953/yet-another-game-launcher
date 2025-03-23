@@ -13,6 +13,7 @@ import { metadataManager } from "../../../main";
 import { MEDIA_TYPE } from "../../../common/constant";
 import { GameWithRelations } from "src/common/types";
 const VDF = require("vdf-parser");
+import { readVdf, writeVdf } from "steam-binary-vdf";
 
 class Steam {
   private steamid: string | undefined;
@@ -206,6 +207,21 @@ class Steam {
     }
   }
 
+  async getAppInfoFile() {
+    const steamConfigDirectory = path.join(
+      app.getPath("userData"),
+      `../../.steam/steam/appcache`,
+    );
+
+    const data = fs.readFileSync(
+      `${steamConfigDirectory}/appinfo.vdf`,
+    );
+
+    const dataJson = readVdf(data,600);
+
+    console.log(dataJson);
+  }
+
   async updateLaunchOptions(
     game: GameWithRelations,
     gamescope: GameConfigGamescope,
@@ -230,7 +246,7 @@ class Steam {
 
       if (gameConfigSteam) {
         gameConfigSteam.LaunchOptions =
-          "VKD3D_DISABLE_EXTENSIONS=VK_KHR_present_wait LD_PRELOAD=\"\" gamescope -e -W 3840 -H 1600 -r 144 --force-grab-cursor -- gamemoderun %command%";
+          'VKD3D_DISABLE_EXTENSIONS=VK_KHR_present_wait LD_PRELOAD="" gamescope -e -W 3840 -H 1600 -r 144 --force-grab-cursor -- gamemoderun %command%';
 
         const updatedVdfContent = VDF.stringify(dataJson);
 

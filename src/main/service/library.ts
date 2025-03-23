@@ -100,6 +100,7 @@ export const getLastPlayed = async (max: number) => {
 export const getFilters = async () => {
   const companies = await queries.Company.findAll();
   const tags = await queries.Tag.findAll()
+  const status = await queries.GameStatus.findAll()
 
-  return { companies, tags };
+  return { companies, tags, status };
 };

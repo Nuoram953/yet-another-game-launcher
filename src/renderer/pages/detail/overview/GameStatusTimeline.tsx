@@ -3,6 +3,10 @@ import { useGames } from "@/context/DatabaseContext";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 
+//status
+//achievements
+//installed?
+
 export const GameStatusTimeline = () => {
   // Mock data and hooks
   const {selectedGame}=useGames()
