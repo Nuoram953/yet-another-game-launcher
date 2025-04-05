@@ -34,7 +34,7 @@ export class YouTubeDownloader {
       }
 
       const name = outputDir + "/trailer";
-      const cookiePath = path.join(app.getPath("userData"), "yt-cookies.txt")
+      const cookiePath = path.join(app.getPath("userData"), "cookies.txt")
 
       const searchResults = await YouTube.search(
         `${game.name} game ${MEDIA_TYPE.TRAILER}`,
@@ -53,7 +53,7 @@ export class YouTubeDownloader {
           noWarnings: true,
           preferFreeFormats: true,
           cookies: cookiePath,
-          addHeader: ["referer:youtube.com", "user-agent:firefox"],
+          addHeader: ["referer:youtube.com", "user-agent:firefox"]
         },
     } catch (error) {
       console.error("Search or download error:", error);

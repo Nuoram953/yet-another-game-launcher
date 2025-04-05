@@ -69,20 +69,19 @@ export const Grid = () => {
   }, [games, search]);
 
   const Cell = useCallback(({ columnIndex, rowIndex, style, data }) => {
-    const { games, columnCount } = data;
+    const { games, columnCount, cellWidth, cellHeight } = data;
     const gameIndex = rowIndex * columnCount + columnIndex;
     const game = games[gameIndex];
 
     if (!game) return null;
 
-    const adjustedStyle = {
+    const cellStyle = {
       ...style,
-      padding: GAP / 2,
-      boxSizing: "border-box" as const,
+      padding: `0 ${GAP/2}px ${GAP}px ${GAP/2}px`, // Add bottom padding for title
     };
 
     return (
-      <div style={adjustedStyle}>
+      <div style={cellStyle}>
         <Cover key={game.id} game={game} />
       </div>
     );
@@ -109,7 +108,7 @@ export const Grid = () => {
       <RecentlyPlayedCarousel />
       <div className="flex-none">
         <div className="flex flex-row items-center justify-between p-2 align-middle">
-          <div className="w-1/3 flex flex-row items-center align-middle">
+          <div className="flex w-1/3 flex-row items-center align-middle">
             <Input
               type="search"
               placeholder="Search library..."
@@ -129,7 +128,7 @@ export const Grid = () => {
           </div>
           <div>
             <Button
-              intent={"primary"}
+              intent={"icon"}
               text="Add game"
               icon={Plus}
               size={"small"}
@@ -144,14 +143,21 @@ export const Grid = () => {
       <div className="min-h-0 flex-1">
         <AutoSizer>
           {({ height, width }) => {
+            // Calculate available space for columns
+            const availableWidth = width;
+
+            // Calculate how many columns can fit
             const columnCount = Math.max(
               1,
-              Math.floor((width - GAP) / (COLUMN_WIDTH + GAP)),
+              Math.floor((availableWidth + GAP) / (COLUMN_WIDTH + GAP)),
             );
+
+            // Calculate row count based on item count
             const rowCount = Math.ceil(filteredGames.length / columnCount);
-            const availableWidth = width - GAP * (columnCount + 1);
+
+            // Calculate actual column width to fill space evenly
             const adjustedColumnWidth = Math.floor(
-              availableWidth / columnCount,
+              (availableWidth - (columnCount - 1) * GAP) / columnCount,
             );
 
             return (
@@ -161,12 +167,13 @@ export const Grid = () => {
                 columnCount={columnCount}
                 rowCount={rowCount}
                 columnWidth={adjustedColumnWidth + GAP}
-                rowHeight={ROW_HEIGHT + GAP}
-                height={height}
+                rowHeight={ROW_HEIGHT + GAP + 40} // Add extra space for the title (40px)
                 width={width}
+                height={height}
                 itemData={{
                   games: filteredGames,
                   columnCount,
+                  cellWidth: adjustedColumnWidth,
                 }}
                 overscanColumnsCount={1}
                 overscanRowsCount={1}

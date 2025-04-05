@@ -4,6 +4,7 @@ import { useGames } from "@/context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 import GameScopeSettings from "./GamescopeSettings";
 import { Tile } from "../Tile";
+import { TabInfo } from "./TabInfo";
 
 enum Tabs {
   INFO = "Info",
@@ -37,7 +38,7 @@ export const SectionSettings = () => {
   }
 
   return (
-    <div className="w-full max-w-4xl">
+    <div className="w-full">
       {/* Tab navigation */}
       <div className="flex border-b border-gray-300">
         <button
@@ -75,12 +76,7 @@ export const SectionSettings = () => {
       {/* Tab content */}
       <div className="p-4">
         {activeTab === Tabs.INFO && (
-          <div>
-            <h2 className="mb-2 text-xl font-bold">Tab 1 Content</h2>
-            <p>
-              This is the content for Tab 1. You can put anything you want here.
-            </p>
-          </div>
+          <TabInfo/>
         )}
 
         {activeTab === Tabs.LAUNCH && (

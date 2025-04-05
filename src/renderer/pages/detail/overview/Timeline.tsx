@@ -8,7 +8,7 @@ interface Event {
   type: "status" | "achievement" | "alert" | string;
   title: string;
   description: string | null;
-  timestamp: bigint;
+  timestamp: bigint | Date;
 }
 
 interface EventsGroupedByDate {
@@ -36,16 +36,14 @@ export const EventTimeline = () => {
     return date.toISOString().split("T")[0];
   };
 
-  const achievements = selectedGame!.achievements
-    .filter((achievement) => achievement.isUnlocked)
-    .map((achivement) => ({
-      type: "achievement",
-      title: achivement.name,
-      description: achivement.description,
-      timestamp: achivement.unlockedAt!,
-    }));
+  const status = selectedGame!.statusHistory.map((status)=>( {
+      type: "status",
+      title: status.gameStatus.name,
+      description: "",
+      timestamp: status.createdAt,
+  } ))
 
-  const events: Event[] = achievements;
+  const events: Event[] = status;
 
   const groupedEvents: EventsGroupedByDate = events.reduce(
     (acc: EventsGroupedByDate, event) => {
@@ -126,7 +124,7 @@ export const EventTimeline = () => {
             <div className="mr-3 rounded-full bg-gray-100 p-2">
               <Calendar className="text-gray-600" size={18} />
             </div>
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-white">
               {formatDate(date)}
             </h3>
           </div>

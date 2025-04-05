@@ -39,6 +39,10 @@ export const Sort = () => {
       field: "timePlayed",
       label: "Time played",
     },
+    {
+      field: "createdAt",
+      label: "Added",
+    },
   ];
 
   const handleOnClick = (option: (typeof options)[0]) => {

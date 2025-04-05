@@ -49,9 +49,7 @@ class Igdb {
       },
     );
 
-    console.log(response.data);
-
-    return response
+    return response;
   }
 
   async getExternalGame(externalId: string, store?: Storefront) {
@@ -75,8 +73,8 @@ class Igdb {
       },
     );
 
-    if(_.isEmpty(response.data)){
-      return null
+    if (_.isEmpty(response.data)) {
+      return null;
     }
 
     return response.data[0].game;
@@ -98,11 +96,11 @@ class Igdb {
     return response.data;
   }
 
-  async getGame(game:GameWithRelations|Game) {
+  async getGame(game: GameWithRelations | Game) {
     let id = await this.getExternalGame(game.externalId!, game.storefrontId!);
 
-    if(_.isNil(id)){
-      id = await this.search(game.name)
+    if (_.isNil(id)) {
+      id = await this.search(game.name);
     }
 
     const response = await axios.post(
@@ -116,9 +114,6 @@ class Igdb {
         },
       },
     );
-
-    console.log(response.data)
-
 
     const company: object[] = await this.getInvolvedCompany(id);
 
@@ -182,20 +177,14 @@ class Igdb {
       },
     );
 
-    console.log(response.data)
-
-    if(_.isEmpty(response.data)){
-      return null
+    if (_.isEmpty(response.data)) {
+      return null;
     }
 
     return response.data[0].id;
   }
 
-  async downloadScreenshotsForGame(
-    game: GameWithRelations,
-    max: number,
-  ) {
-
+  async downloadScreenshotsForGame(game: GameWithRelations, max: number) {
     let path = await metadataManager.getImageDirectoryPath(
       MEDIA_TYPE.SCREENSHOT,
       game,
@@ -209,8 +198,8 @@ class Igdb {
     }
 
     const id = await this.search(game.name);
-    if(_.isNull(id)){
-      return
+    if (_.isNull(id)) {
+      return;
     }
     const response = await this.getGameById(id);
 
@@ -218,16 +207,16 @@ class Igdb {
       log.error(response.data.errors);
     }
 
-    if(_.isUndefined(response.data[0].screenshots)){
-      return
+    if (_.isUndefined(response.data[0].screenshots)) {
+      return;
     }
 
-    if(response.data[0].screenshots.length <= max && files != 0){
-      return
+    if (response.data[0].screenshots.length <= max && files != 0) {
+      return;
     }
 
     for (const image of response.data[0].screenshots) {
-      const url = `https:${image.url}`
+      const url = `https:${image.url}`;
       await metadataManager.downloadImage(
         MEDIA_TYPE.SCREENSHOT,
         game,

@@ -65,9 +65,9 @@ export const getGame = async (id: string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  console.log(_.isNil(game.developers) || _.isNil(game.publishers))
+  console.log(game.openedAt)
 
-  if (_.isNil(game.developers) || _.isNil(game.publishers)) {
+  if (_.isNil(game.openedAt)) {
     try {
       const { developers, publishers, partialGameData } =
         await igdb.getGame(game);
@@ -86,6 +86,8 @@ export const getGame = async (id: string) => {
   await metadataManager.downloadMissing(game);
   await updateAchievements(game);
 
+  await queries.Game.update(id, { openedAt: new Date() });
+
   return await queries.Game.getGameById(id);
 };
 
@@ -99,8 +101,8 @@ export const getLastPlayed = async (max: number) => {
 
 export const getFilters = async () => {
   const companies = await queries.Company.findAll();
-  const tags = await queries.Tag.findAll()
-  const status = await queries.GameStatus.findAll()
+  const tags = await queries.Tag.findAll();
+  const status = await queries.GameStatus.findAll();
 
   return { companies, tags, status };
 };

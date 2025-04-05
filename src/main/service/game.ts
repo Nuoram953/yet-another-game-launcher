@@ -139,7 +139,7 @@ export const updateAchievements = async (game: GameWithRelations) => {
     case Storefront.STEAM: {
       const storeSteam = new Steam();
       await storeSteam.getAchievementsForGame(game);
-      await storeSteam.getUserAchievementsForGame(game);
+      await storeSteam.getUserAchievementsForGame(game.id);
     }
     case Storefront.EPIC: {
       // const storeEpic = new Steam();

@@ -140,7 +140,16 @@ class Steam {
       return [];
     }
   }
-  async getUserAchievementsForGame(game: Game) {
+  async getUserAchievementsForGame(id:string) {
+    const game = await queries.Game.getGameById(id);
+    if (_.isNil(game)) {
+      throw new Error("game not found");
+    }
+
+    if(!game.hasAchievements){
+      return
+    }
+
     try {
       const response = await axios.get(
         "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001",
@@ -182,6 +191,13 @@ class Steam {
           },
         },
       );
+
+      const hasAchievements = Object.keys(response.data.game).length > 0
+      await queries.Game.update(game.id, {hasAchievements:hasAchievements})
+
+      if(!hasAchievements){
+        return
+      }
 
       const achievements = response.data.game.availableGameStats.achievements;
 

@@ -29,12 +29,14 @@ model Game {
   timePlayedDisconnected Int                  @default(0)
   size                   BigInt?              @default(0)
   location               String?
+  hasAchievements        Boolean              @default(false)
   scoreCritic            Int?
   scoreCommunity         Int?
   scoreUser              Int?
   summary                String?
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
+  openedAt               DateTime?
   activities             GameActivity[]
   achievements           GameAchievement[]
   developers             GameDeveloper[]
