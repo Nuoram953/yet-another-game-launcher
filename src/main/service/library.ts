@@ -65,8 +65,6 @@ export const getGame = async (id: string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  console.log(game.openedAt)
-
   if (_.isNil(game.openedAt)) {
     try {
       const { developers, publishers, partialGameData } =

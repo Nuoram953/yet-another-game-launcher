@@ -20,7 +20,7 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
         "active:bg-green-700",
       ],
       running: ["animate-pulse"],
-      destroy: ["bg-red", "text-gray-800", "border-gray-400"],
+      destructive: ["bg-red", "text-gray-800", "border-gray-400"],
       icon: ["text-white", "border-transparent", "hover:opacity-50"],
     },
     size: {

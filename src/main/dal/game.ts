@@ -73,11 +73,13 @@ export async function getGames(
 
         gameStatusId: !_.isNil(filters.status)
           ? {
-              in: filters.status.map((status) => status.id),
+              in: filters.status.map((status) => status.value),
             }
           : undefined,
       }
     : undefined;
+
+  console.log(filters?.status)
 
   const games = await prisma.game.findMany({
     where,

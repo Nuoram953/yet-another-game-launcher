@@ -70,7 +70,10 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
       if (selectedGame != null) {
         const game = response.find((game) => game.id === selectedGame.id);
-        setSelectedGame(game);
+        if(game){
+          setSelectedGame(game);
+        }
+
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -93,7 +96,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     });
   }, []);
 
-  const updateSelectedGame = useCallback(async (game: Game | null) => {
+  const updateSelectedGame = useCallback(async (game: GameWithRelations | null) => {
     setSelectedGame(game);
   }, []);
 

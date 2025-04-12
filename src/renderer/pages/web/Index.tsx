@@ -26,7 +26,7 @@ const WebpageViewer = () => {
             className="h-full w-full"
             webpreferences="contextIsolation=true, nodeIntegration=false"
             partition="persist:steamstore"
-            useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+            useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
             allowpopups={true}
           />
         </div>
@@ -34,5 +34,7 @@ const WebpageViewer = () => {
     </div>
   );
 };
+
+
 
 export default WebpageViewer;

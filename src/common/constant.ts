@@ -11,6 +11,7 @@ export enum MEDIA_TYPE {
 export enum NotificationType {
   REFRESH = "library:refresh",
   INSTALLED = "library:game:installed",
+  NEW_GAME = "library:game:new",
 }
 
 export enum RouteDownload{

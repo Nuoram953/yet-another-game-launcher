@@ -136,13 +136,6 @@ export async function monitorDirectoryProcesses(
     if (!hasProcesses) {
       break;
     }
-    // if(!sentGameRunningEvent){
-    //   dataManager.send(DataRoute.RUNNING_GAME, {
-    //     isRunning: true,
-    //     id: game.id,
-    //   });
-    //   sentGameRunningEvent=true
-    // }
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
 

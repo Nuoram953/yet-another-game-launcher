@@ -21,15 +21,15 @@ const inputStyles = cva(
       disabled: {
         true: "cursor-not-allowed opacity-50",
       },
-      color:{
+      color: {
         dark: "!text-white !bg-gray-600",
-        light: "!text-black !bg-white"
-      }
+        light: "!text-black !bg-white",
+      },
     },
     defaultVariants: {
       variant: "default",
       size: "md",
-      color: "light"
+      color: "light",
     },
   },
 );
@@ -39,6 +39,7 @@ export interface InputProps
     VariantProps<typeof inputStyles> {
   label?: string;
   helperText?: string;
+  textarea?: boolean;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -52,12 +53,13 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       variant,
       size,
       disabled,
+      textarea,
       ...props
     },
     ref,
   ) => {
     return (
-      <div className="flex flex-col space-y-1.5 w-full">
+      <div className="flex w-full flex-col space-y-1.5">
         {label && (
           <label
             htmlFor={props.id}
@@ -66,13 +68,36 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <input
-          type={type}
-          className={inputStyles({ variant, size, disabled, color, className })}
-          ref={ref}
-          disabled={disabled}
-          {...props}
-        />
+
+        {textarea ? (
+          <textarea
+            type={type}
+            className={inputStyles({
+              variant,
+              size,
+              disabled,
+              color,
+              className,
+            })}
+            ref={ref}
+            disabled={disabled}
+            {...props}
+          />
+        ) : (
+          <input
+            type={type}
+            className={inputStyles({
+              variant,
+              size,
+              disabled,
+              color,
+              className,
+            })}
+            ref={ref}
+            disabled={disabled}
+            {...props}
+          />
+        )}
         {helperText && (
           <p
             className={`text-xs ${variant === "error" ? "text-red-500" : "text-gray-500"}`}

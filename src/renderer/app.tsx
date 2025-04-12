@@ -1,10 +1,9 @@
 import * as ReactDOM from "react-dom/client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout/Layout";
-import { GamesProvider, useGames } from "./context/DatabaseContext";
+import { GamesProvider } from "./context/DatabaseContext";
 import GameDetail from "./pages/detail/Index";
-import { Game } from "@prisma/client";
 import { BreadcrumbContext } from "./context/BreadcrumbsContext";
 import { Breadcrumb } from "./types";
 import "./i18n";
@@ -74,7 +73,7 @@ const App = () => {
 };
 
 function render() {
-  const root = ReactDOM.createRoot(document.getElementById("app"));
+  const root = ReactDOM.createRoot(document.getElementById("app")!);
   root.render(<App />);
 }
 

@@ -14,10 +14,11 @@ import Steam from "../api/storefront/steam";
 import _ from "lodash";
 import { GameWithRelations } from "../../common/types";
 import dataManager from "../manager/dataChannelManager";
-import { DataRoute } from "../../common/constant";
+import { DataRoute, NotificationType } from "../../common/constant";
 import { createDownloadTracker } from "../storefront/steam/monitor";
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
+import notificationManager from "../manager/notificationManager";
 
 export const preLaunch = async (game: GameWithRelations) => {
   log.info(`preLaunch for game ${game.id}`);
@@ -160,23 +161,40 @@ export const createOrUpdateGame = async (
   }
 
   if (game.updatedAt.getTime() === game.createdAt.getTime()) {
+    notificationManager.show({
+      id: NotificationType.NEW_GAME+game.id,
+      title: `Adding ${game.name} to library`,
+      message: "Downloading partial assets and metadata",
+      type: "progress",
+      current: 10,
+      total: 100,
+      autoClose: true,
+    });
     const sgdb = new SteamGridDB(game);
     await sgdb.getGameIdByExternalId(game.storefront!.name);
     await sgdb.downloadAllImageType(1, 1);
+
+    notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 25, "Downloading metadata")
 
     try {
       const { developers, publishers, partialGameData } =
         await igdb.getGame(game);
       await queries.Game.update(game.id, partialGameData);
+
+      notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 55, "Updating developers field")
       for (const developer of developers) {
         await queries.GameDeveloper.findOrCreate(game.id, developer);
       }
+
+      notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 75, "Updating publishers field")
       for (const publisher of publishers) {
         await queries.GamePublisher.findOrCreate(game.id, publisher);
       }
     } catch (e) {
       console.log(e);
     }
+
+    notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 100)
     await delay(2000)
   }
 

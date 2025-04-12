@@ -2,11 +2,8 @@ import {
   app,
   BrowserWindow,
   globalShortcut,
-  webContents,
   session,
   Session,
-  shell,
-  ipcMain,
 } from "electron";
 import * as path from "path";
 import "./handlers/media";
@@ -24,6 +21,7 @@ import notificationManager from "./manager/notificationManager";
 import ConfigManager from "./manager/configManager";
 import { AppConfig } from "../common/interface";
 import dataChannelManager from "./manager/dataChannelManager";
+import { ElectronLogger, LogLevel, createMainLogger } from "./manager/logManager";
 
 require("dotenv").config();
 
@@ -36,6 +34,7 @@ export let prisma: PrismaClient;
 export let dbPath: string;
 export let i18n: Awaited<ReturnType<typeof initMainI18n>>;
 export let config: ConfigManager<AppConfig>;
+export let logger: ElectronLogger 
 
 class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
@@ -59,6 +58,9 @@ class MainWindowManager {
       igdb = new Igdb();
       i18n = await initMainI18n();
       config = new ConfigManager<AppConfig>();
+      logger = createMainLogger({
+        minLevel: LogLevel.DEBUG
+      })
 
       await config.init({
         store: {

@@ -1,35 +1,43 @@
 import axios from "axios";
-import log from "electron-log";
+import { logger } from "../main/index";
+import { LogTag } from "../main/manager/logManager";
 
-// Configure Axios interceptors
 axios.interceptors.request.use(
   (config) => {
-    // Log the request URL
-    log.info(`Request URL: ${config.url}`);
+    logger.info("Request Input:", { url: config.url }, LogTag.NETWORK);
     return config;
   },
   (error) => {
-    // Log the error in case the request fails
-    log.error("Request Error:", error);
+    logger.error("Request Error:", { error }, LogTag.NETWORK);
     return Promise.reject(error);
   },
 );
 
-// Optional: Log responses as well
 axios.interceptors.response.use(
   (response) => {
-    log.info(`Response from ${response.config.url}:`, response.status);
+    logger.info(
+      `Request Output:`,
+      {
+        url: response.config.url,
+        status: response.status,
+      },
+      LogTag.NETWORK,
+    );
     return response;
   },
   (error) => {
     if (error.response) {
-      log.error(
+      logger.error(
         `Response Error from ${error.response.config.url}:`,
-        error.response.status,
-        error.message,
+        {
+          url: error.response.config.url,
+          error: error.message,
+          status: error.response.status
+        },
+        LogTag.NETWORK
       );
     } else {
-      log.error("Response Error:", error.message);
+      logger.error("Response Error:", {error:error.message}, LogTag.NETWORK);
     }
     return Promise.reject(error);
   },

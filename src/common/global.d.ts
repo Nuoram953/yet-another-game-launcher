@@ -25,7 +25,7 @@ declare global {
     library: {
       refresh: () => Promise<void>;
       getGame: (id: string) => Promise<GameWithRelations>;
-      getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<Game[]>;
+      getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<GameWithRelations[]>;
       getLastPlayed: (max: number) => Promise<Game[]>;
       getCountForAllStatus: () => Promise<object[]>;
       getStatus: () => Promise<GameStatus[]>;
