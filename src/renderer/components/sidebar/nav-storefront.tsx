@@ -5,7 +5,6 @@ import {
   ExternalLink,
   Globe,
   SquareTerminal,
-  type LucideIcon,
 } from "lucide-react";
 
 import {
@@ -15,7 +14,6 @@ import {
 } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -25,7 +23,6 @@ import {
 } from "@/components/ui/sidebar";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { IconButton } from "../button/IconButton";
 import { useTranslation } from "react-i18next";
 import { Storefront } from "@prisma/client";
 import { Button } from "../button/Button";
@@ -56,24 +53,24 @@ export function NavStorefront({ items }: { items: Storefront[] }) {
                   <SidebarMenuSubItem key={storefront.name}>
                     <SidebarMenuSubButton asChild>
                       <div className="flex flex-row">
-                        <a href={storefront.url}>
+                        <a href={storefront.url!}>
                           <span>{t(storefront.name)}</span>
                         </a>
                         <div className="flex flex-row gap-1">
-                            <Button
-                              icon={ExternalLink}
-                              size={"fit"}
-                              intent={"icon"}
-                              disabled={!storefront.hasLauncher}
-                              onClick={(e) => {
-                                window.store.launch(storefront.name);
-                              }}
-                            />
+                          <Button
+                            icon={ExternalLink}
+                            size={"fit"}
+                            intent={"icon"}
+                            disabled={!storefront.hasLauncher}
+                            onClick={() => {
+                              window.store.launch(storefront.name);
+                            }}
+                          />
                           <Button
                             icon={Globe}
                             size={"fit"}
                             intent={"icon"}
-                            onClick={(e) => {
+                            onClick={() => {
                               navigate("/web", {
                                 state: {
                                   url: storefront.url,

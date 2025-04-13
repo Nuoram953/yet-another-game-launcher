@@ -16,7 +16,6 @@ import { useGames } from "@/context/DatabaseContext";
 import { StatsCard } from "../StatsCard";
 import { ChartActiviy } from "./ChartActiviy";
 import { ChartActivityOs } from "./ChartActiviyOs";
-import { HeatMap } from "./HeatMap";
 
 ChartJS.register(
   CategoryScale,
@@ -212,8 +211,6 @@ export const SectionActivities = () => {
 
       <div className="flex flex-row gap-4">
         <ChartActivityOs chartData={chartOsData} />
-
-        <HeatMap />
       </div>
 
       <div className="h-20"></div>

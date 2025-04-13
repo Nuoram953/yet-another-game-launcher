@@ -1,14 +1,23 @@
 import { X } from "lucide-react";
 import React from "react";
 
+interface CardProps {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  header?: boolean;
+  footer?: React.ReactNode;
+  onClose?: () => void;
+}
+
 export const Card = ({
   title,
   children,
   className = "",
   header = false,
   footer = false,
-  onClose = null,
-}) => {
+  onClose,
+}: CardProps) => {
   return (
     <div
       className={`overflow-hidden rounded-lg bg-gray-800 shadow-lg ${className}`}

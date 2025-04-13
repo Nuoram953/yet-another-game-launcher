@@ -25,6 +25,10 @@ ChartJS.register(
 const AchievementTimeline = () => {
   const { selectedGame } = useGames();
 
+  if (!selectedGame) {
+    return null;
+  }
+
   const processData = () => {
     const countsByDate = new Map();
 

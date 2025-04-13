@@ -236,7 +236,7 @@ const GameDetailsContent: React.FC = () => {
 
             <div className="overflow-hidden rounded-lg shadow-md">
               <ImageWithFallback
-                src={cover}
+                src={cover!}
                 className="h-auto w-full"
                 alt={undefined}
                 style={undefined}

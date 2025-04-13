@@ -1,9 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGames } from "@/context/DatabaseContext";
-import { CheckCircle, EyeOff, Lock, Trophy } from "lucide-react";
+import { CheckCircle, EyeOff, Lock } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Tile } from "./Tile";
-import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   Tooltip,
@@ -65,11 +64,11 @@ export const SectionAchievements = () => {
         return a.name.localeCompare(b.name);
       case "date":
         if (a.isUnlocked && b.isUnlocked) {
-          return (
-            new Date(Number(b.unlockedAt)) - new Date(Number(a.unlockedAt))
-          );
+          const aUnlockedAt = a.unlockedAt ? new Date(Number(a.unlockedAt)).getTime() : 0;
+          const bUnlockedAt = b.unlockedAt ? new Date(Number(b.unlockedAt)).getTime() : 0;
+          return bUnlockedAt - aUnlockedAt;
         }
-        return b.isUnlocked - a.isUnlocked;
+        return Number(b.isUnlocked) - Number(a.isUnlocked);
       default:
         return 0;
     }
@@ -115,7 +114,7 @@ export const SectionAchievements = () => {
                 <label className="flex cursor-pointer items-center gap-2">
                   <Checkbox
                     checked={hideUnlocked}
-                    onCheckedChange={setHideUnlocked}
+                    onCheckedChange={(checked) => setHideUnlocked(checked === true)}
                   />
                   <span className="flex items-center gap-1">
                     <CheckCircle className="h-4 w-4" />
@@ -125,7 +124,7 @@ export const SectionAchievements = () => {
                 <label className="flex cursor-pointer items-center gap-2">
                   <Checkbox
                     checked={hideHidden}
-                    onCheckedChange={setHideHidden}
+                    onCheckedChange={(checked) => setHideHidden(checked === true)}
                   />
                   <span className="flex items-center gap-1">
                     <EyeOff className="h-4 w-4" />
@@ -185,7 +184,7 @@ export const SectionAchievements = () => {
                   </p>
                   {achievement.isUnlocked && (
                     <p className="mt-1 text-xs text-gray-500">
-                      Unlocked: {unixToDate(achievement.unlockedAt)}
+                       Unlocked: {achievement.unlockedAt ? unixToDate(Number(achievement.unlockedAt)) : "N/A"}
                     </p>
                   )}
                 </div>

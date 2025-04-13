@@ -10,7 +10,7 @@ export const StatusBadge = ({ status }: Props) => {
   const { t } = useTranslation("GameStatus");
 
   const getStatusColor = (status: string) => {
-    const colors = {
+    const colors: { [key: string]: string } = {
       playing: "bg-blue-500",
       played: "bg-yellow-500",
       planned: "bg-purple-500",
@@ -21,10 +21,10 @@ export const StatusBadge = ({ status }: Props) => {
   };
 
   return (
-    <div className="absolute top-2 left-2">
+    <div className="absolute left-2 top-2">
       <Badge
         variant={"default"}
-        className={`${getStatusColor(status)} shadow-md rounded-xl border-gray-200 border-2`}
+        className={`${getStatusColor(status)} rounded-xl border-2 border-gray-200 shadow-md`}
       >
         {t(status)}
       </Badge>

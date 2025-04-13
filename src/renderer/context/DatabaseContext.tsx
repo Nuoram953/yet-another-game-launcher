@@ -27,7 +27,7 @@ interface GamesContextValue {
   updateSort: (newSort: SortConfig) => void;
   refreshGames: () => Promise<void>;
   selectedGame: GameWithRelations | null;
-  updateSelectedGame: (game: Game | null) => Promise<void>;
+  updateSelectedGame: (game: GameWithRelations | null) => Promise<void>;
 }
 
 interface GamesProviderProps {
@@ -70,10 +70,9 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
       if (selectedGame != null) {
         const game = response.find((game) => game.id === selectedGame.id);
-        if(game){
+        if (game) {
           setSelectedGame(game);
         }
-
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -96,9 +95,12 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     });
   }, []);
 
-  const updateSelectedGame = useCallback(async (game: GameWithRelations | null) => {
-    setSelectedGame(game);
-  }, []);
+  const updateSelectedGame = useCallback(
+    async (game: GameWithRelations | null) => {
+      setSelectedGame(game);
+    },
+    [],
+  );
 
   const updateSort = useCallback((newSort: SortConfig) => {
     setSortConfig(newSort);
@@ -130,7 +132,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
       }
     });
 
-    window.electron.on(
+    window.data.on(
       RouteDownload.ON_DOWNLOAD_STATUS,
       (payload: { data: DownloadStats }) => {
         setDownloading((prevData) => {
@@ -147,9 +149,9 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
       },
     );
 
-    window.electron.on(
+    window.data.on(
       RouteDownload.ON_DOWNLOAD_STOP,
-      (payload: { id: string }) => {
+      (payload: { data: { id: string } }) => {
         setDownloading((prevData) =>
           prevData.filter((item) => item.id !== payload.data.id),
         );

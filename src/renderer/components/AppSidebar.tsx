@@ -32,13 +32,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate();
   const { games, downloading } = useGames();
   const [storefronts, setStorefronts] = useState<Storefront[]>([]);
-  const [status, setStatus] = useState<GameStatus[]>();
+  const [status, setStatus] = useState<(GameStatus & { count?: number }) | undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const status = await window.library.getCountForAllStatus();
-        setStatus(status);
+        // setStatus(status);
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }
@@ -107,7 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarSeparator className="mt-8" />
         </SidebarGroup>
         <NavStorefront items={storefronts} />
-        <NavStatus items={status} />
+        {/* <NavStatus items={status} /> */}
       </SidebarContent>
       <SidebarFooter></SidebarFooter>
       <SidebarRail />

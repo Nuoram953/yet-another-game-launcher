@@ -52,14 +52,14 @@ const GameScopeSettings = () => {
     handleChange();
   }, [settings]); // Runs whenever state changes, but skips the first time
 
-  const handleSwitchChange = async (setting) => {
+  const handleSwitchChange = async (setting:keyof GameConfigGamescope) => {
     setSettings((prev) => ({
       ...prev,
       [setting]: !prev[setting],
     }));
   };
 
-  const handleDimensionChange = (dimension, value) => {
+  const handleDimensionChange = (dimension:"width"|"height", value:string) => {
     setSettings((prev) => ({
       ...prev,
       [dimension]: value,
@@ -103,7 +103,7 @@ const GameScopeSettings = () => {
               <Switch
                 id="fullscreen"
                 checked={settings.isFullscreen}
-                onCheckedChange={() => handleSwitchChange("fullscreen")}
+                onCheckedChange={() => handleSwitchChange("isFullscreen")}
               />
             </div>
 
@@ -117,7 +117,7 @@ const GameScopeSettings = () => {
               <Switch
                 id="noFSR"
                 checked={settings.isFsr}
-                onCheckedChange={() => handleSwitchChange("noFSR")}
+                onCheckedChange={() => handleSwitchChange("isFsr")}
               />
             </div>
 
@@ -131,7 +131,7 @@ const GameScopeSettings = () => {
               <Switch
                 id="unfocused"
                 checked={settings.isAllowUnfocused}
-                onCheckedChange={() => handleSwitchChange("unfocused")}
+                onCheckedChange={() => handleSwitchChange("isAllowUnfocused")}
               />
             </div>
 
@@ -145,7 +145,7 @@ const GameScopeSettings = () => {
               <Switch
                 id="unfocused"
                 checked={settings.isEnableSteamOverlay}
-                onCheckedChange={() => handleSwitchChange("steamOverlay")}
+                onCheckedChange={() => handleSwitchChange("isEnableSteamOverlay")}
               />
             </div>
 
@@ -159,7 +159,7 @@ const GameScopeSettings = () => {
               <Switch
                 id="unfocused"
                 checked={settings.isForceGrabCursor}
-                onCheckedChange={() => handleSwitchChange("steamOverlay")}
+                onCheckedChange={() => handleSwitchChange("isForceGrabCursor")}
               />
             </div>
           </div>

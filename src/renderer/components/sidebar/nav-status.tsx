@@ -26,7 +26,7 @@ export function NavStatus({
   items: {
     id: number;
     name: string;
-    count?: number;
+    count?: number
   }[];
 }) {
   const { updateFilters } = useGames();

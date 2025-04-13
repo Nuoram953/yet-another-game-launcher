@@ -45,7 +45,7 @@ export interface ButtonProps
     VariantProps<typeof button> {
   text?: string;
   onClick?: () => void;
-  icon?: Icon;
+  icon?: React.ElementType;
 }
 
 export const Button: React.FC<ButtonProps> = ({

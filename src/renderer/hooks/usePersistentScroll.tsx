@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const useGridScrollPersist = (pageId, gridRef) => {
+const useGridScrollPersist = (pageId:string, gridRef:any) => {
   // Save scroll position before unload
   useEffect(() => {
     const handleBeforeUnload = () => {

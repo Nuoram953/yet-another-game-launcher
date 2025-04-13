@@ -12,21 +12,15 @@ export function unixToDate(unixTime: number) {
   return `${day}/${month}/${year}`;
 }
 
-export function unixToYYYYMMDD(unixTimestamp) {
-  // Create a new Date object from the Unix timestamp
-  // Unix timestamp is in seconds, so multiply by 1000 to get milliseconds
+export function unixToYYYYMMDD(unixTimestamp:number) {
   const date = new Date(unixTimestamp * 1000);
   
-  // Get the year, month and day
   const year = date.getFullYear();
-  const month = date.getMonth() + 1; // getMonth() is zero-based
+  const month = date.getMonth() + 1;
   const day = date.getDate();
   
-  // Add leading zeros if needed
   const formattedMonth = month < 10 ? '0' + month : month;
   const formattedDay = day < 10 ? '0' + day : day;
-  console.log(`${year}/${formattedMonth}/${formattedDay}`);
   
-  // Return the formatted date string
   return `${year}-${formattedMonth}-${formattedDay}`;
 }

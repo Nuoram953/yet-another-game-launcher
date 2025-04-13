@@ -11,12 +11,26 @@ import type {
 import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
   interface Window {
-    appControl:{
-      onAppBlur: (callback:()=>void) => void
-      onAppFocus: (callback:()=>void) => void
-    },
+    notifications: {
+      send: (notification: any) => void;
+      onReceive: (callback: (data: any) => void) => void;
+      removeListener: () => void;
+    };
+    store:{
+      launch: (storeName: string) => Promise<void>;
+    }
+    appControl: {
+      onAppBlur: (callback: () => void) => void;
+      onAppFocus: (callback: () => void) => void;
+    };
     media: {
-      getAllMedia: (gameId: string) => Promise<object>;
+      getAllMedia: (gameId: string) => Promise<{
+        backgrounds: string[];
+        icons: string[];
+        logos: string[];
+        covers: string[];
+        trailers: string[];
+      }>;
       getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
       getRecentlyPlayedBackgrounds: (count: number) => Promise<string[]>;
       getLogos: (gameId: string, count?: number) => Promise<string[]>;

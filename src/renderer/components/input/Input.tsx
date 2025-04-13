@@ -35,14 +35,19 @@ const inputStyles = cva(
 );
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
+  extends Omit<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      "color" | "disabled" | "size"
+    >,
     VariantProps<typeof inputStyles> {
   label?: string;
   helperText?: string;
   textarea?: boolean;
 }
-
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  InputProps
+>(
   (
     {
       className,
@@ -58,6 +63,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
+    const inputProps = props as React.InputHTMLAttributes<HTMLInputElement>;
+    const textareaProps = props as React.TextareaHTMLAttributes<HTMLTextAreaElement>;
     return (
       <div className="flex w-full flex-col space-y-1.5">
         {label && (
@@ -71,7 +78,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         {textarea ? (
           <textarea
-            type={type}
             className={inputStyles({
               variant,
               size,
@@ -79,9 +85,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               color,
               className,
             })}
-            ref={ref}
-            disabled={disabled}
-            {...props}
+            ref={ref as React.Ref<HTMLTextAreaElement>}
+            disabled={disabled ?? false}
+            {...textareaProps}
           />
         ) : (
           <input
@@ -93,9 +99,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               color,
               className,
             })}
-            ref={ref}
-            disabled={disabled}
-            {...props}
+            ref={ref as React.Ref<HTMLInputElement>}
+            disabled={disabled ?? false}
+            {...inputProps}
           />
         )}
         {helperText && (

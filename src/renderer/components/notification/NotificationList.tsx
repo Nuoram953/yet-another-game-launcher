@@ -5,6 +5,11 @@ import {
 } from "../../context/NotificationContext";
 import { useToast } from "@/hooks/use-toast";
 
+type ExtendedNotification = Notification & {
+  id: string;
+  isShown?: boolean;
+};
+
 const NotificationList: React.FC = () => {
   const { notifications, setNotifications, removeNotification } =
     useNotification(); // Use context
@@ -12,24 +17,27 @@ const NotificationList: React.FC = () => {
 
   useEffect(() => {
     notifications.forEach((notification) => {
-      if (notification.useToast && !notification.isShown) {
+      const extendedNotification = notification as ExtendedNotification;
+
+      if (extendedNotification.useToast && !extendedNotification.isShown) {
         // Show the toast
         toast({
-          title: notification.title,
-          description: notification.message,
+          title: extendedNotification.title,
+          description: extendedNotification.message,
           duration: 5000, // Toast duration
-          onClose: () => {
-            // Remove the notification from the list once the toast closes
-            removeNotification(notification.id);
-          },
         });
 
         // Mark the notification as shown
         setNotifications((prevNotifications) =>
-          prevNotifications.map((n) =>
-            n.id === notification.id ? { ...n, isShown: true } : n,
+          prevNotifications.map((n:any) =>
+            n.id === extendedNotification.id ? { ...n, isShown: true } : n,
           ),
         );
+
+        // Remove the notification after the toast duration
+        setTimeout(() => {
+          removeNotification(extendedNotification.id);
+        }, 5000);
       }
     });
   }, [notifications, toast, setNotifications, removeNotification]);

@@ -11,6 +11,8 @@ import {
   Legend,
   BarElement,
   ArcElement,
+  BubbleDataPoint,
+  Point,
 } from "chart.js";
 import { ChartData } from "chart.js";
 import React, { useEffect, useState } from "react";
@@ -47,7 +49,7 @@ export const ChartActiviy = ({ chartData }: Props) => {
       },
       tooltip: {
         callbacks: {
-          label: function (context) {
+          label: function (context: any) {
             let label = context.dataset.label || "";
             if (label.includes("Playtime")) {
               return `${label}: ${context.parsed.y.toFixed(2)}`;
@@ -67,7 +69,25 @@ export const ChartActiviy = ({ chartData }: Props) => {
   return (
     <Card title={"Activity"}>
       <div className="h-[400px]">
-        <Bar data={chartData} options={chartOptions} />
+        <Bar
+          data={
+            chartData as ChartData<
+              "bar",
+              (number | [number, number] | Point | BubbleDataPoint | null)[],
+              unknown
+            >
+          }
+          options={{
+            ...chartOptions,
+            plugins: {
+              ...chartOptions.plugins,
+              legend: {
+                ...chartOptions.plugins.legend,
+                position: "top", // Use a valid string literal
+              },
+            },
+          }}
+        />
       </div>
     </Card>
   );

@@ -1,6 +1,6 @@
 import Tile from "@/components/Tile";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartData } from "chart.js";
+import { BubbleDataPoint, ChartData, Point } from "chart.js";
 import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 
@@ -43,7 +43,15 @@ export const ChartActivityOs = ({ chartData }: Props) => {
       </CardHeader>
       <CardContent className="mx-auto flex items-center justify-center">
         <div className="mx-auto max-h-[400px]">
-          <Doughnut data={chartData} />
+          <Doughnut
+            data={
+              chartData as ChartData<
+                "doughnut",
+                (number | [number, number] | Point | BubbleDataPoint | null)[],
+                unknown
+              >
+            }
+          />
         </div>
       </CardContent>
     </Tile>

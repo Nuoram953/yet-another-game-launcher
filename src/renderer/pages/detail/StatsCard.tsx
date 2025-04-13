@@ -1,4 +1,3 @@
-import { Icon } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,7 +7,7 @@ interface StatsCardProps {
   detail?: string;
   value: string;
   hide?: boolean;
-  icon: Icon;
+  icon: React.ElementType;
   isLoading?: boolean;
   className?: string;
   onClick?: () => void;

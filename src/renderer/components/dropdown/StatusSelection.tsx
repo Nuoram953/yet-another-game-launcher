@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useGames } from "@/context/DatabaseContext";
 import { useTranslation } from "react-i18next";
-import { GameWithRelations } from "src/main/dal/game";
 import _ from "lodash";
 import { Game, GameStatus } from "@prisma/client";
+import { GameWithRelations } from "../../../common/types";
 
 interface Props {
   className?: string;
@@ -23,6 +23,10 @@ const BadgeDropdown = ({ className, game }: Props) => {
   const [currentGame, setCurrentGame] = useState(
     _.isUndefined(game) ? selectedGame : game,
   );
+
+  if (!currentGame) {
+    return;
+  }
   const { t } = useTranslation("GameStatus");
   const [selectedOption, setSelectedOption] = useState<string>(
     currentGame.gameStatus.name,
@@ -42,7 +46,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
   }, []);
 
   const getStatusColor = (status: string) => {
-    const colors = {
+    const colors: { [key: string]: string } = {
       playing: "bg-blue-500",
       played: "bg-yellow-500",
       planned: "bg-purple-500",
@@ -52,13 +56,13 @@ const BadgeDropdown = ({ className, game }: Props) => {
     return colors[status] || "bg-gray-500";
   };
 
-  const handleOptionSelect = (e,name: string) => {
+  const handleOptionSelect = (e:React.MouseEvent, name: string) => {
     e.stopPropagation();
     const newStatus = status.find((item) => item.name == name);
-    const data:Partial<Game> ={
+    const data: Partial<Game> = {
       id: currentGame.id,
-      gameStatusId: newStatus!.id
-    }
+      gameStatusId: newStatus!.id,
+    };
     window.game.setStatus(data);
     setSelectedOption(name);
   };
@@ -78,7 +82,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className={className}>
         {status.map((item) => (
-          <DropdownMenuItem onClick={(e) => handleOptionSelect(e,item.name)}>
+          <DropdownMenuItem onClick={(e) => handleOptionSelect(e, item.name)}>
             {t(item.name)}
           </DropdownMenuItem>
         ))}

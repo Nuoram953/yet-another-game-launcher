@@ -8,12 +8,13 @@ import { InstallBadge } from "./cover/installBadge";
 import { ImageWithFallback } from "./cover/cover";
 import BadgeDropdown from "./dropdown/StatusSelection";
 import { FavoriteBadge } from "./cover/favoriteBadge";
+import { GameWithRelations } from "src/common/types";
 
-const Cover: React.FC<{
-  game: Prisma.GameGetPayload<{
-    include: { gameStatus: true; storefront: true };
-  }>;
-}> = ({ game }) => {
+interface CoverProps {
+  game: GameWithRelations;
+}
+
+const Cover = ({ game }: CoverProps) => {
   const [coverPicture, setCoverPicture] = useState<string | null>(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,7 +38,7 @@ const Cover: React.FC<{
     window.game.install(game.id);
   };
 
-  const handleMouseMove = (e: React.MouseEvent, cardElement:HTMLElement) => {
+  const handleMouseMove = (e: React.MouseEvent, cardElement: HTMLElement) => {
     const rect = cardElement.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -82,7 +83,12 @@ const Cover: React.FC<{
         transformStyle: "preserve-3d",
       }}
     >
-      <ImageWithFallback src={coverPicture} alt={undefined} style={undefined} className={undefined} />
+      <ImageWithFallback
+        src={coverPicture ?? ""}
+        alt={undefined}
+        style={undefined}
+        className={undefined}
+      />
 
       <div className="absolute left-2 top-2">
         <BadgeDropdown game={game} />

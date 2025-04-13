@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 export interface Notification {
+  id: string;
   title: string;
   message: string;
   useToast: boolean;

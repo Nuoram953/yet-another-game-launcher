@@ -1,6 +1,18 @@
-import React, { useState } from "react";
+import React, { CSSProperties, useState } from "react";
 
-export const ImageWithFallback = ({ src, alt, style, className }) => {
+interface ImageWithFallbackProps {
+  src: string;
+  alt: string|undefined;
+  style?: CSSProperties;
+  className?: string;
+}
+
+export const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
+  src,
+  alt,
+  style,
+  className,
+}) => {
   const [hasError, setHasError] = useState(false);
 
   return (
@@ -10,7 +22,7 @@ export const ImageWithFallback = ({ src, alt, style, className }) => {
         display: "block",
         backgroundColor: hasError ? "grey" : "transparent",
       }}
-      className="rounded-xl rounded-b-none w-full"
+      className="w-full rounded-xl rounded-b-none"
     >
       {!hasError && (
         <img
@@ -18,7 +30,7 @@ export const ImageWithFallback = ({ src, alt, style, className }) => {
           alt={alt}
           style={{ display: "block", ...style }}
           onError={() => setHasError(true)}
-          className={"rounded-xl w-full " + className}
+          className={"w-full rounded-xl " + (className || "")}
         />
       )}
     </div>
