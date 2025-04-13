@@ -113,7 +113,7 @@ export const postLaunch = async (
     const minutes = await getMinutesBetween(startTime, endTime);
     if (minutes > 0) {
       await createGameActiviy(game.id, startTime, endTime);
-      await queries.Game.updateTimePlayed(game.id, minutes + 1);
+      await queries.Game.updateTimePlayed(game.id, minutes + 5);
     } else {
       log.warn(
         `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
@@ -198,9 +198,9 @@ export const createOrUpdateGame = async (
     await delay(2000)
   }
 
-  mainApp.sendToRenderer("add-new-game", {
-    ...game,
-  });
+  // mainApp.sendToRenderer("add-new-game", {
+  //   ...game,
+  // });
 };
 
 export const downloadAchievements = () => {};

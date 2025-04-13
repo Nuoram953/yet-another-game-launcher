@@ -1,5 +1,5 @@
 import type {
-    Company,
+  Company,
   DownloadHistory,
   Game,
   GameConfigGamescope,
@@ -11,6 +11,10 @@ import type {
 import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
 declare global {
   interface Window {
+    appControl:{
+      onAppBlur: (callback:()=>void) => void
+      onAppFocus: (callback:()=>void) => void
+    },
     media: {
       getAllMedia: (gameId: string) => Promise<object>;
       getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
@@ -25,13 +29,23 @@ declare global {
     library: {
       refresh: () => Promise<void>;
       getGame: (id: string) => Promise<GameWithRelations>;
-      getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<GameWithRelations[]>;
+      getGames: (
+        filters?: FilterConfig,
+        sort?: SortConfig,
+      ) => Promise<GameWithRelations[]>;
       getLastPlayed: (max: number) => Promise<Game[]>;
-      getCountForAllStatus: () => Promise<object[]>;
+      getCountForAllStatus: () => Promise<
+        { id: number; name: string; count: number }[]
+      >;
+
       getStatus: () => Promise<GameStatus[]>;
       getDownloadHistory: () => Promise<DownloadHistory[]>;
       getStorefronts: () => Promise<Storefront[]>;
-      getFilters: () => Promise<{companies:Company[], tags:Tag[], status:GameStatus[]}>;
+      getFilters: () => Promise<{
+        companies: Company[];
+        tags: Tag[];
+        status: GameStatus[];
+      }>;
     };
     game: {
       launch: (id: string) => Promise<void>;

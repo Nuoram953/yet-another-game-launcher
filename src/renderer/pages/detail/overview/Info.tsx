@@ -7,6 +7,10 @@ import { Card } from "@/components/card/Card";
 const Info = () => {
   const { selectedGame } = useGames();
 
+  if (!selectedGame) {
+    return;
+  }
+
   return (
     <Card title={""}>
       <div className="mb-6 flex flex-col gap-6 md:flex-row">

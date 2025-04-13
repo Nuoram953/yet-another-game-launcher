@@ -1,5 +1,4 @@
 import { AxiosResponse } from "axios";
-import { Game } from "./entities/Game";
 
 export interface IGame {
   id: number;

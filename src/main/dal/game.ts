@@ -79,8 +79,6 @@ export async function getGames(
       }
     : undefined;
 
-  console.log(filters?.status)
-
   const games = await prisma.game.findMany({
     where,
     include,

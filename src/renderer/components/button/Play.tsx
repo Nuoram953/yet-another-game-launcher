@@ -11,12 +11,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 export const ButtonPlay = () => {
   const { running, selectedGame } = useGames();
   const [open, setOpen] = useState<boolean>(false);
+
+  if(!selectedGame){
+    return
+  }
 
   const handleOnPlay = async () => {
     await window.game.launch(selectedGame.id);

@@ -26,13 +26,13 @@ export const refresh = async () => {
   if (config.get("store.steam.enable")) {
     const steam = new Steam();
     await steam.initialize();
-    notificationManager.updateProgress(NotificationType.REFRESH, 25);
+    notificationManager.updateProgress(NotificationType.REFRESH, 25, "Steam");
   }
 
   if (config.get("store.epic.enable")) {
     const epic = new Epic();
     await epic.initialize();
-    notificationManager.updateProgress(NotificationType.REFRESH, 35);
+    notificationManager.updateProgress(NotificationType.REFRESH, 35, "Epic");
   }
 
   notificationManager.updateProgress(NotificationType.REFRESH, 100);
@@ -66,6 +66,15 @@ export const getGame = async (id: string) => {
   }
 
   if (_.isNil(game.openedAt)) {
+    notificationManager.show({
+      id: NotificationType.NEW_GAME+game.id,
+      title: game.name,
+      message: "Downloading partial assets and metadata",
+      type: "progress",
+      current: 10,
+      total: 100,
+      autoClose: true,
+    });
     try {
       const { developers, publishers, partialGameData } =
         await igdb.getGame(game);
@@ -79,12 +88,15 @@ export const getGame = async (id: string) => {
     } catch (e) {
       console.log(e);
     }
+
+    await metadataManager.downloadMissing(game);
   }
 
-  await metadataManager.downloadMissing(game);
   await updateAchievements(game);
 
   await queries.Game.update(id, { openedAt: new Date() });
+
+  notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 100)
 
   return await queries.Game.getGameById(id);
 };

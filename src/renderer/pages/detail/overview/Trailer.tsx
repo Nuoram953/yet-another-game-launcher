@@ -1,7 +1,6 @@
 import VideoPlayer from "@/components/VideoPlayer";
 import { useGames } from "@/context/DatabaseContext";
 import React, { useEffect, useState } from "react";
-import { Tile } from "./Tile";
 
 export const Trailer = () => {
   const [trailer, setTrailer] = useState<string>("");

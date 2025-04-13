@@ -54,20 +54,19 @@ export const Filters = ({ expand }: Props) => {
             <Input placeholder="Game's name" />
             <div>
               <div className="flex flex-row gap-2">
-                <Checkbox/>
+                <Checkbox />
                 <label>Installed</label>
               </div>
 
               <div className="flex flex-row gap-2">
-                <Checkbox/>
+                <Checkbox />
                 <label>Favorite</label>
               </div>
 
               <div className="flex flex-row gap-2">
-                <Checkbox/>
+                <Checkbox />
                 <label>Achievements</label>
               </div>
-
             </div>
             <div className="flex basis-4 flex-row justify-between gap-2">
               <div className="w-full">
@@ -82,9 +81,7 @@ export const Filters = ({ expand }: Props) => {
                   className="basic-multi-select z-9999"
                   classNamePrefix="select"
                   onChange={(choice) => {
-                    console.log(choice);
-
-                    updateFilters({ developpers: choice });
+                    updateFilters({ developpers: [...choice] });
                   }}
                   value={filters.developpers}
                 />
@@ -100,7 +97,9 @@ export const Filters = ({ expand }: Props) => {
                   }))}
                   className="basic-multi-select z-9999"
                   classNamePrefix="select"
-                  onChange={(choice) => updateFilters({ publishers: choice })}
+                  onChange={(choice) =>
+                    updateFilters({ publishers: [...choice] })
+                  }
                   value={filters.publishers}
                 />
               </div>
@@ -117,7 +116,7 @@ export const Filters = ({ expand }: Props) => {
                 }))}
                 className="basic-multi-select z-9999"
                 classNamePrefix="select"
-                onChange={(choice) => updateFilters({ tags: choice })}
+                onChange={(choice) => updateFilters({ tags: [...choice] })}
                 value={filters.tags}
               />
             </div>
@@ -133,7 +132,7 @@ export const Filters = ({ expand }: Props) => {
                 }))}
                 className="basic-multi-select z-9999"
                 classNamePrefix="select"
-                onChange={(choice) => updateFilters({ status: choice })}
+                onChange={(choice) => updateFilters({ status: [...choice] })}
                 value={filters.status}
               />
             </div>

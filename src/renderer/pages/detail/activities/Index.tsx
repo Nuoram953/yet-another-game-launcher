@@ -11,25 +11,12 @@ import {
   BarElement,
   ArcElement,
 } from "chart.js";
-import { Bar, Doughnut } from "react-chartjs-2";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Clock, Calendar as CalendarIcon, Timer, Activity } from "lucide-react";
-import { Tile } from "../Tile";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { unixToDate } from "@/utils/util";
 import { useGames } from "@/context/DatabaseContext";
 import { StatsCard } from "../StatsCard";
-import HeatmapCalendar from "../HeatmapCalendar";
 import { ChartActiviy } from "./ChartActiviy";
 import { ChartActivityOs } from "./ChartActiviyOs";
 import { HeatMap } from "./HeatMap";
-import { EventTimeline } from "./Timeline";
 
 ChartJS.register(
   CategoryScale,
@@ -43,12 +30,33 @@ ChartJS.register(
   ArcElement,
 );
 
+type Session = {
+  startedAt: number | string;
+  endedAt: number | string;
+  duration: number | string;
+};
+
+type WeeklyData = {
+  week: string;
+  totalPlaytime: number;
+  sessionCount: number;
+  averageDuration: number;
+};
+
 export const SectionActivities = () => {
   const { selectedGame } = useGames();
   const [timeRange, setTimeRange] = useState("weekly");
   const [loading, setLoading] = useState(true);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [processedData, setProcessedData] = useState({
+  const [processedData, setProcessedData] = useState<{
+    weeklyData: WeeklyData[];
+    stats: {
+      totalSessions: number;
+      averageDuration: number;
+      longestSession: number;
+      totalPlaytime: number;
+    };
+  }>({
     weeklyData: [],
     stats: {
       totalSessions: 0,
@@ -59,7 +67,7 @@ export const SectionActivities = () => {
   });
 
   useEffect(() => {
-    const processGamingData = (sessions) => {
+    const processGamingData = (sessions: Session[]) => {
       const normalizedSessions = sessions.map((session) => ({
         ...session,
         startedAt: Number(session.startedAt),
@@ -67,30 +75,31 @@ export const SectionActivities = () => {
         duration: Number(session.duration),
       }));
 
-      const weeklyData = normalizedSessions.reduce((acc, session) => {
-        const weekStart = new Date(session.startedAt);
-        weekStart.setHours(0, 0, 0, 0);
-        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      const weeklyData = normalizedSessions.reduce<Record<string, WeeklyData>>(
+        (acc, session) => {
+          const weekStart = new Date(session.startedAt);
+          weekStart.setHours(0, 0, 0, 0);
+          weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
-        const weekKey = weekStart.toISOString().split("T")[0];
+          const weekKey = weekStart.toISOString().split("T")[0];
 
-        console.log(weekKey);
+          if (!acc[weekKey]) {
+            acc[weekKey] = {
+              week: weekKey,
+              totalPlaytime: 0,
+              sessionCount: 0,
+              averageDuration: 0,
+            };
+          }
 
-        if (!acc[weekKey]) {
-          acc[weekKey] = {
-            week: weekKey,
-            totalPlaytime: 0,
-            sessionCount: 0,
-            averageDuration: 0,
-          };
-        }
-
-        acc[weekKey].totalPlaytime += session.duration / 60;
-        acc[weekKey].sessionCount += 1;
-        acc[weekKey].averageDuration =
-          acc[weekKey].totalPlaytime / acc[weekKey].sessionCount;
-        return acc;
-      }, {});
+          acc[weekKey].totalPlaytime += session.duration / 60;
+          acc[weekKey].sessionCount += 1;
+          acc[weekKey].averageDuration =
+            acc[weekKey].totalPlaytime / acc[weekKey].sessionCount;
+          return acc;
+        },
+        {},
+      );
 
       const stats = {
         totalSessions: normalizedSessions.length,
@@ -113,7 +122,17 @@ export const SectionActivities = () => {
       setLoading(false);
     };
 
-    processGamingData(selectedGame?.activities);
+    if (selectedGame?.activities) {
+      processGamingData(
+        selectedGame.activities.map((activity) => ({
+          id: activity.id,
+          gameId: activity.gameId,
+          startedAt: Number(activity.startedAt),
+          endedAt: Number(activity.endedAt),
+          duration: activity.duration,
+        })),
+      );
+    }
   }, []);
 
   const chartData = {
@@ -154,7 +173,7 @@ export const SectionActivities = () => {
     ],
   };
 
-  const formatDuration = (minutes) => {
+  const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = Math.round(minutes % 60);
     return `${hours}h ${mins}m`;
@@ -192,10 +211,9 @@ export const SectionActivities = () => {
       <ChartActiviy chartData={chartData} />
 
       <div className="flex flex-row gap-4">
-        <ChartActivityOs chartData={chartOsData}/>
+        <ChartActivityOs chartData={chartOsData} />
 
         <HeatMap />
-
       </div>
 
       <div className="h-20"></div>

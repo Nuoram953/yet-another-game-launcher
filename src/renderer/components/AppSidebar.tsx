@@ -3,13 +3,9 @@
 import * as React from "react";
 import {
   Activity,
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
   HardDriveDownload,
   House,
   Settings,
-  SquareTerminal,
 } from "lucide-react";
 
 import {
@@ -23,64 +19,33 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { NavStorefront } from "./sidebar/nav-storefront";
 import { NavStatus } from "./sidebar/nav-status";
-import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGames } from "@/context/DatabaseContext";
 import { Badge } from "./ui/badge";
-import { Storefront } from "@prisma/client";
-
-const data = {
-  items: [
-    {
-      title: "Store",
-      url: "/steam",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [],
-    },
-    {
-      title: "Status",
-      url: "/steam",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "Steam",
-          url: "/steam",
-        },
-      ],
-    },
-  ],
-};
+import { GameStatus, Storefront } from "@prisma/client";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { t } = useTranslation("GameStatus");
   const navigate = useNavigate();
   const { games, downloading } = useGames();
-  const [storefronts, setStorefronts] = useState<Storefront[]>([])
+  const [storefronts, setStorefronts] = useState<Storefront[]>([]);
+  const [status, setStatus] = useState<GameStatus[]>();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const status = await window.library.getCountForAllStatus();
-        data.items[1].items = status.map((gameStatus) => ({
-          id: gameStatus.id,
-          title: t(gameStatus.name),
-          url: gameStatus.name,
-          count: gameStatus.count,
-        }));
+        setStatus(status);
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }
 
       try {
         const storefronts = await window.library.getStorefronts();
-        setStorefronts(storefronts)
+        setStorefronts(storefronts);
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }
@@ -142,7 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarSeparator className="mt-8" />
         </SidebarGroup>
         <NavStorefront items={storefronts} />
-        <NavStatus items={data.items[1].items} />
+        <NavStatus items={status} />
       </SidebarContent>
       <SidebarFooter></SidebarFooter>
       <SidebarRail />

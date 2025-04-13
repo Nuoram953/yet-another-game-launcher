@@ -1,7 +1,3 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
-//
-
 import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import { RouteGame, RouteLibrary, RouteMedia } from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
@@ -80,38 +76,8 @@ contextBridge.exposeInMainWorld("data", {
 });
 
 contextBridge.exposeInMainWorld("appControl", {
-  onAppBlur: (callback) => ipcRenderer.on("app-blur", callback),
-  onAppFocus: (callback) => ipcRenderer.on("app-focus", callback),
-});
-
-contextBridge.exposeInMainWorld("api", {
-  runCommand: (command: any) => ipcRenderer.invoke("run-command", command),
-  getSteamGames: () => ipcRenderer.invoke("get-steam-games"),
-  openWindow: (id) => {
-    ipcRenderer.send("webview-dom-ready", id);
-  },
-
-  openExternal: (url) => {
-    ipcRenderer.invoke("open-external", url);
-  },
-  onReceiveFromMain: (channel, callback) => {
-    const validChannels = [
-      "add-new-game",
-      "is-game-running",
-      "request:games",
-      "request:game",
-    ]; // Define valid channels
-    if (validChannels.includes(channel)) {
-      ipcRenderer.on(channel, (event, data) => {
-        callback(data); // Pass data to the provided callback
-      });
-    }
-  },
-
-  // Cleanup to avoid memory leaks
-  removeListener: (channel) => {
-    ipcRenderer.removeAllListeners(channel);
-  },
+  onAppBlur: (callback:()=>void) => ipcRenderer.on("app-blur", callback),
+  onAppFocus: (callback:()=>void) => ipcRenderer.on("app-focus", callback),
 });
 
 contextBridge.exposeInMainWorld("store", {
@@ -119,8 +85,8 @@ contextBridge.exposeInMainWorld("store", {
 });
 
 contextBridge.exposeInMainWorld("notifications", {
-  send: (notification) => ipcRenderer.send("send-notification", notification),
-  onReceive: (callback) => {
+  send: (notification:any) => ipcRenderer.send("send-notification", notification),
+  onReceive: (callback:(notification:any)=>void) => {
     ipcRenderer.on("notification", (_event, notification) => {
       callback(notification);
     });

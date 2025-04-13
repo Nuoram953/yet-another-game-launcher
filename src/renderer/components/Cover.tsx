@@ -5,7 +5,6 @@ import { Prisma } from "@prisma/client";
 import { Clock } from "lucide-react";
 import { SkeletonCover } from "./cover/skeleton";
 import { InstallBadge } from "./cover/installBadge";
-import { StatusBadge } from "./cover/statusBadge";
 import { ImageWithFallback } from "./cover/cover";
 import BadgeDropdown from "./dropdown/StatusSelection";
 import { FavoriteBadge } from "./cover/favoriteBadge";
@@ -33,12 +32,12 @@ const Cover: React.FC<{
     fetchPicturePath();
   }, [game]);
 
-  const handleOnInstall = (e) => {
+  const handleOnInstall = (e: React.MouseEvent) => {
     e.stopPropagation();
     window.game.install(game.id);
   };
 
-  const handleMouseMove = (e, cardElement) => {
+  const handleMouseMove = (e: React.MouseEvent, cardElement:HTMLElement) => {
     const rect = cardElement.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -57,7 +56,7 @@ const Cover: React.FC<{
     `;
   };
 
-  const handleMouseLeave = (cardElement) => {
+  const handleMouseLeave = (cardElement: HTMLElement) => {
     cardElement.style.transform =
       "perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)";
   };
@@ -83,7 +82,7 @@ const Cover: React.FC<{
         transformStyle: "preserve-3d",
       }}
     >
-      <ImageWithFallback src={coverPicture} />
+      <ImageWithFallback src={coverPicture} alt={undefined} style={undefined} className={undefined} />
 
       <div className="absolute left-2 top-2">
         <BadgeDropdown game={game} />

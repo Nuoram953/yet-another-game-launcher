@@ -95,7 +95,7 @@ class DataManager {
   stopRealtimeUpdates(channel: string) {
     const timer = this.intervals.get(channel);
     if (timer) {
-      clearInterval(timer);
+      clearInterval(timer as NodeJS.Timeout);
       this.intervals.delete(channel);
       log.info(`Stopped real-time updates for channel: ${channel}`);
     }

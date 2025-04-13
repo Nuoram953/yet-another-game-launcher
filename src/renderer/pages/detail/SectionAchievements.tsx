@@ -75,7 +75,7 @@ export const SectionAchievements = () => {
     }
   };
 
-  if (loading) {
+  if (loading || !selectedGame) {
     return <div>Loading...</div>;
   }
 

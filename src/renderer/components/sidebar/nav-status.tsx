@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -26,8 +25,7 @@ export function NavStatus({
 }: {
   items: {
     id: number;
-    title: string;
-    url: string;
+    name: string;
     count?: number;
   }[];
 }) {
@@ -53,7 +51,7 @@ export function NavStatus({
               <SidebarMenuSub>
                 {items?.map((subItem) => (
                   <SidebarMenuSubItem
-                    key={subItem.title}
+                    key={subItem.name}
                     className="flex justify-between"
                   >
                     <SidebarMenuSubButton asChild>
@@ -63,7 +61,7 @@ export function NavStatus({
                             updateFilters({ gameStatusId: subItem.id });
                           }}
                         >
-                          <span>{subItem.title}</span>
+                          <span>{subItem.name}</span>
                         </div>
                         {subItem.count && <Badge>{subItem.count}</Badge>}
                       </>

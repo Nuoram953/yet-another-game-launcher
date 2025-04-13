@@ -93,7 +93,7 @@ export async function killDirectoyProcess(directoryPath: string) {
     log.error("Error killing processes:", error);
     return {
       success: false,
-      message: `Failed to kill processes: ${error.message}`,
+      message: `Failed to kill processes: ${error}`,
     };
   }
 }
@@ -102,7 +102,7 @@ export async function monitorDirectoryProcesses(
   directoryPath: string,
   sendEvent:boolean=false,
 ): Promise<ProcessInfo> {
-  await delay(60000);
+  await delay(60000*5);
   const startTime = new Date();
   let sentGameRunningEvent:boolean = false;
   console.log(`Monitoring started at: ${startTime}`);

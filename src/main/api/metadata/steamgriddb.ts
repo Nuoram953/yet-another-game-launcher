@@ -1,9 +1,10 @@
 import { Game } from "@prisma/client";
 import axios from "axios";
-import { MEDIA_TYPE } from "../../../common/constant";
+import { MEDIA_TYPE, NotificationType } from "../../../common/constant";
 import { mainApp, metadataManager } from "../../index";
 import log from "electron-log/main";
 import { delay } from "../../utils/utils";
+import notificationManager from "../../../main/manager/notificationManager";
 
 class SteamGridDB {
   private apikey: string | undefined;
@@ -67,11 +68,7 @@ class SteamGridDB {
       return;
     }
 
-    mainApp.sendToRenderer("notification", {
-      title: "Downloading cover images",
-      message: "You can continue to use the app while it's updating",
-      useToast: true,
-    });
+    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 35, "Downloading covers")
 
     while (!hasAllImages) {
       const response = await axios.get(
@@ -132,6 +129,8 @@ class SteamGridDB {
       return;
     }
 
+    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 40, "Downloading backgrounds")
+
     while (!hasAllImages) {
       const response = await axios.get(
         `https://www.steamgriddb.com/api/v2/heroes/game/${this.gameId}`,
@@ -190,6 +189,8 @@ class SteamGridDB {
       );
       return;
     }
+
+    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 45, "Downloading logos")
 
     while (!hasAllImages) {
       const response = await axios.get(

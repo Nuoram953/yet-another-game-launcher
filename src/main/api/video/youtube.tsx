@@ -1,10 +1,8 @@
-import * as ytdlExec from "youtube-dl-exec";
-import * as fs from "fs";
 import * as path from "path";
 import { Game } from "@prisma/client";
 import { metadataManager } from "../../index";
 import { MEDIA_TYPE } from "../../../common/constant";
-import  log  from "electron-log/main";
+import log from "electron-log/main";
 import { app } from "electron";
 
 const YouTube = require("youtube-sr").default;
@@ -28,13 +26,13 @@ export class YouTubeDownloader {
         game,
       );
 
-      if(await metadataManager.getNumberOfFiles(outputDir)>=1){
-        log.info(`${game.id} has 1 trailer. Skipping`)
-        return
+      if ((await metadataManager.getNumberOfFiles(outputDir)) >= 1) {
+        log.info(`${game.id} has 1 trailer. Skipping`);
+        return;
       }
 
       const name = outputDir + "/trailer";
-      const cookiePath = path.join(app.getPath("userData"), "cookies.txt")
+      const cookiePath = path.join(app.getPath("userData"), "cookies.txt");
 
       const searchResults = await YouTube.search(
         `${game.name} game ${MEDIA_TYPE.TRAILER}`,
@@ -53,19 +51,11 @@ export class YouTubeDownloader {
           noWarnings: true,
           preferFreeFormats: true,
           cookies: cookiePath,
-          addHeader: ["referer:youtube.com", "user-agent:firefox"]
+          addHeader: ["referer:youtube.com", "user-agent:firefox"],
         },
+      );
     } catch (error) {
       console.error("Search or download error:", error);
     }
   }
-}
-
-/**
- * Sanitize filename to remove invalid characters
- * @param filename Original filename
- * @returns Sanitized filename
- */
-function sanitizeFileName(filename: string): string {
-  return filename.replace(/[/\\?%*:|"<>]/g, "-").trim();
 }

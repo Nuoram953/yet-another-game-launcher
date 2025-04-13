@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "jsx": "react",
-        "target": "es2019",
+        "target": "es2020",
         "module": "commonjs",
         "lib": ["dom", "es2019"],
         "experimentalDecorators": true,

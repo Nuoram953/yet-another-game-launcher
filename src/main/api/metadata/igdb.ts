@@ -115,7 +115,7 @@ class Igdb {
       },
     );
 
-    const company: object[] = await this.getInvolvedCompany(id);
+    const company: any[] = await this.getInvolvedCompany(id); //TODO: Create proper type for response
 
     const publishers = company
       .filter((company) => company.publisher)
@@ -139,12 +139,12 @@ class Igdb {
 
     const data = response.data[0];
 
-    const themes = data.themes?.map((item) => item.name) || [];
-    const genres = data.genres?.map((item) => item.name) || [];
-    const gameModes = data.game_modes?.map((item) => item.name) || [];
-    const engine = data.game_engines?.map((item) => item.name) || [];
+    const themes = data.themes?.map((item:any) => item.name) || [];
+    const genres = data.genres?.map((item:any) => item.name) || [];
+    const gameModes = data.game_modes?.map((item:any) => item.name) || [];
+    const engine = data.game_engines?.map((item:any) => item.name) || [];
     const playerPerspective =
-      data.player_perspectives?.map((item) => item.name) || [];
+      data.player_perspectives?.map((item:any) => item.name) || [];
 
     const partialGameData: Partial<Game> = {
       summary: data.storyline ?? data.summary,

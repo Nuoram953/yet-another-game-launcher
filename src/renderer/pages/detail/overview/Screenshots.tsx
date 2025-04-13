@@ -5,13 +5,16 @@ import {
 } from "@/components/ui/carousel";
 import { useGames } from "@/context/DatabaseContext";
 import React, { useEffect, useState } from "react";
-import { Card } from "@/components/card/Card";
 import Autoplay from "embla-carousel-autoplay";
 
 export const Screenshots = () => {
   const [loading, setLoading] = useState(true);
   const [screenshots, setScreenshots] = useState<string[]>([]);
   const { selectedGame } = useGames();
+
+  if (!selectedGame) {
+    return null;
+  }
 
   useEffect(() => {
     const fetch = async () => {

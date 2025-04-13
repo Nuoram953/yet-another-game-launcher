@@ -129,7 +129,6 @@ class MainWindowManager {
 
       app.on("web-contents-created", (e, wc) => {
         wc.setWindowOpenHandler((handler) => {
-          console.log("test");
           return { action: "allow" }; // deny or allow
         });
       });
@@ -208,11 +207,6 @@ class MainWindowManager {
     } catch (error) {
       console.error("Failed to create window:", error);
       throw error;
-    }
-  }
-  sendToRenderer(channel, data) {
-    if (this.mainWindow) {
-      this.mainWindow.webContents.send(channel, data);
     }
   }
 }

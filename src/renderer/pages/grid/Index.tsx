@@ -9,20 +9,15 @@ import Cover from "../../components/Cover";
 import _ from "lodash";
 import { useGames } from "@/context/DatabaseContext";
 import { Input } from "../../components/ui/input";
+//@ts-ignore-error - Missing types for react-window
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { RecentlyPlayedCarousel } from "../../components/carousel/recentlyPlayed/RecentlyPlayedCarousel";
+import { RecentlyPlayedCarousel } from "./RecentlyPlayedCarousel";
 import useGridScrollPersist from "@/hooks/usePersistentScroll";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Filters } from "./Filter";
 import { Button } from "@/components/button/Button";
-import {
-  ArrowUpDown,
-  CalendarFoldIcon,
-  Filter,
-  FilterIcon,
-  Plus,
-} from "lucide-react";
+import { Filter, Plus } from "lucide-react";
 import { Sort } from "./Sort";
 
 const COLUMN_WIDTH = 275;
@@ -68,24 +63,37 @@ export const Grid = () => {
       : uniqueGames;
   }, [games, search]);
 
-  const Cell = useCallback(({ columnIndex, rowIndex, style, data }) => {
-    const { games, columnCount, cellWidth, cellHeight } = data;
-    const gameIndex = rowIndex * columnCount + columnIndex;
-    const game = games[gameIndex];
+  const Cell = useCallback(
+    ({
+      columnIndex,
+      rowIndex,
+      style,
+      data,
+    }: {
+      columnIndex: number;
+      rowIndex: number;
+      style: React.CSSProperties;
+      data: any;
+    }) => {
+      const { games, columnCount, cellWidth, cellHeight } = data;
+      const gameIndex = rowIndex * columnCount + columnIndex;
+      const game = games[gameIndex];
 
-    if (!game) return null;
+      if (!game) return null;
 
-    const cellStyle = {
-      ...style,
-      padding: `0 ${GAP/2}px ${GAP}px ${GAP/2}px`, // Add bottom padding for title
-    };
+      const cellStyle = {
+        ...style,
+        padding: `0 ${GAP / 2}px ${GAP}px ${GAP / 2}px`, // Add bottom padding for title
+      };
 
-    return (
-      <div style={cellStyle}>
-        <Cover key={game.id} game={game} />
-      </div>
-    );
-  }, []);
+      return (
+        <div style={cellStyle}>
+          <Cover key={game.id} game={game} />
+        </div>
+      );
+    },
+    [],
+  );
 
   if (loading) {
     return (

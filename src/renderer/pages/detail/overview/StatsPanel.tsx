@@ -4,10 +4,12 @@ import { StatsCard } from "../StatsCard";
 import { Activity, Calendar, Clock, Trophy } from "lucide-react";
 import { convertToHoursAndMinutes } from "@/utils/util";
 import { useTranslation } from "react-i18next";
-import { Badge } from "@/components/ui/badge";
 
 export const StatsPanel = () => {
   const { selectedGame } = useGames();
+  if (!selectedGame) {
+    return;
+  }
   const { t } = useTranslation("GameStatus");
 
   const now = Date.now();
@@ -41,34 +43,40 @@ export const StatsPanel = () => {
     }
   }
 
-const formatTimespan = (start: bigint, end: bigint): string => {
-  const now = BigInt(Date.now()) / BigInt(1000); // Current time in seconds
-  const endTimeSeconds = end;
-  const startTimeSeconds = start;
-  
-  // Calculate time difference in hours
-  const hoursSinceEnd = Number((now - endTimeSeconds) * BigInt(100) / BigInt(60) / BigInt(60)) / 100;
-  
-  if (hoursSinceEnd < 24) {
-    // If less than 24 hours ago, calculate the duration of the activity
-    const durationHours = Math.round(
-      Number((endTimeSeconds - startTimeSeconds) * BigInt(100) / BigInt(60) / BigInt(60)) / 100
-    );
+  const formatTimespan = (start: bigint, end: bigint): string => {
+    const now = BigInt(Date.now()) / BigInt(1000); // Current time in seconds
+    const endTimeSeconds = end;
+    const startTimeSeconds = start;
 
-      console.log(hoursSinceEnd)
-    
-    // Make sure we have a positive duration
-    const positiveDuration = Math.max(0, durationHours);
-    return `Last played ${positiveDuration} hour${positiveDuration !== 1 ? "s" : ""}`;
-  } else {
-    // For dates more than 24 hours ago, create Date objects and format
-    const endTime = new Date(Number(end) * 1000);
-    const day = endTime.getDate().toString().padStart(2, "0");
-    const month = (endTime.getMonth() + 1).toString().padStart(2, "0");
-    const year = endTime.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
-};
+    // Calculate time difference in hours
+    const hoursSinceEnd =
+      Number(((now - endTimeSeconds) * BigInt(100)) / BigInt(60) / BigInt(60)) /
+      100;
+
+    if (hoursSinceEnd < 24) {
+      // If less than 24 hours ago, calculate the duration of the activity
+      const durationHours = Math.round(
+        Number(
+          ((endTimeSeconds - startTimeSeconds) * BigInt(100)) /
+            BigInt(60) /
+            BigInt(60),
+        ) / 100,
+      );
+
+      console.log(hoursSinceEnd);
+
+      // Make sure we have a positive duration
+      const positiveDuration = Math.max(0, durationHours);
+      return `Last played ${positiveDuration} hour${positiveDuration !== 1 ? "s" : ""}`;
+    } else {
+      // For dates more than 24 hours ago, create Date objects and format
+      const endTime = new Date(Number(end) * 1000);
+      const day = endTime.getDate().toString().padStart(2, "0");
+      const month = (endTime.getMonth() + 1).toString().padStart(2, "0");
+      const year = endTime.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+  };
 
   return (
     <div className="flex w-full flex-row justify-around gap-4">

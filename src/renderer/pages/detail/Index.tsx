@@ -301,7 +301,7 @@ const GameDetailsContent: React.FC = () => {
           )}
         </div>
 
-        <Container className="relative z-20 max-w-[1500px] flex-1 overflow-y-auto p-2">
+        <Container>
           {renderContent()}
         </Container>
       </div>

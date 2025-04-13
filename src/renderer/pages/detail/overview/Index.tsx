@@ -3,7 +3,6 @@ import { StatsPanel } from "./StatsPanel";
 import { Trailer } from "./Trailer";
 import Info from "./Info";
 import { Screenshots } from "./Screenshots";
-import { GameStatusTimeline } from "./GameStatusTimeline";
 import { EventTimeline } from "./Timeline";
 
 export const SectionOverview = () => {

@@ -24,7 +24,7 @@ interface Props {
     value: string;
     label: string;
   }[];
-  selectedItems: string[]; // Fixed: properly typed as string[]
+  selectedItems: string[];
   setSelectedItems: (newItems: string[]) => void;
 }
 
@@ -33,34 +33,28 @@ const MultiSelectCombobox = ({
   placeholder,
   emptyText,
   options,
-  selectedItems = [], // Added default value to prevent undefined errors
+  selectedItems = [],
   setSelectedItems,
 }: Props) => {
   const [open, setOpen] = useState(false);
 
-  // Use null check to prevent "undefined is not iterable" error
   const handleSelect = (currentValue: string) => {
     setOpen(false);
-    
-    // Make sure selectedItems is an array before using array methods
+
     const currentItems = Array.isArray(selectedItems) ? selectedItems : [];
-    
+
     if (currentItems.includes(currentValue)) {
-      // If item is already selected, remove it
       setSelectedItems(currentItems.filter((item) => item !== currentValue));
     } else {
-      // Otherwise add it
       setSelectedItems([...currentItems, currentValue]);
     }
   };
 
   const handleRemoveItem = (item: string) => {
-    // Make sure selectedItems is an array before using array methods
     const currentItems = Array.isArray(selectedItems) ? selectedItems : [];
     setSelectedItems(currentItems.filter((i) => i !== item));
   };
 
-  // Safe check for rendering selected items
   const selectedItemsArray = Array.isArray(selectedItems) ? selectedItems : [];
 
   return (
@@ -95,7 +89,9 @@ const MultiSelectCombobox = ({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedItemsArray.includes(option.value) ? "opacity-100" : "opacity-0"
+                      selectedItemsArray.includes(option.value)
+                        ? "opacity-100"
+                        : "opacity-0",
                     )}
                   />
                   {option.label}
@@ -108,7 +104,7 @@ const MultiSelectCombobox = ({
 
       {/* Display selected items with null safety */}
       {selectedItemsArray.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
+        <div className="mt-2 flex flex-wrap gap-1">
           {selectedItemsArray.map((item) => {
             const option = options.find((o) => o.value === item);
             return (
@@ -117,7 +113,7 @@ const MultiSelectCombobox = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-4 w-4 p-0 ml-1"
+                  className="ml-1 h-4 w-4 p-0"
                   onClick={() => handleRemoveItem(item)}
                 >
                   <X className="h-3 w-3" />

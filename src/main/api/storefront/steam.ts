@@ -2,10 +2,12 @@ import axios, { AxiosResponse } from "axios";
 import { app } from "electron";
 import path from "path";
 import fs from "fs";
+//@ts-ignore-error - Missing type definitions
 import vdf from "vdf";
 import { Storefront } from "../../constant";
 import { Game, GameAchievement, GameConfigGamescope } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
+//@ts-ignore-error - Missing type definitions
 import acfParser from "steam-acf2json";
 import queries from "../../dal/dal";
 import _ from "lodash";
@@ -13,7 +15,7 @@ import { metadataManager } from "../../../main";
 import { MEDIA_TYPE } from "../../../common/constant";
 import { GameWithRelations } from "src/common/types";
 const VDF = require("vdf-parser");
-import { readVdf, writeVdf } from "steam-binary-vdf";
+import { readVdf } from "steam-binary-vdf";
 
 class Steam {
   private steamid: string | undefined;

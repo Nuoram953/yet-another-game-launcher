@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { IconButton } from "../button/IconButton";
 import { useTranslation } from "react-i18next";
 import { Storefront } from "@prisma/client";
+import { Button } from "../button/Button";
 
 export function NavStorefront({ items }: { items: Storefront[] }) {
   const navigate = useNavigate();
@@ -59,16 +60,19 @@ export function NavStorefront({ items }: { items: Storefront[] }) {
                           <span>{t(storefront.name)}</span>
                         </a>
                         <div className="flex flex-row gap-1">
-                          {storefront.hasLauncher && (
-                            <IconButton
+                            <Button
                               icon={ExternalLink}
+                              size={"fit"}
+                              intent={"icon"}
+                              disabled={!storefront.hasLauncher}
                               onClick={(e) => {
                                 window.store.launch(storefront.name);
                               }}
                             />
-                          )}
-                          <IconButton
+                          <Button
                             icon={Globe}
+                            size={"fit"}
+                            intent={"icon"}
                             onClick={(e) => {
                               navigate("/web", {
                                 state: {

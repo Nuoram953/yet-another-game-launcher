@@ -3,6 +3,7 @@ import path from "path";
 import log from "electron-log/main";
 import dataManager from "../../manager/dataChannelManager";
 import { getDefaultSteamPath } from "./utils";
+//@ts-ignore-error - Missing type definitions
 import acfParser from "steam-acf2json";
 import getFolderSize from "get-folder-size";
 import queries from "../../dal/dal";

@@ -36,18 +36,22 @@ export const EventTimeline = () => {
     return date.toISOString().split("T")[0];
   };
 
-  const status = selectedGame!.statusHistory.map((status)=>( {
-      type: "status",
-      title: status.gameStatus.name,
-      description: "",
-      timestamp: status.createdAt,
-  } ))
+  const status = selectedGame!.statusHistory.map((status) => ({
+    type: "status",
+    title: status.gameStatus.name,
+    description: "",
+    timestamp: status.createdAt,
+  }));
 
   const events: Event[] = status;
 
   const groupedEvents: EventsGroupedByDate = events.reduce(
     (acc: EventsGroupedByDate, event) => {
-      const eventDate = getDateString(event.timestamp);
+      const eventDate = getDateString(
+        typeof event.timestamp === "bigint"
+          ? event.timestamp
+          : BigInt(event.timestamp.getTime()),
+      );
 
       if (!acc[eventDate]) {
         acc[eventDate] = [];
@@ -142,7 +146,11 @@ export const EventTimeline = () => {
                   <div className="mb-2 flex items-center">
                     <Clock className="mr-2 text-gray-400" size={14} />
                     <span className="text-sm text-gray-500">
-                      {formatTime(event.timestamp)}
+                      {formatTime(
+                        typeof event.timestamp === "bigint"
+                          ? event.timestamp
+                          : BigInt(event.timestamp.getTime()),
+                      )}
                     </span>
                   </div>
 

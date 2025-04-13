@@ -8,11 +8,11 @@ import {
   Tooltip,
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Download} from "lucide-react";
+import { Download } from "lucide-react";
 import { useGames } from "@/context/DatabaseContext";
 import DownloadHistory from "./History";
 
-const formatBytes = (bytes, decimals = 2) => {
+const formatBytes = (bytes: number, decimals = 2) => {
   if (!bytes) return "0 Bytes";
 
   const k = 1024;
@@ -22,18 +22,34 @@ const formatBytes = (bytes, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(decimals))} ${sizes[i]}`;
 };
 
-const formatSpeed = (bytesPerSecond) => {
+const formatSpeed = (bytesPerSecond: number) => {
   return `${formatBytes(bytesPerSecond)}/s`;
 };
 
-const formatTime = (seconds) => {
+const formatTime = (seconds: number) => {
   if (seconds < 60) return `${Math.round(seconds)}s`;
   if (seconds < 3600)
     return `${Math.round(seconds / 60)}m ${Math.round(seconds % 60)}s`;
   return `${Math.floor(seconds / 3600)}h ${Math.round((seconds % 3600) / 60)}m`;
 };
 
-const GameDownloadRow = ({ data, title, speedHistory }) => {
+interface GameDownloadRowProps {
+  data: {
+    progress: number;
+    speed: number;
+    timeRemaining: number;
+    downloadedBytes: number;
+    totalBytes: number;
+  };
+  title: string;
+  speedHistory: { time: string; speed: number }[];
+}
+
+const GameDownloadRow = ({
+  data,
+  title,
+  speedHistory,
+}: GameDownloadRowProps) => {
   return (
     <div className="border-b border-gray-200 last:border-0">
       <div className="space-y-2 p-4">
@@ -126,12 +142,11 @@ const DownloadView = () => {
               key={download.id}
               title={download.id}
               data={download}
-              speedHistory={0}
+              speedHistory={[]}
             />
           ))}
         </CardContent>
       </Card>
-
     </div>
   );
 };
