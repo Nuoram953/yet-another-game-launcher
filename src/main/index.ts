@@ -1,10 +1,4 @@
-import {
-  app,
-  BrowserWindow,
-  globalShortcut,
-  session,
-  Session,
-} from "electron";
+import { app, BrowserWindow, globalShortcut, session, Session } from "electron";
 import * as path from "path";
 import "./handlers/media";
 import "./handlers/store";
@@ -21,7 +15,12 @@ import notificationManager from "./manager/notificationManager";
 import ConfigManager from "./manager/configManager";
 import { AppConfig } from "../common/interface";
 import dataChannelManager from "./manager/dataChannelManager";
-import { ElectronLogger, LogLevel, createMainLogger } from "./manager/logManager";
+import {
+  ElectronLogger,
+  LogLevel,
+  LogTag,
+  createMainLogger,
+} from "./manager/logManager";
 
 require("dotenv").config();
 
@@ -34,7 +33,7 @@ export let prisma: PrismaClient;
 export let dbPath: string;
 export let i18n: Awaited<ReturnType<typeof initMainI18n>>;
 export let config: ConfigManager<AppConfig>;
-export let logger: ElectronLogger 
+export let logger: ElectronLogger;
 
 class MainWindowManager {
   mainWindow: BrowserWindow | null = null;
@@ -59,8 +58,8 @@ class MainWindowManager {
       i18n = await initMainI18n();
       config = new ConfigManager<AppConfig>();
       logger = createMainLogger({
-        minLevel: LogLevel.DEBUG
-      })
+        minLevel: LogLevel.DEBUG,
+      });
 
       await config.init({
         store: {
@@ -74,7 +73,7 @@ class MainWindowManager {
       });
 
       await app.whenReady();
-      log.warn("App is ready");
+      logger.debug("Main process is ready");
 
       if (config.get("store.steam.enable")) {
         const steamSession = session.fromPartition("persist:steamstore");
@@ -90,7 +89,7 @@ class MainWindowManager {
           sameSite: "no_restriction", // Ensures cross-site access
         });
 
-        console.log("Steam store cookies set successfully");
+        logger.info("Steam store cookies set successfully");
       }
 
       if (config.get("store.epic.enable")) {
@@ -107,16 +106,16 @@ class MainWindowManager {
           sameSite: "no_restriction", // Ensures cross-site access
         });
 
-        console.log("Epic store cookies set successfully");
+        logger.info("Epic store cookies set successfully");
       }
 
       await this.createWindow();
-      log.info("Window created");
+      logger.info("Renderer window created");
 
       try {
         execSync("npx prisma migrate deploy");
       } catch (error) {
-        console.error("Error running Prisma migrations:", error);
+        logger.error("Error running Prisma migrations:", { error });
       }
 
       prisma = new PrismaClient();
@@ -201,11 +200,11 @@ class MainWindowManager {
       });
 
       globalShortcut.register("F5", () => {
-        console.log("F5 was pressed!");
-        this.mainWindow?.reload(); // Example: Reload the window
+        logger.debug("F5 was pressed!", {}, LogTag.USER_INPUT);
+        this.mainWindow?.reload();
       });
     } catch (error) {
-      console.error("Failed to create window:", error);
+      logger.error("Failed to create window:", { error });
       throw error;
     }
   }

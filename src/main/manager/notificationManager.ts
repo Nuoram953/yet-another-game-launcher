@@ -1,5 +1,4 @@
 import { BrowserWindow } from "electron";
-import log from "electron-log/main";
 import { logger } from "../index";
 import { LogTag } from "./logManager";
 
@@ -74,7 +73,7 @@ class NotificationManager {
     }
 
     this.queue.push(notification);
-    logger.info(`Notification queued:`, { notification }, LogTag.NOTIFICATION);
+    logger.debug(`Notification queued:`, { notification }, LogTag.NOTIFICATION);
 
     if (!this.isProcessing) {
       this.processQueue();
@@ -157,7 +156,7 @@ class NotificationManager {
 
       if (!this.mainWindow.isDestroyed()) {
         this.mainWindow.webContents.send("notification", notification);
-        logger.info(
+        logger.debug(
           `Notification sent to renderer:`,
           { notification },
           LogTag.NOTIFICATION,

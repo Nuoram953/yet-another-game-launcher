@@ -7,6 +7,8 @@ import * as os from "os";
 export enum LogTag {
   NETWORK = "NETWORK",
   NOTIFICATION = "NOTIFICATION",
+  TRACKING = "TRACKING",
+  USER_INPUT = "USER_INPUT",
 }
 
 export enum LogLevel {

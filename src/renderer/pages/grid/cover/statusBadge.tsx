@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Badge } from "../ui/badge";
+import { Badge } from "../../../components/ui/badge";
 import React from "react";
 
 interface Props {

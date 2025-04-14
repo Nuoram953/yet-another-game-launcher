@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { convertToHoursAndMinutes } from "@/utils/util";
 import { Clock } from "lucide-react";
-import { SkeletonCover } from "./cover/skeleton";
-import { InstallBadge } from "./cover/installBadge";
-import BadgeDropdown from "./dropdown/StatusSelection";
-import { FavoriteBadge } from "./cover/favoriteBadge";
+import { SkeletonCover } from "./skeleton";
+import { InstallBadge } from "./installBadge";
+import BadgeDropdown from "../../../components/dropdown/StatusSelection";
+import { FavoriteBadge } from "./favoriteBadge";
 import { GameWithRelations } from "src/common/types";
-import { Image } from "./image/Image";
+import { Image } from "../../../components/image/Image";
 
 interface CoverProps {
   game: GameWithRelations;

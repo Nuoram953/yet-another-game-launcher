@@ -1,14 +1,13 @@
 import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../constant";
-import { igdb, mainApp, metadataManager } from "..";
+import { igdb, logger } from "..";
 import {
   killDirectoyProcess,
   monitorDirectoryProcesses,
 } from "../utils/tracking";
 import { delay, getMinutesBetween } from "../utils/utils";
 import { createGameActiviy } from "../dal/gameActiviy";
-import log from "electron-log/main";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
 import _ from "lodash";
@@ -19,9 +18,10 @@ import { createDownloadTracker } from "../storefront/steam/monitor";
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
 import notificationManager from "../manager/notificationManager";
+import { LogTag } from "../manager/logManager";
 
 export const preLaunch = async (game: GameWithRelations) => {
-  log.info(`preLaunch for game ${game.id}`);
+  logger.info(`preLaunch for game`, { id: game.id }, LogTag.TRACKING);
 };
 
 export const launch = async (id: string) => {
@@ -30,7 +30,7 @@ export const launch = async (id: string) => {
     throw new Error("game not found");
   }
   await preLaunch(game);
-  log.info(`Launching game ${game.id}`);
+  logger.info(`Launch game`, { id: game.id }, LogTag.TRACKING);
 
   switch (game.storefrontId) {
     case Storefront.STEAM: {
@@ -108,14 +108,14 @@ export const postLaunch = async (
   startTime: Date,
   endTime: Date | null,
 ) => {
-  log.info(`postLaunch for game ${game.id}`);
+  logger.info(`postLaunch for game`, { id: game.id }, LogTag.TRACKING);
   if (startTime && endTime) {
     const minutes = await getMinutesBetween(startTime, endTime);
     if (minutes > 0) {
       await createGameActiviy(game.id, startTime, endTime);
       await queries.Game.updateTimePlayed(game.id, minutes + 5);
     } else {
-      log.warn(
+      logger.info(
         `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
       );
     }
@@ -162,7 +162,7 @@ export const createOrUpdateGame = async (
 
   if (game.updatedAt.getTime() === game.createdAt.getTime()) {
     notificationManager.show({
-      id: NotificationType.NEW_GAME+game.id,
+      id: NotificationType.NEW_GAME + game.id,
       title: `Adding ${game.name} to library`,
       message: "Downloading partial assets and metadata",
       type: "progress",
@@ -174,19 +174,31 @@ export const createOrUpdateGame = async (
     await sgdb.getGameIdByExternalId(game.storefront!.name);
     await sgdb.downloadAllImageType(1, 1);
 
-    notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 25, "Downloading metadata")
+    notificationManager.updateProgress(
+      NotificationType.NEW_GAME + game.id,
+      25,
+      "Downloading metadata",
+    );
 
     try {
       const { developers, publishers, partialGameData } =
         await igdb.getGame(game);
       await queries.Game.update(game.id, partialGameData);
 
-      notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 55, "Updating developers field")
+      notificationManager.updateProgress(
+        NotificationType.NEW_GAME + game.id,
+        55,
+        "Updating developers field",
+      );
       for (const developer of developers) {
         await queries.GameDeveloper.findOrCreate(game.id, developer);
       }
 
-      notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 75, "Updating publishers field")
+      notificationManager.updateProgress(
+        NotificationType.NEW_GAME + game.id,
+        75,
+        "Updating publishers field",
+      );
       for (const publisher of publishers) {
         await queries.GamePublisher.findOrCreate(game.id, publisher);
       }
@@ -194,8 +206,11 @@ export const createOrUpdateGame = async (
       console.log(e);
     }
 
-    notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 100)
-    await delay(2000)
+    notificationManager.updateProgress(
+      NotificationType.NEW_GAME + game.id,
+      100,
+    );
+    await delay(2000);
   }
 
   // mainApp.sendToRenderer("add-new-game", {

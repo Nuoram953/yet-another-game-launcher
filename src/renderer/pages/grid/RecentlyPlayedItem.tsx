@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Game } from "@prisma/client";
 import { useNavigate } from "react-router-dom";
+import { Image } from "@/components/image/Image";
 
 interface Props {
   index: number;
@@ -42,7 +43,7 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
       style={{ left: `${index * 100}%` }}
       onClick={handleOnClick}
     >
-      <img
+      <Image
         src={backgroundPicture}
         alt={game.name}
         className="h-full w-full object-cover"

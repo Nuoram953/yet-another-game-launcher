@@ -3,6 +3,8 @@ import path from "path";
 import { delay, normalizePath } from "./utils";
 import log from "electron-log/main";
 import treeKill from "tree-kill";
+import { logger } from "..";
+import { LogTag } from "../manager/logManager";
 
 interface ProcessInfo {
   startTime: Date;
@@ -26,7 +28,7 @@ export async function killDirectoyProcess(directoryPath: string) {
     });
 
     if (directoryProcesses.length === 0) {
-      log.info("No processes found to kill");
+      logger.debug("No processes found to kill", {}, LogTag.TRACKING);
       return { success: true, message: "No processes found" };
     }
 
@@ -41,20 +43,41 @@ export async function killDirectoyProcess(directoryPath: string) {
                 );
                 try {
                   process.kill(proc.pid, "SIGKILL");
-                  log.info(`Force killed process ${proc.pid}`);
+                  logger.debug(
+                    "Force killed process",
+                    {
+                      id: proc.pid,
+                    },
+                    LogTag.TRACKING,
+                  );
                 } catch (killError) {
-                  log.error(
+                  logger.error(
                     `Failed to force kill process ${proc.pid}:`,
-                    killError,
+                    {
+                      id: proc.pid,
+                      error: killError,
+                    },
+                    LogTag.TRACKING,
                   );
                 }
               } else {
-                log.info(`Successfully killed process tree for ${proc.pid}`);
+                logger.debug(
+                  "successfully killed process tree",
+                  { id: proc.pid },
+                  LogTag.TRACKING,
+                );
               }
               resolve();
             });
           } catch (error) {
-            log.error(`Error killing process ${proc.pid}:`, error);
+            logger.error(
+              `Error killing process:`,
+              {
+                id: proc.pid,
+                error,
+              },
+              LogTag.TRACKING,
+            );
             resolve();
           }
         }),
@@ -75,11 +98,19 @@ export async function killDirectoyProcess(directoryPath: string) {
       for (const proc of remainingProcesses) {
         try {
           process.kill(proc.pid, "SIGKILL");
-          log.info(`Force killed remaining process ${proc.pid}`);
+          log.debug(
+            `Force killed remaining process`,
+            { id: proc.pid },
+            LogTag.TRACKING,
+          );
         } catch (error) {
-          log.error(
-            `Failed to force kill remaining process ${proc.pid}:`,
-            error,
+          logger.error(
+            `Failed to force kill remaining process:`,
+            {
+              id: proc.pid,
+              error,
+            },
+            LogTag.TRACKING,
           );
         }
       }
@@ -90,7 +121,7 @@ export async function killDirectoyProcess(directoryPath: string) {
       message: `Killed ${directoryProcesses.length} processes`,
     };
   } catch (error) {
-    log.error("Error killing processes:", error);
+    logger.error("Error killing processes:", { error }, LogTag.TRACKING);
     return {
       success: false,
       message: `Failed to kill processes: ${error}`,
@@ -100,12 +131,10 @@ export async function killDirectoyProcess(directoryPath: string) {
 
 export async function monitorDirectoryProcesses(
   directoryPath: string,
-  sendEvent:boolean=false,
 ): Promise<ProcessInfo> {
-  await delay(60000*5);
+  await delay(60000 * 5);
   const startTime = new Date();
-  let sentGameRunningEvent:boolean = false;
-  console.log(`Monitoring started at: ${startTime}`);
+  logger.debug(`Monitoring started at: ${startTime}`, {}, LogTag.TRACKING);
 
   const checkProcesses = async (): Promise<boolean> => {
     const processes = await psList();
@@ -120,14 +149,10 @@ export async function monitorDirectoryProcesses(
     });
 
     if (directoryProcesses.length > 0) {
-      console.log(
-        `\nFound ${directoryProcesses.length} processes at ${new Date()}:`,
-      );
-      log.debug(`Found ${directoryProcesses.length}. Continue tracking`);
       return true;
     }
 
-    console.log(`\nNo processes found at ${new Date()}`);
+    logger.debug(`\nNo processes found`, { date: new Date() }, LogTag.TRACKING);
     return false;
   };
 
@@ -140,9 +165,10 @@ export async function monitorDirectoryProcesses(
   }
 
   const endTime = new Date();
-  console.log(`\nMonitoring ended at: ${endTime}`);
-  console.log(
-    `Total monitoring time: ${endTime.getTime() - startTime.getTime()}ms`,
+  logger.debug(
+    `Monitoring ended at: ${endTime}`,
+    { date: endTime, total: endTime.getTime() - startTime.getTime() },
+    LogTag.TRACKING,
   );
 
   return {

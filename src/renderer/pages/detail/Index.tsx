@@ -26,7 +26,7 @@ import { SectionSettings } from "./settings/Index";
 import { SectionReview } from "./SectionReview";
 import { SectionActivities } from "./activities/Index";
 import { Container } from "@/components/Container";
-import { ImageWithFallback } from "@/components/cover/cover";
+import { Image } from "@/components/image/Image";
 
 interface Section {
   id: string;
@@ -99,6 +99,12 @@ const GameDetailsContent: React.FC = () => {
     system: [
       { id: "metadata", icon: ImageIcon, label: "Metadata", show: true },
       { id: "settings", icon: Settings, label: "Settings", show: true },
+      {
+        id: "uninstall",
+        icon: Trash,
+        label: "Uninstall",
+        show: selectedGame?.isInstalled ?? false,
+      },
     ],
   };
 
@@ -235,12 +241,7 @@ const GameDetailsContent: React.FC = () => {
             </Button>
 
             <div className="overflow-hidden rounded-lg shadow-md">
-              <ImageWithFallback
-                src={cover!}
-                className="h-auto w-full"
-                alt={undefined}
-                style={undefined}
-              />
+              <Image src={cover!} alt={undefined} />
             </div>
 
             {!collapsed && (
@@ -286,24 +287,9 @@ const GameDetailsContent: React.FC = () => {
               </div>
             )}
           </div>
-
-          {selectedGame?.isInstalled && (
-            <div className="bg-gray-800/80 p-4">
-              <Button
-                variant="destructive"
-                className={`w-full ${!collapsed ? "justify-start" : "justify-center"}`}
-                onClick={() => window.game.uninstall(selectedGame.id)}
-              >
-                <Trash className={`h-4 w-4 ${!collapsed ? "mr-2" : ""}`} />
-                {!collapsed && <span>Uninstall</span>}
-              </Button>
-            </div>
-          )}
         </div>
 
-        <Container>
-          {renderContent()}
-        </Container>
+        <Container>{renderContent()}</Container>
       </div>
     </div>
   );

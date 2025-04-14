@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import Cover from "../../components/Cover";
+import Cover from "./cover/Cover";
 import _ from "lodash";
 import { useGames } from "@/context/DatabaseContext";
 import { Input } from "../../components/ui/input";
