@@ -3,9 +3,11 @@ import { GameReview } from "@prisma/client";
 import { useGames } from "@/context/DatabaseContext";
 import { Card } from "@/components/card/Card";
 import { Input } from "@/components/input/Input";
+import { useNotifications } from "@/components/NotificationSystem";
 
 export function SectionReview() {
   const { selectedGame } = useGames();
+  const { addNotification } = useNotifications();
   const isFirstRender = useRef(true);
   const lastSentData = useRef<Partial<GameReview> | null>(null);
   const [reviewText, setReviewText] = useState(
@@ -60,6 +62,12 @@ export function SectionReview() {
     const saveTimeout = setTimeout(() => {
       window.game.setReview(data);
       lastSentData.current = data;
+      addNotification({
+        title: "Saved",
+        message: "Your review has been saved.",
+        type: "success",
+        duration: 2000,
+      });
     }, 1500);
 
     return () => clearTimeout(saveTimeout);

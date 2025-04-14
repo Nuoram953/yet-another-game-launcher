@@ -108,6 +108,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
   React.useEffect(() => {
     fetchGames();
+    window.library.refresh()
   }, [filters, sort]);
 
   React.useEffect(() => {

@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { X } from "lucide-react";
-import { Toast, ToastProvider, ToastViewport } from "@/components/ui/toast";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  ReactNode,
+} from "react";
 
-// Types from our notification manager
+// Types from your notification system
 interface BaseNotification {
   id: string;
   title: string;
@@ -21,8 +24,6 @@ interface ProgressNotification extends BaseNotification {
   autoClose?: boolean;
 }
 
-type Notification = BaseNotification | ProgressNotification;
-
 declare global {
   interface Window {
     electron: {
@@ -32,172 +33,235 @@ declare global {
   }
 }
 
-interface NotificationItemProps {
-  notification: Notification;
-  onClose: (id: string) => void;
+type Notification = BaseNotification | ProgressNotification;
+
+// Create context for notification management
+interface NotificationContextType {
+  notifications: Notification[];
+  addNotification: (
+    notification:
+      | Omit<BaseNotification, "id">
+      | Omit<ProgressNotification, "id">,
+  ) => string;
+  updateNotification: (
+    id: string,
+    updates: Partial<Omit<Notification, "id">>,
+  ) => void;
+  removeNotification: (id: string) => void;
+  clearAllNotifications: () => void;
 }
 
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined,
+);
+
+// Provider component
+export const NotificationProvider = ({ children }: { children: ReactNode }) => {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  // Setup electron listeners (same as your existing component)
+  useEffect(() => {
+    if (window.electron) {
+      // Listen for new notifications
+      window.electron.on("notification", (notification: Notification) => {
+        setNotifications((prev) => [...prev, notification]);
+      });
+
+      // Listen for notification updates (progress)
+      window.electron.on(
+        "notification-update",
+        (update: { id: string; current: number; message?: string }) => {
+          setNotifications((prev) =>
+            prev.map((notif) =>
+              notif.id === update.id && isProgressNotification(notif)
+                ? ({
+                    ...notif,
+                    current: update.current,
+                    message: update.message || notif.message,
+                  } as ProgressNotification)
+                : notif,
+            ),
+          );
+        },
+      );
+
+      // Listen for notification close
+      window.electron.on("notification-close", (id: string) => {
+        setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+      });
+
+      // Listen for clear all notifications
+      window.electron.on("clear-notifications", () => {
+        setNotifications([]);
+      });
+
+      return () => {
+        // Cleanup listeners
+        window.electron.removeAllListeners("notification");
+        window.electron.removeAllListeners("notification-update");
+        window.electron.removeAllListeners("notification-close");
+        window.electron.removeAllListeners("clear-notifications");
+      };
+    }
+  }, []);
+
+  // Function to generate unique ID
+  const generateId = () =>
+    `notification-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+  // Add a new notification directly from a component
+  const addNotification = useCallback(
+    (
+      notificationData:
+        | Omit<BaseNotification, "id">
+        | Omit<ProgressNotification, "id">,
+    ): string => {
+      const id = generateId();
+      const newNotification = { ...notificationData, id } as Notification;
+
+      setNotifications((prev) => [...prev, newNotification]);
+
+      // Auto-remove notification after duration (if specified)
+      if (newNotification.duration && newNotification.duration > 0) {
+        setTimeout(() => {
+          setNotifications((prev) => prev.filter((n) => n.id !== id));
+        }, newNotification.duration);
+      }
+
+      return id;
+    },
+    [],
+  );
+
+  // Update an existing notification (useful for progress updates)
+  const updateNotification = useCallback(
+    (id: string, updates: Partial<Omit<Notification, "id">>) => {
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.id === id ? { ...notif, ...updates } : notif,
+        ),
+      );
+
+      // Handle auto-close for completed progress notifications if configured
+      if (
+        updates.type === "progress" &&
+        "current" in updates &&
+        "total" in updates &&
+        updates.current! >= updates.total!
+      ) {
+        const notification = notifications.find((n) => n.id === id);
+        if (isProgressNotification(notification) && notification.autoClose) {
+          setTimeout(() => {
+            setNotifications((prev) => prev.filter((n) => n.id !== id));
+          }, 1000); // Wait a second to show 100% before closing
+        }
+      }
+    },
+    [notifications],
+  );
+
+  // Remove a notification
+  const removeNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  }, []);
+
+  // Clear all notifications
+  const clearAllNotifications = useCallback(() => {
+    setNotifications([]);
+  }, []);
+
+  return (
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        addNotification,
+        updateNotification,
+        removeNotification,
+        clearAllNotifications,
+      }}
+    >
+      {children}
+    </NotificationContext.Provider>
+  );
+};
+
+// Helper function for type checking
 function isProgressNotification(
-  notification: Notification,
+  notification?: Notification,
 ): notification is ProgressNotification {
   return (
+    !!notification &&
     notification.type === "progress" &&
     "current" in notification &&
     "total" in notification
   );
 }
 
-const NotificationItem: React.FC<NotificationItemProps> = ({
-  notification,
-  onClose,
-}) => {
-  const [progress, setProgress] = useState(
-    isProgressNotification(notification)
-      ? (notification.current / notification.total) * 100
-      : 0,
-  );
-
-  useEffect(() => {
-    if (isProgressNotification(notification)) {
-      setProgress((notification.current / notification.total) * 100);
-    }
-    //@ts-ignore
-  }, [notification.current, notification.total]);
-
-  const getAlertVariant = (): "default" | "destructive" | null | undefined => {
-    switch (notification.type) {
-      case "success":
-        return "default"; // Adjust as needed based on your Alert component variants
-      case "error":
-        return "destructive";
-      case "warning":
-        return undefined; // Assuming 'warning' is not a valid variant, using default
-      default:
-        return "default";
-    }
-  };
-
-  if (notification.useToast) {
-    return (
-      <Toast className="w-full">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1">
-            <h3 className="font-semibold">{notification.title}</h3>
-            <p className="text-sm text-muted-foreground">
-              {notification.message}
-            </p>
-            {notification.type === "progress" && (
-              <div className="mt-2">
-                <Progress value={progress} className="h-2" />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {Math.round(progress)}% Complete
-                </p>
-              </div>
-            )}
-          </div>
-          <button
-            onClick={() => onClose(notification.id)}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      </Toast>
+// Custom hook for using notifications in any component
+export const useNotifications = () => {
+  const context = useContext(NotificationContext);
+  if (context === undefined) {
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider",
     );
   }
-
-  return (
-    <Alert variant={getAlertVariant()} className="mb-4">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <AlertTitle>{notification.title}</AlertTitle>
-          <AlertDescription>{notification.message}</AlertDescription>
-          {notification.type === "progress" && (
-            <div className="mt-3">
-              <Progress value={progress} className="h-2" />
-              <p className="mt-1 text-xs text-muted-foreground">
-                {Math.round(progress)}% Complete
-              </p>
-            </div>
-          )}
-        </div>
-        <button
-          onClick={() => onClose(notification.id)}
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
-    </Alert>
-  );
+  return context;
 };
 
-const NotificationSystem: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+// Convenience hooks for different notification types
+export const useToast = () => {
+  const { addNotification } = useNotifications();
 
-  useEffect(() => {
-    // Listen for new notifications
-    window.electron.on("notification", (notification: Notification) => {
-      setNotifications((prev) => [...prev, notification]);
-    });
+  return {
+    success: (title: string, message: string, duration = 5000) =>
+      addNotification({
+        title,
+        message,
+        type: "success",
+        useToast: true,
+        duration,
+      }),
 
-    // Listen for notification updates (progress)
-    window.electron.on(
-      "notification-update",
-      (update: { id: string; current: number; message?: string }) => {
-        setNotifications((prev) =>
-          prev.map((notif) =>
-            notif.id === update.id &&
-            "type" in notif &&
-            notif.type === "progress"
-              ? ({
-                  ...notif,
-                  current: update.current,
-                  message: update.message || notif.message,
-                } as ProgressNotification)
-              : notif,
-          ),
-        );
-      },
-    );
+    error: (title: string, message: string, duration = 5000) =>
+      addNotification({
+        title,
+        message,
+        type: "error",
+        useToast: true,
+        duration,
+      }),
 
-    // Listen for notification close
-    window.electron.on("notification-close", (id: string) => {
-      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
-    });
+    info: (title: string, message: string, duration = 5000) =>
+      addNotification({
+        title,
+        message,
+        type: "info",
+        useToast: true,
+        duration,
+      }),
 
-    // Listen for clear all notifications
-    window.electron.on("clear-notifications", () => {
-      setNotifications([]);
-    });
+    warning: (title: string, message: string, duration = 5000) =>
+      addNotification({
+        title,
+        message,
+        type: "warning",
+        useToast: true,
+        duration,
+      }),
 
-    return () => {
-      // Cleanup listeners
-      window.electron.removeAllListeners("notification");
-      window.electron.removeAllListeners("notification-update");
-      window.electron.removeAllListeners("notification-close");
-      window.electron.removeAllListeners("clear-notifications");
-    };
-  }, []);
-
-  const handleClose = (id: string) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+    progress: (
+      title: string,
+      message: string,
+      options?: { total?: number; current?: number; autoClose?: boolean },
+    ) =>
+      addNotification({
+        title,
+        message,
+        type: "progress",
+        useToast: true,
+        total: options?.total || 100,
+        current: options?.current || 0,
+        autoClose: options?.autoClose || true,
+      }),
   };
-
-  return (
-    <ToastProvider>
-      <div className="fixed bottom-0 right-0 z-50 flex w-full max-w-md flex-col space-y-4 p-4">
-        {notifications.map((notification) => (
-          <NotificationItem
-            key={notification.id}
-            notification={notification}
-            onClose={handleClose}
-          />
-        ))}
-      </div>
-      <ToastViewport />
-    </ToastProvider>
-  );
 };
-
-export default NotificationSystem;
