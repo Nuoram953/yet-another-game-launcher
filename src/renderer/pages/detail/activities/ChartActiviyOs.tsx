@@ -1,7 +1,5 @@
-import Tile from "@/components/Tile";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BubbleDataPoint, ChartData, Point } from "chart.js";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Doughnut } from "react-chartjs-2";
 
 import {
@@ -16,6 +14,7 @@ import {
   BarElement,
   ArcElement,
 } from "chart.js";
+import { Card } from "@/components/card/Card";
 
 ChartJS.register(
   CategoryScale,
@@ -35,25 +34,16 @@ interface Props {
 
 export const ChartActivityOs = ({ chartData }: Props) => {
   return (
-    <Tile>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Activity per OS</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="mx-auto flex items-center justify-center">
-        <div className="mx-auto max-h-[400px]">
-          <Doughnut
-            data={
-              chartData as ChartData<
-                "doughnut",
-                (number | [number, number] | Point | BubbleDataPoint | null)[],
-                unknown
-              >
-            }
-          />
-        </div>
-      </CardContent>
-    </Tile>
+    <Card title="Activity per OS">
+      <Doughnut
+        data={
+          chartData as ChartData<
+            "doughnut",
+            (number | [number, number] | Point | BubbleDataPoint | null)[],
+            unknown
+          >
+        }
+      />
+    </Card>
   );
 };

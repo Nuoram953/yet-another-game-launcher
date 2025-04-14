@@ -22,7 +22,7 @@ const inputStyles = cva(
         true: "cursor-not-allowed opacity-50",
       },
       color: {
-        dark: "!text-white !bg-gray-600",
+        dark: "!text-white !bg-gray-700",
         light: "!text-black !bg-white",
       },
     },

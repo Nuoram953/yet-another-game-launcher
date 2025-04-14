@@ -208,10 +208,7 @@ export const SectionActivities = () => {
       </div>
 
       <ChartActiviy chartData={chartData} />
-
-      <div className="flex flex-row gap-4">
-        <ChartActivityOs chartData={chartOsData} />
-      </div>
+      <ChartActivityOs chartData={chartOsData} />
 
       <div className="h-20"></div>
     </div>

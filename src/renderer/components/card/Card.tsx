@@ -1,49 +1,19 @@
-import { X } from "lucide-react";
 import React from "react";
 
 interface CardProps {
   title: string;
   children: React.ReactNode;
-  className?: string;
-  header?: boolean;
-  footer?: React.ReactNode;
-  onClose?: () => void;
+  showSeparator?: boolean;
 }
 
-export const Card = ({
-  title,
-  children,
-  className = "",
-  header = false,
-  footer = false,
-  onClose,
-}: CardProps) => {
+export const Card = ({ title, children, showSeparator = true }: CardProps) => {
   return (
-    <div
-      className={`overflow-hidden rounded-lg bg-gray-800 shadow-lg ${className}`}
-    >
-      {/* Card Header */}
-      <div className="flex items-center justify-between border-gray-700 px-6">
-        <h3 className="text-lg font-medium text-gray-100">{title}</h3>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="text-gray-400 transition-colors hover:text-gray-200"
-          >
-            <X size={20} />
-          </button>
-        )}
+    <div className="overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-md focus-visible:ring-gray-500">
+      <div className="p-4">
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
+        {showSeparator && <div className="my-2 border-b border-gray-300"></div>}
+        <div className="mt-3">{children}</div>
       </div>
-
-      {/* Card Content */}
-      <div className="px-6 py-4">{children}</div>
-
-      {/* Optional Footer */}
-      {footer && (
-        <div className="border-t border-gray-700 bg-gray-900 px-6 py-4">
-          {footer}
-        </div>
-      )}
     </div>
   );
 };

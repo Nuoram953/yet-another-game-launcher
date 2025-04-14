@@ -12,10 +12,9 @@ const Info = () => {
   }
 
   return (
-    <Card title={""}>
+    <Card title={selectedGame.name} showSeparator={false}>
       <div className="mb-6 flex flex-col gap-6 md:flex-row">
         <div className="flex-grow">
-          <h1 className="mb-2 text-3xl font-bold">{selectedGame.name}</h1>
           <div className="mb-4 flex flex-wrap gap-2">
             <span className="text-gray-600">
               {selectedGame?.developers.length &&
@@ -82,26 +81,6 @@ const Info = () => {
             <div className="text-sm text-gray-600">Release Date</div>
           </div>
         </div>
-      </div>
-
-      <div className="border-t pt-4">
-        <h3 className="mb-2 text-lg font-semibold">Available Platforms</h3>
-        <div className="flex flex-wrap gap-2">
-          {[].map((platform) => (
-            <Badge key={platform} variant="secondary">
-              {platform}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-4 border-t pt-4">
-        <h3 className="mb-2 text-lg font-semibold">Awards & Recognition</h3>
-        <ul className="list-inside list-disc text-gray-700">
-          {[].map((award) => (
-            <li key={award}>{award}</li>
-          ))}
-        </ul>
       </div>
     </Card>
   );
