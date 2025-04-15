@@ -5,17 +5,17 @@ import React from "react";
 
 export const HowLongToBeat = () => {
   const { selectedGame } = useGames();
-  const totalPlaytime = (selectedGame?.timePlayed || 0)*60;
+  const totalPlaytime = (selectedGame?.timePlayed || 0) * 60;
 
   if (!selectedGame) {
     return;
   }
 
-  const formatTime = (seconds:number) => {
+  const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
-    
+
     if (hrs > 0) {
       return `${hrs}h ${mins}m`;
     } else if (mins > 0) {
@@ -24,7 +24,7 @@ export const HowLongToBeat = () => {
       return `${secs}s`;
     }
   };
-  
+
   const getProgressData = (goalTime: number) => {
     const percent = Math.min(100, (totalPlaytime / goalTime) * 100);
     const remaining = Math.max(0, goalTime - totalPlaytime);
@@ -35,7 +35,10 @@ export const HowLongToBeat = () => {
   const extrasData = getProgressData(selectedGame?.mainPlusExtra!);
   const completionistData = getProgressData(selectedGame?.completionist!);
 
-
+  const getTimelinePosition = (timeValue) => {
+    const position = (timeValue / selectedGame?.completionist!) * 100;
+    return `${Math.min(Math.max(position, 0), 100)}%`;
+  };
 
   return (
     <Card title="Progress Tracker">
@@ -47,13 +50,15 @@ export const HowLongToBeat = () => {
         <div
           className="absolute top-0 flex flex-col items-center"
           style={{
-            left: `${Math.min((totalPlaytime / selectedGame.completionist!) * 100, 100)}%`,
+            left: getTimelinePosition(totalPlaytime),
+            // Ensure user position appears above other markers
+            zIndex: 20,
           }}
         >
           <div className="z-10 h-3 w-3 rounded-full bg-white shadow-lg shadow-indigo-500/50"></div>
           <div className="my-1 h-8 w-px bg-white/30"></div>
           <div className="whitespace-nowrap rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 px-3 py-1 text-xs text-white shadow-lg">
-            You: {formatTime(selectedGame?.timePlayed*60)}
+            You: {formatTime(selectedGame?.timePlayed * 60)}
           </div>
         </div>
 
