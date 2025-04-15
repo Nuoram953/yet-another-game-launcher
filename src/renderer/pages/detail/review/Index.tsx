@@ -100,7 +100,6 @@ export function SectionReview() {
       <Card title={"Review"}>
         <div className="p-6">
           <div className="mb-6">
-            <h3 className="mb-3 text-lg font-bold">Category Ratings</h3>
 
             {Object.entries({
               graphics: "Graphics",
@@ -136,7 +135,6 @@ export function SectionReview() {
           </div>
 
           <div className="mb-4">
-            <label className="mb-2 block font-medium">Review</label>
             <Input
               label="Summary"
               color="dark"

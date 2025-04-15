@@ -37,6 +37,9 @@ model Game {
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
   openedAt               DateTime?
+  mainStory              Int?
+  mainPlusExtra          Int?
+  completionist          Int?
   activities             GameActivity[]
   achievements           GameAchievement[]
   developers             GameDeveloper[]

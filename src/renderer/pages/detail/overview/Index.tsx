@@ -4,15 +4,17 @@ import { Trailer } from "./Trailer";
 import Info from "./Info";
 import { Screenshots } from "./Screenshots";
 import { EventTimeline } from "./Timeline";
+import { HowLongToBeat } from "./HowLongToBeat";
 
 export const SectionOverview = () => {
   return (
-    <div className="mx-auto w-full space-y-4 py-4 mb-[100px]">
+    <div className="mx-auto mb-[100px] w-full space-y-4 py-4">
       <StatsPanel />
       <Trailer />
-      <Screenshots/>
+      <Screenshots />
       <Info />
       <EventTimeline />
+      <HowLongToBeat />
     </div>
   );
 };

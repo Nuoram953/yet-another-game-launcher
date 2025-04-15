@@ -100,7 +100,7 @@ export const SectionAchievements = () => {
     <div className="mx-auto w-full space-y-4 py-4">
       {selectedGame?.achievements.filter((item) => item.isUnlocked).length >
         0 && (
-        <Card title="Achievement History">
+        <Card title="History">
           <AchievementTimeline />
         </Card>
       )}

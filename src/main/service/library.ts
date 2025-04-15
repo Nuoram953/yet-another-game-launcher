@@ -7,6 +7,7 @@ import Steam from "../api/storefront/steam";
 import notificationManager from "../manager/notificationManager";
 import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
+import HowLongToBeat from "../api/metadata/hltb";
 
 export const getStorefronts = async () => {
   return await queries.Storefront.getAll();
@@ -67,7 +68,7 @@ export const getGame = async (id: string) => {
 
   if (_.isNil(game.openedAt)) {
     notificationManager.show({
-      id: NotificationType.NEW_GAME+game.id,
+      id: NotificationType.NEW_GAME + game.id,
       title: game.name,
       message: "Downloading partial assets and metadata",
       type: "progress",
@@ -85,6 +86,16 @@ export const getGame = async (id: string) => {
       for (const publisher of publishers) {
         await queries.GamePublisher.findOrCreate(game.id, publisher);
       }
+
+      const ht = new HowLongToBeat();
+      const data = await ht.search(game.name);
+
+      await queries.Game.update(id, {
+        openedAt: new Date(),
+        mainStory: data?.mainStory,
+        mainPlusExtra: data?.mainPlusExtra,
+        completionist: data?.completionist,
+      });
     } catch (e) {
       console.log(e);
     }
@@ -94,9 +105,11 @@ export const getGame = async (id: string) => {
 
   await updateAchievements(game);
 
-  await queries.Game.update(id, { openedAt: new Date() });
+  await queries.Game.update(id, {
+    openedAt: new Date(),
+  });
 
-  notificationManager.updateProgress(NotificationType.NEW_GAME+game.id, 100)
+  notificationManager.updateProgress(NotificationType.NEW_GAME + game.id, 100);
 
   return await queries.Game.getGameById(id);
 };

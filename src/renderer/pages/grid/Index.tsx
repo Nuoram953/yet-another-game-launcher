@@ -136,7 +136,7 @@ export const Grid = () => {
           </div>
           <div>
             <Button
-              intent={"icon"}
+              intent={"primary"}
               text="Add game"
               icon={Plus}
               size={"small"}

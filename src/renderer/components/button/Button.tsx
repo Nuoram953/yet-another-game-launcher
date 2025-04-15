@@ -64,7 +64,12 @@ export const Button: React.FC<ButtonProps> = ({
     onClick={onClick}
     {...props}
   >
-    {!_.isUndefined(Icon) && <Icon />}
-    <p>{text}</p>
+    {!_.isUndefined(Icon) && (
+      <div className="flex flew-row gap-2 items-center justify-center">
+        <Icon />
+        <p className="text-center">{text}</p>
+      </div>
+    )}
+    {_.isUndefined(Icon) && <p>{text}</p>}
   </button>
 );

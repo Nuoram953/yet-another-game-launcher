@@ -1,9 +1,10 @@
 import React from "react";
-import { Calendar, Clock, Badge, Trophy, Bell } from "lucide-react";
+import { Calendar, Clock, Badge, Trophy, Bell, CircleCheck, Gamepad2, CirclePlus } from "lucide-react";
 import { useGames } from "@/context/DatabaseContext";
 import { Card } from "@/components/card/Card";
+import BadgeDropdown from "@/components/dropdown/StatusSelection";
+import { useTranslation } from "react-i18next";
 
-// Define TypeScript interfaces for our data structures
 interface Event {
   type: "status" | "achievement" | "alert" | string;
   title: string;
@@ -11,70 +12,57 @@ interface Event {
   timestamp: bigint | Date;
 }
 
-interface EventsGroupedByDate {
-  [date: string]: Event[];
-}
-
-interface EventTimelineProps {
-  events: Event[];
-}
-
 export const EventTimeline = () => {
   const { selectedGame } = useGames();
+  const {t} = useTranslation("GameStatus");
 
   const getDateFromBigint = (timestamp: bigint): Date => {
-    // Convert from milliseconds to seconds if needed (if timestamp is too large)
     const timestampNumber = Number(timestamp);
-    // Check if timestamp is in seconds (Unix standard) or milliseconds
     return timestampNumber > 10000000000
-      ? new Date(timestampNumber) // Already in milliseconds
-      : new Date(timestampNumber * 1000); // Convert seconds to milliseconds
+      ? new Date(timestampNumber)
+      : new Date(timestampNumber * 1000);
   };
 
-  const getDateString = (timestamp: bigint): string => {
-    const date = getDateFromBigint(timestamp);
-    return date.toISOString().split("T")[0];
+  const status =
+    selectedGame?.statusHistory.map((status) => ({
+      type: status.gameStatus.name,
+      title: status.gameStatus.name,
+      description: "",
+      timestamp: status.createdAt,
+    })) || [];
+
+  let events: Event[] = [...status];
+
+  if (selectedGame?.createdAt) {
+    events.push({
+      type: "added",
+      title: "Added to library",
+      description: "",
+      timestamp: selectedGame.createdAt,
+    });
+  }
+
+  const sortedEvents = [...events].sort((a, b) => {
+    const timestampA =
+      typeof a.timestamp === "bigint"
+        ? Number(a.timestamp)
+        : (a.timestamp as Date).getTime();
+    const timestampB =
+      typeof b.timestamp === "bigint"
+        ? Number(b.timestamp)
+        : (b.timestamp as Date).getTime();
+    return timestampA - timestampB;
+  });
+
+  const formatTime = (timestamp: bigint | Date): string => {
+    const date =
+      typeof timestamp === "bigint" ? getDateFromBigint(timestamp) : timestamp;
+    return date.toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "numeric" });
   };
 
-  const status = selectedGame!.statusHistory.map((status) => ({
-    type: "status",
-    title: status.gameStatus.name,
-    description: "",
-    timestamp: status.createdAt,
-  }));
-
-  const events: Event[] = status;
-
-  const groupedEvents: EventsGroupedByDate = events.reduce(
-    (acc: EventsGroupedByDate, event) => {
-      const eventDate = getDateString(
-        typeof event.timestamp === "bigint"
-          ? event.timestamp
-          : BigInt(event.timestamp.getTime()),
-      );
-
-      if (!acc[eventDate]) {
-        acc[eventDate] = [];
-      }
-
-      acc[eventDate].push(event);
-      return acc;
-    },
-    {},
-  );
-
-  // Sort dates in descending order (newest first)
-  const sortedDates: string[] = Object.keys(groupedEvents).sort(
-    (a, b) => new Date(b).getTime() - new Date(a).getTime(),
-  );
-
-  const formatTime = (timestamp: bigint): string => {
-    const date = getDateFromBigint(timestamp);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
+  const formatDate = (timestamp: bigint | Date): string => {
+    const date =
+      typeof timestamp === "bigint" ? getDateFromBigint(timestamp) : timestamp;
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -92,82 +80,80 @@ export const EventTimeline = () => {
     }
   };
 
-  // Event icon based on type
+  const getEventColor = (status: string): string => {
+    const colors: { [key: string]: string } = {
+      playing: "bg-blue-500",
+      played: "bg-yellow-500",
+      planned: "bg-purple-500",
+      dropped: "bg-red-500",
+      completed: "bg-green-500",
+    };
+    return colors[status] || "bg-gray-500";
+  };
+
   const getEventIcon = (type: string): JSX.Element => {
+    const size = 24;
     switch (type) {
-      case "status":
-        return <Badge className="text-blue-500" size={20} />;
-      case "achievement":
-        return <Trophy className="text-yellow-500" size={20} />;
-      case "alert":
-        return <Bell className="text-red-500" size={20} />;
+      case "added":
+        return <CirclePlus size={size} />;
+      case "completed":
+        return <CircleCheck size={size} />;
+      case "playing":
+        return <Gamepad2 size={size} />;
       default:
-        return <div className="h-5 w-5 rounded-full bg-gray-500"></div>;
+        return <div className="h-4 w-4 rounded-full"></div>;
     }
   };
 
-  // Get color based on event type
-  const getEventColor = (type: string): string => {
-    switch (type) {
-      case "status":
-        return "border-blue-500 bg-blue-50";
-      case "achievement":
-        return "border-yellow-500 bg-yellow-50";
-      case "alert":
-        return "border-red-500 bg-red-50";
-      default:
-        return "border-gray-500 bg-gray-50";
-    }
-  };
+  const currentStatusIndex =
+    sortedEvents.length > 0 ? sortedEvents.length - 1 : 0;
 
   return (
-    <Card title={"Timeline"}>
-      {sortedDates.map((date) => (
-        <div key={date} className="mb-10">
-          <div className="mb-4 flex items-center">
-            <div className="mr-3 rounded-full bg-gray-100 p-2">
-              <Calendar className="text-gray-600" size={18} />
-            </div>
-            <h3 className="text-lg font-semibold text-white">
-              {formatDate(date)}
-            </h3>
-          </div>
+    <Card title="Game Status">
+      <BadgeDropdown />
+      {sortedEvents.length > 0 ? (
+        <div className="relative w-full px-4 py-6">
+          {/* Timeline Bar */}
+          <div className="absolute left-0 right-0 top-8 h-1 bg-gray-700"></div>
 
-          <div className="ml-4 space-y-4 border-l-2 border-gray-200 pl-6">
-            {groupedEvents[date].map((event, index) => (
-              <div key={index} className="relative">
-                <div className="absolute -left-9 mt-1.5 rounded-full bg-white p-1">
+          {/* Progress Bar */}
+          <div
+            className="absolute left-0 top-8 h-1 bg-gray-700 transition-all duration-300"
+            style={{
+              width: `${(currentStatusIndex / Math.max(sortedEvents.length - 1, 1)) * 100}%`,
+            }}
+          ></div>
+
+          {/* Timeline Items */}
+          <div className="relative flex justify-start gap-14">
+            {sortedEvents.map((event, index) => (
+              <div
+                key={index}
+                className="relative z-10 flex flex-col items-center"
+              >
+                {/* Status Circle */}
+                <div
+                  className={`flex h-10 w-10 mt-[-10px] items-center justify-center rounded-full border-2 text-white ${index <= currentStatusIndex ? getEventColor(event.type) : "border-gray-700 bg-gray-800"}`}
+                >
                   {getEventIcon(event.type)}
                 </div>
 
-                <div
-                  className={`rounded-lg border-l-4 p-4 ${getEventColor(event.type)} transition-all duration-200 hover:shadow-md`}
-                >
-                  <div className="mb-2 flex items-center">
-                    <Clock className="mr-2 text-gray-400" size={14} />
-                    <span className="text-sm text-gray-500">
-                      {formatTime(
-                        typeof event.timestamp === "bigint"
-                          ? event.timestamp
-                          : BigInt(event.timestamp.getTime()),
-                      )}
-                    </span>
+                {/* Status Label */}
+                <div className="mt-2 text-center">
+                  <div
+                    className={`text-sm font-medium ${index <= currentStatusIndex ? "text-white" : "text-gray-400"}`}
+                  >
+                    {t(event.title)}
                   </div>
-
-                  <h4 className="mb-1 text-lg font-medium text-gray-800">
-                    {event.title}
-                  </h4>
-                  {event.description && (
-                    <p className="text-sm text-gray-600">{event.description}</p>
-                  )}
+                  <div className="mt-1 text-xs text-gray-500">
+                    {formatTime(event.timestamp)}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      ))}
-
-      {sortedDates.length === 0 && (
+      ) : (
         <div className="rounded-lg py-10 text-center text-gray-500">
           <div className="mb-3">
             <Calendar className="mx-auto text-gray-400" size={32} />

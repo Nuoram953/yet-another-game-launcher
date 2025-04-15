@@ -2,7 +2,7 @@ import React from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import _ from "lodash";
 
-const image = cva(["w-full", "rounded-xl", "rounded-b-none"], {
+const image = cva(["w-full", "rounded-xl"], {
   variants: {
     intent: {
       cover: [],
