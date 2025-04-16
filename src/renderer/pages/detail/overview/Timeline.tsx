@@ -1,5 +1,16 @@
 import React from "react";
-import { Calendar, Clock, Badge, Trophy, Bell, CircleCheck, Gamepad2, CirclePlus } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Badge,
+  Trophy,
+  Bell,
+  CircleCheck,
+  Gamepad2,
+  CirclePlus,
+  Pencil,
+  Cross,
+} from "lucide-react";
 import { useGames } from "@/context/DatabaseContext";
 import { Card } from "@/components/card/Card";
 import BadgeDropdown from "@/components/dropdown/StatusSelection";
@@ -14,7 +25,7 @@ interface Event {
 
 export const EventTimeline = () => {
   const { selectedGame } = useGames();
-  const {t} = useTranslation("GameStatus");
+  const { t } = useTranslation("GameStatus");
 
   const getDateFromBigint = (timestamp: bigint): Date => {
     const timestampNumber = Number(timestamp);
@@ -57,7 +68,11 @@ export const EventTimeline = () => {
   const formatTime = (timestamp: bigint | Date): string => {
     const date =
       typeof timestamp === "bigint" ? getDateFromBigint(timestamp) : timestamp;
-    return date.toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "numeric" });
+    return date.toLocaleDateString([], {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   const formatDate = (timestamp: bigint | Date): string => {
@@ -133,7 +148,7 @@ export const EventTimeline = () => {
               >
                 {/* Status Circle */}
                 <div
-                  className={`flex h-10 w-10 mt-[-10px] items-center justify-center rounded-full border-2 text-white ${index <= currentStatusIndex ? getEventColor(event.type) : "border-gray-700 bg-gray-800"}`}
+                  className={`mt-[-10px] flex h-10 w-10 items-center justify-center rounded-full border-2 text-white ${index <= currentStatusIndex ? getEventColor(event.type) : "border-gray-700 bg-gray-800"}`}
                 >
                   {getEventIcon(event.type)}
                 </div>

@@ -119,9 +119,13 @@ export const postLaunch = async (
         `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
       );
     }
-  }
 
-  await updateAchievements(game);
+    if (game.gameStatusId === 7){
+      await queries.Game.update(game.id, { gameStatusId: 6 });
+    }
+
+    await updateAchievements(game);
+  }
 
   dataManager.send(DataRoute.RUNNING_GAME, {
     isRunning: false,
@@ -210,12 +214,11 @@ export const createOrUpdateGame = async (
       NotificationType.NEW_GAME + game.id,
       100,
     );
+
+    dataManager.send(DataRoute.REQUEST_GAMES,{})
+
     await delay(2000);
   }
-
-  // mainApp.sendToRenderer("add-new-game", {
-  //   ...game,
-  // });
 };
 
 export const downloadAchievements = () => {};

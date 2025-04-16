@@ -103,7 +103,7 @@ export const HowLongToBeat = () => {
       {/* Progress cards with glassmorphism */}
       <div className="grid gap-4">
         {/* Main Story */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-colors hover:bg-white/10">
+        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors ">
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 p-2">
@@ -137,7 +137,7 @@ export const HowLongToBeat = () => {
         </div>
 
         {/* Main + Extras */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-colors hover:bg-white/10">
+        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors ">
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 p-2">
@@ -171,7 +171,7 @@ export const HowLongToBeat = () => {
         </div>
 
         {/* Completionist */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition-colors hover:bg-white/10">
+        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors ">
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-amber-600 to-amber-400 p-2">

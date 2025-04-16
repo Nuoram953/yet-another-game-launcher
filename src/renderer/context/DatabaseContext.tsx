@@ -108,7 +108,6 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
   React.useEffect(() => {
     fetchGames();
-    window.library.refresh()
   }, [filters, sort]);
 
   React.useEffect(() => {
@@ -168,6 +167,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
   useEffect(() => {
     fetchGames();
+    window.library.refresh()
   }, []);
 
   const value: GamesContextValue = {

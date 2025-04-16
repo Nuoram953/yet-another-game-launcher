@@ -33,6 +33,23 @@ interface Props {
 }
 
 export const ChartActivityOs = ({ chartData }: Props) => {
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: false,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
   return (
     <Card title="Activity per OS">
       <Doughnut
@@ -43,6 +60,16 @@ export const ChartActivityOs = ({ chartData }: Props) => {
             unknown
           >
         }
+        options={{
+          ...chartOptions,
+          plugins: {
+            ...chartOptions.plugins,
+            legend: {
+              ...chartOptions.plugins.legend,
+              position: "top", // Use a valid string literal
+            },
+          },
+        }}
       />
     </Card>
   );

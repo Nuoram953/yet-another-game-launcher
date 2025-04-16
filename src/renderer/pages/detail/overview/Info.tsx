@@ -12,7 +12,7 @@ const Info = () => {
   }
 
   return (
-    <Card title={selectedGame.name} showSeparator={false}>
+    <Card title={selectedGame.name}>
       <div className="mb-6 flex flex-col gap-6 md:flex-row">
         <div className="flex-grow">
           <div className="mb-4 flex flex-wrap gap-2">
