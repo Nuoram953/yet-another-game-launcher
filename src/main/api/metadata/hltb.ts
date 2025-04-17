@@ -3,14 +3,45 @@ import axios from "../../../common/axiosConfig";
 import _ from "lodash";
 
 class HowLongToBeat {
-  private token = "";
 
   constructor() {
-    this.token = "6da7362d1fcf453e";
   }
-  async search(name: string){
+
+  async fetchSearchId(): Promise<string | null> {
+    try {
+      const urlBase = "https://howlongtobeat.com";
+      let response = await fetch(urlBase);
+      let html = await response.text();
+
+      const jsMatch = html.match(/_app-\w*\.js/);
+      if (!jsMatch || jsMatch.length === 0) {
+        return null;
+      }
+
+      const jsFile = jsMatch[0];
+      const jsUrl = `${urlBase}/_next/static/chunks/pages/${jsFile}`;
+
+      response = await fetch(jsUrl);
+      const jsContent = await response.text();
+
+      const tokenMatch = jsContent.match(
+        /"\/api\/ouch\/"\.concat\("(\w*)"\)\.concat\("(\w*)"\)/,
+      );
+      if (!tokenMatch || tokenMatch.length < 3) {
+        return null;
+      }
+
+      const searchId = tokenMatch[1] + tokenMatch[2];
+      return searchId;
+    } catch (err) {
+      console.error("Error fetching search ID:", err);
+      return null;
+    }
+  }
+
+  async search(name: string) {
     const response = await axios.post(
-      `https://howlongtobeat.com/api/ouch/${this.token}`,
+      `https://howlongtobeat.com/api/ouch/${await this.fetchSearchId()}`,
       {
         searchOptions: {
           filter: "",
@@ -75,7 +106,7 @@ class HowLongToBeat {
       mainStory: game.comp_main,
       mainPlusExtra: game.comp_plus,
       completionist: game.comp_100,
-    }
+    };
   }
 }
 
