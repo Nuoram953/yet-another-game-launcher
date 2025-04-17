@@ -5,10 +5,11 @@ import type {
   GameConfigGamescope,
   GameReview,
   GameStatus,
+  Ranking,
   Storefront,
   Tag,
 } from "@prisma/client";
-import type { FilterConfig, GameWithRelations, SortConfig } from "./types";
+import type { FilterConfig, GameWithRelations, RankingWithRelation, SortConfig } from "./types";
 declare global {
   interface Window {
     notifications: {
@@ -40,6 +41,11 @@ declare global {
       getAchievements: (gameId: string, count?: number) => Promise<string[]>;
       getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
     };
+    ranking:{
+      getAll: () => Promise<RankingWithRelation[]>;
+      create: (name:string, maxItems:number) => Promise<RankingWithRelation>;
+      delete: (id:number) => Promise<void>;
+    }
     library: {
       refresh: () => Promise<void>;
       getGame: (id: string) => Promise<GameWithRelations>;

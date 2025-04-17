@@ -8,7 +8,6 @@ import React, {
 import Cover from "./cover/Cover";
 import _ from "lodash";
 import { useGames } from "@/context/DatabaseContext";
-import { Input } from "../../components/ui/input";
 //@ts-ignore-error - Missing types for react-window
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -19,6 +18,7 @@ import { Filters } from "./Filter";
 import { Button } from "@/components/button/Button";
 import { Filter, Plus } from "lucide-react";
 import { Sort } from "./Sort";
+import { Input } from "@/components/input/Input";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -118,11 +118,11 @@ export const Grid = () => {
         <div className="flex flex-row items-center justify-between p-2 align-middle">
           <div className="flex w-1/3 flex-row items-center align-middle">
             <Input
+              color={"dark"}
               type="search"
               placeholder="Search library..."
               value={search}
               onChange={handleSearch}
-              className="mr-2 text-white"
             />
             <Button
               intent={"icon"}

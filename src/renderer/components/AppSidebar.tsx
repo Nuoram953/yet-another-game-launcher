@@ -5,6 +5,7 @@ import {
   Activity,
   HardDriveDownload,
   House,
+  Medal,
   Settings,
 } from "lucide-react";
 
@@ -91,6 +92,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <a onClick={() => navigate("/activity")}>
                   <Activity />
                   <span>Activity</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem key={"Ranking"}>
+              <SidebarMenuButton asChild>
+                <a onClick={() => navigate("/ranking")}>
+                  <Medal />
+                  <span>Ranking</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>

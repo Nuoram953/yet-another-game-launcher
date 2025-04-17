@@ -16,6 +16,12 @@ export type GameWithRelations = Prisma.GameGetPayload<{
   };
 }>;
 
+export type RankingWithRelation = Prisma.RankingGetPayload<{
+  include: {
+    rankings: true;
+  };
+}>;
+
 export interface FilterConfig {
   gameStatusId?: number;
   developpers?: {value:string, label:string}[]

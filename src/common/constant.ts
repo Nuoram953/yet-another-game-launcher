@@ -51,6 +51,12 @@ export enum RouteMedia {
   GET_SCREENSHOTS = "media:getScreenshots",
 }
 
+export enum RouteRanking {
+  GET_RANKINGS = "ranking:getAll",
+  CREATE = "ranking:create",
+  DELETE = "ranking:delete",
+}
+
 export enum RouteGame {
   LAUNCH = "game:launch",
   INSTALL = "game:install",

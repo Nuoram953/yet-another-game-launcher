@@ -1,4 +1,3 @@
-// dataManager.ts
 import { BrowserWindow } from "electron";
 import log from "electron-log/main";
 
@@ -48,7 +47,6 @@ class DataManager {
     }
   }
 
-  // Register a real-time data provider
   registerProvider(
     channel: string,
     provider: DataProvider,
@@ -58,7 +56,6 @@ class DataManager {
     log.info(`Provider registered for channel: ${channel}`);
   }
 
-  // Start real-time updates for a channel
   async startRealtimeUpdates(channel: string, interval: number = 1000) {
     const provider = this.providers.get(channel);
     if (!provider) {
@@ -66,10 +63,8 @@ class DataManager {
       return;
     }
 
-    // Clear any existing interval
     this.stopRealtimeUpdates(channel);
 
-    // Send initial data immediately
     try {
       const initialData = await provider();
       this.send(channel, initialData, "realtime-update");
@@ -77,7 +72,6 @@ class DataManager {
       log.error(`Error getting initial data for channel ${channel}:`, error);
     }
 
-    // Set up interval for updates
     const timer = setInterval(async () => {
       try {
         const data = await provider();
@@ -91,7 +85,6 @@ class DataManager {
     log.info(`Started real-time updates for channel: ${channel}`);
   }
 
-  // Stop real-time updates for a channel
   stopRealtimeUpdates(channel: string) {
     const timer = this.intervals.get(channel);
     if (timer) {

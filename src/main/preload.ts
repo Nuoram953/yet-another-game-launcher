@@ -1,5 +1,10 @@
 import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
-import { RouteGame, RouteLibrary, RouteMedia } from "../common/constant";
+import {
+  RouteGame,
+  RouteLibrary,
+  RouteMedia,
+  RouteRanking,
+} from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
 
 const { contextBridge, ipcRenderer } = require("electron");
@@ -36,6 +41,12 @@ contextBridge.exposeInMainWorld("library", {
     ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
   getStorefronts: () => ipcRenderer.invoke(RouteLibrary.GET_STOREFRONTS),
   getFilters: () => ipcRenderer.invoke(RouteLibrary.GET_FILTERS),
+});
+
+contextBridge.exposeInMainWorld("ranking", {
+  getAll: () => ipcRenderer.invoke(RouteRanking.GET_RANKINGS),
+  create: (name:string, maxItems:number) => ipcRenderer.invoke(RouteRanking.CREATE, name, maxItems),
+  delete: (id:number) => ipcRenderer.invoke(RouteRanking.DELETE, id),
 });
 
 contextBridge.exposeInMainWorld("game", {
@@ -76,8 +87,8 @@ contextBridge.exposeInMainWorld("data", {
 });
 
 contextBridge.exposeInMainWorld("appControl", {
-  onAppBlur: (callback:()=>void) => ipcRenderer.on("app-blur", callback),
-  onAppFocus: (callback:()=>void) => ipcRenderer.on("app-focus", callback),
+  onAppBlur: (callback: () => void) => ipcRenderer.on("app-blur", callback),
+  onAppFocus: (callback: () => void) => ipcRenderer.on("app-focus", callback),
 });
 
 contextBridge.exposeInMainWorld("store", {
@@ -85,8 +96,9 @@ contextBridge.exposeInMainWorld("store", {
 });
 
 contextBridge.exposeInMainWorld("notifications", {
-  send: (notification:any) => ipcRenderer.send("send-notification", notification),
-  onReceive: (callback:(notification:any)=>void) => {
+  send: (notification: any) =>
+    ipcRenderer.send("send-notification", notification),
+  onReceive: (callback: (notification: any) => void) => {
     ipcRenderer.on("notification", (_event, notification) => {
       callback(notification);
     });

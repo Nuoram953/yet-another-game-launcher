@@ -11,6 +11,7 @@ import * as GameReview from "./gameReview"
 import * as DownloadHistory from "./downloadHistory"
 import * as GameConfigGamescope from "./gameConfigGamescope"
 import * as Storefront from "./storefront"
+import * as Ranking from "./ranking"
 
 export default {
   Game,
@@ -25,5 +26,6 @@ export default {
   GameReview,
   DownloadHistory,
   GameConfigGamescope,
-  Storefront
+  Storefront,
+  Ranking
 };

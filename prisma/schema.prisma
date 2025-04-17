@@ -50,6 +50,7 @@ model Game {
   review                 GameReview?
   downloadHistory        DownloadHistory[]
   gamescope              GameConfigGamescope?
+  rankings               RankingGame[]
 
   @@unique([externalId, storefrontId])
 }
@@ -214,4 +215,32 @@ model GameConfigGamescope {
   refreshRate          Int
 
   @@unique([gameId])
+}
+
+model Ranking {
+  id              Int           @id @default(autoincrement())
+  name            String        @unique
+  maxItems        Int           @default(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rankingStatus   RankingStatus @relation(fields: [rankingStatusId], references: [id])
+  rankingStatusId Int
+  rankings        RankingGame[]
+}
+
+model RankingStatus {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
+  Ranking Ranking[]
+}
+
+model RankingGame {
+  id        Int      @id @default(autoincrement())
+  rank      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ranking   Ranking  @relation(fields: [rankingId], references: [id])
+  rankingId Int
+  game      Game     @relation(fields: [gameId], references: [id])
+  gameId    String
 }

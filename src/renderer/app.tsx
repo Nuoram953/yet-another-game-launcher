@@ -15,6 +15,8 @@ import { NotificationProvider } from "./components/NotificationSystem";
 import DownloadViewer from "./pages/download/Index";
 import { Grid } from "./pages/grid/Index";
 import NotificationSystem from "./components/NotificationProvider";
+import { RankingPage } from "./pages/ranking/Index";
+import { RankingEditPage } from "./pages/ranking/edit/Index";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
@@ -42,6 +44,26 @@ const App = () => {
                   element={
                     <Layout>
                       <GameDetail />
+                    </Layout>
+                  }
+                />
+
+                <Route
+                  index
+                  path="/ranking"
+                  element={
+                    <Layout>
+                      <RankingPage />
+                    </Layout>
+                  }
+                />
+
+                <Route
+                  index
+                  path="/ranking/:id"
+                  element={
+                    <Layout>
+                      <RankingEditPage />
                     </Layout>
                   }
                 />

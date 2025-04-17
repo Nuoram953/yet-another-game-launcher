@@ -2,6 +2,7 @@ import { app, BrowserWindow, globalShortcut, session, Session } from "electron";
 import * as path from "path";
 import "./handlers/media";
 import "./handlers/store";
+import "./handlers/ranking";
 import "./handlers/library";
 import "./handlers/game";
 import "reflect-metadata";

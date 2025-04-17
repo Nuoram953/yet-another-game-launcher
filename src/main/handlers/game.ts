@@ -3,10 +3,11 @@ import log from "electron-log/main";
 import { RouteGame } from "../../common/constant";
 import { ErrorMessage } from "../../common/error";
 import * as GameService from "../service/game"
+import * as LaunchService from "../service/launch"
 
 ipcMain.handle(RouteGame.LAUNCH, async (_event, id) => {
   try {
-    await GameService.launch(id)
+    await LaunchService.launch(id)
   } catch (e) {
     log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
     log.debug(e);

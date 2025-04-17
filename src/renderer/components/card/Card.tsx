@@ -4,15 +4,17 @@ interface CardProps {
   title: string;
   children: React.ReactNode;
   actions?: React.ReactNode;
+  className?: string;
 }
 
 export const Card = ({
   title,
   children,
   actions,
+  className
 }: CardProps) => {
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-md focus-visible:ring-gray-500">
+    <div className={`overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-md focus-visible:ring-gray-500 ${className}`}>
       <div className="p-4">
         <div className="flex flex-row justify-between">
           <h2 className="text-xl font-semibold text-white">{title}</h2>
