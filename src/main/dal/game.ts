@@ -8,6 +8,7 @@ import {
   GameWithRelations,
   SortConfig,
 } from "../../common/types";
+import { sanitizeGameName } from "../utils/utils";
 
 const include = {
   gameStatus: true,
@@ -193,7 +194,7 @@ export async function createOrUpdateExternal(
       timePlayedSteamdeck: data.timePlayedSteamdeck,
     },
     create: {
-      name: data.name!,
+      name: sanitizeGameName(data.name!),
       lastTimePlayed: data?.lastTimePlayed,
       isInstalled: false,
       gameStatusId: data.gameStatusId ?? GameStatus.UNPLAYED,

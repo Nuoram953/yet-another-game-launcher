@@ -49,6 +49,7 @@ class MainWindowManager {
     try {
       dbPath = path.join(app.getPath("userData"), "app.sqlite");
 
+      console.log(dbPath)
       process.env.DATABASE_URL = `file:${dbPath}`;
 
       log.initialize();

@@ -1,9 +1,12 @@
 import { Card } from "@/components/card/Card";
 import { useGames } from "@/context/DatabaseContext";
-import { Award, Trophy } from "lucide-react";
+import { Award, Trophy, RefreshCcw } from "lucide-react";
 import React from "react";
+import { ProgressTrackerDialog } from "./ProgressTrackerDialog";
+import { useNotifications } from "@/components/NotificationSystem";
 
 export const HowLongToBeat = () => {
+  const { addNotification } = useNotifications();
   const { selectedGame } = useGames();
   const totalPlaytime = (selectedGame?.timePlayed || 0) * 60;
 
@@ -41,7 +44,24 @@ export const HowLongToBeat = () => {
   };
 
   return (
-    <Card title="Progress Tracker">
+    <Card
+      title="Progress Tracker"
+      actions={[
+        {
+          icon: RefreshCcw,
+          name: "Refresh",
+          onClick: () => {
+            window.game.refreshProgressTracker(selectedGame.id!);
+            addNotification({
+              title: "Progress Tracker",
+              message: "Progress Tracker refreshed successfully.",
+              type: "success",
+              duration: 2000,
+            });
+          },
+        },
+      ]}
+    >
       <div className="relative mb-8 h-16">
         {/* Timeline base */}
         <div className="absolute left-0 right-0 top-4 h-1 rounded-full bg-white/10"></div>
@@ -103,7 +123,7 @@ export const HowLongToBeat = () => {
       {/* Progress cards with glassmorphism */}
       <div className="grid gap-4">
         {/* Main Story */}
-        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors ">
+        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors">
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 p-2">
@@ -137,7 +157,7 @@ export const HowLongToBeat = () => {
         </div>
 
         {/* Main + Extras */}
-        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors ">
+        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors">
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 p-2">
@@ -171,7 +191,7 @@ export const HowLongToBeat = () => {
         </div>
 
         {/* Completionist */}
-        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors ">
+        <div className="rounded-xl p-4 backdrop-blur-sm transition-colors">
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-amber-600 to-amber-400 p-2">

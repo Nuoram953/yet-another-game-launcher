@@ -1,218 +1,356 @@
-import { Container } from "@/components/Container";
-import { Card } from "@/components/card/Card";
-import { useGames } from "@/context/DatabaseContext";
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { RankingCover } from "../RankingCover";
+import React, { useState } from 'react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical, X, Gamepad2, ListOrdered, BookmarkPlus, ChevronRight, Plus, ArrowRight } from 'lucide-react';
 
-export function RankingEditPage() {
-  const { id } = useParams<{ id: string }>();
-  const { games } = useGames();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+// Sample game data
+const initialGames = [
+  { id: 'zelda-botw', name: 'The Legend of Zelda: Breath of the Wild', image: '/api/placeholder/80/80' },
+  { id: 'witcher3', name: 'The Witcher 3: Wild Hunt', image: '/api/placeholder/80/80' },
+  { id: 'elden-ring', name: 'Elden Ring', image: '/api/placeholder/80/80' },
+  { id: 'mario-odyssey', name: 'Super Mario Odyssey', image: '/api/placeholder/80/80' },
+  { id: 'rdr2', name: 'Red Dead Redemption 2', image: '/api/placeholder/80/80' },
+  { id: 'bloodborne', name: 'Bloodborne', image: '/api/placeholder/80/80' },
+  { id: 'gta5', name: 'Grand Theft Auto V', image: '/api/placeholder/80/80' },
+  { id: 'horizon', name: 'Horizon Zero Dawn', image: '/api/placeholder/80/80' },
+  { id: 'god-of-war', name: 'God of War', image: '/api/placeholder/80/80' },
+  { id: 'minecraft', name: 'Minecraft', image: '/api/placeholder/80/80' },
+  { id: 'hollow-knight', name: 'Hollow Knight', image: '/api/placeholder/80/80' },
+  { id: 'cyberpunk', name: 'Cyberpunk 2077', image: '/api/placeholder/80/80' },
+  { id: 'hades', name: 'Hades', image: '/api/placeholder/80/80' },
+  { id: 'souls', name: 'Dark Souls', image: '/api/placeholder/80/80' },
+  { id: 'skyrim', name: 'The Elder Scrolls V: Skyrim', image: '/api/placeholder/80/80' },
+  { id: 'stardew', name: 'Stardew Valley', image: '/api/placeholder/80/80' },
+  { id: 'portal2', name: 'Portal 2', image: '/api/placeholder/80/80' },
+  { id: 'mass-effect2', name: 'Mass Effect 2', image: '/api/placeholder/80/80' }
+];
 
-  // State for ranked games in the pyramid
-  const [rankedGames, setRankedGames] = useState(Array(10).fill(null));
-
-  // Track which item is being dragged
-  const [draggedGame, setDraggedGame] = useState(null);
-
-  const handleDragStart = (game) => {
-    setDraggedGame(game);
+const SortableItem = ({ id, name, image, index, removeFn }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 100 : 1,
+    position: isDragging ? 'relative' : undefined,
+    opacity: isDragging ? 0.8 : 1,
   };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e, index) => {
-    e.preventDefault();
-
-    if (!draggedGame) return;
-
-    // Create a copy of current rankings
-    const newRankedGames = [...rankedGames];
-
-    // If dragging from available games
-    if (!draggedGame.currentIndex && draggedGame.currentIndex !== 0) {
-      newRankedGames[index] = draggedGame;
-    }
-    // If reordering within pyramid
-    else {
-      // Remove from old position
-      newRankedGames[draggedGame.currentIndex] = null;
-      // Add to new position
-      newRankedGames[index] = { ...draggedGame };
-      delete newRankedGames[index].currentIndex;
-    }
-
-    setRankedGames(newRankedGames);
-    setDraggedGame(null);
-  };
-
-  const handleRemove = (index) => {
-    const newRankedGames = [...rankedGames];
-    newRankedGames[index] = null;
-    setRankedGames(newRankedGames);
-  };
-
-  const fetchCover = async (id: string): Promise<string | undefined> => {
-    try {
-      const covers = await window.media.getCovers(id, 1);
-      return covers?.[0];
-    } catch (error) {
-      console.error("Failed to fetch cover:", error);
-      return undefined;
-    }
-  };
-
-  // Calculate remaining games (exclude ones already in pyramid)
-  const remainingGames = games.filter(
-    (game) =>
-      !rankedGames.some(
-        (rankedGame) => rankedGame && rankedGame.id === game.id,
-      ),
-  );
-
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-xl font-semibold text-gray-600">
-          Loading games...
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center bg-red-50 p-4">
-        <div className="mb-2 text-xl font-semibold text-red-500">Error</div>
-        <p className="text-gray-700">{error}</p>
-        <button
-          className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          onClick={() => window.location.reload()}
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
-  // Create the pyramid structure with appropriate sizing
-  const pyramidSlots = [
-    { row: 1, cols: 1 }, // Top (1st place)
-    { row: 2, cols: 2 }, // 2nd & 3rd
-    { row: 3, cols: 3 }, // 4th, 5th, 6th
-    { row: 4, cols: 4 }, // 7th, 8th, 9th, 10th
-  ];
-
+  
   return (
-    <Container>
-      <h1 className="mb-6 text-center text-3xl font-bold text-blue-800">
-        My Top 10 Video Games
-      </h1>
-      <p className="mb-8 text-center text-gray-600">
-        Drag and drop your favorite games to create your personal ranking
-        pyramid
-      </p>
-
-      <div className="flex flex-col gap-8">
-        {/* Left side - Pyramid */}
-        <Card title={"Your Top 10 Ranking"}>
-          <div className="flex flex-col items-center gap-4">
-            {pyramidSlots.map((slotRow, rowIndex) => (
-              <div
-                key={`row-${rowIndex}`}
-                className="flex w-full justify-center gap-4"
-              >
-                {Array.from({ length: slotRow.cols }).map((_, colIndex) => {
-                  // Calculate the absolute index in our flat array
-                  let absoluteIndex;
-                  if (rowIndex === 0) absoluteIndex = 0;
-                  else if (rowIndex === 1) absoluteIndex = 1 + colIndex;
-                  else if (rowIndex === 2) absoluteIndex = 3 + colIndex;
-                  else absoluteIndex = 6 + colIndex;
-
-                  const game = rankedGames[absoluteIndex];
-                  const rank = absoluteIndex + 1;
-
-                  return (
-                    <div
-                      key={`slot-${absoluteIndex}`}
-                      className={`relative border-2 ${game ? "border-green-500" : "border-dashed border-gray-300"} rounded-lg ${rowIndex === 0 ? "h-40 w-32" : "h-32 w-24"} flex items-center justify-center bg-gray-50`}
-                      onDragOver={handleDragOver}
-                      onDrop={(e) => handleDrop(e, absoluteIndex)}
-                    >
-                      {game ? (
-                        <div
-                          className="relative h-full w-full"
-                          draggable
-                          onDragStart={() =>
-                            handleDragStart({
-                              ...game,
-                              currentIndex: absoluteIndex,
-                            })
-                          }
-                        >
-                          <RankingCover id={game.id} />
-                          <div className="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-br-lg bg-blue-600 font-bold text-white">
-                            {rank}
-                          </div>
-                          <button
-                            className="absolute right-0 top-0 flex h-6 w-6 items-center justify-center rounded-bl-lg bg-red-500 text-white"
-                            onClick={() => handleRemove(absoluteIndex)}
-                          >
-                            ×
-                          </button>
-                          <div className="absolute bottom-0 left-0 right-0 truncate bg-black bg-opacity-70 p-1 text-xs text-white">
-                            {game.name}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-center text-sm text-gray-400">
-                          <div className="mb-1 font-bold">#{rank}</div>
-                          <div>Drop game here</div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Right side - Available games */}
-        <div className="h-screen">
-          <div className="grid max-h-full flex-grow grid-cols-2 gap-4 overflow-scroll sm:grid-cols-3">
-            {remainingGames.map((game) => (
-              <div
-                key={game.id}
-                className="relative my-4 cursor-move rounded-lg border border-gray-200 transition-shadow hover:shadow-md"
-                draggable
-                onDragStart={() => handleDragStart(game)}
-              >
-                <RankingCover id={game.id} />
-                <div className="bg-white p-2">
-                  <h3
-                    className="truncate text-sm font-medium"
-                    title={game.name}
-                  >
-                    {game.name}
-                  </h3>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {remainingGames.length === 0 && (
-          <div className="py-8 text-center text-gray-500">
-            All games have been ranked!
+    <div 
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-3 bg-white dark:bg-slate-800 p-3 mb-3 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 group hover:border-indigo-300 dark:hover:border-indigo-500 transition-all"
+    >
+      <div className="flex items-center gap-3 flex-1">
+        {index !== undefined && (
+          <div className="flex justify-center items-center w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 font-bold flex-shrink-0">
+            {index + 1}
           </div>
         )}
+        <div className="flex-shrink-0 rounded-md overflow-hidden w-12 h-12 bg-slate-100 dark:bg-slate-700">
+          <img src={image} alt={name} className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1 font-medium text-slate-700 dark:text-slate-200">{name}</div>
       </div>
-    </Container>
+      <div className="flex items-center gap-2">
+        <button 
+          className="cursor-grab opacity-60 hover:opacity-100 transition-opacity touch-none p-1" 
+          {...attributes} 
+          {...listeners}
+          type="button"
+        >
+          <GripVertical size={18} />
+        </button>
+        <button 
+          onClick={() => removeFn(id)} 
+          className="text-slate-400 hover:text-red-500 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+          type="button"
+        >
+          <X size={18} />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const GameCard = ({ game, onAddToRanked, onAddToPlaceholder, rankedFull }) => {
+  return (
+    <div className="relative group bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 mb-3 hover:shadow-lg transition-all">
+      <div className="flex items-center gap-3">
+        <div className="rounded-md overflow-hidden w-16 h-16 bg-slate-100 dark:bg-slate-700 flex-shrink-0">
+          <img src={game.image} alt={game.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-medium text-slate-800 dark:text-slate-200">{game.name}</h3>
+          <div className="mt-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => onAddToPlaceholder(game)}
+              className="flex items-center gap-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded text-xs text-slate-700 dark:text-slate-300 transition-colors"
+              type="button"
+            >
+              <BookmarkPlus size={12} />
+              <span>Add to Placeholder</span>
+            </button>
+            <button
+              onClick={() => onAddToRanked(game)}
+              disabled={rankedFull}
+              className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                rankedFull 
+                ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed' 
+                : 'bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/60 dark:hover:bg-indigo-800/60 text-indigo-700 dark:text-indigo-300'
+              }`}
+              type="button"
+            >
+              <Plus size={12} />
+              <span>Add to Top 10</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const EmptyState = ({ icon: Icon, message }) => (
+  <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500">
+    <Icon size={64} className="mb-4 opacity-50" />
+    <p className="text-center max-w-xs">{message}</p>
+  </div>
+);
+
+export function RankingEditPage() {
+  const [ranked, setRanked] = useState([]);
+  const [placeholder, setPlaceholder] = useState([]);
+  
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px movement before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEndRanked = (event) => {
+    const { active, over } = event;
+    
+    if (active.id !== over?.id) {
+      setRanked((items) => {
+        const oldIndex = items.findIndex(item => item.id === active.id);
+        const newIndex = items.findIndex(item => item.id === over.id);
+        
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const handleDragEndPlaceholder = (event) => {
+    const { active, over } = event;
+    
+    if (active.id !== over?.id) {
+      setPlaceholder((items) => {
+        const oldIndex = items.findIndex(item => item.id === active.id);
+        const newIndex = items.findIndex(item => item.id === over.id);
+        
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const addToRanked = (game) => {
+    if (ranked.length < 10) {
+      setRanked([...ranked, game]);
+    }
+  };
+
+  const addToPlaceholder = (game) => {
+    setPlaceholder([...placeholder, game]);
+  };
+
+  const removeFromRanked = (id) => {
+    setRanked(ranked.filter(game => game.id !== id));
+  };
+
+  const removeFromPlaceholder = (id) => {
+    setPlaceholder(placeholder.filter(game => game.id !== id));
+  };
+
+  const moveToRanked = (id) => {
+    if (ranked.length < 10) {
+      const game = placeholder.find(g => g.id === id);
+      setRanked([...ranked, game]);
+      setPlaceholder(placeholder.filter(g => g.id !== id));
+    }
+  };
+
+  const moveToPlaceholder = (id) => {
+    const game = ranked.find(g => g.id === id);
+    setPlaceholder([...placeholder, game]);
+    setRanked(ranked.filter(g => g.id !== id));
+  };
+
+  const availableGames = initialGames.filter(
+    game => !ranked.some(g => g.id === game.id) && !placeholder.some(g => g.id === game.id)
+  );
+
+  return (
+    <div className="h-screen bg-slate-100 dark:bg-slate-900 overflow-hidden flex flex-col">
+      <header className="bg-white dark:bg-slate-800 py-4 px-6 shadow-md">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
+            Top 10 Games Ranking
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            Create your definitive ranking of the best video games
+          </p>
+        </div>
+      </header>
+      
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+          {/* Left Column - Rankings and Placeholders */}
+          <div className="flex flex-col gap-6 overflow-y-auto pr-2">
+            {/* Top 10 Ranking Section */}
+            <div className="flex flex-col">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                  <ListOrdered size={20} />
+                  Your Top 10 Games
+                </h2>
+                <div className="bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 px-3 py-1 rounded-full text-sm font-medium">
+                  {ranked.length}/10
+                </div>
+              </div>
+              
+              <div className="bg-slate-200/50 dark:bg-slate-800/30 rounded-xl p-4 min-h-72">
+                {ranked.length === 0 ? (
+                  <EmptyState 
+                    icon={ListOrdered}
+                    message="Your top 10 list is empty. Select games from the available list to start ranking."
+                  />
+                ) : (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEndRanked}
+                  >
+                    <SortableContext items={ranked.map(game => game.id)} strategy={verticalListSortingStrategy}>
+                      {ranked.map((game, index) => (
+                        <div key={game.id} className="relative group">
+                          <SortableItem 
+                            id={game.id} 
+                            name={game.name}
+                            image={game.image}
+                            index={index}
+                            removeFn={removeFromRanked}
+                          />
+                          <button
+                            onClick={() => moveToPlaceholder(game.id)}
+                            className="absolute right-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:hover:bg-yellow-800/30 text-yellow-700 dark:text-yellow-400 py-1 px-2 rounded-md flex items-center gap-1"
+                            type="button"
+                          >
+                            <BookmarkPlus size={12} />
+                            <span>Move to Placeholder</span>
+                          </button>
+                        </div>
+                      ))}
+                    </SortableContext>
+                  </DndContext>
+                )}
+              </div>
+            </div>
+            
+            {/* Placeholder Section */}
+            <div className="flex flex-col">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                  <BookmarkPlus size={20} />
+                  Placeholder Games
+                </h2>
+                <div className="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-full text-sm font-medium">
+                  {placeholder.length}
+                </div>
+              </div>
+              
+              <div className="bg-slate-200/50 dark:bg-slate-800/30 rounded-xl p-4 min-h-72">
+                {placeholder.length === 0 ? (
+                  <EmptyState 
+                    icon={BookmarkPlus}
+                    message="No placeholder games. Add games you're considering but haven't finalized their position."
+                  />
+                ) : (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEndPlaceholder}
+                  >
+                    <SortableContext items={placeholder.map(game => game.id)} strategy={verticalListSortingStrategy}>
+                      {placeholder.map((game) => (
+                        <div key={game.id} className="relative group">
+                          <SortableItem 
+                            id={game.id} 
+                            name={game.name}
+                            image={game.image}
+                            removeFn={removeFromPlaceholder}
+                          />
+                          {ranked.length < 10 && (
+                            <button
+                              onClick={() => moveToRanked(game.id)}
+                              className="absolute right-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/30 dark:hover:bg-indigo-800/30 text-indigo-700 dark:text-indigo-300 py-1 px-2 rounded-md flex items-center gap-1"
+                              type="button"
+                            >
+                              <ArrowRight size={12} />
+                              <span>Move to Top 10</span>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </SortableContext>
+                  </DndContext>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Right Column - Available Games */}
+          <div className="flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                <Gamepad2 size={20} />
+                Available Games
+              </h2>
+              <div className="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1 rounded-full text-sm font-medium">
+                {availableGames.length}
+              </div>
+            </div>
+            
+            <div className="bg-slate-200/50 dark:bg-slate-800/30 rounded-xl p-4 overflow-y-auto h-full">
+              {availableGames.length === 0 ? (
+                <EmptyState 
+                  icon={Gamepad2}
+                  message="All games have been added to your lists. You can remove games from your rankings to make them available again."
+                />
+              ) : (
+                <div className="grid grid-cols-1 gap-1">
+                  {availableGames.map(game => (
+                    <GameCard 
+                      key={game.id}
+                      game={game}
+                      onAddToRanked={addToRanked}
+                      onAddToPlaceholder={addToPlaceholder}
+                      rankedFull={ranked.length >= 10}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

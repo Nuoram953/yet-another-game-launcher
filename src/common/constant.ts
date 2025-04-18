@@ -65,4 +65,5 @@ export enum RouteGame {
   SET_REVIEW = "game:setReview",
   SET_STATUS = "game:setStatus",
   SET_SETTING_GAMESCOPE = "game:setGamescope",
+  REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
 }

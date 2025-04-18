@@ -2,9 +2,7 @@ import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../constant";
 import { igdb } from "..";
-import {
-  killDirectoyProcess,
-} from "../utils/tracking";
+import { killDirectoyProcess } from "../utils/tracking";
 import { delay } from "../utils/utils";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
@@ -16,6 +14,7 @@ import { createDownloadTracker } from "../storefront/steam/monitor";
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
 import notificationManager from "../manager/notificationManager";
+import HowLongToBeat from "../api/metadata/hltb";
 
 export const install = async (id: string) => {
   const game = await queries.Game.getGameById(id);
@@ -204,5 +203,23 @@ export const setGamescope = async (data: GameConfigGamescope) => {
     const storeSteam = new Steam();
     await storeSteam.updateLaunchOptions(game, data);
   }
+  await refreshGame(game.id);
+};
+
+export const refreshProgressTracker = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  const ht = new HowLongToBeat();
+  const data = await ht.search(game.name);
+
+  await queries.Game.update(id, {
+    mainStory: data?.mainStory,
+    mainPlusExtra: data?.mainPlusExtra,
+    completionist: data?.completionist,
+  });
+
   await refreshGame(game.id);
 };

@@ -19,6 +19,7 @@ import { ChartActivityOs } from "./ChartActiviyOs";
 import ChartSessionDurationDistribution from "./ChartSessionDistribution";
 import ChartStartEndTimeScatterPlot from "./ChartSartEndTimeScatterPlot";
 import ChartHeatMapCalendar from "./ChartHeatMapCalendar";
+import ChartAMPMPlaytimeDistribution from "./ChartAmPmDistribution";
 
 ChartJS.register(
   CategoryScale,
@@ -157,47 +158,45 @@ export const SectionActivities = () => {
     ],
   };
 
-  const chartOsData:any = {
+  const chartOsData: any = {
     labels: [],
     datasets: [
       {
         label: "Os",
-        data: [
-          
-        ],
-        backgroundColor: [  ],
-        borderColor: [  ],
+        data: [],
+        backgroundColor: [],
+        borderColor: [],
         borderWidth: 1,
       },
     ],
   };
 
-  if(selectedGame?.timePlayedWindows){
-    const color = 'rgba(0, 120, 215, 1)'
+  if (selectedGame?.timePlayedWindows) {
+    const color = "rgba(0, 120, 215, 1)";
     chartOsData.labels.push("Windows");
     chartOsData.datasets[0].data.push(selectedGame.timePlayedWindows / 60);
     chartOsData.datasets[0].backgroundColor.push(color);
     chartOsData.datasets[0].borderColor.push(color);
   }
 
-  if(selectedGame?.timePlayedLinux){
-    const color = 'rgba(48, 98, 48, 1)'
+  if (selectedGame?.timePlayedLinux) {
+    const color = "rgba(48, 98, 48, 1)";
     chartOsData.labels.push("Linux");
     chartOsData.datasets[0].data.push(selectedGame.timePlayedLinux / 60);
     chartOsData.datasets[0].backgroundColor.push(color);
     chartOsData.datasets[0].borderColor.push(color);
   }
 
-  if(selectedGame?.timePlayedMac){
-    const color = 'rgba(88, 86, 214, 1)'
+  if (selectedGame?.timePlayedMac) {
+    const color = "rgba(88, 86, 214, 1)";
     chartOsData.labels.push("Mac");
     chartOsData.datasets[0].data.push(selectedGame.timePlayedMac / 60);
     chartOsData.datasets[0].backgroundColor.push(color);
     chartOsData.datasets[0].borderColor.push(color);
   }
 
-  if(selectedGame?.timePlayedSteamdeck){
-    const color = 'rgba(0, 0, 0, 0.8)'
+  if (selectedGame?.timePlayedSteamdeck) {
+    const color = "rgba(0, 0, 0, 0.8)";
     chartOsData.labels.push("Steamdeck");
     chartOsData.datasets[0].data.push(selectedGame.timePlayedSteamdeck / 60);
     chartOsData.datasets[0].backgroundColor.push(color);
@@ -240,11 +239,17 @@ export const SectionActivities = () => {
       </div>
 
       <ChartActiviy chartData={chartData} />
-      <ChartActivityOs chartData={chartOsData} />
+      <div className="flex w-full flex-row gap-4">
+        <div className="w-1/2">
+          <ChartActivityOs chartData={chartOsData} />
+        </div>
+        <div className="w-1/2">
+          <ChartAMPMPlaytimeDistribution />
+        </div>
+      </div>
       <ChartStartEndTimeScatterPlot />
       <ChartSessionDurationDistribution />
       <ChartHeatMapCalendar />
-
 
       <div className="h-20"></div>
     </div>

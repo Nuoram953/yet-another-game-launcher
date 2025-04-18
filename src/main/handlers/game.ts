@@ -70,3 +70,12 @@ ipcMain.handle(RouteGame.SET_SETTING_GAMESCOPE, async (_event, data) => {
     log.debug(e);
   }
 });
+
+ipcMain.handle(RouteGame.REFRESH_PROGRESS_TRACKER, async (_event, id) => {
+  try {
+    await GameService.refreshProgressTracker(id);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});

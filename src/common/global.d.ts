@@ -9,7 +9,12 @@ import type {
   Storefront,
   Tag,
 } from "@prisma/client";
-import type { FilterConfig, GameWithRelations, RankingWithRelation, SortConfig } from "./types";
+import type {
+  FilterConfig,
+  GameWithRelations,
+  RankingWithRelation,
+  SortConfig,
+} from "./types";
 declare global {
   interface Window {
     notifications: {
@@ -17,9 +22,9 @@ declare global {
       onReceive: (callback: (data: any) => void) => void;
       removeListener: () => void;
     };
-    store:{
+    store: {
       launch: (storeName: string) => Promise<void>;
-    }
+    };
     appControl: {
       onAppBlur: (callback: () => void) => void;
       onAppFocus: (callback: () => void) => void;
@@ -41,11 +46,11 @@ declare global {
       getAchievements: (gameId: string, count?: number) => Promise<string[]>;
       getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
     };
-    ranking:{
+    ranking: {
       getAll: () => Promise<RankingWithRelation[]>;
-      create: (name:string, maxItems:number) => Promise<RankingWithRelation>;
-      delete: (id:number) => Promise<void>;
-    }
+      create: (name: string, maxItems: number) => Promise<RankingWithRelation>;
+      delete: (id: number) => Promise<void>;
+    };
     library: {
       refresh: () => Promise<void>;
       getGame: (id: string) => Promise<GameWithRelations>;
@@ -75,6 +80,7 @@ declare global {
       setReview: (data: Partial<GameReview>) => Promise<void>;
       setStatus: (data: Partial<Game>) => Promise<void>;
       setGamescope: (data: GameConfigGamescope) => Promise<void>;
+      refreshProgressTracker: (id: string) => Promise<void>;
     };
     data: {
       on: (

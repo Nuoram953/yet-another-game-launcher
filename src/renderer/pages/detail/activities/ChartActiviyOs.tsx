@@ -52,25 +52,27 @@ export const ChartActivityOs = ({ chartData }: Props) => {
   };
   return (
     <Card title="Activity per OS">
-      <Doughnut
-        data={
-          chartData as ChartData<
-            "doughnut",
-            (number | [number, number] | Point | BubbleDataPoint | null)[],
-            unknown
-          >
-        }
-        options={{
-          ...chartOptions,
-          plugins: {
-            ...chartOptions.plugins,
-            legend: {
-              ...chartOptions.plugins.legend,
-              position: "top", // Use a valid string literal
+      <div style={{ height: "400px", width: "100%" }}>
+        <Doughnut
+          data={
+            chartData as ChartData<
+              "doughnut",
+              (number | [number, number] | Point | BubbleDataPoint | null)[],
+              unknown
+            >
+          }
+          options={{
+            ...chartOptions,
+            plugins: {
+              ...chartOptions.plugins,
+              legend: {
+                ...chartOptions.plugins.legend,
+                position: "top", // Use a valid string literal
+              },
             },
-          },
-        }}
-      />
+          }}
+        />
+      </div>
     </Card>
   );
 };
