@@ -6,6 +6,7 @@ import type {
   GameReview,
   GameStatus,
   Ranking,
+  RankingGame,
   Storefront,
   Tag,
 } from "@prisma/client";
@@ -47,9 +48,15 @@ declare global {
       getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
     };
     ranking: {
+      getRanking: (id: number) => Promise<RankingWithRelation>;
       getAll: () => Promise<RankingWithRelation[]>;
       create: (name: string, maxItems: number) => Promise<RankingWithRelation>;
       delete: (id: number) => Promise<void>;
+      edit: (data: Partial<RankingGame>) => Promise<void>;
+      removeGameFromRanking: (
+        rankingId: number,
+        gameId: string,
+      ) => Promise<void>;
     };
     library: {
       refresh: () => Promise<void>;

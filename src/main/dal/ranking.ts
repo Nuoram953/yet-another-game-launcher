@@ -4,7 +4,7 @@ import { RankingWithRelation } from "src/common/types";
 export async function findAll(): Promise<RankingWithRelation[]> {
   return await prisma.ranking.findMany({
     where: { rankingStatusId: { not: 4 } },
-    include: { rankings: true },
+    include: { rankings: { orderBy: { rank: "asc" } } },
   });
 }
 
@@ -13,7 +13,7 @@ export async function findById(
 ): Promise<RankingWithRelation | null> {
   return await prisma.ranking.findUnique({
     where: { id },
-    include: { rankings: true },
+    include: { rankings: { orderBy: { rank: "asc" } } },
   });
 }
 

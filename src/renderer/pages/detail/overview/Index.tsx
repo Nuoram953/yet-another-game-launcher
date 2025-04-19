@@ -4,7 +4,7 @@ import { Trailer } from "./Trailer";
 import Info from "./Info";
 import { Screenshots } from "./Screenshots";
 import { EventTimeline } from "./Timeline";
-import { HowLongToBeat } from "./HowLongToBeat";
+import { ProgressTracker } from "./ProgressTracker";
 
 export const SectionOverview = () => {
   return (
@@ -14,7 +14,7 @@ export const SectionOverview = () => {
       <Screenshots />
       <Info />
       <EventTimeline />
-      <HowLongToBeat />
+      <ProgressTracker />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { Award, Trophy, RefreshCcw } from "lucide-react";
 import React from "react";
 import { useNotifications } from "@/components/NotificationSystem";
 
-export const HowLongToBeat = () => {
+export const ProgressTracker = () => {
   const { addNotification } = useNotifications();
   const { selectedGame } = useGames();
   const totalPlaytime = (selectedGame?.timePlayed || 0) * 60;
@@ -42,6 +42,28 @@ export const HowLongToBeat = () => {
     return `${Math.min(Math.max(position, 0), 100)}%`;
   };
 
+  // Determine the current section based on playtime
+  const getCurrentSection = () => {
+    if (totalPlaytime <= selectedGame.mainStory!) {
+      return {
+        color: "from-blue-600 to-blue-400",
+        percent: (totalPlaytime / selectedGame.mainStory!) * 100
+      };
+    } else if (totalPlaytime <= selectedGame.mainPlusExtra!) {
+      return {
+        color: "from-purple-600 to-purple-400",
+        percent: (totalPlaytime / selectedGame.mainPlusExtra!) * 100
+      };
+    } else {
+      return {
+        color: "from-amber-600 to-amber-400",
+        percent: (totalPlaytime / selectedGame.completionist!) * 100
+      };
+    }
+  };
+
+  const currentSection = getCurrentSection();
+
   return (
     <Card
       title="Progress Tracker"
@@ -61,20 +83,57 @@ export const HowLongToBeat = () => {
         },
       ]}
     >
-      <div className="relative mb-8 h-16">
-        {/* Timeline base */}
-        <div className="absolute left-0 right-0 top-4 h-1 rounded-full bg-white/10"></div>
+      <div className="relative mb-8 h-20">
+        {/* Timeline base - thicker and with segments */}
+        <div className="absolute left-0 right-0 top-4 h-3 rounded-full bg-white/10">
+          {/* Main story section */}
+          <div 
+            className="absolute h-full rounded-l-full bg-gradient-to-r from-blue-600/30 to-blue-400/30" 
+            style={{ 
+              width: `${(selectedGame.mainStory! / selectedGame.completionist!) * 100}%`,
+              zIndex: 1
+            }}
+          ></div>
+          
+          {/* Main+Extras section */}
+          <div 
+            className="absolute h-full bg-gradient-to-r from-purple-600/30 to-purple-400/30" 
+            style={{ 
+              left: `${(selectedGame.mainStory! / selectedGame.completionist!) * 100}%`,
+              width: `${((selectedGame.mainPlusExtra! - selectedGame.mainStory!) / selectedGame.completionist!) * 100}%`,
+              zIndex: 1
+            }}
+          ></div>
+          
+          {/* Completionist section */}
+          <div 
+            className="absolute h-full rounded-r-full bg-gradient-to-r from-amber-600/30 to-amber-400/30" 
+            style={{ 
+              left: `${(selectedGame.mainPlusExtra! / selectedGame.completionist!) * 100}%`,
+              right: 0,
+              zIndex: 1
+            }}
+          ></div>
+          
+          {/* Progress indicator - uses current section color */}
+          <div 
+            className={`absolute h-full rounded-l-full bg-gradient-to-r ${currentSection.color}`} 
+            style={{ 
+              width: getTimelinePosition(totalPlaytime),
+              zIndex: 2
+            }}
+          ></div>
+        </div>
 
         {/* Your position indicator */}
         <div
           className="absolute top-0 flex flex-col items-center"
           style={{
             left: getTimelinePosition(totalPlaytime),
-            // Ensure user position appears above other markers
             zIndex: 20,
           }}
         >
-          <div className="z-10 h-3 w-3 rounded-full bg-white shadow-lg shadow-indigo-500/50"></div>
+          <div className="z-10 h-4 w-4 rounded-full bg-white shadow-lg shadow-indigo-500/50"></div>
           <div className="my-1 h-8 w-px bg-white/30"></div>
           <div className="whitespace-nowrap rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 px-3 py-1 text-xs text-white shadow-lg">
             You: {formatTime(selectedGame?.timePlayed * 60)}
@@ -89,7 +148,7 @@ export const HowLongToBeat = () => {
           }}
         >
           <div className="h-6 w-px bg-blue-400/50"></div>
-          <div className="absolute top-8 -translate-x-1/2 whitespace-nowrap text-xs text-blue-400">
+          <div className="absolute top-10 -translate-x-1/2 whitespace-nowrap text-xs text-blue-400">
             Main: {formatTime(selectedGame.mainStory!)}
           </div>
         </div>
@@ -102,7 +161,7 @@ export const HowLongToBeat = () => {
           }}
         >
           <div className="h-6 w-px bg-purple-400/50"></div>
-          <div className="absolute top-8 -translate-x-1/2 whitespace-nowrap text-xs text-purple-400">
+          <div className="absolute top-10 -translate-x-1/2 whitespace-nowrap text-xs text-purple-400">
             Extras: {formatTime(selectedGame.mainPlusExtra!)}
           </div>
         </div>
@@ -113,7 +172,7 @@ export const HowLongToBeat = () => {
           style={{ left: `100%` }}
         >
           <div className="h-6 w-px bg-amber-400/50"></div>
-          <div className="absolute top-8 -translate-x-1/2 whitespace-nowrap text-xs text-amber-400">
+          <div className="absolute top-10 -translate-x-1/2 whitespace-nowrap text-xs text-amber-400">
             100%: {formatTime(selectedGame.completionist!)}
           </div>
         </div>

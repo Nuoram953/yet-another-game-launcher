@@ -52,9 +52,12 @@ export enum RouteMedia {
 }
 
 export enum RouteRanking {
+  GET_RANKING = "ranking:getRanking",
   GET_RANKINGS = "ranking:getAll",
   CREATE = "ranking:create",
   DELETE = "ranking:delete",
+  EDIT = "ranking:edit",
+  REMOVE_GAME_FROM_RANKING = "ranking:removeGameFromRanking",
 }
 
 export enum RouteGame {

@@ -44,9 +44,12 @@ contextBridge.exposeInMainWorld("library", {
 });
 
 contextBridge.exposeInMainWorld("ranking", {
+  getRanking: (id:number) => ipcRenderer.invoke(RouteRanking.GET_RANKING, id),
   getAll: () => ipcRenderer.invoke(RouteRanking.GET_RANKINGS),
   create: (name:string, maxItems:number) => ipcRenderer.invoke(RouteRanking.CREATE, name, maxItems),
   delete: (id:number) => ipcRenderer.invoke(RouteRanking.DELETE, id),
+  edit: (data: Partial<Game>) => ipcRenderer.invoke(RouteRanking.EDIT, data),
+  removeGameFromRanking: (rankingId:number, gameId:string) => ipcRenderer.invoke(RouteRanking.REMOVE_GAME_FROM_RANKING, rankingId, gameId),
 });
 
 contextBridge.exposeInMainWorld("game", {

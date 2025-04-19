@@ -10,12 +10,19 @@ interface ActionItem {
 
 interface CardProps {
   title: string;
+  subtitle?: React.ReactNode;
   children: React.ReactNode;
   actions?: ActionItem[];
   className?: string;
 }
 
-export const Card = ({ title, children, actions, className }: CardProps) => {
+export const Card = ({
+  title,
+  subtitle,
+  children,
+  actions,
+  className,
+}: CardProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
@@ -42,7 +49,10 @@ export const Card = ({ title, children, actions, className }: CardProps) => {
     >
       <div className="p-4">
         <div className="flex flex-row justify-between">
-          <h2 className="text-xl font-semibold text-white">{title}</h2>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-semibold text-white">{title}</h2>
+            <h3>{subtitle}</h3>
+          </div>
           {actions && actions.length > 0 && (
             <div className="relative" ref={dropdownRef}>
               <Button

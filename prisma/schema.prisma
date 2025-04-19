@@ -219,10 +219,10 @@ model GameConfigGamescope {
 
 model Ranking {
   id              Int           @id @default(autoincrement())
-  name            String        @unique
+  name            String        
   maxItems        Int           @default(10)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
   rankingStatus   RankingStatus @relation(fields: [rankingStatusId], references: [id])
   rankingStatusId Int
   rankings        RankingGame[]
@@ -236,11 +236,14 @@ model RankingStatus {
 
 model RankingGame {
   id        Int      @id @default(autoincrement())
-  rank      Int
+  rank      Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ranking   Ranking  @relation(fields: [rankingId], references: [id])
   rankingId Int
   game      Game     @relation(fields: [gameId], references: [id])
   gameId    String
+
+
+  @@unique([rankingId, gameId])
 }
