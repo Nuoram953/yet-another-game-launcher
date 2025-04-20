@@ -20,20 +20,58 @@ import {
   SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { NavStorefront } from "./sidebar/nav-storefront";
 import { NavStatus } from "./sidebar/nav-status";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGames } from "@/context/DatabaseContext";
 import { Badge } from "./ui/badge";
 import { GameStatus, Storefront } from "@prisma/client";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { open, setOpen } = useSidebar();
   const navigate = useNavigate();
   const { games, downloading } = useGames();
   const [storefronts, setStorefronts] = useState<Storefront[]>([]);
-  const [status, setStatus] = useState<(GameStatus & { count?: number }) | undefined>(undefined);
+  const [status, setStatus] = useState<
+    (GameStatus & { count?: number }) | undefined
+  >(undefined);
+
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const sidebarState = await window.config.get("state.sidebar.open");
+        if (isMounted) {
+          setOpen(sidebarState);
+        }
+      } catch (error) {
+        console.error("Failed to fetch sidebar state:", error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
+    if (typeof open === "boolean") {
+      window.config.set("state.sidebar.open", open);
+    }
+  }, [open]);
 
   useEffect(() => {
     const fetchData = async () => {

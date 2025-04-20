@@ -1,13 +1,23 @@
 import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import {
+  ConfigRoute,
   RouteGame,
   RouteLibrary,
   RouteMedia,
   RouteRanking,
 } from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
+import { AppConfig } from "../common/interface";
+import { PathsToProperties } from "./manager/configManager";
 
 const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld("config", {
+  get: (key: PathsToProperties<AppConfig>) => ipcRenderer.invoke(ConfigRoute.GET, key),
+  getAll: () => ipcRenderer.invoke(ConfigRoute.GET_ALL),
+  set: (key: PathsToProperties<AppConfig>, value: any) =>
+    ipcRenderer.invoke(ConfigRoute.SET, key, value),
+});
 
 contextBridge.exposeInMainWorld("media", {
   getAllMedia: (gameId: string) =>
@@ -26,6 +36,8 @@ contextBridge.exposeInMainWorld("media", {
     ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
   getScreenshots: (gameId: number, count?: number) =>
     ipcRenderer.invoke(RouteMedia.GET_SCREENSHOTS, gameId, count),
+  getIcons: (gameId: number, count?: number) =>
+    ipcRenderer.invoke(RouteMedia.GET_ICONS, gameId, count),
 });
 
 contextBridge.exposeInMainWorld("library", {
@@ -44,12 +56,18 @@ contextBridge.exposeInMainWorld("library", {
 });
 
 contextBridge.exposeInMainWorld("ranking", {
-  getRanking: (id:number) => ipcRenderer.invoke(RouteRanking.GET_RANKING, id),
+  getRanking: (id: number) => ipcRenderer.invoke(RouteRanking.GET_RANKING, id),
   getAll: () => ipcRenderer.invoke(RouteRanking.GET_RANKINGS),
-  create: (name:string, maxItems:number) => ipcRenderer.invoke(RouteRanking.CREATE, name, maxItems),
-  delete: (id:number) => ipcRenderer.invoke(RouteRanking.DELETE, id),
+  create: (name: string, maxItems: number) =>
+    ipcRenderer.invoke(RouteRanking.CREATE, name, maxItems),
+  delete: (id: number) => ipcRenderer.invoke(RouteRanking.DELETE, id),
   edit: (data: Partial<Game>) => ipcRenderer.invoke(RouteRanking.EDIT, data),
-  removeGameFromRanking: (rankingId:number, gameId:string) => ipcRenderer.invoke(RouteRanking.REMOVE_GAME_FROM_RANKING, rankingId, gameId),
+  removeGameFromRanking: (rankingId: number, gameId: string) =>
+    ipcRenderer.invoke(
+      RouteRanking.REMOVE_GAME_FROM_RANKING,
+      rankingId,
+      gameId,
+    ),
 });
 
 contextBridge.exposeInMainWorld("game", {
@@ -63,7 +81,8 @@ contextBridge.exposeInMainWorld("game", {
     ipcRenderer.invoke(RouteGame.SET_STATUS, data),
   setGamescope: (data: GameConfigGamescope) =>
     ipcRenderer.invoke(RouteGame.SET_SETTING_GAMESCOPE, data),
-  refreshProgressTracker: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_PROGRESS_TRACKER, id),
+  refreshProgressTracker: (id: string) =>
+    ipcRenderer.invoke(RouteGame.REFRESH_PROGRESS_TRACKER, id),
 });
 
 contextBridge.exposeInMainWorld("data", {

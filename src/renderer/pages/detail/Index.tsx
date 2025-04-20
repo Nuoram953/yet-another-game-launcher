@@ -27,6 +27,7 @@ import { SectionReview } from "./review/Index";
 import { SectionActivities } from "./activities/Index";
 import { Container } from "@/components/Container";
 import { Image } from "@/components/image/Image";
+import useWindowSize from "@/hooks/useWindowSize";
 
 interface Section {
   id: string;
@@ -36,12 +37,14 @@ interface Section {
 }
 
 const GameDetailsContent: React.FC = () => {
+  const { width } = useWindowSize();
   const [activeSection, setActiveSection] = useState<string>("overview");
   const [loading, setLoading] = useState<boolean>(true);
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [collapsed, setCollapsed] = useState<boolean>(width < 1200);
   const { id } = useParams<{ id: string }>();
   const { setBreadcrumbs } = useBreadcrumbsContext();
   const [cover, setCover] = useState<string | null>(null);
+  const [icon, setIcon] = useState<string | null>(null);
   const { selectedGame, running, updateSelectedGame } = useGames();
 
   useEffect(() => {
@@ -54,6 +57,9 @@ const GameDetailsContent: React.FC = () => {
           await updateSelectedGame(result);
           const covers = await window.media.getCovers(id);
           setCover(covers[0]);
+
+          const icon = await window.media.getIcons(id);
+          setIcon(icon[0]);
           setLoading(false);
 
           setBreadcrumbs([
@@ -241,7 +247,7 @@ const GameDetailsContent: React.FC = () => {
             </Button>
 
             <div className="overflow-hidden rounded-lg shadow-md">
-              <Image src={cover!} alt={undefined} />
+              <Image src={(collapsed ? icon! : cover!) ?? ""} alt={undefined} />
             </div>
 
             {!collapsed && (

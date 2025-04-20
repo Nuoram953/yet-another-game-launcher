@@ -1,6 +1,7 @@
 import { app, BrowserWindow, globalShortcut, session, Session } from "electron";
 import * as path from "path";
 import "./handlers/media";
+import "./handlers/config";
 import "./handlers/store";
 import "./handlers/ranking";
 import "./handlers/library";
@@ -64,6 +65,11 @@ class MainWindowManager {
       });
 
       await config.init({
+        state:{
+          sidebar: {
+            open: false
+          },
+        },
         store: {
           steam: {
             enable: true,

@@ -39,6 +39,12 @@ export enum RouteLibrary {
   GET_FILTERS = "library:getFilters",
 }
 
+export enum ConfigRoute {
+  GET = "config:get",
+  SET = "config:set",
+  GET_ALL = "config:getAll",
+}
+
 export enum RouteMedia {
   GET_ALL_MEDIA = "media:getAll",
   GET_BACKGROUNDS = "media:getBackgrounds",

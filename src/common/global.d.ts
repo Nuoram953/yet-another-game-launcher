@@ -5,7 +5,6 @@ import type {
   GameConfigGamescope,
   GameReview,
   GameStatus,
-  Ranking,
   RankingGame,
   Storefront,
   Tag,
@@ -16,8 +15,15 @@ import type {
   RankingWithRelation,
   SortConfig,
 } from "./types";
+import { AppConfig } from "./interface";
+import { PathsToProperties } from "src/main/manager/configManager";
 declare global {
   interface Window {
+    config: {
+      get: (key: PathsToProperties<AppConfig>) => Promise<any>;
+      set: (key: PathsToProperties<AppConfig>, value: any) => Promise<void>;
+      getAll: () => Promise<AppConfig>;
+    };
     notifications: {
       send: (notification: any) => void;
       onReceive: (callback: (data: any) => void) => void;

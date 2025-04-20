@@ -1,7 +1,7 @@
 import { Game } from "@prisma/client";
 import axios from "axios";
 import { MEDIA_TYPE, NotificationType } from "../../../common/constant";
-import { mainApp, metadataManager } from "../../index";
+import { logger, mainApp, metadataManager } from "../../index";
 import log from "electron-log/main";
 import { delay } from "../../utils/utils";
 import notificationManager from "../../../main/manager/notificationManager";
@@ -20,6 +20,7 @@ class SteamGridDB {
     await this.downladHeroesForGame(countPerType, max);
     await this.downloadGridForGame(countPerType, max);
     await this.downloadLogosForGame(countPerType, max);
+    await this.downloadIconForGame(countPerType, max);
   }
 
   async getGameIdByExternalId(platform: string) {
@@ -166,6 +167,66 @@ class SteamGridDB {
     for (const image of data) {
       await metadataManager.downloadImage(
         MEDIA_TYPE.BACKGROUND,
+        this.game,
+        image.url,
+        image.mime.split("image/")[1],
+      );
+    }
+  }
+
+  async downloadIconForGame(count: number, max: number) {
+    let images: any[] = [];
+    let hasAllImages: boolean = false;
+    let page: number = 0;
+
+    let path = await metadataManager.getOrCreateImageDirectory(
+      MEDIA_TYPE.ICON,
+      this.game,
+    );
+    let files = await metadataManager.getNumberOfFiles(path);
+    if (files >= max) {
+      log.debug(
+        `${this.game.id} has ${files} icon and the max was ${max}. Skipping`,
+      );
+      return;
+    }
+
+    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 45, "Downloading icons")
+
+    while (!hasAllImages) {
+      const response = await axios.get(
+        `https://www.steamgriddb.com/api/v2/icons/game/${this.gameId}`,
+        {
+          headers: { Authorization: `Bearer ${this.apikey}` },
+          params: {
+            gameId: this.gameId,
+            styles: "official,custom",
+            mimes: "image/png",
+            type: "static",
+            limit: 50,
+            page: page,
+          },
+        },
+      );
+
+      if (response.status !== 200) {
+        log.error(response.data.errors);
+      }
+
+      if (images.length >= response.data.total) {
+        hasAllImages = true;
+      } else {
+        images = [...images, ...response.data.data];
+        page += 1;
+        await delay(2000);
+      }
+    }
+
+    const data = images.sort((a, b) => b.score - a.score).splice(0, count);
+
+    for (const image of data) {
+      await metadataManager.downloadImage(
+        MEDIA_TYPE.ICON,
         this.game,
         image.url,
         image.mime.split("image/")[1],
