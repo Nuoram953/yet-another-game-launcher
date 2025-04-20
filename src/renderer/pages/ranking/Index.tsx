@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { Image } from "@/components/image/Image";
 import { unixToDate } from "@/utils/util";
 import { Button } from "@/components/button/Button";
+import { Header } from "@/components/layout/Header";
 
 const CoverImage = ({ game, isFirst = false }) => {
   const [image, setImage] = useState<string | null>(null);
@@ -105,17 +106,19 @@ export const RankingPage = () => {
 
   return (
     <div className="flex h-screen flex-col text-white">
-      <div className="m-4 flex items-center justify-between">
-        <div></div>
-        <Button
-          intent={"primary"}
-          onClick={handleNewRanking}
-          text="Create"
-          icon={Plus}
-          size={"small"}
-          className="w-fit"
-        />
-      </div>
+      <Header>
+        <div className="m-4 flex items-center justify-between w-full">
+          <h1 className="text-2xl font-semibold text-white"></h1>
+          <Button
+            intent={"primary"}
+            onClick={handleNewRanking}
+            text="Create"
+            icon={Plus}
+            size={"small"}
+            className="w-fit"
+          />
+        </div>
+      </Header>
       <div className="container mx-auto flex flex-col space-y-6 p-4">
         {rankings.map((ranking) => (
           <Card

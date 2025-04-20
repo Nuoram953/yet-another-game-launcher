@@ -41,6 +41,11 @@ export default function Layout({ children }: LayoutProps) {
       hasMounted.current = true;
       return;
     }
+
+    if (typeof open !== "boolean") {
+      return;
+    }
+
     window.config.set("state.sidebar.open", open);
   }, [open]);
 

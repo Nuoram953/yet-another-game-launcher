@@ -4,6 +4,7 @@ import { useGames } from "@/context/DatabaseContext";
 import { Card } from "@/components/card/Card";
 import { Input } from "@/components/input/Input";
 import { useNotifications } from "@/components/NotificationSystem";
+import OpenCriticReviews from "./OpenCritic";
 
 export function SectionReview() {
   const { selectedGame } = useGames();
@@ -100,7 +101,6 @@ export function SectionReview() {
       <Card title={"Review"}>
         <div className="p-6">
           <div className="mb-6">
-
             {Object.entries({
               graphics: "Graphics",
               gameplay: "Gameplay",
@@ -147,6 +147,8 @@ export function SectionReview() {
           </div>
         </div>
       </Card>
+
+      <OpenCriticReviews />
     </div>
   );
 }

@@ -20,6 +20,7 @@ import { Button } from "@/components/button/Button";
 import { Filter, Plus, Search } from "lucide-react";
 import { Sort } from "./Sort";
 import { Input } from "@/components/input/Input";
+import { Header } from "@/components/layout/Header";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -117,7 +118,7 @@ export const Grid = () => {
     <div className="flex h-screen flex-col overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
       <RecentlyPlayedCarousel />
       <div className="flex-none">
-        <div className="flex flex-row items-center justify-between bg-white p-2 align-middle shadow-md dark:bg-slate-800">
+        <Header>
           <div className="flex w-1/3 flex-row items-center p-4 align-middle">
             {searchBarExpanded ? (
               <Input
@@ -159,7 +160,7 @@ export const Grid = () => {
               onClick={() => {}}
             />
           </div>
-        </div>
+        </Header>
         <Filters expand={isExpanded} />
       </div>
 

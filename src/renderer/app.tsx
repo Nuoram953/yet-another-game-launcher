@@ -17,6 +17,7 @@ import { Grid } from "./pages/grid/Index";
 import NotificationSystem from "./components/NotificationProvider";
 import { RankingPage } from "./pages/ranking/Index";
 import { RankingEditPage } from "./pages/ranking/edit/Index";
+import NotFound from "./pages/error/notFound";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
@@ -84,6 +85,14 @@ const App = () => {
                   element={
                     <Layout>
                       <WebsiteViewer />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="*"
+                  element={
+                    <Layout>
+                      <NotFound />
                     </Layout>
                   }
                 />

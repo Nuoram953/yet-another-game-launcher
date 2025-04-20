@@ -9,6 +9,7 @@ import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
 import { GameWithRelations } from "src/common/types";
 import { igdb } from "..";
+import OpenCritic from "../api/metadata/opencritic";
 
 class MetadataManager {
   private userPath: string;
@@ -25,6 +26,9 @@ class MetadataManager {
     await igdb.downloadScreenshotsForGame(game, 10)
 
     await YouTubeDownloader.searchAndDownloadVideos(game);
+    
+    const openCritic = new OpenCritic()
+    await openCritic.search(game.name)
   }
 
   async getCountAchievementPictures(game: Game) {
