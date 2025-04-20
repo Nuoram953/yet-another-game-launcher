@@ -50,7 +50,7 @@ export const RecentlyPlayedCarousel = () => {
   };
 
   return (
-    <div className="relative w-full mx-auto mb-8">
+    <div className="relative w-full mx-auto">
       <div className="relative h-[24rem] overflow-hidden">
         <div
           className="absolute w-full h-full transition-transform duration-500 ease-out"

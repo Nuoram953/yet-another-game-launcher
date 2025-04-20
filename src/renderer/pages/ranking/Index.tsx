@@ -1,11 +1,5 @@
 import { Card } from "@/components/card/Card";
-import {
-  Trophy,
-  Clock,
-  Edit,
-  Trash2,
-  Pencil,
-} from "lucide-react";
+import { Trophy, Clock, Edit, Trash2, Pencil, Plus } from "lucide-react";
 import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import React, { useEffect, useState } from "react";
 import {
@@ -16,13 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RankingWithRelation } from "../../../common/types";
 import { useNavigate } from "react-router-dom";
 import { Image } from "@/components/image/Image";
 import { unixToDate } from "@/utils/util";
+import { Button } from "@/components/button/Button";
 
 const CoverImage = ({ game, isFirst = false }) => {
   const [image, setImage] = useState<string | null>(null);
@@ -111,6 +105,17 @@ export const RankingPage = () => {
 
   return (
     <div className="flex h-screen flex-col text-white">
+      <div className="m-4 flex items-center justify-between">
+        <div></div>
+        <Button
+          intent={"primary"}
+          onClick={handleNewRanking}
+          text="Create"
+          icon={Plus}
+          size={"small"}
+          className="w-fit"
+        />
+      </div>
       <div className="container mx-auto flex flex-col space-y-6 p-4">
         {rankings.map((ranking) => (
           <Card
@@ -188,13 +193,6 @@ export const RankingPage = () => {
             <p>No rankings found. Create your first ranking!</p>
           </div>
         )}
-
-        <button
-          className="rounded-lg bg-indigo-600 font-medium text-white transition-colors hover:bg-indigo-700"
-          onClick={handleNewRanking}
-        >
-          Create New Ranking
-        </button>
       </div>
       <Dialog open={openNewDialog}>
         <DialogContent
