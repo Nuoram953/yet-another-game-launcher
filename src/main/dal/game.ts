@@ -3,11 +3,7 @@ import { GameStatus, Storefront } from "../constant";
 import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";
-import {
-  FilterConfig,
-  GameWithRelations,
-  SortConfig,
-} from "../../common/types";
+import { FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
 import { sanitizeGameName } from "../utils/utils";
 
 const include = {
@@ -35,11 +31,7 @@ export async function update(id: string, newData: Partial<Game>) {
   });
 }
 
-export async function getGames(
-  limit?: number | null,
-  filters?: FilterConfig,
-  sort?: SortConfig,
-) {
+export async function getGames(limit?: number | null, filters?: FilterConfig, sort?: SortConfig) {
   const where = filters
     ? {
         developers: !_.isNil(filters.developpers)
@@ -83,18 +75,14 @@ export async function getGames(
   const games = await prisma.game.findMany({
     where,
     include,
-    orderBy: sort
-      ? { [sort.field]: sort.direction }
-      : [{ lastTimePlayed: "desc" }],
+    orderBy: sort ? { [sort.field]: sort.direction } : [{ lastTimePlayed: "desc" }],
     ...(limit && { take: limit }),
   });
 
   return games;
 }
 
-export async function getGameById(
-  id: string,
-): Promise<GameWithRelations | null> {
+export async function getGameById(id: string): Promise<GameWithRelations | null> {
   return prisma.game.findFirst({
     where: { id },
     include,
@@ -146,11 +134,7 @@ export async function updateTimePlayed(gameId: string, timePlayed: number) {
   });
 }
 
-export async function updateIsInstalled(
-  installedExternalIds: string[],
-  storefront: Storefront,
-  isInstalled: boolean,
-) {
+export async function updateIsInstalled(installedExternalIds: string[], storefront: Storefront, isInstalled: boolean) {
   await prisma.game.updateMany({
     data: {
       isInstalled: isInstalled,
@@ -175,9 +159,7 @@ export async function updateIsInstalled(
 export async function createOrUpdateExternal(
   data: Partial<Game>,
   storefront: Storefront,
-): Promise<Prisma.GameGetPayload<{
-  include: { gameStatus: true; storefront: true };
-}> | null> {
+): Promise<GameWithRelations | null> {
   const createdOrUpdatedGame = await prisma.game.upsert({
     where: {
       externalId_storefrontId: {

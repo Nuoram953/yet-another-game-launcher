@@ -19,7 +19,7 @@ i18n
     },
     debug: true,
     backend: {
-      loadPath: "./locales/{{lng}}/{{ns}}.json",
+      loadPath: "./locale/{{lng}}/{{ns}}.json",
     },
     missingKeyHandler: (lng, ns, key) => {
       console.log(

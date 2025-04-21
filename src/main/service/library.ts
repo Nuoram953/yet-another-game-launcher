@@ -7,7 +7,7 @@ import Steam from "../api/storefront/steam";
 import notificationManager from "../manager/notificationManager";
 import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
-import HowLongToBeat from "../api/metadata/hltb";
+import * as GameSerivce from "./game";
 
 export const getStorefronts = async () => {
   return await queries.Storefront.getAll();
@@ -24,13 +24,13 @@ export const refresh = async () => {
     autoClose: true,
   });
 
-  if (config.get("store.steam.enable")) {
+  if (await config.get("store.steam.enable")) {
     const steam = new Steam();
     await steam.initialize();
     notificationManager.updateProgress(NotificationType.REFRESH, 25, "Steam");
   }
 
-  if (config.get("store.epic.enable")) {
+  if (await config.get("store.epic.enable")) {
     const epic = new Epic();
     await epic.initialize();
     notificationManager.updateProgress(NotificationType.REFRESH, 35, "Epic");
@@ -66,41 +66,13 @@ export const getGame = async (id: string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  if (_.isNil(game.openedAt)) {
-    notificationManager.show({
-      id: NotificationType.NEW_GAME + game.id,
-      title: game.name,
-      message: "Downloading partial assets and metadata",
-      type: "progress",
-      current: 10,
-      total: 100,
-      autoClose: true,
+  //For existing games that don't have metadata downloaded
+  if (!game.openedAt) {
+    await GameSerivce.createOrUpdateGame(game, game.storefrontId!, true);
+
+    await queries.Game.update(game.id, {
+      openedAt: new Date(),
     });
-    try {
-      const { developers, publishers, partialGameData } =
-        await igdb.getGame(game);
-      await queries.Game.update(game.id, partialGameData);
-      for (const developer of developers) {
-        await queries.GameDeveloper.findOrCreate(game.id, developer);
-      }
-      for (const publisher of publishers) {
-        await queries.GamePublisher.findOrCreate(game.id, publisher);
-      }
-
-      const ht = new HowLongToBeat();
-      const data = await ht.search(game.name);
-
-      await queries.Game.update(id, {
-        openedAt: new Date(),
-        mainStory: data?.mainStory,
-        mainPlusExtra: data?.mainPlusExtra,
-        completionist: data?.completionist,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-
-    await metadataManager.downloadMissing(game);
   }
 
   await updateAchievements(game);
@@ -108,8 +80,6 @@ export const getGame = async (id: string) => {
   await queries.Game.update(id, {
     openedAt: new Date(),
   });
-
-  notificationManager.updateProgress(NotificationType.NEW_GAME + game.id, 100);
 
   return await queries.Game.getGameById(id);
 };

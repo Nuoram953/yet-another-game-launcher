@@ -219,7 +219,7 @@ model GameConfigGamescope {
 
 model Ranking {
   id              Int           @id @default(autoincrement())
-  name            String        
+  name            String
   maxItems        Int           @default(10)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -243,7 +243,6 @@ model RankingGame {
   rankingId Int
   game      Game     @relation(fields: [gameId], references: [id])
   gameId    String
-
 
   @@unique([rankingId, gameId])
 }

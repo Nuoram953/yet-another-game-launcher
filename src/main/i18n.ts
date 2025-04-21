@@ -1,20 +1,23 @@
 import i18next from "i18next";
-import HttpBackend from "i18next-http-backend/cjs";
+import path from "path";
+
+const Backend = require('i18next-fs-backend/cjs');
 
 const i18nConfig = {
   fallbackLng: "en",
   supportedLngs: ["en", "es", "fr"],
-  ns: ["common", "main", "renderer"],
+  ns: ["common", "notification" ],
   defaultNS: "common",
 };
 
 export const initMainI18n = async () => {
   const i18n = i18next.createInstance();
-  await i18n.use(HttpBackend).init({
+  await i18n.use(Backend).init({
     ...i18nConfig,
     backend: {
-      loadPath: "../../locales/{{lng}}/{{ns}}.json",
+      loadPath: path.join(__dirname, "locale/{{lng}}/{{ns}}.json"),
     },
+    debug: false
   });
   return i18n;
 };

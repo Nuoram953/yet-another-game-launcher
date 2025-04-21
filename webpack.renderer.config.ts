@@ -25,7 +25,7 @@ export const rendererConfig: Configuration = {
         },
         {
           from: path.resolve(__dirname, "locale"),
-          to: path.resolve(__dirname, ".webpack/renderer/locales"),
+          to: path.resolve(__dirname, ".webpack/renderer/locale"),
         },
       ],
     }),

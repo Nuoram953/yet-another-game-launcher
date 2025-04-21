@@ -48,6 +48,10 @@ const GameDetailsContent: React.FC = () => {
   const { selectedGame, running, updateSelectedGame } = useGames();
 
   useEffect(() => {
+    setCollapsed(width < 1200);
+  }, [width]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         if (!id) return;

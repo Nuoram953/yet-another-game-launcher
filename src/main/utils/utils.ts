@@ -18,3 +18,13 @@ export async function getMinutesBetween(
 export const sanitizeGameName = (name: string) => {
   return name.replace(/[^a-zA-Z0-9\s\(\)\[\]:.,!?'"<>\-]/g, "");
 };
+
+export const getKeyPercentage = (item: object, targetKey: string): number => {
+  const keys = Object.keys(item);
+  const totalKeys = keys.length;
+  const keyIndex = keys.indexOf(targetKey);
+  
+  if (keyIndex === -1) return 0;
+  
+  return Math.round(((keyIndex + 1) / totalKeys) * 100);
+};

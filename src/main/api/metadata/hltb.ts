@@ -1,4 +1,3 @@
-import { Game } from "@prisma/client";
 import axios from "../../../common/axiosConfig";
 import _ from "lodash";
 
@@ -25,7 +24,7 @@ class HowLongToBeat {
       const jsContent = await response.text();
 
       const tokenMatch = jsContent.match(
-        /"\/api\/ouch\/"\.concat\("(\w*)"\)\.concat\("(\w*)"\)/,
+        /"\/api\/seek\/"\.concat\("(\w*)"\)\.concat\("(\w*)"\)/,
       );
       if (!tokenMatch || tokenMatch.length < 3) {
         return null;
@@ -41,7 +40,7 @@ class HowLongToBeat {
 
   async search(name: string) {
     const response = await axios.post(
-      `https://howlongtobeat.com/api/ouch/${await this.fetchSearchId()}`,
+      `https://howlongtobeat.com/api/seek/${await this.fetchSearchId()}`,
       {
         searchOptions: {
           filter: "",

@@ -65,11 +65,6 @@ class MainWindowManager {
       });
 
       await config.init({
-        state:{
-          sidebar: {
-            open: false
-          },
-        },
         store: {
           steam: {
             enable: true,
@@ -83,7 +78,7 @@ class MainWindowManager {
       await app.whenReady();
       logger.debug("Main process is ready");
 
-      if (config.get("store.steam.enable")) {
+      if (await config.get("store.steam.enable")) {
         const steamSession = session.fromPartition("persist:steamstore");
 
         await steamSession.cookies.set({
@@ -100,7 +95,7 @@ class MainWindowManager {
         logger.info("Steam store cookies set successfully");
       }
 
-      if (config.get("store.epic.enable")) {
+      if (await config.get("store.epic.enable")) {
         const epicSession = session.fromPartition("persist:epic");
 
         await epicSession.cookies.set({

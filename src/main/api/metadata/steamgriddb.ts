@@ -1,19 +1,20 @@
-import { Game } from "@prisma/client";
 import axios from "axios";
 import { MEDIA_TYPE, NotificationType } from "../../../common/constant";
 import { logger, mainApp, metadataManager } from "../../index";
 import log from "electron-log/main";
 import { delay } from "../../utils/utils";
 import notificationManager from "../../../main/manager/notificationManager";
+import { GameWithRelations } from "src/common/types";
 
 class SteamGridDB {
   private apikey: string | undefined;
   private gameId: number;
-  private game: Game;
+  private game: GameWithRelations;
 
-  constructor(game: Game) {
+  constructor(game: GameWithRelations) {
     this.apikey = process.env.STEAM_GRID_DB_API_KEY;
     this.game = game;
+
   }
 
   async downloadAllImageType(countPerType: number, max: number) {
@@ -69,7 +70,6 @@ class SteamGridDB {
       return;
     }
 
-    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 35, "Downloading covers")
 
     while (!hasAllImages) {
       const response = await axios.get(
@@ -130,7 +130,6 @@ class SteamGridDB {
       return;
     }
 
-    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 40, "Downloading backgrounds")
 
     while (!hasAllImages) {
       const response = await axios.get(
@@ -191,7 +190,6 @@ class SteamGridDB {
       return;
     }
 
-    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 45, "Downloading icons")
 
     while (!hasAllImages) {
       const response = await axios.get(
@@ -251,7 +249,6 @@ class SteamGridDB {
       return;
     }
 
-    notificationManager.updateProgress(NotificationType.NEW_GAME+this.game.id, 45, "Downloading logos")
 
     while (!hasAllImages) {
       const response = await axios.get(

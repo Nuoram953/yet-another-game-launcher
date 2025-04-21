@@ -2,9 +2,8 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Separator } from "@radix-ui/react-separator";
 import { AppSidebar } from "../AppSidebar";
 import {
@@ -25,29 +24,6 @@ export default function Layout({ children }: LayoutProps) {
   const { breadcrumbs, setBreadcrumbs } = useBreadcrumbsContext();
   const [open, setOpen] = useState<boolean>(true);
   const navigate = useNavigate();
-  const hasMounted = React.useRef(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const config = await window.config.getAll();
-      setOpen(config.state.sidebar.open);
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
-      return;
-    }
-
-    if (typeof open !== "boolean") {
-      return;
-    }
-
-    window.config.set("state.sidebar.open", open);
-  }, [open]);
 
   const handleClickBreadcrumbs = (path: string) => {
     const index = breadcrumbs.findIndex((item) => item.path === path);

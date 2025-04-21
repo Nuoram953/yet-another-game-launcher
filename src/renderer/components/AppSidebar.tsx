@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { useGames } from "@/context/DatabaseContext";
 import { Badge } from "./ui/badge";
 import { GameStatus, Storefront } from "@prisma/client";
+import { CookieType, getCookie, setCookie } from "@/utils/cookieUtil";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { open, setOpen } = useSidebar();
@@ -42,24 +43,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const hasMounted = useRef(false);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
-      try {
-        const sidebarState = await window.config.get("state.sidebar.open");
-        if (isMounted) {
-          setOpen(sidebarState);
-        }
-      } catch (error) {
-        console.error("Failed to fetch sidebar state:", error);
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      isMounted = false;
-    };
+    const sidebarState = getCookie(
+      CookieType.SIDEBAR_COLLAPSED,
+      "boolean",
+    ) as boolean;
+    setOpen(sidebarState);
+    console.log(sidebarState);
   }, []);
 
   useEffect(() => {
@@ -68,9 +57,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       return;
     }
 
-    if (typeof open === "boolean") {
-      window.config.set("state.sidebar.open", open);
+    if (typeof open !== "boolean") {
+      return;
     }
+
+    setCookie(CookieType.SIDEBAR_COLLAPSED, open);
   }, [open]);
 
   useEffect(() => {

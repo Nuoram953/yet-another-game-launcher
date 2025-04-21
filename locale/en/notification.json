@@ -1,0 +1,15 @@
+{
+  "newGame": {
+    "stepDownloadingCover": "Downloading covers",
+    "stepDownloadingBackgrounds": "Downloading backgrounds",
+    "stepDownloadingIcons": "Downloading icons",
+    "stepDownloadingLogos": "Downloading logos",
+    "stepDownloadingScreenshots": "Downloading screenshots",
+    "stepAddingDevelopers": "Adding developers",
+    "stepAddingPublishers": "Adding publishers",
+    "stepDownloadingTrailer": "Downloading trailer",
+    "stepDownloadingHltb": "Downloading How Long to Beat data",
+    "stepOpenCritcicData": "Downloading OpenCritic data",
+    "stepDownloadingAchievements": "Downloading achievements"
+  }
+}
