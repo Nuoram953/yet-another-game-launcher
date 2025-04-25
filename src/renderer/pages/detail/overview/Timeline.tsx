@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Calendar,
-  Clock,
-  Trophy,
-  Bell,
+  History,
+  CirclePlus,
   CircleCheck,
   Gamepad2,
-  CirclePlus,
-  Pencil,
   AlertCircle,
-  History,
-  ArrowRight,
+  Clock,
+  MoreVertical,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { useGames } from "@/context/DatabaseContext";
 import { Card } from "@/components/card/Card";
@@ -27,6 +26,7 @@ interface Event {
 export const EventTimeline = () => {
   const { selectedGame } = useGames();
   const { t } = useTranslation("GameStatus");
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const getDateFromBigint = (timestamp: bigint): Date => {
     const timestampNumber = Number(timestamp);
@@ -96,211 +96,175 @@ export const EventTimeline = () => {
     }
   };
 
-  const getEventColor = (
-    status: string,
-  ): { bg: string; text: string; border: string; light: string } => {
-    const colors: {
-      [key: string]: {
-        bg: string;
-        text: string;
-        border: string;
-        light: string;
-      };
-    } = {
-      playing: {
-        bg: "bg-blue-600",
-        text: "text-blue-200",
-        border: "border-blue-400",
-        light: "bg-blue-500/20",
-      },
-      played: {
-        bg: "bg-yellow-600",
-        text: "text-yellow-200",
-        border: "border-yellow-400",
-        light: "bg-yellow-500/20",
-      },
-      planned: {
-        bg: "bg-purple-600",
-        text: "text-purple-200",
-        border: "border-purple-400",
-        light: "bg-purple-500/20",
-      },
-      dropped: {
-        bg: "bg-red-600",
-        text: "text-red-200",
-        border: "border-red-400",
-        light: "bg-red-500/20",
-      },
-      completed: {
-        bg: "bg-green-600",
-        text: "text-green-200",
-        border: "border-green-400",
-        light: "bg-green-500/20",
-      },
-      added: {
-        bg: "bg-indigo-600",
-        text: "text-indigo-200",
-        border: "border-indigo-400",
-        light: "bg-indigo-500/20",
-      },
-    };
-    return (
-      colors[status] || {
-        bg: "bg-gray-600",
-        text: "text-gray-200",
-        border: "border-gray-400",
-        light: "bg-gray-500/20",
-      }
-    );
-  };
-
   const getEventIcon = (type: string): JSX.Element => {
     const size = 20;
     switch (type) {
       case "added":
-        return <CirclePlus size={size} className="text-indigo-100" />;
+        return <CirclePlus size={size} />;
       case "completed":
-        return <CircleCheck size={size} className="text-green-100" />;
+        return <CircleCheck size={size} />;
       case "playing":
-        return <Gamepad2 size={size} className="text-blue-100" />;
+        return <Gamepad2 size={size} />;
       case "played":
-        return <History size={size} className="text-yellow-100" />;
+        return <History size={size} />;
       case "planned":
-        return <Calendar size={size} className="text-purple-100" />;
+        return <Calendar size={size} />;
       case "dropped":
-        return <AlertCircle size={size} className="text-red-100" />;
+        return <AlertCircle size={size} />;
       default:
-        return <div className="h-4 w-4 rounded-full"></div>;
+        return <Clock size={size} />;
     }
   };
 
-  const currentStatusIndex =
-    sortedEvents.length > 0 ? sortedEvents.length - 1 : 0;
+  const getEventColor = (type: string): string => {
+    const colors: Record<string, string> = {
+      playing: "from-blue-600 to-blue-400",
+      played: "from-yellow-600 to-yellow-400",
+      planned: "from-purple-600 to-purple-400",
+      dropped: "from-red-600 to-red-400",
+      completed: "from-green-600 to-green-400",
+      added: "from-indigo-600 to-indigo-400",
+    };
+    return colors[type] || "from-gray-600 to-gray-400";
+  };
 
+  const currentStatusIndex = sortedEvents.length - 1;
   const currentStatus = sortedEvents[currentStatusIndex]?.type || "";
-  const currentStatusColors = getEventColor(currentStatus);
+  
+  const [visibleRange, setVisibleRange] = useState({
+    start: 0,
+    end: Math.min(5, sortedEvents.length)
+  });
+
+  const showPrevious = () => {
+    if (visibleRange.start > 0) {
+      setVisibleRange({
+        start: visibleRange.start - 1,
+        end: visibleRange.end - 1
+      });
+    }
+  };
+
+  const showNext = () => {
+    if (visibleRange.end < sortedEvents.length) {
+      setVisibleRange({
+        start: visibleRange.start + 1,
+        end: visibleRange.end + 1
+      });
+    }
+  };
+
+  const visibleEvents = sortedEvents.slice(visibleRange.start, visibleRange.end);
 
   return (
     <Card
-      title={
-        <div className="flex items-center space-x-2">
-          <History className="h-5 w-5 text-indigo-400" />
-          <span>Game Status Timeline</span>
-        </div>
-      }
+      title={ "Status History" }
       className="overflow-hidden"
     >
-
       {sortedEvents.length > 0 ? (
-        <div className="relative w-full pb-8">
-          {/* Current Status Display */}
-          <div className="mb-6 px-4">
-            <div
-              className={`flex items-center justify-between rounded-lg p-3 ${currentStatusColors.light}`}
-            >
+        <div className="w-full">
+          {/* Current Status Bar */}
+          <div className="mb-8 px-4">
+            <div className="flex items-center justify-between rounded-lg bg-gray-900 p-4">
               <div className="flex items-center space-x-3">
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-full ${currentStatusColors.bg} shadow-lg`}
-                >
-                  {getEventIcon(currentStatus)}
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Current Status</div>
-                  <div
-                    className={`text-lg font-medium ${currentStatusColors.text}`}
-                  >
-        <BadgeDropdown />
-                  </div>
+                <div className="text-lg font-medium text-gray-200">Current Status:</div>
+                <div className="flex">
+                  <BadgeDropdown />
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm text-gray-400">Since</div>
-                <div className="text-base font-medium text-gray-300">
-                  {formatDate(
-                    sortedEvents[currentStatusIndex]?.timestamp || new Date(),
-                  )}
-                </div>
+              <div className="flex items-center text-gray-400">
+                <Clock size={16} className="mr-2" />
+                {formatDate(sortedEvents[currentStatusIndex]?.timestamp || new Date())}
               </div>
             </div>
           </div>
 
-          <div className="max-w-full overflow-x-auto px-4 pb-4">
-            <div className="relative py-6">
-              {/* Timeline Bar */}
-              <div className="absolute left-0 right-0 top-12 h-1 bg-gray-700/50 shadow-inner"></div>
-
-              {/* Progress Bar - Gradient effect */}
-              <div
-                className="absolute left-0 top-12 h-1 bg-gradient-to-r from-indigo-600 to-indigo-400 shadow transition-all duration-700 ease-out"
-                style={{
-                  width: `${(currentStatusIndex / Math.max(sortedEvents.length - 1, 1)) * 100}%`,
-                }}
-              ></div>
-
-              {/* Timeline Items */}
-              <div
-                className="relative flex justify-start"
-                style={{
-                  minWidth:
-                    sortedEvents.length > 3
-                      ? `${sortedEvents.length * 150}px`
-                      : "100%",
-                }}
-              >
-                {sortedEvents.map((event, index) => {
-                  const colors = getEventColor(event.type);
-                  const isActive = index <= currentStatusIndex;
-                  const isLast = index === sortedEvents.length - 1;
-
-                  return (
-                    <div
-                      key={index}
-                      className={`relative z-10 flex flex-1 flex-col items-center transition-all duration-300 hover:scale-105`}
-                      style={{ minWidth: "120px" }}
-                    >
-                      {/* Status Circle */}
-                      <div className="mb-4 flex items-center">
-                        <div
-                          className={`flex h-12 w-12 items-center justify-center rounded-full border-2 shadow-lg ${
-                            isActive
-                              ? `${colors.bg} ${colors.border} shadow-${event.type}-500/20`
-                              : "border-gray-700 bg-gray-800"
-                          }`}
-                        >
-                          {getEventIcon(event.type)}
+          {/* Status History */}
+          <div className="relative px-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-300">Status Timeline</h3>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={showPrevious} 
+                  disabled={visibleRange.start === 0}
+                  className={`p-1 rounded-full ${visibleRange.start === 0 ? 'bg-gray-800 text-gray-600' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button 
+                  onClick={showNext} 
+                  disabled={visibleRange.end >= sortedEvents.length}
+                  className={`p-1 rounded-full ${visibleRange.end >= sortedEvents.length ? 'bg-gray-800 text-gray-600' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+            
+            {/* Timeline Visualization */}
+            <div className="grid grid-cols-1 gap-4">
+              {visibleEvents.map((event, idx) => {
+                const actualIndex = visibleRange.start + idx;
+                const isActive = activeIndex === actualIndex || activeIndex === null;
+                const isLatest = actualIndex === currentStatusIndex;
+                
+                return (
+                  <div 
+                    key={actualIndex}
+                    className={`relative rounded-lg transition-all duration-300 ${isActive ? 'bg-gray-800' : 'bg-gray-800/50'}`}
+                    onClick={() => setActiveIndex(isActive && activeIndex !== null ? null : actualIndex)}
+                  >
+                    {/* Indicator line */}
+                    {actualIndex < sortedEvents.length - 1 && (
+                      <div className="absolute top-1/2 left-6 h-full w-px bg-gray-700" style={{transform: 'translateX(-50%)'}}></div>
+                    )}
+                    
+                    <div className="relative flex items-start p-4">
+                      {/* Icon Circle */}
+                      <div className={`relative mr-6 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getEventColor(event.type)}`}>
+                        {getEventIcon(event.type)}
+                        {isLatest && (
+                          <div className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-white ring-2 ring-gray-800"></div>
+                        )}
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-lg font-medium text-gray-200">{t(event.title)}</h4>
+                          <span className="text-sm text-gray-400">{formatTime(event.timestamp)}</span>
                         </div>
-
-                        {/* Connector arrow between events */}
-                        {index < sortedEvents.length - 1 && (
-                          <div className="absolute left-full top-6 -translate-x-1/2 transform">
-                            <ArrowRight
-                              size={16}
-                              className={`opacity-50 ${isActive ? "text-white" : "text-gray-600"}`}
-                            />
+                        
+                        {isActive && (
+                          <div className="mt-2 text-sm text-gray-400">
+                            {event.type === "added" ? (
+                              <span>Game was added to your library</span>
+                            ) : event.type === "completed" ? (
+                              <span>You marked this game as completed</span>
+                            ) : event.type === "playing" ? (
+                              <span>You started playing this game</span>
+                            ) : event.type === "played" ? (
+                              <span>You've played this game before</span>
+                            ) : event.type === "planned" ? (
+                              <span>You plan to play this game</span>
+                            ) : event.type === "dropped" ? (
+                              <span>You stopped playing this game</span>
+                            ) : (
+                              <span>Status was updated</span>
+                            )}
                           </div>
                         )}
                       </div>
-
-                      {/* Status Label */}
-                      <div className="flex flex-col items-center text-center">
-                        <div
-                          className={`mb-1 rounded-md px-3 py-1 text-sm font-medium ${
-                            isActive
-                              ? `${colors.light} ${colors.text}`
-                              : "bg-gray-800/50 text-gray-400"
-                          }`}
-                        >
-                          {t(event.title)}
-                        </div>
-                        <div
-                          className={`text-xs ${isActive ? "text-gray-300" : "text-gray-500"}`}
-                        >
-                          {formatTime(event.timestamp)}
-                        </div>
-                      </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Status Count Indicator */}
+            <div className="mt-4 flex items-center justify-center">
+              <div className="text-sm text-gray-500">
+                Showing {visibleRange.start + 1}-{Math.min(visibleRange.end, sortedEvents.length)} of {sortedEvents.length} status updates
               </div>
             </div>
           </div>

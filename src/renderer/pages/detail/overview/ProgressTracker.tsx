@@ -83,7 +83,7 @@ export const ProgressTracker = () => {
       title={
         <div className="flex items-center space-x-2">
           <Clock className="h-5 w-5 text-indigo-400" />
-          <span>Progress Tracker - {selectedGame.name}</span>
+          <span>Progress Tracker</span>
         </div>
       }
       actions={[
@@ -322,31 +322,6 @@ export const ProgressTracker = () => {
               {completionistData.percent > 98 && (
                 <div className="absolute inset-0 bg-white/20"></div>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Overall completion status - new feature */}
-      <div className="mt-6 rounded-lg bg-indigo-900/20 p-4 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="mr-3 rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 p-2">
-              <Clock className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <h4 className="font-medium text-indigo-100">
-                Overall Completion
-              </h4>
-              <div className="text-xs text-indigo-300/80">
-                {formatTime(totalPlaytime)} of{" "}
-                {formatTime(selectedGame.completionist)} total
-              </div>
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="text-sm font-medium text-indigo-100">
-              {Math.round(completionistData.percent)}% Complete
             </div>
           </div>
         </div>

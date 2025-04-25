@@ -6,7 +6,7 @@ const image = cva(["w-full", "rounded-xl"], {
   variants: {
     intent: {
       cover: [],
-      background: [],
+      background: ["!w-[600px]", "h-[220px]", "object-cover"],
     },
   },
 });

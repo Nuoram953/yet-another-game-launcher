@@ -17,12 +17,7 @@ import notificationManager from "./manager/notificationManager";
 import ConfigManager from "./manager/configManager";
 import { AppConfig } from "../common/interface";
 import dataChannelManager from "./manager/dataChannelManager";
-import {
-  ElectronLogger,
-  LogLevel,
-  LogTag,
-  createMainLogger,
-} from "./manager/logManager";
+import { ElectronLogger, LogLevel, LogTag, createMainLogger } from "./manager/logManager";
 
 require("dotenv").config();
 
@@ -50,7 +45,7 @@ class MainWindowManager {
     try {
       dbPath = path.join(app.getPath("userData"), "app.sqlite");
 
-      console.log(dbPath)
+      console.log(dbPath);
       process.env.DATABASE_URL = `file:${dbPath}`;
 
       log.initialize();
@@ -202,9 +197,12 @@ class MainWindowManager {
         this.mainWindow?.webContents.send("app-focus");
       });
 
-      globalShortcut.register("F5", () => {
-        logger.debug("F5 was pressed!", {}, LogTag.USER_INPUT);
-        this.mainWindow?.reload();
+      this.mainWindow.webContents.on("before-input-event", (event, input) => {
+        if (input.key === "F5" && input.type === "keyDown") {
+          logger.debug("F5 was pressed!", {}, LogTag.USER_INPUT);
+          this.mainWindow?.reload();
+          event.preventDefault();
+        }
       });
     } catch (error) {
       logger.error("Failed to create window:", { error });

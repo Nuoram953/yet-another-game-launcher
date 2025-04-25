@@ -1,5 +1,6 @@
 export enum CookieType {
   SIDEBAR_COLLAPSED = 'sidebar_collapsed',
+  ACTIVE_SECTION = 'active_section',
 }
 
 /**

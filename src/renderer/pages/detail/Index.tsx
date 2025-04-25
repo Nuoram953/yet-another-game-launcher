@@ -17,7 +17,7 @@ import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
 import { Background } from "./Background";
 import { Logo } from "./Logo";
 import { useGames } from "@/context/DatabaseContext";
-import { SectionMetadata } from "./SectionMetadata";
+import { SectionMetadata } from "./metadata/Index";
 import { ButtonPlay } from "@/components/button/Play";
 import { SectionOverview } from "./overview/Index";
 import { SectionAchievements } from "./achievements/Index";
@@ -28,6 +28,7 @@ import { SectionActivities } from "./activities/Index";
 import { Container } from "@/components/Container";
 import { Image } from "@/components/image/Image";
 import useWindowSize from "@/hooks/useWindowSize";
+import { CookieType, getCookie, setCookie } from "@/utils/cookieUtil";
 
 interface Section {
   id: string;
@@ -38,7 +39,9 @@ interface Section {
 
 const GameDetailsContent: React.FC = () => {
   const { width } = useWindowSize();
-  const [activeSection, setActiveSection] = useState<string>("overview");
+  const [activeSection, setActiveSection] = useState<string>(
+    getCookie(CookieType.ACTIVE_SECTION, "string") || "overview",
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [collapsed, setCollapsed] = useState<boolean>(width < 1200);
   const { id } = useParams<{ id: string }>();
@@ -118,11 +121,7 @@ const GameDetailsContent: React.FC = () => {
     ],
   };
 
-  const sections: Section[] = [
-    ...sectionGroups.gameContent,
-    ...sectionGroups.socialFeatures,
-    ...sectionGroups.system,
-  ];
+  const sections: Section[] = [...sectionGroups.gameContent, ...sectionGroups.socialFeatures, ...sectionGroups.system];
 
   interface ComponentMapping {
     [key: string]: React.ComponentType<any>;
@@ -157,9 +156,7 @@ const GameDetailsContent: React.FC = () => {
 
     return (
       <div className="animate-fadeIn rounded-xl bg-gray-800/50 p-6 backdrop-blur-lg">
-        <h2 className="mb-4 text-xl font-bold">
-          {sections.find((s) => s.id === activeSection)?.label}
-        </h2>
+        <h2 className="mb-4 text-xl font-bold">{sections.find((s) => s.id === activeSection)?.label}</h2>
         <p className="text-gray-400">Content for {activeSection} section</p>
       </div>
     );
@@ -174,9 +171,7 @@ const GameDetailsContent: React.FC = () => {
 
     return (
       <div className="mb-6">
-        <h3 className="mb-2 px-4 text-xs font-medium uppercase tracking-wider text-gray-400">
-          {title}
-        </h3>
+        <h3 className="mb-2 px-4 text-xs font-medium uppercase tracking-wider text-gray-400">{title}</h3>
         <div className="space-y-1">
           {filteredSections.map((section, index) => (
             <Button
@@ -187,7 +182,10 @@ const GameDetailsContent: React.FC = () => {
                   ? "border-l-2 border-blue-400 bg-gradient-to-r from-blue-900/50 to-transparent"
                   : ""
               }`}
-              onClick={() => setActiveSection(section.id)}
+              onClick={() => {
+                setActiveSection(section.id);
+                setCookie(CookieType.ACTIVE_SECTION, section.id);
+              }}
               style={{
                 animation: "slideIn 0.5s ease-out forwards",
                 animationDelay: `${index * 50}ms`,
@@ -195,27 +193,15 @@ const GameDetailsContent: React.FC = () => {
             >
               <div
                 className={`mr-3 flex h-8 w-8 items-center justify-center rounded-full ${
-                  activeSection === section.id
-                    ? "bg-gray-800/50 text-blue-200"
-                    : "bg-gray-800/70 text-gray-400"
+                  activeSection === section.id ? "bg-gray-800/50 text-blue-200" : "bg-gray-800/70 text-gray-400"
                 }`}
               >
-                <section.icon
-                  className={`h-4 w-4 ${getIconStyle(section.id)}`}
-                />
+                <section.icon className={`h-4 w-4 ${getIconStyle(section.id)}`} />
               </div>
-              <span
-                className={
-                  activeSection === section.id
-                    ? "font-medium text-white"
-                    : "text-gray-300"
-                }
-              >
+              <span className={activeSection === section.id ? "font-medium text-white" : "text-gray-300"}>
                 {section.label}
               </span>
-              {activeSection === section.id && (
-                <div className="ml-auto h-2 w-2 rounded-full bg-blue-400"></div>
-              )}
+              {activeSection === section.id && <div className="ml-auto h-2 w-2 rounded-full bg-blue-400"></div>}
             </Button>
           ))}
         </div>
@@ -245,9 +231,7 @@ const GameDetailsContent: React.FC = () => {
               className="absolute right-2 top-2 h-8 w-8 p-0"
               onClick={() => setCollapsed(!collapsed)}
             >
-              <ChevronLeft
-                className={`h-4 w-4 transition-transform ${collapsed ? "rotate-180" : ""}`}
-              />
+              <ChevronLeft className={`h-4 w-4 transition-transform ${collapsed ? "rotate-180" : ""}`} />
             </Button>
 
             <div className="overflow-hidden rounded-lg shadow-md">
@@ -256,9 +240,7 @@ const GameDetailsContent: React.FC = () => {
 
             {!collapsed && (
               <div className="mt-3 text-center">
-                <h2 className="text-sm font-bold text-white">
-                  {selectedGame?.name}
-                </h2>
+                <h2 className="text-sm font-bold text-white">{selectedGame?.name}</h2>
               </div>
             )}
           </div>
@@ -268,10 +250,7 @@ const GameDetailsContent: React.FC = () => {
               <>
                 {renderSectionGroup("Game Content", sectionGroups.gameContent)}
                 <div className="mx-4 my-4 h-px bg-gray-700/50"></div>
-                {renderSectionGroup(
-                  "Social Features",
-                  sectionGroups.socialFeatures,
-                )}
+                {renderSectionGroup("Social Features", sectionGroups.socialFeatures)}
                 <div className="mx-4 my-4 h-px bg-gray-700/50"></div>
                 {renderSectionGroup("System", sectionGroups.system)}
               </>
@@ -288,7 +267,10 @@ const GameDetailsContent: React.FC = () => {
                           ? "bg-blue-900/50 text-blue-200"
                           : "text-gray-400 hover:bg-gray-700/50"
                       }`}
-                      onClick={() => setActiveSection(section.id)}
+                      onClick={() => {
+                        setActiveSection(section.id);
+                        setCookie(CookieType.ACTIVE_SECTION, section.id);
+                      }}
                       title={section.label}
                     >
                       <section.icon className="h-5 w-5" />

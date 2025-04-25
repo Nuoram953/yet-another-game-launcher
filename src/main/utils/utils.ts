@@ -25,6 +25,8 @@ export const getKeyPercentage = (item: object, targetKey: string): number => {
   const keyIndex = keys.indexOf(targetKey);
   
   if (keyIndex === -1) return 0;
+
+  const value = Math.round(((keyIndex + 1) / totalKeys) * 100);
   
-  return Math.round(((keyIndex + 1) / totalKeys) * 100);
+  return value === 100 ? 99 : value; //the 100% is handle by the notification manager
 };

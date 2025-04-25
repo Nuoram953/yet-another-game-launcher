@@ -114,6 +114,7 @@ export const createOrUpdateGame = async (
 
   const notificationsObject = i18n.t("newGame", { ns: "notification", returnObjects: true });
 
+
   const sgdb = new SteamGridDB(game);
   await sgdb.getGameIdByExternalId(game.storefront!.name);
   notificationManager.updateProgress(
@@ -205,6 +206,7 @@ export const createOrUpdateGame = async (
     getKeyPercentage(notificationsObject, "stepDownloadingAchievements"),
     i18n.t("newGame.stepDownloadingAchievements", { ns: "notification" }),
   );
+
   await updateAchievements(game);
 
   dataManager.send(DataRoute.REQUEST_GAMES, {});

@@ -14,6 +14,7 @@ import {
   SortConfig,
 } from "../../common/types";
 import { DataRoute, RouteDownload } from "../../common/constant";
+import { CookieType, deleteCookie} from "@/utils/cookieUtil";
 
 interface GamesContextValue {
   games: Game[];
@@ -97,6 +98,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
   const updateSelectedGame = useCallback(
     async (game: GameWithRelations | null) => {
+      deleteCookie(CookieType.ACTIVE_SECTION);
       setSelectedGame(game);
     },
     [],
