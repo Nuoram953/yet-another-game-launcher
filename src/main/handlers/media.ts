@@ -118,3 +118,13 @@ ipcMain.handle(RouteMedia.GET_SCREENSHOTS, async (_event, gameId, count) => {
     return [];
   }
 });
+
+ipcMain.handle(RouteMedia.DELETE, async (_event, gameId, mediaType, mediaName) => {
+  try {
+    return MediaService.deleteMediaByGameIdAndMediaId(gameId, mediaType, mediaName);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});

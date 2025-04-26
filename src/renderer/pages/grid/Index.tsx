@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Cover from "./cover/Cover";
 import _ from "lodash";
 import { useGames } from "@/context/DatabaseContext";
@@ -55,15 +49,9 @@ export const Grid = () => {
   );
 
   const filteredGames = useMemo(() => {
-    const uniqueGames = Array.from(
-      new Map(games.map((game) => [game.id, game])).values(),
-    );
+    const uniqueGames = Array.from(new Map(games.map((game) => [game.id, game])).values());
 
-    return search
-      ? uniqueGames.filter((game) =>
-          game.name.toLowerCase().includes(search.toLowerCase()),
-        )
-      : uniqueGames;
+    return search ? uniqueGames.filter((game) => game.name.toLowerCase().includes(search.toLowerCase())) : uniqueGames;
   }, [games, search]);
 
   const Cell = useCallback(
@@ -120,25 +108,14 @@ export const Grid = () => {
       <div className="flex-none">
         <Header>
           <div className="flex w-1/3 flex-row items-center p-4 align-middle">
-            {searchBarExpanded ? (
-              <Input
-                color={"dark"}
-                type="search"
-                placeholder="Search library..."
-                value={search}
-                onChange={handleSearch}
-              />
-            ) : (
-              <Button
-                intent={"icon"}
-                icon={Search}
-                size={"fit"}
-                onClick={() => {
-                  setSearchBarExpanded(true);
-                }}
-              />
-            )}
-            <div className="ml-2 flex flex-row">
+            <Input
+              color={"dark"}
+              type="search"
+              placeholder="Search library..."
+              value={search}
+              onChange={handleSearch}
+            />
+            <div className="flex flex-row ml-2">
               <Button
                 intent={"icon"}
                 icon={Filter}
@@ -169,16 +146,11 @@ export const Grid = () => {
           {({ height, width }) => {
             const availableWidth = width;
 
-            const columnCount = Math.max(
-              1,
-              Math.floor((availableWidth + GAP) / (COLUMN_WIDTH + GAP)),
-            );
+            const columnCount = Math.max(1, Math.floor((availableWidth + GAP) / (COLUMN_WIDTH + GAP)));
 
             const rowCount = Math.ceil(filteredGames.length / columnCount);
 
-            const adjustedColumnWidth = Math.floor(
-              (availableWidth - (columnCount - 1) * GAP) / columnCount,
-            );
+            const adjustedColumnWidth = Math.floor((availableWidth - (columnCount - 1) * GAP) / columnCount);
 
             return (
               <FixedSizeGrid

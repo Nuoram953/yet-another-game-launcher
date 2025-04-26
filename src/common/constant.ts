@@ -55,6 +55,9 @@ export enum RouteMedia {
   GET_TRAILERS = "media:getTrailer",
   GET_ACHIEVEMENTS = "media:getAchievements",
   GET_SCREENSHOTS = "media:getScreenshots",
+  DELETE = "media:delete",
+  SET_DEFAULT = "media:setDefault",
+  EDIT = "media:edit",
 }
 
 export enum RouteRanking {

@@ -25,12 +25,13 @@ export const StatsPanel = () => {
   if (lastSession) {
     const now = Date.now();
     const endedAt = Number(lastSession.endedAt); // Convert BigInt to Number for compatibility
-    const diffInMs = now - endedAt * 1000;
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
+    const diffInSeconds = now - endedAt
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
 
-    if (diffInHours < 24) {
+
+
+    if (diffInHours < 14) {
       // Format as "Last played X hours ago"
       detail =
         diffInHours > 0
@@ -38,7 +39,7 @@ export const StatsPanel = () => {
           : `Last played ${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
     } else {
       // Format as "Last played on dd/mm/yyyy"
-      const lastPlayedDate = new Date(Number(endedAt) * 1000);
+      const lastPlayedDate = new Date(Number(endedAt));
       detail = `Last played on ${lastPlayedDate.toLocaleDateString()}`;
     }
   }
@@ -84,7 +85,7 @@ export const StatsPanel = () => {
         icon={Clock}
         label="Time Played"
         value={`${convertToHoursAndMinutes(selectedGame?.timePlayed)}`}
-        // detail={formatTimespan(lastSession.startedAt, lastSession.endedAt)}
+        detail={detail}
       />
       <StatsCard
         icon={Trophy}
@@ -98,13 +99,6 @@ export const StatsPanel = () => {
         label="Activity"
         value={`${selectedGame.activities.length} Sessions`}
         detail={`${last7DaysSessions.length} sessions in the last 7 days`}
-      />
-      <StatsCard
-        icon={Activity}
-        label="Status"
-        value={t(selectedGame.gameStatus.name)}
-        detail=""
-        hide={true}
       />
     </div>
   );

@@ -18,22 +18,28 @@ class MetadataManager {
     this.userPath = app.getPath("userData");
   }
 
-  async downloadMissing(game:GameWithRelations){
+  async downloadMissing(game: GameWithRelations) {
     const sgdb = new SteamGridDB(game);
     await sgdb.getGameIdByExternalId(game.storefront!.name);
     await sgdb.downloadAllImageType(1, 1);
 
-    await igdb.downloadScreenshotsForGame(game, 10)
+    await igdb.downloadScreenshotsForGame(game, 10);
 
     await YouTubeDownloader.searchAndDownloadVideos(game);
-    
-    const openCritic = new OpenCritic()
-    await openCritic.search(game.name)
+
+    const openCritic = new OpenCritic();
+    await openCritic.search(game.name);
+  }
+
+  async deleteMedia(gameId: string, MediaType: MEDIA_TYPE, mediaId: string) {
+    const mediaPath = `${this.userPath}/${gameId}/${MediaType}/${mediaId}`;
+
+    fs.unlinkSync(`${mediaPath}`);
   }
 
   async getCountAchievementPictures(game: Game) {
-    const path = await this.getImageDirectoryPath(MEDIA_TYPE.ACHIEVEMENT, game)
-    return await this.getNumberOfFiles(path)
+    const path = await this.getImageDirectoryPath(MEDIA_TYPE.ACHIEVEMENT, game);
+    return await this.getNumberOfFiles(path);
   }
 
   async getImageDirectoryPath(type: MEDIA_TYPE, game: Game) {
@@ -72,16 +78,13 @@ class MetadataManager {
     customName?: string,
   ): Promise<void> {
     try {
-
       const folderPath = await this.getOrCreateImageDirectory(type, game);
       const countFiles = await this.getNumberOfFiles(folderPath);
-      const fileName = !_.isNil(customName)
-        ? `/${customName}.${extension}`
-        : `/${type}_${countFiles + 1}.${extension}`;
+      const fileName = !_.isNil(customName) ? `/${customName}.${extension}` : `/${type}_${countFiles + 1}.${extension}`;
 
       const destination = folderPath + fileName;
-      if(fs.existsSync(destination)){
-        return
+      if (fs.existsSync(destination)) {
+        return;
       }
 
       const response = await axios.get<Buffer>(url, {

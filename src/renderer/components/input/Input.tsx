@@ -2,7 +2,7 @@ import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const inputStyles = cva(
-  "flex w-full rounded-md border px-3 py-2 text-black text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2",
+  "flex w-full rounded-md px-3 py-2 text-black text-sm transition-colors focus:outline-none",
   {
     variants: {
       variant: {

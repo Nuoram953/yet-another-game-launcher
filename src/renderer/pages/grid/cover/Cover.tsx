@@ -82,7 +82,7 @@ const Cover = ({ game }: CoverProps) => {
         transformStyle: "preserve-3d",
       }}
     >
-      <Image src={coverPicture} alt={""}/>
+      <Image src={coverPicture} alt={""} intent={"cover"} />
 
       <div className="absolute left-2 top-2">
         <BadgeDropdown game={game} />

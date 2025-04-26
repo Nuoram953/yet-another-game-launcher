@@ -52,6 +52,7 @@ declare global {
       getTrailers: (gameId: string, count?: number) => Promise<string[]>;
       getAchievements: (gameId: string, count?: number) => Promise<string[]>;
       getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
+      delete: (gameId: string, mediaType: string, mediaId: string) => Promise<void>;
     };
     ranking: {
       getRanking: (id: number) => Promise<RankingWithRelation>;
