@@ -9,14 +9,10 @@ import type {
   Storefront,
   Tag,
 } from "@prisma/client";
-import type {
-  FilterConfig,
-  GameWithRelations,
-  RankingWithRelation,
-  SortConfig,
-} from "./types";
+import type { FilterConfig, GameWithRelations, RankingWithRelation, SortConfig } from "./types";
 import { AppConfig } from "./interface";
 import { PathsToProperties } from "src/main/manager/configManager";
+import { MEDIA_TYPE } from "./constant";
 declare global {
   interface Window {
     config: {
@@ -53,6 +49,8 @@ declare global {
       getAchievements: (gameId: string, count?: number) => Promise<string[]>;
       getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
       delete: (gameId: string, mediaType: string, mediaId: string) => Promise<void>;
+      search: (gameId: string, mediaType: MEDIA_TYPE, page: number) => Promise<string[]>;
+      downloadByUrl: (gameId: string, mediaType: MEDIA_TYPE, url: string[]) => Promise<void>;
     };
     ranking: {
       getRanking: (id: number) => Promise<RankingWithRelation>;
@@ -60,22 +58,14 @@ declare global {
       create: (name: string, maxItems: number) => Promise<RankingWithRelation>;
       delete: (id: number) => Promise<void>;
       edit: (data: Partial<RankingGame>) => Promise<void>;
-      removeGameFromRanking: (
-        rankingId: number,
-        gameId: string,
-      ) => Promise<void>;
+      removeGameFromRanking: (rankingId: number, gameId: string) => Promise<void>;
     };
     library: {
       refresh: () => Promise<void>;
       getGame: (id: string) => Promise<GameWithRelations>;
-      getGames: (
-        filters?: FilterConfig,
-        sort?: SortConfig,
-      ) => Promise<GameWithRelations[]>;
+      getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<GameWithRelations[]>;
       getLastPlayed: (max: number) => Promise<Game[]>;
-      getCountForAllStatus: () => Promise<
-        { id: number; name: string; count: number }[]
-      >;
+      getCountForAllStatus: () => Promise<{ id: number; name: string; count: number }[]>;
 
       getStatus: () => Promise<GameStatus[]>;
       getDownloadHistory: () => Promise<DownloadHistory[]>;
@@ -97,10 +87,7 @@ declare global {
       refreshProgressTracker: (id: string) => Promise<void>;
     };
     data: {
-      on: (
-        channel: string,
-        callback: (data: any) => void,
-      ) => (event: any, payload: any) => void;
+      on: (channel: string, callback: (data: any) => void) => (event: any, payload: any) => void;
       off: (channel: string, callback: (data: any) => void) => void;
       removeAllListeners: (channel: string) => void;
       subscribe: (channel: string, interval?: number) => Promise<void>;

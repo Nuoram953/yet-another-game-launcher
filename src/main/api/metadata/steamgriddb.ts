@@ -5,6 +5,7 @@ import log from "electron-log/main";
 import { delay } from "../../utils/utils";
 import notificationManager from "../../../main/manager/notificationManager";
 import { GameWithRelations } from "src/common/types";
+import _ from "lodash";
 
 class SteamGridDB {
   private apikey: string | undefined;
@@ -14,7 +15,6 @@ class SteamGridDB {
   constructor(game: GameWithRelations) {
     this.apikey = process.env.STEAM_GRID_DB_API_KEY;
     this.game = game;
-
   }
 
   async downloadAllImageType(countPerType: number, max: number) {
@@ -25,13 +25,10 @@ class SteamGridDB {
   }
 
   async getGameIdByExternalId(platform: string) {
-    const response = await axios.get(
-      `https://www.steamgriddb.com/api/v2/games/${platform}/${this.game.externalId}`,
-      {
-        headers: { Authorization: `Bearer ${this.apikey}` },
-        validateStatus: (status) => true,
-      },
-    );
+    const response = await axios.get(`https://www.steamgriddb.com/api/v2/games/${platform}/${this.game.externalId}`, {
+      headers: { Authorization: `Bearer ${this.apikey}` },
+      validateStatus: (status) => true,
+    });
 
     if (response.status == 404) {
       this.gameId = await this.searchByGameName(this.game.name);
@@ -41,10 +38,9 @@ class SteamGridDB {
   }
 
   async searchByGameName(name: string) {
-    const response = await axios.get(
-      `https://www.steamgriddb.com/api/v2/search/autocomplete/${name}`,
-      { headers: { Authorization: `Bearer ${this.apikey}` } },
-    );
+    const response = await axios.get(`https://www.steamgriddb.com/api/v2/search/autocomplete/${name}`, {
+      headers: { Authorization: `Bearer ${this.apikey}` },
+    });
 
     if (response.status != 200) {
       throw new Error("invalid api call");
@@ -58,35 +54,26 @@ class SteamGridDB {
     let hasAllImages: boolean = false;
     let page: number = 0;
 
-    let path = await metadataManager.getImageDirectoryPath(
-      MEDIA_TYPE.COVER,
-      this.game,
-    );
+    let path = await metadataManager.getImageDirectoryPath(MEDIA_TYPE.COVER, this.game);
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.debug(
-        `${this.game.id} has ${files} cover and the max was ${max}. Skipping`,
-      );
+      log.debug(`${this.game.id} has ${files} cover and the max was ${max}. Skipping`);
       return;
     }
 
-
     while (!hasAllImages) {
-      const response = await axios.get(
-        `https://www.steamgriddb.com/api/v2/grids/game/${this.gameId}`,
-        {
-          headers: { Authorization: `Bearer ${this.apikey}` },
-          params: {
-            gameId: this.gameId,
-            styles: "alternate,material",
-            dimensions: "600x900",
-            mimes: "image/jpeg,image/png",
-            type: "static",
-            limit: 50,
-            page: page,
-          },
+      const response = await axios.get(`https://www.steamgriddb.com/api/v2/grids/game/${this.gameId}`, {
+        headers: { Authorization: `Bearer ${this.apikey}` },
+        params: {
+          gameId: this.gameId,
+          styles: "alternate,material",
+          dimensions: "600x900",
+          mimes: "image/jpeg,image/png",
+          type: "static",
+          limit: 50,
+          page: page,
         },
-      );
+      });
 
       if (response.status !== 200) {
         log.error(response.data.errors);
@@ -104,12 +91,7 @@ class SteamGridDB {
     const data = images.sort((a, b) => b.score - a.score).splice(0, count);
 
     for (const image of data) {
-      await metadataManager.downloadImage(
-        MEDIA_TYPE.COVER,
-        this.game,
-        image.url,
-        image.mime.split("image/")[1],
-      );
+      await metadataManager.downloadImage(MEDIA_TYPE.COVER, this.game, image.url, image.mime.split("image/")[1]);
     }
   }
 
@@ -118,35 +100,26 @@ class SteamGridDB {
     let hasAllImages: boolean = false;
     let page: number = 0;
 
-    let path = await metadataManager.getImageDirectoryPath(
-      MEDIA_TYPE.BACKGROUND,
-      this.game,
-    );
+    let path = await metadataManager.getImageDirectoryPath(MEDIA_TYPE.BACKGROUND, this.game);
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.debug(
-        `${this.game.id} has ${files} background and the max was ${max}. Skipping`,
-      );
+      log.debug(`${this.game.id} has ${files} background and the max was ${max}. Skipping`);
       return;
     }
 
-
     while (!hasAllImages) {
-      const response = await axios.get(
-        `https://www.steamgriddb.com/api/v2/heroes/game/${this.gameId}`,
-        {
-          headers: { Authorization: `Bearer ${this.apikey}` },
-          params: {
-            gameId: this.gameId,
-            styles: "alternate,material",
-            dimensions: "3840x1240,1920x620",
-            mimes: "image/jpeg,image/png,image/webp",
-            type: "static",
-            limit: 50,
-            page: page,
-          },
+      const response = await axios.get(`https://www.steamgriddb.com/api/v2/heroes/game/${this.gameId}`, {
+        headers: { Authorization: `Bearer ${this.apikey}` },
+        params: {
+          gameId: this.gameId,
+          styles: "alternate,material",
+          dimensions: "3840x1240,1920x620",
+          mimes: "image/jpeg,image/png,image/webp",
+          type: "static",
+          limit: 50,
+          page: page,
         },
-      );
+      });
 
       if (response.status !== 200) {
         log.error(response.data.errors);
@@ -164,12 +137,7 @@ class SteamGridDB {
     const data = images.sort((a, b) => b.score - a.score).splice(0, count);
 
     for (const image of data) {
-      await metadataManager.downloadImage(
-        MEDIA_TYPE.BACKGROUND,
-        this.game,
-        image.url,
-        image.mime.split("image/")[1],
-      );
+      await metadataManager.downloadImage(MEDIA_TYPE.BACKGROUND, this.game, image.url, image.mime.split("image/")[1]);
     }
   }
 
@@ -178,34 +146,25 @@ class SteamGridDB {
     let hasAllImages: boolean = false;
     let page: number = 0;
 
-    let path = await metadataManager.getOrCreateImageDirectory(
-      MEDIA_TYPE.ICON,
-      this.game,
-    );
+    let path = await metadataManager.getOrCreateImageDirectory(MEDIA_TYPE.ICON, this.game);
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.debug(
-        `${this.game.id} has ${files} icon and the max was ${max}. Skipping`,
-      );
+      log.debug(`${this.game.id} has ${files} icon and the max was ${max}. Skipping`);
       return;
     }
 
-
     while (!hasAllImages) {
-      const response = await axios.get(
-        `https://www.steamgriddb.com/api/v2/icons/game/${this.gameId}`,
-        {
-          headers: { Authorization: `Bearer ${this.apikey}` },
-          params: {
-            gameId: this.gameId,
-            styles: "official,custom",
-            mimes: "image/png",
-            type: "static",
-            limit: 50,
-            page: page,
-          },
+      const response = await axios.get(`https://www.steamgriddb.com/api/v2/icons/game/${this.gameId}`, {
+        headers: { Authorization: `Bearer ${this.apikey}` },
+        params: {
+          gameId: this.gameId,
+          styles: "official,custom",
+          mimes: "image/png",
+          type: "static",
+          limit: 50,
+          page: page,
         },
-      );
+      });
 
       if (response.status !== 200) {
         log.error(response.data.errors);
@@ -223,12 +182,7 @@ class SteamGridDB {
     const data = images.sort((a, b) => b.score - a.score).splice(0, count);
 
     for (const image of data) {
-      await metadataManager.downloadImage(
-        MEDIA_TYPE.ICON,
-        this.game,
-        image.url,
-        image.mime.split("image/")[1],
-      );
+      await metadataManager.downloadImage(MEDIA_TYPE.ICON, this.game, image.url, image.mime.split("image/")[1]);
     }
   }
 
@@ -237,34 +191,25 @@ class SteamGridDB {
     let hasAllImages: boolean = false;
     let page: number = 0;
 
-    let path = await metadataManager.getImageDirectoryPath(
-      MEDIA_TYPE.LOGO,
-      this.game,
-    );
+    let path = await metadataManager.getImageDirectoryPath(MEDIA_TYPE.LOGO, this.game);
     let files = await metadataManager.getNumberOfFiles(path);
     if (files >= max) {
-      log.debug(
-        `${this.game.id} has ${files} logo and the max was ${max}. Skipping`,
-      );
+      log.debug(`${this.game.id} has ${files} logo and the max was ${max}. Skipping`);
       return;
     }
 
-
     while (!hasAllImages) {
-      const response = await axios.get(
-        `https://www.steamgriddb.com/api/v2/logos/game/${this.gameId}`,
-        {
-          headers: { Authorization: `Bearer ${this.apikey}` },
-          params: {
-            gameId: this.gameId,
-            styles: "official,white,black",
-            mimes: "image/png,image/webp",
-            type: "static",
-            limit: 50,
-            page: page,
-          },
+      const response = await axios.get(`https://www.steamgriddb.com/api/v2/logos/game/${this.gameId}`, {
+        headers: { Authorization: `Bearer ${this.apikey}` },
+        params: {
+          gameId: this.gameId,
+          styles: "official,white,black",
+          mimes: "image/png,image/webp",
+          type: "static",
+          limit: 50,
+          page: page,
         },
-      );
+      });
 
       if (response.status !== 200) {
         log.error(response.data.errors);
@@ -282,13 +227,118 @@ class SteamGridDB {
     const data = images.sort((a, b) => b.score - a.score).splice(0, count);
 
     for (const image of data) {
-      await metadataManager.downloadImage(
-        MEDIA_TYPE.LOGO,
-        this.game,
-        image.url,
-        image.mime.split("image/")[1],
-      );
+      await metadataManager.downloadImage(MEDIA_TYPE.LOGO, this.game, image.url, image.mime.split("image/")[1]);
     }
+  }
+
+  async searchGrid(page: number, limit?: number) {
+    const response = await axios.get(`https://www.steamgriddb.com/api/v2/grids/game/${this.gameId}`, {
+      headers: { Authorization: `Bearer ${this.apikey}` },
+      params: {
+        gameId: this.gameId,
+        styles: "alternate,material",
+        dimensions: "600x900",
+        mimes: "image/jpeg,image/png",
+        type: "static",
+        limit: limit,
+        page: page,
+      },
+    });
+
+    if (response.status !== 200) {
+      log.error(response.data.errors);
+    }
+
+    return response;
+  }
+
+  async searchHero(page: number, limit?: number) {
+    const response = await axios.get(`https://www.steamgriddb.com/api/v2/heroes/game/${this.gameId}`, {
+      headers: { Authorization: `Bearer ${this.apikey}` },
+      params: {
+        gameId: this.gameId,
+        styles: "alternate,material",
+        dimensions: "3840x1240,1920x620",
+        mimes: "image/jpeg,image/png,image/webp",
+        type: "static",
+        limit: limit,
+        page: page,
+      },
+    });
+
+    if (response.status !== 200) {
+      log.error(response.data.errors);
+    }
+
+    return response;
+  }
+
+  async searchIcon(page: number, limit?: number) {
+    const response = await axios.get(`https://www.steamgriddb.com/api/v2/icons/game/${this.gameId}`, {
+      headers: { Authorization: `Bearer ${this.apikey}` },
+      params: {
+        gameId: this.gameId,
+        styles: "official,custom",
+        mimes: "image/png",
+        type: "static",
+        limit: limit,
+        page: page,
+      },
+    });
+
+    if (response.status !== 200) {
+      log.error(response.data.errors);
+    }
+
+    return response;
+  }
+
+  async searchLogo(page: number, limit?: number) {
+    const response = await axios.get(`https://www.steamgriddb.com/api/v2/logos/game/${this.gameId}`, {
+      headers: { Authorization: `Bearer ${this.apikey}` },
+      params: {
+        gameId: this.gameId,
+        styles: "official,white,black",
+        mimes: "image/png,image/webp",
+        type: "static",
+        limit: limit,
+        page: page,
+      },
+    });
+
+    if (response.status !== 200) {
+      log.error(response.data.errors);
+    }
+
+    return response;
+  }
+
+  async search(mediaType: MEDIA_TYPE, page: number, limit?: number) {
+    let response;
+    switch (mediaType) {
+      case MEDIA_TYPE.COVER:
+        response = await this.searchGrid(page, limit);
+        break;
+      case MEDIA_TYPE.BACKGROUND:
+        response = await this.searchHero(page, limit);
+        break;
+      case MEDIA_TYPE.ICON:
+        response = await this.searchIcon(page, limit);
+        break;
+      case MEDIA_TYPE.LOGO:
+        response = await this.searchLogo(page, limit);
+        break;
+    }
+
+    if (_.isNil(response)) {
+      throw new Error("error");
+    }
+
+    if (response.status !== 200) {
+      log.error(response.data.errors);
+    }
+
+    return response.data.data.map((image: any) => image.url);
   }
 }
 

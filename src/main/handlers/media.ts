@@ -128,3 +128,23 @@ ipcMain.handle(RouteMedia.DELETE, async (_event, gameId, mediaType, mediaName) =
     return [];
   }
 });
+
+ipcMain.handle(RouteMedia.SEARCH, async (_event, gameId, mediaType, page) => {
+  try {
+    return MediaService.search(gameId, mediaType, page);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});
+
+ipcMain.handle(RouteMedia.DOWNLOAD_BY_URL, async (_event, gameId, mediaType, url) => {
+  try {
+    await MediaService.downloadByUrl(gameId, mediaType, url);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});

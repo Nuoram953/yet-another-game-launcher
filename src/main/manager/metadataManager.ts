@@ -74,13 +74,16 @@ class MetadataManager {
     type: MEDIA_TYPE,
     game: Game,
     url: string,
-    extension: string,
+    extension?: string,
     customName?: string,
   ): Promise<void> {
     try {
       const folderPath = await this.getOrCreateImageDirectory(type, game);
       const countFiles = await this.getNumberOfFiles(folderPath);
-      const fileName = !_.isNil(customName) ? `/${customName}.${extension}` : `/${type}_${countFiles + 1}.${extension}`;
+      const extensionFromFile = url.match(/\.([a-zA-Z0-9]+)(?:\?|#|$)/)?.[1];
+      const fileName = !_.isNil(customName)
+        ? `/${customName.replace(/\.[^/.]+$/, "")}.${extension}`
+        : `/${type}_${countFiles + 1}.${extension ? extension : extensionFromFile}`;
 
       const destination = folderPath + fileName;
       if (fs.existsSync(destination)) {
@@ -99,6 +102,11 @@ class MetadataManager {
         console.error(`Unexpected error: ${(error as Error).message}`);
       }
     }
+  }
+  async search(game: GameWithRelations, mediaType: MEDIA_TYPE, page: number) {
+    const sgdb = new SteamGridDB(game);
+    await sgdb.getGameIdByExternalId(game.storefront!.name);
+    return await sgdb.search(mediaType, page);
   }
 }
 

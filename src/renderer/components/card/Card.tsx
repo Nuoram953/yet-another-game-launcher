@@ -62,11 +62,11 @@ export const Card = ({
                 aria-label="Open actions menu"
               />
               {isDropdownOpen && (
-                <div className="absolute right-0 z-50 mt-2 w-48 rounded-md bg-gray-700 py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="absolute right-0 z-[100] mt-2 w-48 rounded-md bg-gray-700 py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                   {actions.map((action, index) => (
                     <button
                       key={index}
-                      className="flex w-full items-center px-4 py-2 text-left text-sm text-white hover:bg-gray-600"
+                      className="flex w-full items-center px-4 py-2 text-left text-sm z-[100] text-white hover:bg-gray-600"
                       onClick={() => {
                         action.onClick();
                         setIsDropdownOpen(false);

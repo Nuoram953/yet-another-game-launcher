@@ -222,9 +222,9 @@ const GameDetailsContent: React.FC = () => {
         <div
           className={`flex flex-col transition-all duration-300 ${
             collapsed ? "w-16" : "w-72"
-          } bg-gradient-to-b from-gray-800 to-gray-900 shadow-lg`}
+          } dark:bg-slate-800 shadow-lg`}
         >
-          <div className="relative bg-gradient-to-b from-gray-700/80 to-gray-800/80 p-4 backdrop-blur-lg">
+          <div className="relative dark:bg-slate-800 p-4 backdrop-blur-lg">
             <Button
               variant="ghost"
               size="sm"

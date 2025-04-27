@@ -18,6 +18,7 @@ import NotificationSystem from "./components/NotificationProvider";
 import { RankingPage } from "./pages/ranking/Index";
 import { RankingEditPage } from "./pages/ranking/edit/Index";
 import NotFound from "./pages/error/notFound";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
@@ -25,7 +26,7 @@ const App = () => {
   return (
     <I18nextProvider i18n={i18n}>
       <NotificationProvider>
-      <NotificationSystem />
+        <NotificationSystem />
         <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
           <GamesProvider>
             <HashRouter>
@@ -108,7 +109,11 @@ const App = () => {
 
 function render() {
   const root = ReactDOM.createRoot(document.getElementById("app")!);
-  root.render(<App />);
+  root.render(
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>,
+  );
 }
 
 render();

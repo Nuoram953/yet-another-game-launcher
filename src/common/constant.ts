@@ -56,6 +56,8 @@ export enum RouteMedia {
   GET_ACHIEVEMENTS = "media:getAchievements",
   GET_SCREENSHOTS = "media:getScreenshots",
   DELETE = "media:delete",
+  SEARCH = "media:search",
+  DOWNLOAD_BY_URL = "media:downloadByUrl",
   SET_DEFAULT = "media:setDefault",
   EDIT = "media:edit",
 }

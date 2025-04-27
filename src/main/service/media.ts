@@ -55,3 +55,21 @@ export const deleteMediaByGameIdAndMediaId = async (gameId:string, mediaType:MED
   await metadataManager.deleteMedia(gameId, mediaType, mediaId);
 
 };
+
+export const search = async (gameId:string, mediaType:MEDIA_TYPE, page:number) => {
+  const game = await queries.Game.getGameById(gameId);
+  if(_.isNil(game)) {
+    throw new Error(ErrorMessage.INVALID_GAME);
+  }
+
+  return await metadataManager.search(game, mediaType, page);
+};
+
+export const downloadByUrl = async (gameId:string, mediaType:MEDIA_TYPE, url:string) => {
+  const game = await queries.Game.getGameById(gameId);
+  if(_.isNil(game)) {
+    throw new Error(ErrorMessage.INVALID_GAME);
+  }
+
+  return await metadataManager.downloadImage(mediaType, game, url);
+};
