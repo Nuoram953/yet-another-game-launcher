@@ -9,7 +9,7 @@ export const Logo = () => {
   useEffect(() => {
     const fetchLogoPicture = async () => {
       try {
-        const logos = await window.media.getLogos(selectedGame!.id);
+        const logos = await window.media.getLogos(selectedGame!.id, 1);
         setLogoPicture(logos[0]);
         setLoading(false);
       } catch (error) {

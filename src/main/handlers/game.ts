@@ -79,3 +79,12 @@ ipcMain.handle(RouteGame.REFRESH_PROGRESS_TRACKER, async (_event, id) => {
     log.debug(e);
   }
 });
+
+ipcMain.handle(RouteGame.SET_FAVORITE, async (_event, data) => {
+  try {
+    await GameService.setFavorite(data);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+  }
+});

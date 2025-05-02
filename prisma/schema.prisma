@@ -51,6 +51,7 @@ model Game {
   downloadHistory        DownloadHistory[]
   gamescope              GameConfigGamescope?
   rankings               RankingGame[]
+  mediaDefault           MediaDefault[]
 
   @@unique([externalId, storefrontId])
 }
@@ -245,4 +246,22 @@ model RankingGame {
   gameId    String
 
   @@unique([rankingId, gameId])
+}
+
+model MediaDefault {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  mediaName   String
+  mediaType   MediaType @relation(fields: [mediaTypeId], references: [id])
+  mediaTypeId Int
+  game        Game      @relation(fields: [gameId], references: [id])
+  gameId      String
+
+  @@unique([mediaTypeId, gameId])
+}
+
+model MediaType {
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  MediaDefault MediaDefault[]
 }

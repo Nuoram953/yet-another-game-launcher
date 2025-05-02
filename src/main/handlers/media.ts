@@ -18,12 +18,15 @@ ipcMain.handle(RouteMedia.GET_ALL_MEDIA, async (_event, gameId) => {
       MEDIA_TYPE.TRAILER,
       gameId,
     );
+    const screenshots = await MediaService.getMediaByType(MEDIA_TYPE.SCREENSHOT, gameId);
+
     return {
       backgrounds,
       icons,
       logos,
       covers,
       trailers,
+      screenshots,
     };
   } catch (e) {
     log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
@@ -142,6 +145,16 @@ ipcMain.handle(RouteMedia.SEARCH, async (_event, gameId, mediaType, page) => {
 ipcMain.handle(RouteMedia.DOWNLOAD_BY_URL, async (_event, gameId, mediaType, url) => {
   try {
     await MediaService.downloadByUrl(gameId, mediaType, url);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});
+
+ipcMain.handle(RouteMedia.SET_DEFAULT, async (_event, gameId, mediaType, name) => {
+  try {
+    await MediaService.setDefault(gameId, mediaType, name);
   } catch (e) {
     log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
     log.debug(e);

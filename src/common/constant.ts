@@ -78,6 +78,7 @@ export enum RouteGame {
   UNINSTALL = "game:uninstall",
   SET_REVIEW = "game:setReview",
   SET_STATUS = "game:setStatus",
+  SET_FAVORITE = "game:setFavorite",
   SET_SETTING_GAMESCOPE = "game:setGamescope",
   REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
 }

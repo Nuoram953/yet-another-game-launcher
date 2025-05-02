@@ -39,6 +39,7 @@ declare global {
         logos: string[];
         covers: string[];
         trailers: string[];
+        screenshots: string[];
       }>;
       getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
       getRecentlyPlayedBackgrounds: (count: number) => Promise<string[]>;
@@ -51,6 +52,7 @@ declare global {
       delete: (gameId: string, mediaType: string, mediaId: string) => Promise<void>;
       search: (gameId: string, mediaType: MEDIA_TYPE, page: number) => Promise<string[]>;
       downloadByUrl: (gameId: string, mediaType: MEDIA_TYPE, url: string[]) => Promise<void>;
+      setDefault: (gameId: string, mediaType: MEDIA_TYPE, name: string) => Promise<void>;
     };
     ranking: {
       getRanking: (id: number) => Promise<RankingWithRelation>;
@@ -84,6 +86,7 @@ declare global {
       setReview: (data: Partial<GameReview>) => Promise<void>;
       setStatus: (data: Partial<Game>) => Promise<void>;
       setGamescope: (data: GameConfigGamescope) => Promise<void>;
+      setFavorite: (data: Partial<Game>) => Promise<void>;
       refreshProgressTracker: (id: string) => Promise<void>;
     };
     data: {

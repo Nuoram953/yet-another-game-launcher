@@ -39,9 +39,7 @@ interface Section {
 
 const GameDetailsContent: React.FC = () => {
   const { width } = useWindowSize();
-  const [activeSection, setActiveSection] = useState<string>(
-    getCookie(CookieType.ACTIVE_SECTION, "string") || "overview",
-  );
+  const [activeSection, setActiveSection] = useState(getCookie(CookieType.ACTIVE_SECTION, "string") || "overview");
   const [loading, setLoading] = useState<boolean>(true);
   const [collapsed, setCollapsed] = useState<boolean>(width < 1200);
   const { id } = useParams<{ id: string }>();
@@ -62,10 +60,10 @@ const GameDetailsContent: React.FC = () => {
         const result = await window.library.getGame(id);
         if (result) {
           await updateSelectedGame(result);
-          const covers = await window.media.getCovers(id);
+          const covers = await window.media.getCovers(id, 1);
           setCover(covers[0]);
 
-          const icon = await window.media.getIcons(id);
+          const icon = await window.media.getIcons(id, 1);
           setIcon(icon[0]);
           setLoading(false);
 
@@ -148,7 +146,7 @@ const GameDetailsContent: React.FC = () => {
       activities: SectionActivities,
     };
 
-    const ActiveComponent = components[activeSection];
+    const ActiveComponent = components[activeSection as string];
 
     if (ActiveComponent) {
       return <ActiveComponent />;
@@ -222,9 +220,9 @@ const GameDetailsContent: React.FC = () => {
         <div
           className={`flex flex-col transition-all duration-300 ${
             collapsed ? "w-16" : "w-72"
-          } dark:bg-slate-800 shadow-lg`}
+          } shadow-lg dark:bg-slate-800`}
         >
-          <div className="relative dark:bg-slate-800 p-4 backdrop-blur-lg">
+          <div className="relative p-4 backdrop-blur-lg dark:bg-slate-800">
             <Button
               variant="ghost"
               size="sm"

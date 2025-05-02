@@ -67,15 +67,6 @@ export const getGame = async (id: string) => {
     throw new Error("Invalid game id ${id}");
   }
 
-  //For existing games that don't have metadata downloaded
-  if (!game.openedAt) {
-    await GameSerivce.createOrUpdateGame(game, game.storefrontId!, true);
-
-    await queries.Game.update(game.id, {
-      openedAt: new Date(),
-    });
-  }
-
   await updateAchievements(game);
 
   await queries.Game.update(id, {

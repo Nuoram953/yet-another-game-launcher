@@ -29,6 +29,8 @@ contextBridge.exposeInMainWorld("media", {
     ipcRenderer.invoke(RouteMedia.SEARCH, gameId, mediaType, page),
   downloadByUrl: (gameId:string, mediaType: string, url:string) =>
     ipcRenderer.invoke(RouteMedia.DOWNLOAD_BY_URL, gameId, mediaType, url),
+  setDefault: (gameId:string, mediaType: string, name:string) =>
+    ipcRenderer.invoke(RouteMedia.SET_DEFAULT, gameId, mediaType, name),
 });
 
 contextBridge.exposeInMainWorld("library", {
@@ -60,6 +62,7 @@ contextBridge.exposeInMainWorld("game", {
   uninstall: (id: string) => ipcRenderer.invoke(RouteGame.UNINSTALL, id),
   setReview: (data: Partial<GameReview>) => ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
   setStatus: (data: Partial<Game>) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
+  setFavorite: (data: Partial<Game>) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, data),
   setGamescope: (data: GameConfigGamescope) => ipcRenderer.invoke(RouteGame.SET_SETTING_GAMESCOPE, data),
   refreshProgressTracker: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_PROGRESS_TRACKER, id),
 });

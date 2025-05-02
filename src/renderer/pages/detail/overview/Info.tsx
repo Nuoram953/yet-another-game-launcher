@@ -1,89 +1,204 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Star, Calendar } from "lucide-react";
+import { Star, Calendar, Users, Building, Heart, Share2, BookOpen } from "lucide-react";
 import { useGames } from "@/context/DatabaseContext";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Progress } from "@/components/ui/progress";
+import React from "react";
 import { Card } from "@/components/card/Card";
 
-const Info = () => {
+const MotionDiv = ({ children, ...props }) => {
+  return <div {...props}>{children}</div>;
+};
+
+const GameInfo = () => {
   const { selectedGame } = useGames();
+  const [isFavorite, setIsFavorite] = useState(selectedGame?.isFavorite || false);
+  const [scoreAnimation, setScoreAnimation] = useState(0);
+
+  useEffect(() => {
+    if (selectedGame?.scoreCritic) {
+      const timer = setTimeout(() => {
+        setScoreAnimation(selectedGame.scoreCritic);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedGame?.scoreCritic]);
 
   if (!selectedGame) {
-    return;
-  }
-
-  return (
-    <Card title={selectedGame.name}>
-      <div className="mb-6 flex flex-col gap-6 md:flex-row">
-        <div className="flex-grow">
-          <div className="mb-4 flex flex-wrap gap-2">
-            <span className="text-gray-600">
-              {selectedGame?.developers.length &&
-                selectedGame?.developers[0].company.name}
-            </span>
-            <span className="text-gray-400">•</span>
-            <span className="text-gray-600">
-              {selectedGame?.publishers.length &&
-                selectedGame?.publishers[0].company.name}
-            </span>
-          </div>
-
-          <div className="mb-6">
-            <p className="text-gray-400">{selectedGame?.summary}</p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              {selectedGame?.tags
-                .filter((item) => item.isGenre)
-                .map((genre) => (
-                  <Badge
-                    key={genre.tag.name}
-                    variant="secondary"
-                    className="text-sm"
-                  >
-                    {genre.tag.name}
-                  </Badge>
-                ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {selectedGame?.tags
-                .filter((item) => item.isTheme)
-                .map((item) => (
-                  <Badge
-                    key={item.tag.name}
-                    variant="secondary"
-                    className="text-sm"
-                  >
-                    {item.tag.name}
-                  </Badge>
-                ))}
-            </div>
-          </div>
+    return (
+      <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-white shadow-xl">
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <BookOpen className="mb-4 h-16 w-16 text-gray-400" />
+          <h3 className="mb-2 text-2xl font-bold">No Game Selected</h3>
+          <p className="text-gray-400">Select a game from your library to view details</p>
         </div>
       </div>
+    );
+  }
 
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="flex items-center gap-2">
-          <Star className="text-yellow-500" />
-          <div>
-            <div className="text-2xl font-bold">
-              {selectedGame?.scoreCritic}
+  const getReleaseYear = () => {
+    return new Date(selectedGame?.createdAt).getFullYear();
+  };
+
+  const handleShareGame = () => {
+    // Share functionality would go here
+    console.log("Sharing game:", selectedGame.name);
+  };
+
+  const toggleFavorite = () => {
+    window.game.setFavorite({id:selectedGame.id, isFavorite:!selectedGame.isFavorite});
+    setIsFavorite(!isFavorite);
+  };
+
+  const getScoreColor = (score) => {
+    if (score >= 85) return "text-green-500";
+    if (score >= 70) return "text-yellow-500";
+    return "text-red-500";
+  };
+
+  const developer = selectedGame?.developers?.length ? selectedGame.developers[0].company.name : "Unknown";
+  const publisher = selectedGame?.publishers?.length ? selectedGame.publishers[0].company.name : "Unknown";
+
+  const renderGenres = () => {
+    const genres = selectedGame?.tags?.filter((tag) => tag.isGenre) || [];
+    return genres.map((genre) => (
+      <Badge
+        key={genre.tag.name}
+        variant="outline"
+        className="border-none bg-gray-800 px-3 py-1 text-gray-100 hover:bg-gray-700"
+      >
+        {genre.tag.name}
+      </Badge>
+    ));
+  };
+
+  const renderThemes = () => {
+    const themes = selectedGame?.tags?.filter((tag) => tag.isTheme) || [];
+    return themes.map((theme) => (
+      <Badge
+        key={theme.tag.name}
+        variant="outline"
+        className="border-none bg-gray-700 px-3 py-1 text-gray-200 hover:bg-gray-600"
+      >
+        {theme.tag.name}
+      </Badge>
+    ));
+  };
+
+  const formattedDate = new Date(selectedGame?.createdAt).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <Card title="">
+      {/* Game Header */}
+      <div className="h-fit bg-gray-800 bg-opacity-50" /> {/* Game cover image would go here */}
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="mb-1 flex flex-row items-center">
+            <h1 className="text-3xl font-bold">{selectedGame.name}</h1>
+            <span className="inline-block rounded bg-gray-800 px-2 py-1 text-xs font-medium">{getReleaseYear()}</span>
+          </div>
+
+          <div className="mt-3 flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <Building size={16} className="text-gray-400" />
+              <span className="text-sm text-gray-300">{developer}</span>
             </div>
-            <div className="text-sm text-gray-600">Metacritic</div>
+            <div className="flex items-center gap-1.5">
+              <Users size={16} className="text-gray-400" />
+              <span className="text-sm text-gray-300">{publisher}</span>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Calendar className="text-blue-500" />
-          <div>
-            <div className="text-lg font-semibold">
-              {new Date(selectedGame?.createdAt).toLocaleDateString()}
-            </div>
-            <div className="text-sm text-gray-600">Release Date</div>
-          </div>
+
+        <div className="flex gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={toggleFavorite}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-gray-700 ${
+                    isFavorite ? "text-red-500" : "text-gray-400"
+                  }`}
+                >
+                  <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{selectedGame.isFavorite ? "Remove from favorites" : "Add to favorites"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleShareGame}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors hover:bg-gray-700"
+                >
+                  <Share2 size={18} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Share</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
+      </div>
+      {/* Score & Release Date */}
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <MotionDiv className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
+              <Star className={`${getScoreColor(selectedGame.scoreCritic)}`} size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`text-2xl font-bold ${getScoreColor(selectedGame.scoreCritic)}`}>
+                  {selectedGame.scoreCritic || "N/A"}
+                </span>
+                <span className="text-xs text-gray-400">/100</span>
+              </div>
+              <div className="mt-1">
+                <Progress value={scoreAnimation} className="h-1 w-24" />
+              </div>
+              <div className="mt-1 text-xs text-gray-400">Metacritic Score</div>
+            </div>
+          </div>
+        </MotionDiv>
+
+        <MotionDiv className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
+              <Calendar className="text-blue-400" size={20} />
+            </div>
+            <div>
+              <div className="text-lg font-semibold">{formattedDate}</div>
+              <div className="mt-1 text-xs text-gray-400">Release Date</div>
+            </div>
+          </div>
+        </MotionDiv>
+      </div>
+      <div>
+        <h3 className="mb-2 text-lg font-medium text-gray-300">About</h3>
+        <p className="leading-relaxed text-gray-400">{selectedGame.summary}</p>
+      </div>
+      <div>
+        <h3 className="mb-3 text-lg font-medium text-gray-300">Genres</h3>
+        <div className="flex flex-wrap gap-2">{renderGenres()}</div>
+      </div>
+      <div>
+        <h3 className="mb-3 text-lg font-medium text-gray-300">Themes</h3>
+        <div className="flex flex-wrap gap-2">{renderThemes()}</div>
       </div>
     </Card>
   );
 };
 
-export default Info;
+export default GameInfo;

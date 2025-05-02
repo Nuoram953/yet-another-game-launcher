@@ -14,7 +14,6 @@ interface ImageSelectionDialogProps {
 }
 
 export default function ImageAddDialogue({ isOpen, onClose, onSelect, mediaType, gameId }: ImageSelectionDialogProps) {
-  console.log(mediaType)
   const { selectedGame } = useGames();
   const [availableImages, setAvailableImages] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);

@@ -224,7 +224,7 @@ class SteamGridDB {
       }
     }
 
-    const data = images.sort((a, b) => b.score - a.score).splice(0, count);
+    const data = images.sort((a, b) => b.score - a.score).splice(0, max);
 
     for (const image of data) {
       await metadataManager.downloadImage(MEDIA_TYPE.LOGO, this.game, image.url, image.mime.split("image/")[1]);

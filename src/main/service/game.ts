@@ -122,35 +122,35 @@ export const createOrUpdateGame = async (
     getKeyPercentage(notificationsObject, "stepDownloadingCover"),
     i18n.t("newGame.stepDownloadingCover", { ns: "notification" }),
   );
-  await sgdb.downloadGridForGame(1, 5);
+  await sgdb.downloadGridForGame(3, 5);
 
   notificationManager.updateProgress(
     notificationId,
     getKeyPercentage(notificationsObject, "stepDownloadingBackgrounds"),
     i18n.t("newGame.stepDownloadingBackgrounds", { ns: "notification" }),
   );
-  await sgdb.downladHeroesForGame(1, 5);
+  await sgdb.downladHeroesForGame(3, 5);
 
   notificationManager.updateProgress(
     notificationId,
     getKeyPercentage(notificationsObject, "stepDownloadingIcons"),
     i18n.t("newGame.stepDownloadingIcons", { ns: "notification" }),
   );
-  await sgdb.downloadIconForGame(1, 5);
+  await sgdb.downloadIconForGame(3, 5);
 
   notificationManager.updateProgress(
     notificationId,
     getKeyPercentage(notificationsObject, "stepDownloadingLogos"),
     i18n.t("newGame.stepDownloadingLogos", { ns: "notification" }),
   );
-  await sgdb.downloadLogosForGame(1, 5);
+  await sgdb.downloadLogosForGame(3, 5);
 
   notificationManager.updateProgress(
     notificationId,
     getKeyPercentage(notificationsObject, "stepDownloadingScreenshots"),
     i18n.t("newGame.stepDownloadingScreenshots", { ns: "notification" }),
   );
-  await igdb.downloadScreenshotsForGame(game, 10);
+  await igdb.downloadScreenshotsForGame(game, 15);
 
   const { developers, publishers, partialGameData } = await igdb.getGame(game);
   await queries.Game.update(game.id, partialGameData);
@@ -269,6 +269,16 @@ export const setGamescope = async (data: GameConfigGamescope) => {
     await storeSteam.updateLaunchOptions(game, data);
   }
   await refreshGame(game.id);
+};
+
+export const setFavorite = async (data: Partial<Game>) => {
+  const game = await queries.Game.getGameById(data.id!);
+
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  await queries.Game.update(data.id!, { isFavorite: data.isFavorite });
 };
 
 export const refreshProgressTracker = async (id: string) => {

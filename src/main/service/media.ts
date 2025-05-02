@@ -7,11 +7,7 @@ import fs from "fs";
 import { ErrorMessage } from "../../common/error";
 import { metadataManager } from "..";
 
-export const getMediaByType = async (
-  type: MEDIA_TYPE,
-  gameId: string,
-  count?: number,
-) => {
+export const getMediaByType = async (type: MEDIA_TYPE, gameId: string, count?: number) => {
   const game = await queries.Game.getGameById(gameId);
 
   if (_.isNil(game)) {
@@ -28,11 +24,18 @@ export const getMediaByType = async (
       for (const file of files) {
         paths.push(`file://${path.join(directory, file)}`);
       }
-    } else {
-      const slicedFiles = files.slice(0, count);
-      for (const file of slicedFiles) {
-        paths.push(`file://${path.join(directory, file)}`);
-      }
+      return paths;
+    }
+
+    const defaultMedia = await queries.MediaDefault.findByGameIdAndMediaType(game.id, type);
+
+    if (defaultMedia) {
+      paths.push(`file://${path.join(directory, defaultMedia.mediaName)}`);
+    }
+
+    const randomFiles = files.sort(() => 0.5 - Math.random()).slice(0, count);
+    for (const file of randomFiles) {
+      paths.push(`file://${path.join(directory, file)}`);
     }
 
     return paths;
@@ -51,25 +54,39 @@ export const getRecentlyPlayedBackgrounds = async (count: number) => {
   }
 };
 
-export const deleteMediaByGameIdAndMediaId = async (gameId:string, mediaType:MEDIA_TYPE, mediaId:string) => {
+export const deleteMediaByGameIdAndMediaId = async (gameId: string, mediaType: MEDIA_TYPE, mediaId: string) => {
   await metadataManager.deleteMedia(gameId, mediaType, mediaId);
-
 };
 
-export const search = async (gameId:string, mediaType:MEDIA_TYPE, page:number) => {
+export const search = async (gameId: string, mediaType: MEDIA_TYPE, page: number) => {
   const game = await queries.Game.getGameById(gameId);
-  if(_.isNil(game)) {
+  if (_.isNil(game)) {
     throw new Error(ErrorMessage.INVALID_GAME);
   }
 
   return await metadataManager.search(game, mediaType, page);
 };
 
-export const downloadByUrl = async (gameId:string, mediaType:MEDIA_TYPE, url:string) => {
+export const downloadByUrl = async (gameId: string, mediaType: MEDIA_TYPE, url: string) => {
   const game = await queries.Game.getGameById(gameId);
-  if(_.isNil(game)) {
+  if (_.isNil(game)) {
     throw new Error(ErrorMessage.INVALID_GAME);
   }
 
   return await metadataManager.downloadImage(mediaType, game, url);
+};
+
+export const setDefault = async (gameId: string, mediaType: MEDIA_TYPE, name: string) => {
+  const game = await queries.Game.getGameById(gameId);
+  if (_.isNil(game)) {
+    throw new Error(ErrorMessage.INVALID_GAME);
+  }
+
+  const mediaTypeDb = await queries.MediaType.findByName(mediaType);
+
+  await queries.MediaDefault.createOrUpdate({
+    gameId: game.id,
+    mediaTypeId: mediaTypeDb?.id,
+    mediaName: name,
+  });
 };

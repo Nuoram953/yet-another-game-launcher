@@ -13,6 +13,8 @@ import * as GameConfigGamescope from "./gameConfigGamescope"
 import * as Storefront from "./storefront"
 import * as Ranking from "./ranking"
 import * as RankingGame from "./rankingGame"
+import * as MediaDefault from "./mediaDefault"
+import * as MediaType from "./mediaType"
 
 export default {
   Game,
@@ -30,4 +32,6 @@ export default {
   Storefront,
   Ranking,
   RankingGame,
+  MediaDefault,
+  MediaType
 };
