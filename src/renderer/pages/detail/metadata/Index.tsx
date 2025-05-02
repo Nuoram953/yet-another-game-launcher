@@ -259,7 +259,7 @@ export function SectionMetadata() {
                       <div className="absolute bottom-0 left-0 right-0 flex justify-end gap-1 bg-gradient-to-t from-black p-2">
                         <Button
                           intent="icon"
-                          icon={<Star/>}
+                          icon={Star}
                           size="xs"
                           aria-label="Edit image"
                           onClick={(e) => {

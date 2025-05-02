@@ -144,7 +144,7 @@ export const Grid = () => {
       <div className="mt-8 min-h-0 flex-1">
         <AutoSizer>
           {({ height, width }) => {
-            const availableWidth = width;
+            const availableWidth = width - 24; // Subtracting 32px for padding
 
             const columnCount = Math.max(1, Math.floor((availableWidth + GAP) / (COLUMN_WIDTH + GAP)));
 

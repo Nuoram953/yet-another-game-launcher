@@ -27,7 +27,7 @@ const WebpageViewer = () => {
             webpreferences="contextIsolation=true, nodeIntegration=false"
             partition="persist:steamstore"
             useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36"
-            allowpopups={true}
+            allowpopups
           />
         </div>
       )}
