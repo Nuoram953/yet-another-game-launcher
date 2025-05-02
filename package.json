@@ -22,7 +22,7 @@
     ]
   },
   "lint-staged": {
-    "*.{ts,js,json,yml,md}": [
+    "*.{ts,js,json,yml,md,tsx}": [
       "prettier --write"
     ]
   },
@@ -52,9 +52,10 @@
     "eslint-plugin-import": "^2.27.5",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
     "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
     "node-loader": "^2.0.0",
     "postcss-loader": "^7.3.3",
-    "prettier": "^3.4.2",
+    "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.3.0-dev.4",
     "semantic-release": "^24.2.3",
