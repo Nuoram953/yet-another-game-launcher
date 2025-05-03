@@ -6,6 +6,7 @@ interface ActionItem {
   icon: React.FC<any>;
   name: string;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 interface CardProps {
@@ -16,23 +17,14 @@ interface CardProps {
   className?: string;
 }
 
-export const Card = ({
-  title,
-  subtitle,
-  children,
-  actions,
-  className,
-}: CardProps) => {
+export const Card = ({ title, subtitle, children, actions, className }: CardProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
@@ -66,17 +58,14 @@ export const Card = ({
                   {actions.map((action, index) => (
                     <button
                       key={index}
-                      className="flex w-full items-center px-4 py-2 text-left text-sm z-[100] text-white hover:bg-gray-600"
+                      className="z-[100] flex w-full items-center px-4 py-2 text-left text-sm text-white hover:bg-gray-600 disabled:text-gray-500"
+                      disabled={action.disabled ?? false}
                       onClick={() => {
                         action.onClick();
                         setIsDropdownOpen(false);
                       }}
                     >
-                      {action.icon && (
-                        <span className="mr-2">
-                          {React.createElement(action.icon, { size: 16 })}
-                        </span>
-                      )}
+                      {action.icon && <span className="mr-2">{React.createElement(action.icon, { size: 16 })}</span>}
                       {action.name}
                     </button>
                   ))}

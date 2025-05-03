@@ -25,12 +25,14 @@ contextBridge.exposeInMainWorld("media", {
   getIcons: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_ICONS, gameId, count),
   delete: (gameId: string, mediaType: string, mediaId: string) =>
     ipcRenderer.invoke(RouteMedia.DELETE, gameId, mediaType, mediaId),
-  search: (gameId:string, mediaType: string, page:number) =>
+  search: (gameId: string, mediaType: string, page: number) =>
     ipcRenderer.invoke(RouteMedia.SEARCH, gameId, mediaType, page),
-  downloadByUrl: (gameId:string, mediaType: string, url:string) =>
+  downloadByUrl: (gameId: string, mediaType: string, url: string) =>
     ipcRenderer.invoke(RouteMedia.DOWNLOAD_BY_URL, gameId, mediaType, url),
-  setDefault: (gameId:string, mediaType: string, name:string) =>
+  setDefault: (gameId: string, mediaType: string, name: string) =>
     ipcRenderer.invoke(RouteMedia.SET_DEFAULT, gameId, mediaType, name),
+  removeDefault: (gameId: string, mediaType: string) =>
+    ipcRenderer.invoke(RouteMedia.REMOVE_DEFAULT, gameId, mediaType),
 });
 
 contextBridge.exposeInMainWorld("library", {

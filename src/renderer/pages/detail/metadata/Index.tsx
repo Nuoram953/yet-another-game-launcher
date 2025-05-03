@@ -1,74 +1,97 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useGames } from "@/context/DatabaseContext";
 import { Card } from "@/components/card/Card";
 import { MEDIA_TYPE } from "../../../../common/constant";
-import { Check, Cross, Pencil, Star, Trash } from "lucide-react";
+import { Plus, Star, Trash } from "lucide-react";
 import { Image } from "@/components/image/Image";
 import { Button } from "@/components/button/Button";
 import { useNotifications } from "@/components/NotificationSystem";
 import ImageAddDialogue from "./ImageAddDialogue";
+import { MediaItem, MediaState } from "./types";
 
 export function SectionMetadata() {
   const { addNotification } = useNotifications();
   const { selectedGame } = useGames();
-  const [media, setMedia] = useState({});
+  const [media, setMedia] = useState<MediaState | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentMediaType, setCurrentMediaType] = useState<MEDIA_TYPE | null>(MEDIA_TYPE.BACKGROUND);
-  const [selectedItems, setSelectedItems] = useState({});
+  const [currentMediaType, setCurrentMediaType] = useState<MEDIA_TYPE>(MEDIA_TYPE.BACKGROUND);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMedia = async () => {
-      if (!selectedGame?.id) return;
+  const fetchMedia = useCallback(async () => {
+    if (!selectedGame?.id) return;
 
-      try {
-        const mediaData = await window.media.getAllMedia(selectedGame.id);
-        if (!mediaData) return;
-
-        const processedMedia = {
-          background: formatMediaItems(mediaData.backgrounds, MEDIA_TYPE.BACKGROUND, "background"),
-          icon: formatMediaItems(mediaData.icons, MEDIA_TYPE.ICON, "icon"),
-          logo: formatMediaItems(mediaData.logos, MEDIA_TYPE.LOGO, "logo"),
-          cover: formatMediaItems(mediaData.covers, MEDIA_TYPE.COVER, "cover"),
-          screenshot: formatMediaItems(mediaData.screenshots, MEDIA_TYPE.SCREENSHOT, "screenshot"),
-        };
-
-        setMedia(processedMedia);
-        // Initialize selected items structure
-        const initialSelected = {};
-        Object.keys(processedMedia).forEach((key) => {
-          initialSelected[key] = [];
-        });
-        setSelectedItems(initialSelected);
-      } catch (error) {
-        console.error("Failed to fetch media:", error);
-        addNotification({
-          title: "Error",
-          message: "Failed to load media assets",
-          type: "error",
-          duration: 3000,
-        });
+    try {
+      setLoading(true);
+      const mediaData = await window.media.getAllMedia(selectedGame.id);
+      if (!mediaData) {
+        setLoading(false);
+        return;
       }
-    };
 
-    fetchMedia();
+      const processedMedia: MediaState = {
+        background: {
+          all: formatMediaItems(mediaData.backgrounds.all, MEDIA_TYPE.BACKGROUND),
+          default: mediaData.backgrounds.default,
+        },
+        icon: {
+          all: formatMediaItems(mediaData.icons.all, MEDIA_TYPE.ICON),
+          default: mediaData.icons.default,
+        },
+        logo: {
+          all: formatMediaItems(mediaData.logos.all, MEDIA_TYPE.LOGO),
+          default: mediaData.logos.default,
+        },
+        cover: {
+          all: formatMediaItems(mediaData.covers.all, MEDIA_TYPE.COVER),
+          default: mediaData.covers.default,
+        },
+        screenshot: {
+          all: formatMediaItems(mediaData.screenshots.all, MEDIA_TYPE.SCREENSHOT),
+          default: mediaData.screenshots.default,
+        },
+      };
+
+      setMedia(processedMedia);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch media:", error);
+      addNotification({
+        title: "Error",
+        message: "Failed to load media assets",
+        type: "error",
+        duration: 3000,
+      });
+      setLoading(false);
+    }
   }, [selectedGame, addNotification]);
 
-  const formatMediaItems = (items, type, alt) => {
+  useEffect(() => {
+    fetchMedia();
+  }, [fetchMedia, refreshKey]);
+
+  const formatMediaItems = (items: string[], type: MEDIA_TYPE): MediaItem[] => {
     return items.map((imagePath) => ({
       src: imagePath,
       name: formatMediaName(imagePath),
-      alt,
+      alt: type.toString(),
       type,
     }));
   };
 
-  const formatMediaName = (mediaPath: string) => {
+  const refreshPage = () => {
+    setRefreshKey((prevKey) => prevKey + 1);
+  };
+
+  const formatMediaName = (mediaPath: string): string => {
     const match = mediaPath.match(/\/([^/]+\.[a-zA-Z0-9]+)$/);
     return match ? match[1] : "";
   };
 
   const handleSetDefault = async (gameId: string, mediaType: MEDIA_TYPE, mediaId: string) => {
+    if (!gameId) return;
     await window.media.setDefault(gameId, mediaType, mediaId);
+    refreshPage();
   };
 
   const handleDelete = async (gameId: string, mediaType: MEDIA_TYPE, mediaId: string, mediaSrc: string) => {
@@ -77,10 +100,19 @@ export function SectionMetadata() {
     try {
       await window.media.delete(gameId, mediaType, mediaId);
 
-      setMedia((prevMedia) => ({
-        ...prevMedia,
-        [mediaType]: prevMedia[mediaType].filter((image) => image.src !== mediaSrc),
-      }));
+      setMedia((prevMedia) => {
+        if (!prevMedia) return null;
+
+        const updatedMediaType = {
+          ...prevMedia[mediaType],
+          all: prevMedia[mediaType].all.filter((image) => image.src !== mediaSrc),
+        };
+
+        return {
+          ...prevMedia,
+          [mediaType]: updatedMediaType,
+        };
+      });
 
       addNotification({
         title: "Media Deleted",
@@ -88,6 +120,8 @@ export function SectionMetadata() {
         type: "success",
         duration: 2000,
       });
+
+      refreshPage();
     } catch (error) {
       console.error("Failed to delete media:", error);
       addNotification({
@@ -99,104 +133,35 @@ export function SectionMetadata() {
     }
   };
 
-  const handleBulkDelete = async (mediaType: MEDIA_TYPE) => {
-    if (!selectedGame?.id || selectedItems[mediaType].length === 0) return;
-
-    try {
-      for (const item of selectedItems[mediaType]) {
-        await window.media.delete(selectedGame.id, item.type, item.name);
-      }
-
-      setMedia((prevMedia) => ({
-        ...prevMedia,
-        [mediaType]: prevMedia[mediaType].filter(
-          (image) => !selectedItems[mediaType].some((selected) => selected.src === image.src),
-        ),
-      }));
-
-      // Clear selection after deletion
-      setSelectedItems((prev) => ({
-        ...prev,
-        [mediaType]: [],
-      }));
-
-      addNotification({
-        title: "Multiple Items Deleted",
-        message: `${selectedItems[mediaType].length} items successfully deleted`,
-        type: "success",
-        duration: 2000,
-      });
-    } catch (error) {
-      console.error("Failed to perform bulk delete:", error);
-      addNotification({
-        title: "Error",
-        message: "Failed to delete some items",
-        type: "error",
-        duration: 3000,
-      });
-    }
-  };
-
-  const toggleItemSelection = (mediaType, item) => {
-    setSelectedItems((prev) => {
-      const isSelected = prev[mediaType].some((selected) => selected.src === item.src);
-
-      if (isSelected) {
-        return {
-          ...prev,
-          [mediaType]: prev[mediaType].filter((selected) => selected.src !== item.src),
-        };
-      } else {
-        return {
-          ...prev,
-          [mediaType]: [...prev[mediaType], item],
-        };
-      }
-    });
-  };
-
-  const openAddDialog = (mediaType) => {
+  const openAddDialog = (mediaType: MEDIA_TYPE) => {
     setCurrentMediaType(mediaType);
     setIsDialogOpen(true);
   };
 
   const closeDialog = () => {
     setIsDialogOpen(false);
-    setCurrentMediaType(null);
   };
 
-  const getImageDimensions = (type: string) => {
-    switch (String(type).toLowerCase()) {
+  const getImageDimensions = (type: string): string => {
+    switch (type.toLowerCase()) {
       case "cover":
-        return "h-48 w-full"; // Wider for covers
+        return "h-48 w-full";
       case "logo":
-        return "h-32 w-full"; // Square for logos
+        return "h-32 w-full";
       case "icon":
-        return "h-16 w-full"; // Small for icons
+        return "h-16 w-full";
       case "screenshot":
-        return "h-40 w-full"; // 16:10 ratio for screenshots
+        return "h-40 w-full";
       case "background":
-        return "h-36 w-full"; // Wide for backgrounds
+        return "h-36 w-full";
       default:
-        return "h-32 w-32"; // Default square
+        return "h-32 w-32";
     }
   };
 
-  const handleImagesSelected = (selectedImages) => {
-    if (!selectedImages.length || !currentMediaType) return;
-
-    setMedia((prevMedia) => ({
-      ...prevMedia,
-      [currentMediaType]: [...(prevMedia[currentMediaType] || []), ...selectedImages],
-    }));
-
-    addNotification({
-      title: "Media Added",
-      message: `${selectedImages.length} ${currentMediaType.toLowerCase()} image${selectedImages.length !== 1 ? "s" : ""} added successfully`,
-      type: "success",
-      duration: 2000,
-    });
-  };
+  if (loading || !media) {
+    return <div>...loading</div>;
+  }
 
   return (
     <div className="container mx-auto mb-20 h-fit w-full space-y-4 py-4">
@@ -206,76 +171,64 @@ export function SectionMetadata() {
           title={mediaKey.charAt(0).toUpperCase() + mediaKey.slice(1)}
           actions={[
             {
-              icon: Cross,
+              icon: Plus,
               name: "Add",
-              onClick: () => openAddDialog(mediaKey),
+              onClick: () => openAddDialog(mediaKey as MEDIA_TYPE),
+            },
+            {
+              icon: Trash,
+              name: "Clear default",
+              onClick: () => {
+                if (selectedGame?.id) {
+                  window.media.removeDefault(selectedGame.id, mediaKey as MEDIA_TYPE);
+                  refreshPage();
+                }
+              },
+              disabled: !group.default,
             },
           ]}
         >
-          {selectedItems[mediaKey]?.length > 0 && (
-            <div className="mb-4 flex items-center justify-between border-b border-gray-700 pb-3">
-              <span className="text-sm">
-                {selectedItems[mediaKey].length} item{selectedItems[mediaKey].length !== 1 ? "s" : ""} selected
-              </span>
-              <Button
-                intent="secondary"
-                text="Delete Selected"
-                size="sm"
-                icon={Trash}
-                onClick={() => handleBulkDelete(mediaKey)}
-              />
-            </div>
-          )}
-
-          {group.length === 0 ? (
+          {group.all.length === 0 ? (
             <div className="flex h-32 items-center justify-center">
               <p className="text-gray-400">No {mediaKey} images added yet</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {group.map((item) => {
-                const isSelected = selectedItems[mediaKey]?.some((selected) => selected.src === item.src);
+              {group.all.map((item) => {
                 const dimensionClass = getImageDimensions(mediaKey);
 
                 return (
                   <div
                     key={item.src}
-                    className={`relative cursor-pointer rounded-md border-2 p-2 transition hover:shadow-md ${
-                      isSelected ? "border-blue-500" : "border-gray-700 hover:border-gray-500"
-                    }`}
-                    onClick={() => toggleItemSelection(mediaKey, item)}
+                    className="relative cursor-pointer rounded-md border-2 border-gray-700 p-2 transition hover:border-gray-500 hover:shadow-md"
                   >
                     <div
                       className={`relative flex items-center justify-center overflow-hidden rounded bg-gray-900 ${dimensionClass}`}
                     >
                       <Image src={item.src} alt={item.alt || "image"} className="max-h-full object-contain" />
 
-                      {isSelected && (
-                        <div className="absolute right-2 top-2 rounded-full bg-blue-500 p-1">
-                          <Check size={16} />
-                        </div>
-                      )}
-
                       <div className="absolute bottom-0 left-0 right-0 flex justify-end gap-1 bg-gradient-to-t from-black p-2">
                         <Button
                           intent="icon"
                           icon={Star}
-                          size="xs"
-                          aria-label="Edit image"
+                          iconColor={item.name === group?.default ? "yellow" : "white"}
+                          aria-label="Set as default"
                           onClick={(e) => {
-                            handleSetDefault(selectedGame!.id, item.type, item.name);
-                            e.stopPropagation();
-                            // Edit functionality would go here
+                            if (selectedGame?.id) {
+                              handleSetDefault(selectedGame.id, item.type, item.name);
+                              e.stopPropagation();
+                            }
                           }}
                         />
                         <Button
                           intent="icon"
                           icon={Trash}
-                          size="xs"
                           aria-label="Delete image"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDelete(selectedGame?.id, item.type, item.name, item.src);
+                            if (selectedGame?.id) {
+                              handleDelete(selectedGame.id, item.type, item.name, item.src);
+                            }
                           }}
                         />
                       </div>
@@ -292,10 +245,9 @@ export function SectionMetadata() {
       <ImageAddDialogue
         isOpen={isDialogOpen}
         onClose={closeDialog}
-        onSelect={handleImagesSelected}
         mediaType={currentMediaType}
         gameId={selectedGame?.id}
-        existingMedia={currentMediaType ? media[currentMediaType] : []}
+        refresh={refreshPage}
       />
     </div>
   );

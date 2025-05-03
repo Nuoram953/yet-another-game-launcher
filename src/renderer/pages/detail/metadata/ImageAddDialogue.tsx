@@ -4,26 +4,27 @@ import { Button } from "@/components/button/Button";
 import { Image } from "@/components/image/Image";
 import { MEDIA_TYPE } from "src/common/constant";
 import { useGames } from "@/context/DatabaseContext";
+import { MediaItem } from "./types";
 
 interface ImageSelectionDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (images: { src: string; name: string; alt: string; type: string }[]) => void;
   mediaType: MEDIA_TYPE;
   gameId?: string;
+  refresh: () => void;
 }
 
-export default function ImageAddDialogue({ isOpen, onClose, onSelect, mediaType, gameId }: ImageSelectionDialogProps) {
+export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, refresh }: ImageSelectionDialogProps) {
   const { selectedGame } = useGames();
-  const [availableImages, setAvailableImages] = useState([]);
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [availableImages, setAvailableImages] = useState<string[]>([]);
+  const [selectedImages, setSelectedImages] = useState<(string | MediaItem)[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadMode, setIsUploadMode] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && gameId) {
       fetchAvailableImages();
     } else {
       setSelectedImages([]);
@@ -33,7 +34,7 @@ export default function ImageAddDialogue({ isOpen, onClose, onSelect, mediaType,
   }, [isOpen, currentPage, gameId, mediaType]);
 
   const fetchAvailableImages = async () => {
-    if (!gameId) return;
+    if (!gameId || !selectedGame?.id) return;
 
     setIsLoading(true);
     try {
@@ -47,9 +48,9 @@ export default function ImageAddDialogue({ isOpen, onClose, onSelect, mediaType,
     }
   };
 
-  const toggleImageSelection = (image) => {
-    if (selectedImages.some((img) => img === image)) {
-      setSelectedImages((prev) => prev.filter((img) => img !== image));
+  const toggleImageSelection = (image: string) => {
+    if (selectedImages.some((img) => (typeof img === "string" ? img === image : img.src === image))) {
+      setSelectedImages((prev) => prev.filter((img) => (typeof img === "string" ? img !== image : img.src !== image)));
     } else {
       setSelectedImages((prev) => [...prev, image]);
     }
@@ -67,61 +68,32 @@ export default function ImageAddDialogue({ isOpen, onClose, onSelect, mediaType,
     }
   };
 
-  const handleFileUpload = async (event) => {
-    const files = event.target.files;
-    if (!files.length || !gameId || !mediaType) return;
-
-    setIsLoading(true);
-    try {
-      const uploadedImages = [];
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const uploadedPath = await window.media.upload(gameId, mediaType, file);
-
-        uploadedImages.push({
-          src: uploadedPath,
-          name: file.name,
-          alt: mediaType.toLowerCase(),
-          type: mediaType,
-        });
-      }
-
-      setSelectedImages((prev) => [...prev, ...uploadedImages]);
-      setIsUploadMode(false);
-      fetchAvailableImages();
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleSubmit = async () => {
-    console.log("Selected images:", selectedImages);
+    if (!selectedGame?.id) return;
+
     for (const image of selectedImages) {
-      await window.media.downloadByUrl(selectedGame!.id, mediaType, image);
+      await window.media.downloadByUrl(selectedGame.id, mediaType, image as string);
     }
+    refresh();
     onClose();
   };
 
   if (!isOpen) return null;
 
-  // Define dimensions for different media types
-  const getImageDimensions = (type) => {
-    switch (String(type).toLowerCase()) {
+  const getImageDimensions = (type: string): string => {
+    switch (type.toLowerCase()) {
       case "cover":
-        return "h-48 w-full"; // Wider for covers
+        return "h-48 w-full";
       case "logo":
-        return "h-32 w-32"; // Square for logos
+        return "h-32 w-32";
       case "icon":
-        return "h-16 w-16"; // Small for icons
+        return "h-16 w-16";
       case "screenshot":
-        return "h-40 w-64"; // 16:10 ratio for screenshots
+        return "h-40 w-64";
       case "background":
-        return "h-36 w-full"; // Wide for backgrounds
+        return "h-36 w-full";
       default:
-        return "h-32 w-32"; // Default square
+        return "h-32 w-32";
     }
   };
 
@@ -129,96 +101,66 @@ export default function ImageAddDialogue({ isOpen, onClose, onSelect, mediaType,
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="flex max-h-screen w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-gray-800 p-6 shadow-lg">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">{isUploadMode ? `Upload ${mediaType}` : `Select ${mediaType}`}</h2>
+          <h2 className="text-xl font-semibold">{`Select ${mediaType}`}</h2>
           <div className="flex items-center gap-2">
-            <Button intent="secondary" onClick={() => setIsUploadMode(!isUploadMode)} size="sm">
-              {isUploadMode ? "Browse Library" : "Upload New"}
-            </Button>
             <Button intent="icon" icon={X} size="fit" onClick={onClose} className="hover:bg-gray-700" />
           </div>
         </div>
 
-        {isUploadMode ? (
-          <div className="mb-6">
-            <div className="flex h-64 flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-600 p-8 hover:border-gray-400">
-              <Upload className="mb-2 h-8 w-8 text-gray-400" />
-              <p className="mb-2 text-center text-sm text-gray-400">Click to browse or drag and drop files</p>
-              <p className="text-xs text-gray-500">Supported formats: JPG, PNG, GIF, SVG</p>
-              <input
-                type="file"
-                className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={handleFileUpload}
-                accept="image/*"
-                multiple
-              />
+        <div className="mb-4 flex-1 overflow-auto">
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <p>Loading images...</p>
             </div>
-          </div>
-        ) : (
-          <>
-            <div className="mb-4 flex-1 overflow-auto">
-              {isLoading ? (
-                <div className="flex h-64 items-center justify-center">
-                  <p>Loading images...</p>
-                </div>
-              ) : availableImages.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {availableImages.map((image) => {
-                    const dimensionClass = getImageDimensions(mediaType);
+          ) : availableImages.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {availableImages.map((image) => {
+                const dimensionClass = getImageDimensions(mediaType.toString());
+                const isSelected = selectedImages.some((img) =>
+                  typeof img === "string" ? img === image : img.src === image,
+                );
 
-                    return (
-                      <div
-                        key={image}
-                        className={`relative cursor-pointer rounded-md border-2 p-2 transition hover:shadow-md ${
-                          selectedImages.some((img) => img === image)
-                            ? "border-blue-500"
-                            : "border-gray-700 hover:border-gray-500"
-                        }`}
-                        onClick={() => toggleImageSelection(image)}
-                      >
-                        <div
-                          className={`relative flex items-center justify-center overflow-hidden rounded bg-gray-900 ${dimensionClass}`}
-                        >
-                          <Image src={image} alt={image.alt || "image"} className="max-h-full object-contain" />
-                          {selectedImages.some((img) => img === image) && (
-                            <div className="absolute right-2 top-2 rounded-full bg-blue-500 p-1">
-                              <Check size={16} />
-                            </div>
-                          )}
+                return (
+                  <div
+                    key={image}
+                    className={`relative cursor-pointer rounded-md border-2 p-2 transition hover:shadow-md ${
+                      isSelected ? "border-blue-500" : "border-gray-700 hover:border-gray-500"
+                    }`}
+                    onClick={() => toggleImageSelection(image)}
+                  >
+                    <div
+                      className={`relative flex items-center justify-center overflow-hidden rounded bg-gray-900 ${dimensionClass}`}
+                    >
+                      <Image src={image} alt="media image" className="max-h-full object-contain" />
+                      {isSelected && (
+                        <div className="absolute right-2 top-2 rounded-full bg-blue-500 p-1">
+                          <Check size={16} />
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="flex h-64 items-center justify-center">
-                  <p>No images found. Upload some images to get started.</p>
-                </div>
-              )}
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-
-            {/* Pagination controls */}
-            <div className="mb-4 flex items-center justify-center space-x-2">
-              <Button
-                intent="icon"
-                icon={ChevronLeft}
-                size="sm"
-                onClick={handlePrevPage}
-                disabled={currentPage === 1 || isLoading}
-              />
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                intent="icon"
-                icon={ChevronRight}
-                size="sm"
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages || isLoading}
-              />
+          ) : (
+            <div className="flex h-64 items-center justify-center">
+              <p>No images found. Upload some images to get started.</p>
             </div>
-          </>
-        )}
+          )}
+        </div>
 
+        <div className="mb-4 flex items-center justify-center space-x-2">
+          <Button intent="icon" icon={ChevronLeft} onClick={handlePrevPage} disabled={currentPage === 1 || isLoading} />
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            intent="icon"
+            icon={ChevronRight}
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages || isLoading}
+          />
+        </div>
         <div className="mt-2 flex justify-between border-t border-gray-700 pt-4">
           <div>
             {selectedImages.length > 0 && (

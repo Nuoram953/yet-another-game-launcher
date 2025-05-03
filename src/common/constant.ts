@@ -14,15 +14,15 @@ export enum NotificationType {
   NEW_GAME = "library:game:new",
 }
 
-export enum RouteDownload{
-  ON_DOWNLOAD_STATUS="data:download:status",
-  ON_DOWNLOAD_STOP="data:download:stop",
+export enum RouteDownload {
+  ON_DOWNLOAD_STATUS = "data:download:status",
+  ON_DOWNLOAD_STOP = "data:download:stop",
 }
 
-export enum DataRoute{
-  REQUEST_GAMES="data:request:games",
-  REQUEST_GAME="data:request:game",
-  RUNNING_GAME="data:running:game"
+export enum DataRoute {
+  REQUEST_GAMES = "data:request:games",
+  REQUEST_GAME = "data:request:game",
+  RUNNING_GAME = "data:running:game",
 }
 
 export enum RouteLibrary {
@@ -59,6 +59,7 @@ export enum RouteMedia {
   SEARCH = "media:search",
   DOWNLOAD_BY_URL = "media:downloadByUrl",
   SET_DEFAULT = "media:setDefault",
+  REMOVE_DEFAULT = "media:removeDefault",
   EDIT = "media:edit",
 }
 

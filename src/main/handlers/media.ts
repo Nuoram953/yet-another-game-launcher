@@ -4,29 +4,42 @@ import { MEDIA_TYPE, RouteMedia } from "../../common/constant";
 import log from "electron-log/main";
 import * as MediaService from "../service/media";
 import { ErrorMessage } from "../../common/error";
+import queries from "../dal/dal";
 
 ipcMain.handle(RouteMedia.GET_ALL_MEDIA, async (_event, gameId) => {
   try {
-    const backgrounds = await MediaService.getMediaByType(
-      MEDIA_TYPE.BACKGROUND,
-      gameId,
-    );
+    const backgrounds = await MediaService.getMediaByType(MEDIA_TYPE.BACKGROUND, gameId);
     const icons = await MediaService.getMediaByType(MEDIA_TYPE.ICON, gameId);
     const logos = await MediaService.getMediaByType(MEDIA_TYPE.LOGO, gameId);
     const covers = await MediaService.getMediaByType(MEDIA_TYPE.COVER, gameId);
-    const trailers = await MediaService.getMediaByType(
-      MEDIA_TYPE.TRAILER,
-      gameId,
-    );
+    const trailers = await MediaService.getMediaByType(MEDIA_TYPE.TRAILER, gameId);
     const screenshots = await MediaService.getMediaByType(MEDIA_TYPE.SCREENSHOT, gameId);
 
     return {
-      backgrounds,
-      icons,
-      logos,
-      covers,
-      trailers,
-      screenshots,
+      backgrounds: {
+        default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.BACKGROUND))?.mediaName,
+        all: backgrounds,
+      },
+      icons: {
+        default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.ICON))?.mediaName,
+        all: icons,
+      },
+      logos: {
+        default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.LOGO))?.mediaName,
+        all: logos,
+      },
+      covers: {
+        default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.COVER))?.mediaName,
+        all: covers,
+      },
+      trailers: {
+        default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.TRAILER))?.mediaName,
+        all: trailers,
+      },
+      screenshots: {
+        default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.SCREENSHOT))?.mediaName,
+        all: screenshots,
+      },
     };
   } catch (e) {
     log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
@@ -37,11 +50,7 @@ ipcMain.handle(RouteMedia.GET_ALL_MEDIA, async (_event, gameId) => {
 
 ipcMain.handle(RouteMedia.GET_BACKGROUNDS, async (_event, gameId, count) => {
   try {
-    return await MediaService.getMediaByType(
-      MEDIA_TYPE.BACKGROUND,
-      gameId,
-      count,
-    );
+    return await MediaService.getMediaByType(MEDIA_TYPE.BACKGROUND, gameId, count);
   } catch (e) {
     log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
     log.debug(e);
@@ -89,18 +98,15 @@ ipcMain.handle(RouteMedia.GET_TRAILERS, async (_event, gameId, count) => {
   }
 });
 
-ipcMain.handle(
-  RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS,
-  async (_event, count) => {
-    try {
-      return await MediaService.getRecentlyPlayedBackgrounds(count);
-    } catch (e) {
-      log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
-      log.debug(e);
-      return [];
-    }
-  },
-);
+ipcMain.handle(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, async (_event, count) => {
+  try {
+    return await MediaService.getRecentlyPlayedBackgrounds(count);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});
 
 ipcMain.handle(RouteMedia.GET_ACHIEVEMENTS, async (_event, gameId) => {
   try {
@@ -155,6 +161,16 @@ ipcMain.handle(RouteMedia.DOWNLOAD_BY_URL, async (_event, gameId, mediaType, url
 ipcMain.handle(RouteMedia.SET_DEFAULT, async (_event, gameId, mediaType, name) => {
   try {
     await MediaService.setDefault(gameId, mediaType, name);
+  } catch (e) {
+    log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
+    log.debug(e);
+    return [];
+  }
+});
+
+ipcMain.handle(RouteMedia.REMOVE_DEFAULT, async (_event, gameId, mediaType) => {
+  try {
+    await MediaService.removeDefault(gameId, mediaType);
   } catch (e) {
     log.warn(ErrorMessage.ERROR_WHILE_FETCHING_MEDIA);
     log.debug(e);
