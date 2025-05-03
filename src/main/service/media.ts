@@ -90,3 +90,12 @@ export const setDefault = async (gameId: string, mediaType: MEDIA_TYPE, name: st
     mediaName: name,
   });
 };
+
+export const removeDefault = async (gameId: string, mediaType: MEDIA_TYPE) => {
+  const game = await queries.Game.getGameById(gameId);
+  if (_.isNil(game)) {
+    throw new Error(ErrorMessage.INVALID_GAME);
+  }
+
+  await queries.MediaDefault.deleteByGameIdAndMediaType(game.id, mediaType);
+};

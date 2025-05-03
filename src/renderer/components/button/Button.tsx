@@ -1,24 +1,14 @@
-import React from "react";
+import React, { MouseEvent, createElement } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import _ from "lodash";
 
 const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
   variants: {
     intent: {
-      primary: [
-        "bg-gray-600",
-        "text-white",
-        "border-transparent",
-        "hover:bg-gray-700",
-      ],
+      primary: ["bg-gray-600", "text-white", "border-transparent", "hover:bg-gray-700"],
       secondary: ["bg-white", "text-gray-800", "border-gray-400"],
       install: ["bg-yellow-500", "text-white", "border-yellow-400"],
-      play: [
-        "bg-green-600",
-        "text-white",
-        "hover:bg-green-500",
-        "active:bg-green-700",
-      ],
+      play: ["bg-green-600", "text-white", "hover:bg-green-500", "active:bg-green-700"],
       running: ["animate-pulse"],
       destructive: ["bg-red", "text-gray-800", "border-gray-400"],
       icon: ["text-white", "border-transparent", "hover:opacity-50"],
@@ -44,8 +34,9 @@ export interface ButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled">,
     VariantProps<typeof button> {
   text?: string;
-  onClick?: () => void;
-  icon?: React.ElementType;
+  onClick?: (e: MouseEvent) => void;
+  icon?: React.FC<any>;
+  iconColor?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -54,7 +45,8 @@ export const Button: React.FC<ButtonProps> = ({
   size,
   disabled,
   text,
-  icon: Icon,
+  icon,
+  iconColor,
   onClick,
   ...props
 }) => (
@@ -64,12 +56,9 @@ export const Button: React.FC<ButtonProps> = ({
     onClick={onClick}
     {...props}
   >
-    {!_.isUndefined(Icon) && (
-      <div className="flex flew-row gap-2 items-center justify-center">
-        <Icon />
-        <p className="text-center">{text}</p>
-      </div>
-    )}
-    {_.isUndefined(Icon) && <p>{text}</p>}
+    <div className="flew-row flex items-center justify-center gap-2">
+      {icon && createElement(icon, { color: iconColor || "white" })}
+      <p>{text}</p>
+    </div>
   </button>
 );

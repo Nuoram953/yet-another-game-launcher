@@ -34,12 +34,30 @@ declare global {
     };
     media: {
       getAllMedia: (gameId: string) => Promise<{
-        backgrounds: string[];
-        icons: string[];
-        logos: string[];
-        covers: string[];
-        trailers: string[];
-        screenshots: string[];
+        backgrounds: {
+          default: string | null;
+          all: string[];
+        };
+        icons: {
+          default: string | null;
+          all: string[];
+        };
+        logos: {
+          default: string | null;
+          all: string[];
+        };
+        covers: {
+          default: string | null;
+          all: string[];
+        };
+        trailers: {
+          default: string | null;
+          all: string[];
+        };
+        screenshots: {
+          default: string | null;
+          all: string[];
+        };
       }>;
       getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
       getRecentlyPlayedBackgrounds: (count: number) => Promise<string[]>;
@@ -51,8 +69,9 @@ declare global {
       getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
       delete: (gameId: string, mediaType: string, mediaId: string) => Promise<void>;
       search: (gameId: string, mediaType: MEDIA_TYPE, page: number) => Promise<string[]>;
-      downloadByUrl: (gameId: string, mediaType: MEDIA_TYPE, url: string[]) => Promise<void>;
+      downloadByUrl: (gameId: string, mediaType: MEDIA_TYPE, url: string) => Promise<void>;
       setDefault: (gameId: string, mediaType: MEDIA_TYPE, name: string) => Promise<void>;
+      removeDefault: (gameId: string, mediaType: MEDIA_TYPE) => Promise<void>;
     };
     ranking: {
       getRanking: (id: number) => Promise<RankingWithRelation>;

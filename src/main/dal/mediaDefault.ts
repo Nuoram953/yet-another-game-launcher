@@ -35,3 +35,16 @@ export const findByGameIdAndMediaType = async (gameId: string, mediaType: MEDIA_
     },
   });
 };
+
+export const deleteByGameIdAndMediaType = async (gameId: string, mediaType: MEDIA_TYPE) => {
+  const mediaTypeDb = await queries.MediaType.findByName(mediaType);
+
+  return await prisma.mediaDefault.delete({
+    where: {
+      mediaTypeId_gameId: {
+        mediaTypeId: mediaTypeDb!.id,
+        gameId: gameId,
+      },
+    },
+  });
+};
