@@ -11,24 +11,23 @@ import {
   Trash,
   ChevronLeft,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@render//components/ui/button";
 import { useParams } from "react-router-dom";
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import { Background } from "./Background";
 import { Logo } from "./Logo";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import { SectionMetadata } from "./metadata/Index";
-import { ButtonPlay } from "@/components/button/Play";
+import { ButtonPlay } from "@render//components/button/Play";
 import { SectionOverview } from "./overview/Index";
 import { SectionAchievements } from "./achievements/Index";
-import { SectionSession } from "./SectionSession";
 import { SectionSettings } from "./settings/Index";
 import { SectionReview } from "./review/Index";
 import { SectionActivities } from "./activities/Index";
-import { Container } from "@/components/Container";
-import { Image } from "@/components/image/Image";
-import useWindowSize from "@/hooks/useWindowSize";
-import { CookieType, getCookie, setCookie } from "@/utils/cookieUtil";
+import { Container } from "@render/components/layout/Container";
+import { Image } from "@component/image/Image";
+import useWindowSize from "@hook/useWindowSize";
+import { CookieType, getCookie, setCookie } from "@render/utils/cookieUtil";
 
 interface Section {
   id: string;
@@ -137,7 +136,6 @@ const GameDetailsContent: React.FC = () => {
     }
 
     const components: ComponentMapping = {
-      session: SectionSession,
       overview: SectionOverview,
       metadata: SectionMetadata,
       achievements: SectionAchievements,

@@ -5,13 +5,13 @@ import _ from "lodash";
 const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
   variants: {
     intent: {
-      primary: ["bg-gray-600", "text-white", "border-transparent", "hover:bg-gray-700"],
+      primary: ["bg-gray-600", "text-white", "border-transparent", "hover:bg-gray-700", "active:bg-gray-800"],
       secondary: ["bg-white", "text-gray-800", "border-gray-400"],
       install: ["bg-yellow-500", "text-white", "border-yellow-400"],
       play: ["bg-green-600", "text-white", "hover:bg-green-500", "active:bg-green-700"],
       running: ["animate-pulse"],
       destructive: ["bg-red", "text-gray-800", "border-gray-400"],
-      icon: ["text-white", "border-transparent", "hover:opacity-50"],
+      icon: ["text-white", "border-transparent", "hover:opacity-50", "active:opacity-75"],
     },
     size: {
       small: ["text-sm", "py-1", "px-2"],

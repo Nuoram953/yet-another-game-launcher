@@ -1,9 +1,5 @@
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import { useGames } from "@/context/DatabaseContext";
+import { Carousel, CarouselContent, CarouselItem } from "@render//components/ui/carousel";
+import { useGames } from "@render//context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
 
@@ -47,10 +43,7 @@ export const Screenshots = () => {
         >
           <CarouselContent className="min-h-48">
             {screenshots.map((screenshot, index) => (
-              <CarouselItem
-                key={index}
-                className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
-              >
+              <CarouselItem key={index} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
                 <img
                   src={screenshot}
                   alt="Image"

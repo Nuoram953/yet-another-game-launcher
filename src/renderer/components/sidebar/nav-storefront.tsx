@@ -1,17 +1,8 @@
 "use client";
 
-import {
-  ChevronRight,
-  ExternalLink,
-  Globe,
-  SquareTerminal,
-} from "lucide-react";
+import { ChevronRight, ExternalLink, Globe, SquareTerminal } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@render//components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -20,7 +11,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
+} from "@render//components/ui/sidebar";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -33,12 +24,7 @@ export function NavStorefront({ items }: { items: Storefront[] }) {
   return (
     <SidebarGroup>
       <SidebarMenu>
-        <Collapsible
-          key={"storefront"}
-          asChild
-          defaultOpen={true}
-          className="group/collapsible"
-        >
+        <Collapsible key={"storefront"} asChild defaultOpen={true} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
               <SidebarMenuButton tooltip={"storefront"}>

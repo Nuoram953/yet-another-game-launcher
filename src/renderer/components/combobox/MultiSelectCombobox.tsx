@@ -1,20 +1,10 @@
 import React, { useState } from "react";
 import { Check, ChevronsUpDown, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { cn } from "@render//lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@render//components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@render//components/ui/popover";
+import { Badge } from "@render//components/ui/badge";
+import { Button } from "@render//components/ui/button";
 
 interface Props {
   name: string;
@@ -61,12 +51,7 @@ const MultiSelectCombobox = ({
     <div className="w-full space-y-1">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between"
-          >
+          <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
             <span className="truncate">
               {selectedItemsArray
                 ? `${selectedItemsArray.length} item${selectedItemsArray.length > 1 ? "s" : ""} selected`
@@ -81,17 +66,11 @@ const MultiSelectCombobox = ({
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={() => handleSelect(option.value)}
-                >
+                <CommandItem key={option.value} value={option.value} onSelect={() => handleSelect(option.value)}>
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedItemsArray.includes(option.value)
-                        ? "opacity-100"
-                        : "opacity-0",
+                      selectedItemsArray.includes(option.value) ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {option.label}
@@ -110,12 +89,7 @@ const MultiSelectCombobox = ({
             return (
               <Badge key={item} variant="secondary" className="text-sm">
                 {option?.label || item}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="ml-1 h-4 w-4 p-0"
-                  onClick={() => handleRemoveItem(item)}
-                >
+                <Button variant="ghost" size="sm" className="ml-1 h-4 w-4 p-0" onClick={() => handleRemoveItem(item)}>
                   <X className="h-3 w-3" />
                 </Button>
               </Badge>

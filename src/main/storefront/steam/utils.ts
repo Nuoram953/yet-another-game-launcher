@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 
+import VDF from "vdf-parser";
+
 export const getDefaultSteamPath = (): string => {
   const platform = os.platform();
   const homeDir = os.homedir();
@@ -33,4 +35,16 @@ export const getDefaultSteamPath = (): string => {
   }
 
   throw new Error("Steam installation not found in default locations");
+};
+
+export const getSteamUserId = async () => {
+  const steamDir = getDefaultSteamPath();
+  const steamConfigDirectory = path.join(steamDir, "config");
+  const data = await fs.promises.readFile(`${steamConfigDirectory}/loginusers.vdf`, "utf8");
+
+  const loginUsersJson: any = await VDF.parse(data);
+  const users = Object.entries(loginUsersJson.users);
+
+  const user = users[0];
+  return user[0];
 };

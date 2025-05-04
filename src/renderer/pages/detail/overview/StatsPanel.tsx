@@ -1,8 +1,8 @@
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import React from "react";
 import { StatsCard } from "../StatsCard";
 import { Activity, Calendar, Clock, Trophy } from "lucide-react";
-import { convertToHoursAndMinutes } from "@/utils/util";
+import { convertToHoursAndMinutes } from "@render//utils/util";
 import { useTranslation } from "react-i18next";
 
 export const StatsPanel = () => {
@@ -15,21 +15,16 @@ export const StatsPanel = () => {
   const now = Date.now();
   const sevenDaysAgo = BigInt(now - 7 * 24 * 60 * 60 * 1000);
 
-  const last7DaysSessions = selectedGame.activities.filter(
-    (session) => session.startedAt >= sevenDaysAgo,
-  );
+  const last7DaysSessions = selectedGame.activities.filter((session) => session.startedAt >= sevenDaysAgo);
   let detail = "Not played recently";
-  const lastSession =
-    selectedGame.activities[selectedGame.activities.length - 1];
+  const lastSession = selectedGame.activities[selectedGame.activities.length - 1];
 
   if (lastSession) {
     const now = Date.now();
     const endedAt = Number(lastSession.endedAt); // Convert BigInt to Number for compatibility
-    const diffInSeconds = now - endedAt
+    const diffInSeconds = now - endedAt;
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     const diffInHours = Math.floor(diffInSeconds / 3600);
-
-
 
     if (diffInHours < 14) {
       // Format as "Last played X hours ago"
@@ -50,18 +45,12 @@ export const StatsPanel = () => {
     const startTimeSeconds = start;
 
     // Calculate time difference in hours
-    const hoursSinceEnd =
-      Number(((now - endTimeSeconds) * BigInt(100)) / BigInt(60) / BigInt(60)) /
-      100;
+    const hoursSinceEnd = Number(((now - endTimeSeconds) * BigInt(100)) / BigInt(60) / BigInt(60)) / 100;
 
     if (hoursSinceEnd < 24) {
       // If less than 24 hours ago, calculate the duration of the activity
       const durationHours = Math.round(
-        Number(
-          ((endTimeSeconds - startTimeSeconds) * BigInt(100)) /
-            BigInt(60) /
-            BigInt(60),
-        ) / 100,
+        Number(((endTimeSeconds - startTimeSeconds) * BigInt(100)) / BigInt(60) / BigInt(60)) / 100,
       );
 
       console.log(hoursSinceEnd);

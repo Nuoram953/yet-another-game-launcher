@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { useGames } from "@/context/DatabaseContext";
+import { Card, CardHeader, CardTitle, CardContent } from "@render//components/ui/card";
+import { Switch } from "@render//components/ui/switch";
+import { Label } from "@render//components/ui/label";
+import { Input } from "@render//components/ui/input";
+import { Separator } from "@render//components/ui/separator";
+import { useGames } from "@render//context/DatabaseContext";
 import { GameConfigGamescope } from "@prisma/client";
 
 const GameScopeSettings = () => {
@@ -52,14 +52,14 @@ const GameScopeSettings = () => {
     handleChange();
   }, [settings]); // Runs whenever state changes, but skips the first time
 
-  const handleSwitchChange = async (setting:keyof GameConfigGamescope) => {
+  const handleSwitchChange = async (setting: keyof GameConfigGamescope) => {
     setSettings((prev) => ({
       ...prev,
       [setting]: !prev[setting],
     }));
   };
 
-  const handleDimensionChange = (dimension:"width"|"height", value:string) => {
+  const handleDimensionChange = (dimension: "width" | "height", value: string) => {
     setSettings((prev) => ({
       ...prev,
       [dimension]: value,
@@ -71,10 +71,7 @@ const GameScopeSettings = () => {
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-2xl">Gamescope</CardTitle>
-        <Switch
-          checked={settings.isEnabled}
-          onCheckedChange={() => handleSwitchChange("isEnabled")}
-        />
+        <Switch checked={settings.isEnabled} onCheckedChange={() => handleSwitchChange("isEnabled")} />
       </CardHeader>
       {settings.isEnabled && (
         <CardContent className="mt-8 space-y-6">
@@ -82,9 +79,7 @@ const GameScopeSettings = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="borderless" className="flex flex-col">
                 <span>Borderless</span>
-                <span className="text-sm text-gray-500">
-                  Remove window decorations
-                </span>
+                <span className="text-sm text-gray-500">Remove window decorations</span>
               </Label>
               <Switch
                 id="borderless"
@@ -96,9 +91,7 @@ const GameScopeSettings = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="fullscreen" className="flex flex-col">
                 <span>Fullscreen</span>
-                <span className="text-sm text-gray-500">
-                  Force fullscreen mode
-                </span>
+                <span className="text-sm text-gray-500">Force fullscreen mode</span>
               </Label>
               <Switch
                 id="fullscreen"
@@ -110,23 +103,15 @@ const GameScopeSettings = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="noFSR" className="flex flex-col">
                 <span>Enable FSR</span>
-                <span className="text-sm text-gray-500">
-                  Disable FidelityFX Super Resolution
-                </span>
+                <span className="text-sm text-gray-500">Disable FidelityFX Super Resolution</span>
               </Label>
-              <Switch
-                id="noFSR"
-                checked={settings.isFsr}
-                onCheckedChange={() => handleSwitchChange("isFsr")}
-              />
+              <Switch id="noFSR" checked={settings.isFsr} onCheckedChange={() => handleSwitchChange("isFsr")} />
             </div>
 
             <div className="flex items-center justify-between">
               <Label htmlFor="unfocused" className="flex flex-col">
                 <span>Allow Unfocused</span>
-                <span className="text-sm text-gray-500">
-                  Continue rendering when unfocused
-                </span>
+                <span className="text-sm text-gray-500">Continue rendering when unfocused</span>
               </Label>
               <Switch
                 id="unfocused"
@@ -138,9 +123,7 @@ const GameScopeSettings = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="unfocused" className="flex flex-col">
                 <span>Enable Steam overlay</span>
-                <span className="text-sm text-gray-500">
-                  Show Steam overlay while in game
-                </span>
+                <span className="text-sm text-gray-500">Show Steam overlay while in game</span>
               </Label>
               <Switch
                 id="unfocused"
@@ -152,9 +135,7 @@ const GameScopeSettings = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="unfocused" className="flex flex-col">
                 <span>Force grab cursos</span>
-                <span className="text-sm text-gray-500">
-                  Show Steam overlay while in game
-                </span>
+                <span className="text-sm text-gray-500">Show Steam overlay while in game</span>
               </Label>
               <Switch
                 id="unfocused"
@@ -174,9 +155,7 @@ const GameScopeSettings = () => {
                   id="width"
                   type="number"
                   value={settings.width}
-                  onChange={(e) =>
-                    handleDimensionChange("width", e.target.value)
-                  }
+                  onChange={(e) => handleDimensionChange("width", e.target.value)}
                   className="w-full"
                 />
               </div>
@@ -186,9 +165,7 @@ const GameScopeSettings = () => {
                   id="height"
                   type="number"
                   value={settings.height}
-                  onChange={(e) =>
-                    handleDimensionChange("height", e.target.value)
-                  }
+                  onChange={(e) => handleDimensionChange("height", e.target.value)}
                   className="w-full"
                 />
               </div>

@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { Game } from "@prisma/client";
 import { useNavigate } from "react-router-dom";
-import { Image } from "@/components/image/Image";
+import { Image } from "@render//components/image/Image";
 import { Clock, Trophy } from "lucide-react";
-import { convertToHoursAndMinutes } from "@/utils/util";
+import { convertToHoursAndMinutes } from "@render//utils/util";
 import { GameWithRelations } from "src/common/types";
 
 interface Props {
@@ -46,11 +46,7 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
       style={{ left: `${index * 100}%` }}
       onClick={handleOnClick}
     >
-      <Image
-        src={backgroundPicture}
-        alt={game.name}
-        className="h-full w-full object-cover"
-      />
+      <Image src={backgroundPicture} alt={game.name} className="h-full w-full object-cover" />
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
         <h2 className="mb-2 text-4xl font-bold text-white">{game.name}</h2>
         <div className="flex flex-row gap-8">

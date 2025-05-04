@@ -1,5 +1,5 @@
-import React, { ErrorInfo, ReactNode, useEffect } from 'react';
-import ErrorPage500 from '../pages/error/Error';
+import React, { ErrorInfo, ReactNode, useEffect } from "react";
+import ErrorPage500 from "../pages/error/Error";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -28,14 +28,14 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
 
   resetError = (): void => {
     this.setState({ hasError: false, error: null });
-  }
+  };
 
   render(): ReactNode {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
       }
-      return <ErrorPage500 error={this.state.error} resetError={this.resetError} />;
+      return <ErrorPage500 />;
     }
 
     return this.props.children;

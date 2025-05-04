@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useGames } from "@/context/DatabaseContext";
-import { Card } from "@/components/card/Card";
+import { useGames } from "@render//context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
 import { MEDIA_TYPE } from "../../../../common/constant";
 import { Plus, Star, Trash } from "lucide-react";
-import { Image } from "@/components/image/Image";
-import { Button } from "@/components/button/Button";
-import { useNotifications } from "@/components/NotificationSystem";
+import { Image } from "@render//components/image/Image";
+import { Button } from "@render//components/button/Button";
+import { useNotifications } from "@render//components/NotificationSystem";
 import ImageAddDialogue from "./ImageAddDialogue";
 import { MediaItem, MediaState } from "./types";
 
@@ -16,14 +16,15 @@ export function SectionMetadata() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentMediaType, setCurrentMediaType] = useState<MEDIA_TYPE>(MEDIA_TYPE.BACKGROUND);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const fetchMedia = useCallback(async () => {
     if (!selectedGame?.id) return;
 
     try {
-      setLoading(true);
+      setLoading(false);
       const mediaData = await window.media.getAllMedia(selectedGame.id);
+      console.log(mediaData);
       if (!mediaData) {
         setLoading(false);
         return;

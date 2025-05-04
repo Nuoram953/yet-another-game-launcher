@@ -45,6 +45,10 @@ export enum ConfigRoute {
   GET_ALL = "config:getAll",
 }
 
+export enum RouteStore {
+  LAUNCH = "store:launch",
+}
+
 export enum RouteMedia {
   GET_ALL_MEDIA = "media:getAll",
   GET_BACKGROUNDS = "media:getBackgrounds",
@@ -82,4 +86,19 @@ export enum RouteGame {
   SET_FAVORITE = "game:setFavorite",
   SET_SETTING_GAMESCOPE = "game:setGamescope",
   REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
+}
+
+export enum GameStatus {
+  UNPLAYED = 1,
+  PLAYED = 2,
+  COMPLETED = 3,
+  beaten = 4,
+  dropped = 5,
+  playing = 6,
+  planned = 7,
+}
+
+export enum Storefront {
+  STEAM = 1,
+  EPIC = 2,
 }

@@ -1,6 +1,6 @@
-import { Input } from "@/components/input/Input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useGames } from "@/context/DatabaseContext";
+import { Input } from "@render//components/input/Input";
+import { Checkbox } from "@render//components/ui/checkbox";
+import { useGames } from "@render//context/DatabaseContext";
 import { Company, GameStatus, Tag } from "@prisma/client";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -97,9 +97,7 @@ export const Filters = ({ expand }: Props) => {
                   }))}
                   className="basic-multi-select z-9999"
                   classNamePrefix="select"
-                  onChange={(choice) =>
-                    updateFilters({ publishers: [...choice] })
-                  }
+                  onChange={(choice) => updateFilters({ publishers: [...choice] })}
                   value={filters.publishers}
                 />
               </div>

@@ -8,11 +8,11 @@ import acfParser from "steam-acf2json";
 import getFolderSize from "get-folder-size";
 import queries from "../../dal/dal";
 import { GameWithRelations } from "src/common/types";
-import { refreshGame } from "../../service/game";
+import { refreshGame } from "../../game/game.service";
 import { NotificationType, RouteDownload } from "../../../common/constant";
 import { delay } from "../../utils/utils";
 import notificationManager from "../../manager/notificationManager";
-import Steam from "../../api/storefront/steam";
+import * as SteamService from "./service";
 
 interface DownloadStats {
   id: string;
@@ -40,11 +40,7 @@ class DownloadTracker {
 
   private async estimateTotalSize() {
     try {
-      const manifestPath = path.join(
-        getDefaultSteamPath(),
-        "steamapps",
-        `appmanifest_${this.gameId}.acf`,
-      );
+      const manifestPath = path.join(getDefaultSteamPath(), "steamapps", `appmanifest_${this.gameId}.acf`);
 
       const file = fs.readFileSync(manifestPath, "utf-8");
       const decode = acfParser.decode(file);
@@ -58,11 +54,7 @@ class DownloadTracker {
   async getDownloadStats() {
     let isDownloadInProgress = true;
     while (isDownloadInProgress) {
-      const downloadingFolder = path.join(
-        getDefaultSteamPath(),
-        "steamapps/downloading",
-        this.gameId,
-      );
+      const downloadingFolder = path.join(getDefaultSteamPath(), "steamapps/downloading", this.gameId);
 
       if (!fs.existsSync(downloadingFolder)) {
         isDownloadInProgress = false;
@@ -78,12 +70,8 @@ class DownloadTracker {
       const now = Date.now();
       const elapsedTime = (now - this.lastUpdate) / 1000; // seconds
       const speed = (totalSize - this.previousSize) / elapsedTime; // bytes per second
-      const progress =
-        this.totalBytes > 0 ? (totalSize / this.totalBytes) * 100 : 0;
-      const timeRemaining =
-        speed > 0 && this.totalBytes > 0
-          ? (this.totalBytes - totalSize) / speed
-          : 0;
+      const progress = this.totalBytes > 0 ? (totalSize / this.totalBytes) * 100 : 0;
+      const timeRemaining = speed > 0 && this.totalBytes > 0 ? (this.totalBytes - totalSize) / speed : 0;
 
       this.previousSize = totalSize;
       this.lastUpdate = now;
@@ -103,14 +91,11 @@ class DownloadTracker {
   }
 
   async stop() {
-    const manifestPath = path.join(
-      getDefaultSteamPath(),
-      "steamapps",
-      `appmanifest_${this.gameId}.acf`,
-    );
+    const manifestPath = path.join(getDefaultSteamPath(), "steamapps", `appmanifest_${this.gameId}.acf`);
     if (fs.existsSync(manifestPath)) {
-      await queries.DownloadHistory.create(this.game.id)
-      await queries.Game.update(this.game.id, { isInstalled: true });
+      await queries.DownloadHistory.create(this.game.id);
+
+      await SteamService.refresh();
       await refreshGame(this.game.id);
       notificationManager.show({
         id: NotificationType.INSTALLED,
@@ -118,10 +103,7 @@ class DownloadTracker {
         message: `${this.game.name} has been installed.`,
         type: "info",
       });
-      const steam = new Steam()
-      steam.getInstalledGames()
     }
-
 
     dataManager.send(RouteDownload.ON_DOWNLOAD_STOP, {
       id: this.game.id,
@@ -130,8 +112,6 @@ class DownloadTracker {
   }
 }
 
-export function createDownloadTracker(
-  game: GameWithRelations,
-): DownloadTracker {
+export function createDownloadTracker(game: GameWithRelations): DownloadTracker {
   return new DownloadTracker(game);
 }

@@ -1,19 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { GameReview } from "@prisma/client";
-import { useGames } from "@/context/DatabaseContext";
-import { Card } from "@/components/card/Card";
-import { Input } from "@/components/input/Input";
-import { useNotifications } from "@/components/NotificationSystem";
-import OpenCriticReviews from "./OpenCritic";
+import { useGames } from "@render//context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
+import { Input } from "@render//components/input/Input";
+import { useNotifications } from "@render//components/NotificationSystem";
 
 export function SectionReview() {
   const { selectedGame } = useGames();
   const { addNotification } = useNotifications();
   const isFirstRender = useRef(true);
   const lastSentData = useRef<Partial<GameReview> | null>(null);
-  const [reviewText, setReviewText] = useState(
-    selectedGame?.review?.review ?? "",
-  );
+  const [reviewText, setReviewText] = useState(selectedGame?.review?.review ?? "");
 
   const [categoryRatings, setCategoryRatings] = useState({
     graphics: selectedGame?.review?.scoreGraphic ?? 5,
@@ -33,10 +30,7 @@ export function SectionReview() {
     return total * 2;
   };
 
-  const overallScore = useMemo(
-    () => calculateOverallScore(),
-    [categoryRatings],
-  );
+  const overallScore = useMemo(() => calculateOverallScore(), [categoryRatings]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -115,9 +109,7 @@ export function SectionReview() {
                     className={`rounded-md px-2 py-1 text-xs text-white ${getCategoryColor(categoryRatings[key as keyof typeof categoryRatings])}`}
                   >
                     {categoryRatings[key as keyof typeof categoryRatings]}/10 -{" "}
-                    {getCategoryLabel(
-                      categoryRatings[key as keyof typeof categoryRatings],
-                    )}
+                    {getCategoryLabel(categoryRatings[key as keyof typeof categoryRatings])}
                   </span>
                 </div>
                 <input
@@ -125,9 +117,7 @@ export function SectionReview() {
                   min="1"
                   max="10"
                   value={categoryRatings[key as keyof typeof categoryRatings]}
-                  onChange={(e) =>
-                    handleCategoryChange(key, parseInt(e.target.value))
-                  }
+                  onChange={(e) => handleCategoryChange(key, parseInt(e.target.value))}
                   className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-700"
                 />
               </div>
@@ -147,8 +137,6 @@ export function SectionReview() {
           </div>
         </div>
       </Card>
-
-      <OpenCriticReviews />
     </div>
   );
 }

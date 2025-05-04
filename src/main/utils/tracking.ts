@@ -3,8 +3,7 @@ import path from "path";
 import { delay, normalizePath } from "./utils";
 import log from "electron-log/main";
 import treeKill from "tree-kill";
-import { logger } from "..";
-import { LogTag } from "../manager/logManager";
+import logger, { LogTag } from "@main/logger";
 
 interface ProcessInfo {
   startTime: Date;
@@ -38,9 +37,7 @@ export async function killDirectoyProcess(directoryPath: string) {
           try {
             treeKill(proc.pid, "SIGTERM", (err) => {
               if (err) {
-                log.warn(
-                  `tree-kill failed for ${proc.pid}, attempting force kill`,
-                );
+                log.warn(`tree-kill failed for ${proc.pid}, attempting force kill`);
                 try {
                   process.kill(proc.pid, "SIGKILL");
                   logger.debug(
@@ -61,11 +58,7 @@ export async function killDirectoyProcess(directoryPath: string) {
                   );
                 }
               } else {
-                logger.debug(
-                  "successfully killed process tree",
-                  { id: proc.pid },
-                  LogTag.TRACKING,
-                );
+                logger.debug("successfully killed process tree", { id: proc.pid }, LogTag.TRACKING);
               }
               resolve();
             });
@@ -98,11 +91,7 @@ export async function killDirectoyProcess(directoryPath: string) {
       for (const proc of remainingProcesses) {
         try {
           process.kill(proc.pid, "SIGKILL");
-          log.debug(
-            `Force killed remaining process`,
-            { id: proc.pid },
-            LogTag.TRACKING,
-          );
+          log.debug(`Force killed remaining process`, { id: proc.pid }, LogTag.TRACKING);
         } catch (error) {
           logger.error(
             `Failed to force kill remaining process:`,
@@ -129,9 +118,7 @@ export async function killDirectoyProcess(directoryPath: string) {
   }
 }
 
-export async function monitorDirectoryProcesses(
-  directoryPath: string,
-): Promise<ProcessInfo> {
+export async function monitorDirectoryProcesses(directoryPath: string): Promise<ProcessInfo> {
   await delay(60000 * 5);
   const startTime = new Date();
   logger.debug(`Monitoring started at: ${startTime}`, {}, LogTag.TRACKING);

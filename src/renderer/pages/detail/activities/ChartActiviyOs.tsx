@@ -14,19 +14,9 @@ import {
   BarElement,
   ArcElement,
 } from "chart.js";
-import { Card } from "@/components/card/Card";
+import { Card } from "@render//components/card/Card";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement);
 
 interface Props {
   chartData: ChartData;
@@ -55,11 +45,7 @@ export const ChartActivityOs = ({ chartData }: Props) => {
       <div style={{ height: "400px", width: "100%" }}>
         <Doughnut
           data={
-            chartData as ChartData<
-              "doughnut",
-              (number | [number, number] | Point | BubbleDataPoint | null)[],
-              unknown
-            >
+            chartData as ChartData<"doughnut", (number | [number, number] | Point | BubbleDataPoint | null)[], unknown>
           }
           options={{
             ...chartOptions,

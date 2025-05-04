@@ -1,10 +1,10 @@
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 
 export const Logo = () => {
   const [LogoPicture, setLogoPicture] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const {selectedGame} = useGames()
+  const { selectedGame } = useGames();
 
   useEffect(() => {
     const fetchLogoPicture = async () => {
@@ -28,7 +28,7 @@ export const Logo = () => {
     <img
       src={LogoPicture}
       alt={`game name logo`}
-      className="max-h-32 object-contain transform hover:scale-105 transition-transform duration-300"
+      className="max-h-32 transform object-contain transition-transform duration-300 hover:scale-105"
     />
   );
 };
