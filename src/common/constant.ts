@@ -45,6 +45,10 @@ export enum ConfigRoute {
   GET_ALL = "config:getAll",
 }
 
+export enum RouteStore {
+  LAUNCH = "store:launch",
+}
+
 export enum RouteMedia {
   GET_ALL_MEDIA = "media:getAll",
   GET_BACKGROUNDS = "media:getBackgrounds",

@@ -7,6 +7,48 @@ import fs from "fs";
 import { ErrorMessage } from "../../common/error";
 import { metadataManager } from "..";
 
+export const getAllMedia = async (gameId: string) => {
+  const game = await queries.Game.getGameById(gameId);
+
+  if (_.isNil(game)) {
+    throw new Error(ErrorMessage.INVALID_GAME);
+  }
+
+  const backgrounds = await getMediaByType(MEDIA_TYPE.BACKGROUND, gameId);
+  const icons = await getMediaByType(MEDIA_TYPE.ICON, gameId);
+  const logos = await getMediaByType(MEDIA_TYPE.LOGO, gameId);
+  const covers = await getMediaByType(MEDIA_TYPE.COVER, gameId);
+  const trailers = await getMediaByType(MEDIA_TYPE.TRAILER, gameId);
+  const screenshots = await getMediaByType(MEDIA_TYPE.SCREENSHOT, gameId);
+
+  return {
+    backgrounds: {
+      default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.BACKGROUND))?.mediaName,
+      all: backgrounds,
+    },
+    icons: {
+      default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.ICON))?.mediaName,
+      all: icons,
+    },
+    logos: {
+      default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.LOGO))?.mediaName,
+      all: logos,
+    },
+    covers: {
+      default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.COVER))?.mediaName,
+      all: covers,
+    },
+    trailers: {
+      default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.TRAILER))?.mediaName,
+      all: trailers,
+    },
+    screenshots: {
+      default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.SCREENSHOT))?.mediaName,
+      all: screenshots,
+    },
+  };
+};
+
 export const getMediaByType = async (type: MEDIA_TYPE, gameId: string, count?: number) => {
   const game = await queries.Game.getGameById(gameId);
 

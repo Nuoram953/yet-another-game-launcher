@@ -2,7 +2,7 @@ import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { YouTubeDownloader } from "../api/video/youtube";
 import { Storefront } from "../constant";
-import { i18n, igdb, logger } from "..";
+import { i18n, logger, metadataManager } from "..";
 import { killDirectoyProcess } from "../utils/tracking";
 import { delay, getKeyPercentage } from "../utils/utils";
 import SteamGridDB from "../api/metadata/steamgriddb";
@@ -10,14 +10,14 @@ import Steam from "../api/storefront/steam";
 import _ from "lodash";
 import { GameWithRelations } from "../../common/types";
 import dataManager from "../manager/dataChannelManager";
-import { DataRoute, NotificationType } from "../../common/constant";
+import { DataRoute, MEDIA_TYPE, NotificationType } from "../../common/constant";
 import { createDownloadTracker } from "../storefront/steam/monitor";
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
 import notificationManager from "../manager/notificationManager";
-import HowLongToBeat from "../api/metadata/hltb";
 import OpenCritic from "../api/metadata/opencritic";
-import { t } from "i18next";
+import * as howLongToBeatApi from "../externalApi/howLongToBeat";
+import * as internetGameDatabaseApi from "../externalApi/internetGameDatabase";
 
 export const install = async (id: string) => {
   const game = await queries.Game.getGameById(id);
@@ -114,7 +114,6 @@ export const createOrUpdateGame = async (
 
   const notificationsObject = i18n.t("newGame", { ns: "notification", returnObjects: true });
 
-
   const sgdb = new SteamGridDB(game);
   await sgdb.getGameIdByExternalId(game.storefront!.name);
   notificationManager.updateProgress(
@@ -145,32 +144,37 @@ export const createOrUpdateGame = async (
   );
   await sgdb.downloadLogosForGame(3, 5);
 
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingScreenshots"),
-    i18n.t("newGame.stepDownloadingScreenshots", { ns: "notification" }),
-  );
-  await igdb.downloadScreenshotsForGame(game, 15);
+  const igdbData = await internetGameDatabaseApi.getGame(game);
+  if (!_.isNil(igdbData)) {
+    await queries.Game.update(game.id, igdbData.partialGameData);
 
-  const { developers, publishers, partialGameData } = await igdb.getGame(game);
-  await queries.Game.update(game.id, partialGameData);
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepAddingDevelopers"),
+      i18n.t("newGame.stepAddingDevelopers", { ns: "notification" }),
+    );
+    for (const developer of igdbData.developers) {
+      await queries.GameDeveloper.findOrCreate(game.id, developer);
+    }
 
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepAddingDevelopers"),
-    i18n.t("newGame.stepAddingDevelopers", { ns: "notification" }),
-  );
-  for (const developer of developers) {
-    await queries.GameDeveloper.findOrCreate(game.id, developer);
-  }
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepAddingPublishers"),
+      i18n.t("newGame.stepAddingPublishers", { ns: "notification" }),
+    );
+    for (const publisher of igdbData.publishers) {
+      await queries.GamePublisher.findOrCreate(game.id, publisher);
+    }
 
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepAddingPublishers"),
-    i18n.t("newGame.stepAddingPublishers", { ns: "notification" }),
-  );
-  for (const publisher of publishers) {
-    await queries.GamePublisher.findOrCreate(game.id, publisher);
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepDownloadingScreenshots"),
+      i18n.t("newGame.stepDownloadingScreenshots", { ns: "notification" }),
+    );
+    for (const image of igdbData.screenshots) {
+      const url = `https:${image}`;
+      await metadataManager.downloadImage(MEDIA_TYPE.SCREENSHOT, game, url.replace("t_thumb", "t_1080p"), "jpg");
+    }
   }
 
   notificationManager.updateProgress(
@@ -185,8 +189,7 @@ export const createOrUpdateGame = async (
     getKeyPercentage(notificationsObject, "stepDownloadingHltb"),
     i18n.t("newGame.stepDownloadingHltb", { ns: "notification" }),
   );
-  const ht = new HowLongToBeat();
-  const HowLongToBeatData = await ht.search(game.name);
+  const HowLongToBeatData = await howLongToBeatApi.search(game.name);
   await queries.Game.update(game.id, {
     mainStory: HowLongToBeatData?.mainStory,
     mainPlusExtra: HowLongToBeatData?.mainPlusExtra,
@@ -287,9 +290,7 @@ export const refreshProgressTracker = async (id: string) => {
     throw new Error("Invalid game");
   }
 
-  const ht = new HowLongToBeat();
-  const data = await ht.search(game.name);
-
+  const data = await howLongToBeatApi.search(game.name);
   await queries.Game.update(id, {
     mainStory: data?.mainStory,
     mainPlusExtra: data?.mainPlusExtra,

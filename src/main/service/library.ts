@@ -7,8 +7,7 @@ import Steam from "../api/storefront/steam";
 import notificationManager from "../manager/notificationManager";
 import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
-import * as GameSerivce from "./game";
-import { NODE_ENV, NODE_ENV_ENUM } from "../config";
+import * as internetGameDatabaseApi from "../externalApi/internetGameDatabase/index";
 
 export const getStorefronts = async () => {
   return await queries.Storefront.getAll();

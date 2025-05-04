@@ -8,7 +8,6 @@ import { Game } from "@prisma/client";
 import SteamGridDB from "../api/metadata/steamgriddb";
 import { YouTubeDownloader } from "../api/video/youtube";
 import { GameWithRelations } from "src/common/types";
-import { igdb } from "..";
 import OpenCritic from "../api/metadata/opencritic";
 
 class MetadataManager {
@@ -22,8 +21,6 @@ class MetadataManager {
     const sgdb = new SteamGridDB(game);
     await sgdb.getGameIdByExternalId(game.storefront!.name);
     await sgdb.downloadAllImageType(1, 1);
-
-    await igdb.downloadScreenshotsForGame(game, 10);
 
     await YouTubeDownloader.searchAndDownloadVideos(game);
 

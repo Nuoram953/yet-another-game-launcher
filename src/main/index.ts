@@ -7,7 +7,6 @@ import log from "electron-log/main";
 import "reflect-metadata";
 require("dotenv").config();
 
-// Import handlers
 import "./handlers/media";
 import "./handlers/config";
 import "./handlers/store";
@@ -15,23 +14,19 @@ import "./handlers/ranking";
 import "./handlers/library";
 import "./handlers/game";
 
-// Import managers and APIs
 import MetadataManager from "./manager/metadataManager";
-import Igdb from "./api/metadata/igdb";
 import notificationManager from "./manager/notificationManager";
 import ConfigManager from "./manager/configManager";
 import dataChannelManager from "./manager/dataChannelManager";
 import { ElectronLogger, LogLevel, LogTag, createMainLogger } from "./manager/logManager";
 import { initMainI18n } from "./i18n";
 import { AppConfig } from "../common/interface";
+import { t } from "i18next";
 
-// Webpack entries
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-// Export global instances for other modules to use
 export let metadataManager: MetadataManager;
-export let igdb: Igdb;
 export let prisma: PrismaClient;
 export let dbPath: string;
 export let i18n: Awaited<ReturnType<typeof initMainI18n>>;
@@ -51,21 +46,17 @@ class MainWindowManager {
 
   async initialize(): Promise<void> {
     try {
-      // Set up database path
       dbPath = path.join(app.getPath("userData"), "app.sqlite");
       process.env.DATABASE_URL = `file:${dbPath}`;
 
-      // Initialize logging
       log.initialize();
       log.errorHandler.startCatching();
 
       await app.whenReady();
 
-      // Create loading window and initialize components
       await this.createLoadingWindow();
       await this.initializeComponents();
 
-      // Set up app event handlers
       this.setupAppEventHandlers();
     } catch (error) {
       this.handleFatalError("Failed to initialize application:", error);
@@ -74,19 +65,14 @@ class MainWindowManager {
 
   private async initializeComponents(): Promise<void> {
     try {
-      // Initialize components with loading progress updates
-      this.updateLoadingProgress(10, "Initializing components...");
+      this.updateLoadingProgress(10, t("loadingProgress.components"));
 
       metadataManager = new MetadataManager();
-      this.updateLoadingProgress(20, "Loading metadata manager...");
-
-      igdb = new Igdb();
-      this.updateLoadingProgress(30, "Connecting to IGDB...");
+      this.updateLoadingProgress(20, t("loadingProgress.metadata"));
 
       i18n = await initMainI18n();
-      this.updateLoadingProgress(40, "Setting up localization...");
+      this.updateLoadingProgress(40, t("loadingProgress.i18n"));
 
-      // Initialize config and logger
       config = new ConfigManager<AppConfig>();
       logger = createMainLogger({ minLevel: LogLevel.DEBUG });
 
@@ -96,21 +82,16 @@ class MainWindowManager {
           epic: { enable: true },
         },
       });
-      this.updateLoadingProgress(50, "Loading configuration...");
+      this.updateLoadingProgress(50, t("loadingProgress.config"));
 
       await app.whenReady();
-      logger.debug("Main process is ready");
-      this.updateLoadingProgress(60, "Main process ready...");
 
-      // Set up store integrations
       await this.setupStoreIntegrations();
-      this.updateLoadingProgress(80, "Preparing database...");
+      this.updateLoadingProgress(80, t("loadingProgress.database"));
 
-      // Initialize database
       await this.initializeDatabase();
-      this.updateLoadingProgress(90, "Creating main window...");
+      this.updateLoadingProgress(90, t("loadingProgress.mainWindow"));
 
-      // Create and show main window
       await this.createWindow();
       logger.info("Renderer window created");
     } catch (error) {
@@ -120,7 +101,6 @@ class MainWindowManager {
 
   private async setupStoreIntegrations(): Promise<void> {
     try {
-      // Setup Steam store if enabled
       if (await config.get("store.steam.enable")) {
         const steamSession = session.fromPartition("persist:steamstore");
         await this.setupStoreCookies(
@@ -133,7 +113,6 @@ class MainWindowManager {
         logger.info("Steam store cookies set successfully");
       }
 
-      // Setup Epic store if enabled
       if (await config.get("store.epic.enable")) {
         const epicSession = session.fromPartition("persist:epic");
         await this.setupStoreCookies(
@@ -147,7 +126,6 @@ class MainWindowManager {
       }
     } catch (error) {
       logger.error("Error setting up store integrations:", { error });
-      // Non-fatal error, continue initialization
     }
   }
 
@@ -176,27 +154,24 @@ class MainWindowManager {
       prisma = new PrismaClient();
     } catch (error) {
       logger.error("Error running Prisma migrations:", { error });
-      // Create new client anyway to avoid application failure
+
       prisma = new PrismaClient();
     }
   }
 
   private setupAppEventHandlers(): void {
-    // Handle activation (macOS)
     app.on("activate", async () => {
       if (BrowserWindow.getAllWindows().length === 0) {
         await this.createWindow();
       }
     });
 
-    // Handle window-all-closed event
     app.on("window-all-closed", () => {
       if (process.platform !== "darwin") {
         app.quit();
       }
     });
 
-    // Handle web contents creation
     app.on("web-contents-created", (e, wc) => {
       wc.setWindowOpenHandler(() => {
         return { action: "allow" };
@@ -214,12 +189,10 @@ class MainWindowManager {
     try {
       const loadingHtmlPath = path.join(app.getAppPath(), "loading.html");
 
-      // Create loading HTML file if it doesn't exist
       if (!fs.existsSync(loadingHtmlPath)) {
         fs.writeFileSync(loadingHtmlPath, this.getLoadingHtmlContent());
       }
 
-      // Create loading window
       this.loadingWindow = new BrowserWindow({
         width: 400,
         height: 300,
@@ -336,10 +309,8 @@ class MainWindowManager {
   }
 
   private getContentSecurityPolicy(): string {
-    // Common domains for both stores
     const commonDomains = ["'self'", "'unsafe-inline'", "'unsafe-eval'"];
 
-    // Steam domains
     const steamDomains = [
       "https://*.steamcontent.com",
       "https://*.steamstatic.com",
@@ -351,13 +322,10 @@ class MainWindowManager {
       "https://login.steampowered.com",
     ];
 
-    // Epic domains
     const epicDomains = ["https://*.epicgames.com", "https://www.epicgames.com", "https://*.store.epicgames.com"];
 
-    // Combine all domains
     const allDomains = [...commonDomains, ...steamDomains, ...epicDomains].join(" ");
 
-    // Content Security Policy directives
     return [
       `default-src ${allDomains};`,
       `frame-src 'self' https: http: steam: mailto: about: ${steamDomains.join(" ")} ${epicDomains.join(" ")};`,
@@ -388,7 +356,7 @@ class MainWindowManager {
       this.mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        show: false, // Initially hidden
+        show: false,
         webPreferences: {
           preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
           webSecurity: false,
@@ -397,17 +365,14 @@ class MainWindowManager {
         },
       });
 
-      // Set up managers
       notificationManager.setMainWindow(this.mainWindow);
       dataChannelManager.setMainWindow(this.mainWindow);
 
       this.mainWindow.setMenuBarVisibility(false);
       await this.setupCSP(this.mainWindow.webContents.session);
 
-      // Set up window event handlers
       this.setupWindowEventHandlers();
 
-      // Load the application
       await this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
     } catch (error) {
       this.handleFatalError("Failed to create window:", error);
@@ -417,7 +382,6 @@ class MainWindowManager {
   private setupWindowEventHandlers(): void {
     if (!this.mainWindow) return;
 
-    // Show main window when ready and close loading window
     this.mainWindow.on("ready-to-show", () => {
       this.updateLoadingProgress(100, "Ready to launch!");
 
@@ -432,12 +396,10 @@ class MainWindowManager {
       }, 500);
     });
 
-    // Handle window closed event
     this.mainWindow.on("closed", () => {
       this.mainWindow = null;
     });
 
-    // Handle focus/blur events
     this.mainWindow.on("blur", () => {
       this.mainWindow?.webContents.send("app-blur");
     });
@@ -446,7 +408,6 @@ class MainWindowManager {
       this.mainWindow?.webContents.send("app-focus");
     });
 
-    // Handle key events (F5 reload)
     this.mainWindow.webContents.on("before-input-event", (event, input) => {
       if (input.key === "F5" && input.type === "keyDown") {
         logger?.debug("F5 was pressed!", {}, LogTag.USER_INPUT);

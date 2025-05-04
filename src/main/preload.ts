@@ -1,5 +1,5 @@
 import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
-import { ConfigRoute, RouteGame, RouteLibrary, RouteMedia, RouteRanking } from "../common/constant";
+import { ConfigRoute, RouteGame, RouteLibrary, RouteMedia, RouteRanking, RouteStore } from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "./manager/configManager";
@@ -99,7 +99,7 @@ contextBridge.exposeInMainWorld("appControl", {
 });
 
 contextBridge.exposeInMainWorld("store", {
-  launch: (storeName: string) => ipcRenderer.invoke("store:launch", storeName),
+  launch: (storeName: string) => ipcRenderer.invoke(RouteStore.LAUNCH, storeName),
 });
 
 contextBridge.exposeInMainWorld("notifications", {
