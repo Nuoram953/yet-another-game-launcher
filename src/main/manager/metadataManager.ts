@@ -5,27 +5,14 @@ import { app } from "electron";
 import log from "electron-log";
 import _ from "lodash";
 import { Game } from "@prisma/client";
-import SteamGridDB from "../api/metadata/steamgriddb";
-import { YouTubeDownloader } from "../api/video/youtube";
 import { GameWithRelations } from "src/common/types";
-import OpenCritic from "../api/metadata/opencritic";
+import * as SteamGridDbApi from "../externalApi/steamGridDb";
 
 class MetadataManager {
   private userPath: string;
 
   constructor() {
     this.userPath = app.getPath("userData");
-  }
-
-  async downloadMissing(game: GameWithRelations) {
-    const sgdb = new SteamGridDB(game);
-    await sgdb.getGameIdByExternalId(game.storefront!.name);
-    await sgdb.downloadAllImageType(1, 1);
-
-    await YouTubeDownloader.searchAndDownloadVideos(game);
-
-    const openCritic = new OpenCritic();
-    await openCritic.search(game.name);
   }
 
   async deleteMedia(gameId: string, MediaType: MEDIA_TYPE, mediaId: string) {
@@ -101,9 +88,25 @@ class MetadataManager {
     }
   }
   async search(game: GameWithRelations, mediaType: MEDIA_TYPE, page: number) {
-    const sgdb = new SteamGridDB(game);
-    await sgdb.getGameIdByExternalId(game.storefront!.name);
-    return await sgdb.search(mediaType, page);
+    let res = null;
+    switch (mediaType) {
+      case MEDIA_TYPE.COVER:
+        res = await SteamGridDbApi.searchGrid(game);
+        break;
+      case MEDIA_TYPE.BACKGROUND:
+        res = await SteamGridDbApi.searchHero(game);
+        break;
+      case MEDIA_TYPE.LOGO:
+        res = await SteamGridDbApi.searchLogo(game);
+        break;
+      case MEDIA_TYPE.ICON:
+        res = await SteamGridDbApi.searchIcon(game);
+        break;
+      default:
+        throw new Error("Invalid media type");
+    }
+
+    return res.data.map((item) => item.url);
   }
 }
 

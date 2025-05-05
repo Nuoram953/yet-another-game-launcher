@@ -7,7 +7,7 @@ import { ErrorMessage } from "../../common/error";
 
 ipcMain.handle(RouteMedia.GET_ALL_MEDIA, async (_event, gameId) => {
   try {
-    await MediaService.getAllMedia(gameId);
+    return await MediaService.getAllMedia(gameId);
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteMedia.GET_ALL_MEDIA,

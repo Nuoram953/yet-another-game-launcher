@@ -16,14 +16,15 @@ export function SectionMetadata() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentMediaType, setCurrentMediaType] = useState<MEDIA_TYPE>(MEDIA_TYPE.BACKGROUND);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const fetchMedia = useCallback(async () => {
     if (!selectedGame?.id) return;
 
     try {
-      setLoading(true);
+      setLoading(false);
       const mediaData = await window.media.getAllMedia(selectedGame.id);
+      console.log(mediaData);
       if (!mediaData) {
         setLoading(false);
         return;

@@ -1,9 +1,6 @@
 {
   "newGame": {
-    "stepDownloadingCover": "Downloading covers",
-    "stepDownloadingBackgrounds": "Downloading backgrounds",
-    "stepDownloadingIcons": "Downloading icons",
-    "stepDownloadingLogos": "Downloading logos",
+    "stepDownloadingAssets": "Downloading assets",
     "stepDownloadingScreenshots": "Downloading screenshots",
     "stepAddingDevelopers": "Adding developers",
     "stepAddingPublishers": "Adding publishers",

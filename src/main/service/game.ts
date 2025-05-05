@@ -5,7 +5,6 @@ import { Storefront } from "../constant";
 import { i18n, logger, metadataManager } from "..";
 import { killDirectoyProcess } from "../utils/tracking";
 import { delay, getKeyPercentage } from "../utils/utils";
-import SteamGridDB from "../api/metadata/steamgriddb";
 import Steam from "../api/storefront/steam";
 import _ from "lodash";
 import { GameWithRelations } from "../../common/types";
@@ -15,9 +14,10 @@ import { createDownloadTracker } from "../storefront/steam/monitor";
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
 import notificationManager from "../manager/notificationManager";
-import OpenCritic from "../api/metadata/opencritic";
 import * as howLongToBeatApi from "../externalApi/howLongToBeat";
 import * as internetGameDatabaseApi from "../externalApi/internetGameDatabase";
+import * as SteamGridDbService from "../externalApi/steamGridDb/service";
+import * as openCriticApi from "../externalApi/openCritic";
 
 export const install = async (id: string) => {
   const game = await queries.Game.getGameById(id);
@@ -69,10 +69,6 @@ export const kill = async (id: string) => {
 };
 
 export const updateAchievements = async (game: GameWithRelations) => {
-  // const countAchievements = game.achievements.length;
-  // const countAchievementPictures =
-  //   await metadataManager.getCountAchievementPictures(game);
-
   switch (game.storefrontId) {
     case Storefront.STEAM: {
       const storeSteam = new Steam();
@@ -114,35 +110,15 @@ export const createOrUpdateGame = async (
 
   const notificationsObject = i18n.t("newGame", { ns: "notification", returnObjects: true });
 
-  const sgdb = new SteamGridDB(game);
-  await sgdb.getGameIdByExternalId(game.storefront!.name);
+  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.COVER, 3, 5);
+  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.LOGO, 3, 5);
+  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.ICON, 3, 5);
+  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.BACKGROUND, 3, 5);
   notificationManager.updateProgress(
     notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingCover"),
-    i18n.t("newGame.stepDownloadingCover", { ns: "notification" }),
+    getKeyPercentage(notificationsObject, "stepDownloadingAssets"),
+    i18n.t("newGame.stepDownloadingAssets", { ns: "notification" }),
   );
-  await sgdb.downloadGridForGame(3, 5);
-
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingBackgrounds"),
-    i18n.t("newGame.stepDownloadingBackgrounds", { ns: "notification" }),
-  );
-  await sgdb.downladHeroesForGame(3, 5);
-
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingIcons"),
-    i18n.t("newGame.stepDownloadingIcons", { ns: "notification" }),
-  );
-  await sgdb.downloadIconForGame(3, 5);
-
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingLogos"),
-    i18n.t("newGame.stepDownloadingLogos", { ns: "notification" }),
-  );
-  await sgdb.downloadLogosForGame(3, 5);
 
   const igdbData = await internetGameDatabaseApi.getGame(game);
   if (!_.isNil(igdbData)) {
@@ -201,8 +177,7 @@ export const createOrUpdateGame = async (
     getKeyPercentage(notificationsObject, "stepOpenCritcicData"),
     i18n.t("newGame.stepOpenCritcicData", { ns: "notification" }),
   );
-  const openCritic = new OpenCritic();
-  await openCritic.search(game.name);
+  const openCriticData = await openCriticApi.getGame(game.name);
 
   notificationManager.updateProgress(
     notificationId,
