@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 //@ts-ignore-error - Missing type definitions
 import vdf from "vdf";
-import { Storefront } from "../../constant";
+import { Storefront } from "../../../common/constant";
 import { Game, GameAchievement, GameConfigGamescope } from "@prisma/client";
 import { createOrUpdateGame } from "../../service/game";
 //@ts-ignore-error - Missing type definitions
@@ -53,14 +53,8 @@ class Steam {
   }
 
   async getSteamUserData() {
-    const steamConfigDirectory = path.join(
-      app.getPath("userData"),
-      "../../.steam/steam/config",
-    );
-    const data = await fs.promises.readFile(
-      `${steamConfigDirectory}/loginusers.vdf`,
-      "utf8",
-    );
+    const steamConfigDirectory = path.join(app.getPath("userData"), "../../.steam/steam/config");
+    const data = await fs.promises.readFile(`${steamConfigDirectory}/loginusers.vdf`, "utf8");
 
     const loginUsersJson = await vdf.parse(data);
     const users = Object.entries(loginUsersJson.users);
@@ -72,17 +66,14 @@ class Steam {
 
   async getOwnedGames() {
     try {
-      const response = await axios.get(
-        "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001",
-        {
-          params: {
-            steamid: await this.getSteamUserData(),
-            key: this.apiKey,
-            format: "json",
-            include_appinfo: 1,
-          },
+      const response = await axios.get("https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001", {
+        params: {
+          steamid: await this.getSteamUserData(),
+          key: this.apiKey,
+          format: "json",
+          include_appinfo: 1,
         },
-      );
+      });
 
       this.parseResponse(response);
     } catch (error) {
@@ -93,15 +84,10 @@ class Steam {
 
   async getInstalledGames() {
     try {
-      const steamConfigDirectory = path.join(
-        app.getPath("userData"),
-        "../../.steam/steam/steamapps",
-      );
+      const steamConfigDirectory = path.join(app.getPath("userData"), "../../.steam/steam/steamapps");
 
       const files = await fs.promises.readdir(steamConfigDirectory);
-      const appManifestFiles = files.filter((file) =>
-        /^appmanifest_\d+\.acf$/.test(file),
-      );
+      const appManifestFiles = files.filter((file) => /^appmanifest_\d+\.acf$/.test(file));
 
       for (const file of appManifestFiles) {
         let appId;
@@ -112,10 +98,7 @@ class Steam {
           throw new Error();
         }
 
-        const game = await queries.Game.getGameByExtenalIdAndStorefront(
-          appId,
-          Storefront.STEAM,
-        );
+        const game = await queries.Game.getGameByExtenalIdAndStorefront(appId, Storefront.STEAM);
 
         if (!game) {
           continue;
@@ -142,27 +125,24 @@ class Steam {
       return [];
     }
   }
-  async getUserAchievementsForGame(id:string) {
+  async getUserAchievementsForGame(id: string) {
     const game = await queries.Game.getGameById(id);
     if (_.isNil(game)) {
       throw new Error("game not found");
     }
 
-    if(!game.hasAchievements){
-      return
+    if (!game.hasAchievements) {
+      return;
     }
 
     try {
-      const response = await axios.get(
-        "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001",
-        {
-          params: {
-            steamid: await this.getSteamUserData(),
-            key: this.apiKey,
-            appid: game.externalId,
-          },
+      const response = await axios.get("https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001", {
+        params: {
+          steamid: await this.getSteamUserData(),
+          key: this.apiKey,
+          appid: game.externalId,
         },
-      );
+      });
 
       const achievements = response.data.playerstats.achievements;
       for (const achievement of achievements) {
@@ -183,22 +163,19 @@ class Steam {
 
   async getAchievementsForGame(game: Game) {
     try {
-      const response = await axios.get(
-        "https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002",
-        {
-          params: {
-            steamid: await this.getSteamUserData(),
-            key: this.apiKey,
-            appid: game.externalId,
-          },
+      const response = await axios.get("https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002", {
+        params: {
+          steamid: await this.getSteamUserData(),
+          key: this.apiKey,
+          appid: game.externalId,
         },
-      );
+      });
 
-      const hasAchievements = Object.keys(response.data.game).length > 0
-      await queries.Game.update(game.id, {hasAchievements:hasAchievements})
+      const hasAchievements = Object.keys(response.data.game).length > 0;
+      await queries.Game.update(game.id, { hasAchievements: hasAchievements });
 
-      if(!hasAchievements){
-        return
+      if (!hasAchievements) {
+        return;
       }
 
       const achievements = response.data.game.availableGameStats.achievements;
@@ -211,13 +188,7 @@ class Steam {
           name: achievement.displayName,
         };
         await queries.GameAchievements.findOrCreate(game.id, data);
-        await metadataManager.downloadImage(
-          MEDIA_TYPE.ACHIEVEMENT,
-          game,
-          achievement.icon,
-          "jpg",
-          achievement.name,
-        );
+        await metadataManager.downloadImage(MEDIA_TYPE.ACHIEVEMENT, game, achievement.icon, "jpg", achievement.name);
       }
     } catch (error) {
       console.log(error);
@@ -226,29 +197,18 @@ class Steam {
   }
 
   async getAppInfoFile() {
-    const steamConfigDirectory = path.join(
-      app.getPath("userData"),
-      `../../.steam/steam/appcache`,
-    );
+    const steamConfigDirectory = path.join(app.getPath("userData"), `../../.steam/steam/appcache`);
 
-    const data = fs.readFileSync(
-      `${steamConfigDirectory}/appinfo.vdf`,
-    );
+    const data = fs.readFileSync(`${steamConfigDirectory}/appinfo.vdf`);
 
-    const dataJson = readVdf(data,600);
+    const dataJson = readVdf(data, 600);
 
     console.log(dataJson);
   }
 
-  async updateLaunchOptions(
-    game: GameWithRelations,
-    gamescope: GameConfigGamescope,
-  ) {
+  async updateLaunchOptions(game: GameWithRelations, gamescope: GameConfigGamescope) {
     try {
-      const steamConfigDirectory = path.join(
-        app.getPath("userData"),
-        `../../.steam/steam/userdata`,
-      );
+      const steamConfigDirectory = path.join(app.getPath("userData"), `../../.steam/steam/userdata`);
 
       const data = await fs.promises.readFile(
         `${steamConfigDirectory}/${await this.steamId64ToSteamId3()}/config/localconfig.vdf`,
@@ -257,10 +217,7 @@ class Steam {
 
       const dataJson = await vdf.parse(data);
 
-      const gameConfigSteam =
-        dataJson.UserLocalConfigStore.Software.Valve.Steam.apps[
-          game.externalId
-        ];
+      const gameConfigSteam = dataJson.UserLocalConfigStore.Software.Valve.Steam.apps[game.externalId];
 
       if (gameConfigSteam) {
         gameConfigSteam.LaunchOptions =

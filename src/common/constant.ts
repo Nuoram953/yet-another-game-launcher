@@ -87,3 +87,15 @@ export enum RouteGame {
   SET_SETTING_GAMESCOPE = "game:setGamescope",
   REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
 }
+
+export enum GameStatus {
+  UNPLAYED = 1,
+  PLAYED = 2,
+  COMPLETED = 3,
+  ABONDONNED = 4,
+}
+
+export enum Storefront {
+  STEAM = 1,
+  EPIC = 2,
+}

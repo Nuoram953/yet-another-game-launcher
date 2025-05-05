@@ -1,7 +1,7 @@
 import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { YouTubeDownloader } from "../api/video/youtube";
-import { Storefront } from "../constant";
+import { Storefront } from "../../common/constant";
 import { i18n, logger, metadataManager } from "..";
 import { killDirectoyProcess } from "../utils/tracking";
 import { delay, getKeyPercentage } from "../utils/utils";

@@ -3,12 +3,13 @@ import { HEROES_URL, ICONS_URL, LOGOS_URL, axiosInstance } from "./config";
 import { SEARCH_URL, GRIDS_URL, GET_GAME_BY_EXTERNAL_ID } from "./config";
 import { GetExternalGameIdResponse, MediaResponse, SearchResponse } from "./types";
 import _ from "lodash";
+import { getPlatform } from "./util";
 
 const getGameId = async (game: GameWithRelations) => {
   let gameId = null;
   if (game.externalId) {
     const response = await axiosInstance.get<GetExternalGameIdResponse>(
-      GET_GAME_BY_EXTERNAL_ID + `${game.storefront!.name}/${game.externalId}`,
+      GET_GAME_BY_EXTERNAL_ID + `${await getPlatform(game.storefrontId!)}/${game.externalId}`,
     );
     gameId = response.data.data.id;
   }

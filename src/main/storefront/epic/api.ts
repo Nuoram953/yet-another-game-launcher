@@ -1,15 +1,13 @@
 import { Game } from "@prisma/client";
 import { spawn } from "child_process";
-import { Storefront } from "../../../main/constant";
+import { Storefront } from "../../../common/constant";
 import { createOrUpdateGame } from "../../../main/service/game";
 
 export class Epic {
   async initialize(): Promise<void> {
     await this.getOwnedGames();
   }
-  async getGameInfo(appId:string){
-
-  }
+  async getGameInfo(appId: string) {}
   async getOwnedGames() {
     return new Promise((resolve, reject) => {
       const legendary = spawn("legendary", ["list", "--json"]);

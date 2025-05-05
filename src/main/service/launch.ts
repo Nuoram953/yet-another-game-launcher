@@ -1,5 +1,5 @@
 import queries from "../dal/dal";
-import { Storefront } from "../constant";
+import { Storefront } from "../../common/constant";
 import { logger } from "..";
 import { monitorDirectoryProcesses } from "../utils/tracking";
 import { getMinutesBetween } from "../utils/utils";
@@ -41,17 +41,11 @@ export const launch = async (id: string) => {
     id: game.id,
   });
 
-  const { startTime, endTime } = await monitorDirectoryProcesses(
-    game?.location!,
-  );
+  const { startTime, endTime } = await monitorDirectoryProcesses(game?.location!);
   await postLaunch(game, startTime, endTime);
 };
 
-export const postLaunch = async (
-  game: GameWithRelations,
-  startTime: Date,
-  endTime: Date | null,
-) => {
+export const postLaunch = async (game: GameWithRelations, startTime: Date, endTime: Date | null) => {
   logger.info(`postLaunch for game`, { id: game.id }, LogTag.TRACKING);
   if (startTime && endTime) {
     const minutes = await getMinutesBetween(startTime, endTime);
@@ -59,9 +53,7 @@ export const postLaunch = async (
       await createGameActiviy(game.id, startTime, endTime);
       await queries.Game.updateTimePlayed(game.id, minutes + 5);
     } else {
-      logger.info(
-        `Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`,
-      );
+      logger.info(`Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`);
     }
 
     if (game.gameStatusId === 7) {
