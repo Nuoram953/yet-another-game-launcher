@@ -7,12 +7,12 @@ import log from "electron-log/main";
 import "reflect-metadata";
 require("dotenv").config();
 
-import "./handlers/media";
-import "./handlers/config";
-import "./handlers/store";
-import "./handlers/ranking";
-import "./handlers/library";
-import "./handlers/game";
+import "./media/media.handler";
+import "./config/config.handler";
+import "./store/store.handler";
+import "./ranking/ranking.handler";
+import "./library/library.handler";
+import "./game/game.handler";
 
 import MetadataManager from "./manager/metadataManager";
 import notificationManager from "./manager/notificationManager";

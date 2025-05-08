@@ -1,7 +1,7 @@
 import { Game } from "@prisma/client";
 import { spawn } from "child_process";
 import { Storefront } from "../../../common/constant";
-import { createOrUpdateGame } from "../../../main/service/game";
+import { createOrUpdateGame } from "../../../main/game/game.service";
 
 export class Epic {
   async initialize(): Promise<void> {

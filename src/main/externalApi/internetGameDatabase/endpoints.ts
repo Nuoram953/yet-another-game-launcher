@@ -1,6 +1,6 @@
 import _ from "lodash";
-import { Storefront } from "../../../main/constant";
-import { EXTERNAL_GAME_URL, axiosInstance } from "./config";
+import { Storefront } from "../../../common/constant";
+import { EXTERNAL_GAME_URL, GAME_URL, INVOLED_COMPANY_URL, axiosInstance } from "./config";
 import { IExternalGame, IGame, IInvolvedCompany } from "./types";
 import { getCategory } from "./util";
 import { GameWithRelations } from "../../../common/types";
@@ -21,7 +21,7 @@ export const getExternalGameId = async (externalId: string, store: Storefront) =
 
 export const getInvolvedCompany = async (id: number) => {
   const res = await axiosInstance.post<IInvolvedCompany[]>(
-    EXTERNAL_GAME_URL,
+    INVOLED_COMPANY_URL,
     `fields *, company.*;  where game=${id};`,
   );
 
@@ -29,10 +29,7 @@ export const getInvolvedCompany = async (id: number) => {
 };
 
 export const search = async (name: string) => {
-  const res = await axiosInstance.post<IGame[]>(
-    EXTERNAL_GAME_URL,
-    `fields *; search "${name}"; where version_parent = null;`,
-  );
+  const res = await axiosInstance.post<IGame[]>(GAME_URL, `fields *; search "${name}"; where version_parent = null;`);
 
   if (_.isEmpty(res.data)) {
     return null;
@@ -53,8 +50,8 @@ export const getGame = async (game: GameWithRelations | Game) => {
   }
 
   const res = await axiosInstance.post<IGame[]>(
-    EXTERNAL_GAME_URL,
-    `fields *, platforms.*, genres.*, themes.*, game_engines.*, game_modes.*, player_perspectives.*;  where id=${id};`,
+    GAME_URL,
+    `fields *, platforms.*, genres.*, themes.*, game_engines.*, game_modes.*, player_perspectives.*, screenshots.*;  where id=${id};`,
   );
 
   const companies = await getInvolvedCompany(id);
@@ -64,7 +61,7 @@ export const getGame = async (game: GameWithRelations | Game) => {
       name: item.company.name,
       description: item.company.description,
       country: item.company.country,
-      startedAt: BigInt(item.company.start_date),
+      startedAt: item.company.start_date,
       url: item.company.url,
     }));
 
@@ -74,7 +71,7 @@ export const getGame = async (game: GameWithRelations | Game) => {
       name: item.company.name,
       description: item.company.description,
       country: item.company.country,
-      startedAt: BigInt(item.company.start_date),
+      startedAt: item.company.start_date,
       url: item.company.url,
     }));
 

@@ -1,25 +1,10 @@
 import React, { useMemo, useEffect } from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from "chart.js";
 import { Scatter } from "react-chartjs-2";
 import { useGames } from "@/context/DatabaseContext";
 import { Card } from "@/components/card/Card";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 const ChartHeatMapCalendar = () => {
   const { selectedGame } = useGames();
@@ -42,15 +27,10 @@ const ChartHeatMapCalendar = () => {
 
     sessions.forEach((session) => {
       try {
-        const endTimestamp =
-          typeof session.endedAt === "bigint"
-            ? Number(session.endedAt)
-            : Number(session.endedAt);
+        const endTimestamp = typeof session.endedAt === "bigint" ? Number(session.endedAt) : Number(session.endedAt);
 
         const durationMinutes =
-          typeof session.duration === "bigint"
-            ? Number(session.duration)
-            : Number(session.duration);
+          typeof session.duration === "bigint" ? Number(session.duration) : Number(session.duration);
 
         if (isNaN(endTimestamp) || isNaN(durationMinutes)) {
           console.error("Invalid timestamp or duration:", {
@@ -70,10 +50,7 @@ const ChartHeatMapCalendar = () => {
         const dateKey = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, "0")}-${String(endDate.getDate()).padStart(2, "0")}`;
 
         if (dayPlaytimeMap.has(dateKey)) {
-          dayPlaytimeMap.set(
-            dateKey,
-            dayPlaytimeMap.get(dateKey) + durationMinutes,
-          );
+          dayPlaytimeMap.set(dateKey, dayPlaytimeMap.get(dateKey) + durationMinutes);
         } else {
           dayPlaytimeMap.set(dateKey, durationMinutes);
         }
@@ -82,10 +59,7 @@ const ChartHeatMapCalendar = () => {
       }
     });
 
-    console.log(
-      "Day playtime map (minutes):",
-      Array.from(dayPlaytimeMap.entries()),
-    );
+    console.log("Day playtime map (minutes):", Array.from(dayPlaytimeMap.entries()));
 
     const dataPoints = [];
     const now = new Date();
@@ -124,7 +98,7 @@ const ChartHeatMapCalendar = () => {
     return max;
   }, [calendarData]);
 
-  const getColor = (value) => {
+  const getColor = (value: number) => {
     const intensity = Math.min(value / maxValue, 1);
 
     const r = Math.round(220 - intensity * 170);
@@ -144,9 +118,7 @@ const ChartHeatMapCalendar = () => {
         borderWidth: 1,
         pointRadius: 15,
         pointHoverRadius: 18,
-        hoverBackgroundColor: calendarData.map((point) =>
-          getColor(point.value),
-        ),
+        hoverBackgroundColor: calendarData.map((point) => getColor(point.value)),
       },
     ],
   };
@@ -173,8 +145,7 @@ const ChartHeatMapCalendar = () => {
         min: -0.5,
         max: 6.5,
         ticks: {
-          callback: (value) =>
-            value >= 0 && value <= 6 ? dayLabels[value] : "",
+          callback: (value) => (value >= 0 && value <= 6 ? dayLabels[value] : ""),
           stepSize: 1,
         },
         title: {
@@ -191,8 +162,7 @@ const ChartHeatMapCalendar = () => {
         max: 7.5,
         reverse: true,
         ticks: {
-          callback: (value) =>
-            value >= 0 && value <= 7 ? weekLabels[value] : "",
+          callback: (value) => (value >= 0 && value <= 7 ? weekLabels[value] : ""),
           stepSize: 1,
         },
         title: {
@@ -237,7 +207,7 @@ const ChartHeatMapCalendar = () => {
         display: false,
       },
       title: {
-        display: true,
+        display: false,
         text: "Gaming Activity Heat Map",
         font: {
           size: 16,
@@ -252,9 +222,7 @@ const ChartHeatMapCalendar = () => {
         {sessions && sessions.length > 0 ? (
           <Scatter data={chartData} options={options} />
         ) : (
-          <div style={{ textAlign: "center", padding: "20px" }}>
-            No gaming session data available to display.
-          </div>
+          <div style={{ textAlign: "center", padding: "20px" }}>No gaming session data available to display.</div>
         )}
       </div>
     </Card>

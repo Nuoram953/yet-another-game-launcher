@@ -2,12 +2,12 @@ import { ipcMain } from "electron";
 import log from "electron-log/main";
 import { RouteGame } from "../../common/constant";
 import { ErrorMessage } from "../../common/error";
-import * as GameService from "../service/game";
-import * as LaunchService from "../service/launch";
+import * as GameService from "../game/game.service";
+import * as LibraryService from "../library/library.service";
 
 ipcMain.handle(RouteGame.LAUNCH, async (_event, id) => {
   try {
-    await LaunchService.launch(id);
+    await LibraryService.launch(id);
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteGame.LAUNCH,

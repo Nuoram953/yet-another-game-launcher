@@ -147,6 +147,7 @@ export const createOrUpdateGame = async (
       getKeyPercentage(notificationsObject, "stepDownloadingScreenshots"),
       i18n.t("newGame.stepDownloadingScreenshots", { ns: "notification" }),
     );
+    console.log(igdbData.screenshots);
     for (const image of igdbData.screenshots) {
       const url = `https:${image}`;
       await metadataManager.downloadImage(MEDIA_TYPE.SCREENSHOT, game, url.replace("t_thumb", "t_1080p"), "jpg");

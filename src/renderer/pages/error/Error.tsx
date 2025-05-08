@@ -1,60 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function ErrorPage500() {
+const ErrorPage500: React.FC = () => {
   return (
-    <div className="not-found-container">
-      <h1>500</h1>
-      <h2>Unexpected error has occured</h2>
-      <Link to="/" className="home-button">
+    <div className="flex h-screen flex-col items-center justify-center bg-slate-50 p-5 text-center dark:bg-slate-900">
+      <h1 className="m-0 text-7xl font-bold text-red-500 dark:text-red-400">500</h1>
+      <h2 className="mb-6 mt-1 text-xl font-semibold text-slate-800 dark:text-slate-200">Server Error</h2>
+      <p className="mb-6 text-slate-600 dark:text-slate-400">
+        Sorry, something went wrong on our server. We're working to fix the issue.
+      </p>
+      <Link
+        to="/"
+        className="rounded-md bg-indigo-500 px-5 py-2 text-white no-underline transition-colors hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"
+      >
         Go to Homepage
       </Link>
-
-      <style jsx>{`
-        .not-found-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100vh;
-          text-align: center;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Helvetica, Arial, sans-serif;
-          background-color: #f5f5f5;
-          padding: 20px;
-        }
-
-        h1 {
-          font-size: 72px;
-          margin: 0;
-          color: #e74c3c;
-        }
-
-        h2 {
-          margin-top: 0;
-          margin-bottom: 24px;
-        }
-
-        p {
-          margin-bottom: 24px;
-        }
-
-        .home-button {
-          display: inline-block;
-          padding: 10px 20px;
-          background-color: #3498db;
-          color: white;
-          border-radius: 4px;
-          text-decoration: none;
-          transition: background-color 0.3s;
-        }
-
-        .home-button:hover {
-          background-color: #2980b9;
-        }
-      `}</style>
     </div>
   );
-}
+};
 
 export default ErrorPage500;

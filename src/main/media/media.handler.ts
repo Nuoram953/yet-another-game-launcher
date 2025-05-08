@@ -2,7 +2,7 @@ import { ipcMain } from "electron";
 import _ from "lodash";
 import { MEDIA_TYPE, RouteMedia } from "../../common/constant";
 import log from "electron-log/main";
-import * as MediaService from "../service/media";
+import * as MediaService from "../media/media.service";
 import { ErrorMessage } from "../../common/error";
 
 ipcMain.handle(RouteMedia.GET_ALL_MEDIA, async (_event, gameId) => {

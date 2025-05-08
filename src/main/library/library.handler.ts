@@ -2,7 +2,7 @@ import { ipcMain } from "electron";
 import log from "electron-log/main";
 import { RouteLibrary } from "../../common/constant";
 import { ErrorMessage } from "../../common/error";
-import * as LibraryService from "../service/library";
+import * as LibraryService from "./library.service";
 
 ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {
   try {

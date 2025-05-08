@@ -1,6 +1,6 @@
 import { ipcMain } from "electron";
 import { RouteStore } from "../../common/constant";
-import * as StoreService from "../service/store";
+import * as StoreService from "../store/store.service";
 import log from "electron-log/main";
 import { ErrorMessage } from "../../common/error";
 

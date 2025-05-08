@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
+import axios from "../../../common/axiosConfig";
 import { app } from "electron";
 import path from "path";
 import fs from "fs";
@@ -6,7 +7,7 @@ import fs from "fs";
 import vdf from "vdf";
 import { Storefront } from "../../../common/constant";
 import { Game, GameAchievement, GameConfigGamescope } from "@prisma/client";
-import { createOrUpdateGame } from "../../service/game";
+import { createOrUpdateGame } from "../../game/game.service";
 //@ts-ignore-error - Missing type definitions
 import acfParser from "steam-acf2json";
 import queries from "../../dal/dal";

@@ -1,4 +1,4 @@
-import { Storefront } from "../../../main/constant";
+import { Storefront } from "../../../common/constant";
 
 export const getCategory = (store: Storefront) => {
   let category = -1;

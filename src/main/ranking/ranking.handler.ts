@@ -2,7 +2,7 @@ import { ipcMain } from "electron";
 import _ from "lodash";
 import { RouteRanking } from "../../common/constant";
 import log from "electron-log/main";
-import * as RankingService from "../service/ranking";
+import * as RankingService from "../ranking/ranking.service";
 import { ErrorMessage } from "../../common/error";
 
 ipcMain.handle(RouteRanking.GET_RANKING, async (_event, id) => {

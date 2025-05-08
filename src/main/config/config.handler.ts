@@ -2,7 +2,7 @@ import { ipcMain } from "electron";
 import _ from "lodash";
 import { ConfigRoute } from "../../common/constant";
 import log from "electron-log/main";
-import * as ConfigService from "../service/config";
+import * as ConfigService from "../config/config.service";
 import { ErrorMessage } from "../../common/error";
 
 ipcMain.handle(ConfigRoute.GET, async (_event, key) => {

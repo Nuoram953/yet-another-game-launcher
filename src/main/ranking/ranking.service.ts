@@ -31,6 +31,6 @@ export const edit = async (data: Partial<RankingGame>) => {
   await queries.RankingGame.edit(data);
 };
 
-export const removeGameFromRanking = async (rankingId: number, gameId:string) => {
+export const removeGameFromRanking = async (rankingId: number, gameId: string) => {
   await queries.RankingGame.destroy(rankingId, gameId);
 };
