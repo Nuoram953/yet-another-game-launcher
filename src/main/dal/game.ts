@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { GameStatus, Storefront } from "../constant";
+import { GameStatus, Storefront } from "../../common/constant";
 import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";

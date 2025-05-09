@@ -85,7 +85,7 @@ declare global {
       refresh: () => Promise<void>;
       getGame: (id: string) => Promise<GameWithRelations>;
       getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<GameWithRelations[]>;
-      getLastPlayed: (max: number) => Promise<Game[]>;
+      getLastPlayed: (max: number) => Promise<GameWithRelations[]>;
       getCountForAllStatus: () => Promise<{ id: number; name: string; count: number }[]>;
 
       getStatus: () => Promise<GameStatus[]>;

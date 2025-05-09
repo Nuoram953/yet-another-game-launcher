@@ -5,19 +5,32 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useNotifications } from "./NotificationSystem";
 
+type NotificationType = "success" | "error" | "warning" | "info" | "progress";
+
+interface BaseNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  useToast?: boolean;
+}
+
+interface ProgressNotification extends BaseNotification {
+  type: "progress";
+  current: number;
+  total: number;
+}
+
+type Notification = BaseNotification | ProgressNotification;
+
 interface NotificationItemProps {
   notification: Notification;
   onClose: (id: string) => void;
 }
 
-const NotificationItem: React.FC<NotificationItemProps> = ({
-  notification,
-  onClose,
-}) => {
+const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClose }) => {
   const [progress, setProgress] = React.useState(
-    isProgressNotification(notification)
-      ? (notification.current / notification.total) * 100
-      : 0,
+    isProgressNotification(notification) ? (notification.current / notification.total) * 100 : 0,
   );
 
   React.useEffect(() => {
@@ -45,22 +58,15 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
             <h3 className="font-semibold">{notification.title}</h3>
-            <p className="text-sm text-muted-foreground">
-              {notification.message}
-            </p>
-            {notification.type === "progress" && (
+            <p className="text-sm text-muted-foreground">{notification.message}</p>
+            {isProgressNotification(notification) && (
               <div className="mt-2">
                 <Progress value={progress} className="h-2" />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {Math.round(progress)}% Complete
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">{Math.round(progress)}% Complete</p>
               </div>
             )}
           </div>
-          <button
-            onClick={() => onClose(notification.id)}
-            className="text-muted-foreground hover:text-foreground"
-          >
+          <button onClick={() => onClose(notification.id)} className="text-muted-foreground hover:text-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -74,19 +80,14 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         <div className="flex-1">
           <AlertTitle>{notification.title}</AlertTitle>
           <AlertDescription>{notification.message}</AlertDescription>
-          {notification.type === "progress" && (
+          {isProgressNotification(notification) && (
             <div className="mt-3">
               <Progress value={progress} className="h-2" />
-              <p className="mt-1 text-xs text-muted-foreground">
-                {Math.round(progress)}% Complete
-              </p>
+              <p className="mt-1 text-xs text-muted-foreground">{Math.round(progress)}% Complete</p>
             </div>
           )}
         </div>
-        <button
-          onClick={() => onClose(notification.id)}
-          className="text-muted-foreground hover:text-foreground"
-        >
+        <button onClick={() => onClose(notification.id)} className="text-muted-foreground hover:text-foreground">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -94,14 +95,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   );
 };
 
-function isProgressNotification(
-  notification: Notification,
-): notification is ProgressNotification {
-  return (
-    notification.type === "progress" &&
-    "current" in notification &&
-    "total" in notification
-  );
+function isProgressNotification(notification: Notification): notification is ProgressNotification {
+  return notification.type === "progress";
 }
 
 const NotificationSystem: React.FC = () => {
@@ -113,7 +108,7 @@ const NotificationSystem: React.FC = () => {
         {notifications.map((notification) => (
           <NotificationItem
             key={notification.id}
-            notification={notification}
+            notification={notification as Notification}
             onClose={removeNotification}
           />
         ))}

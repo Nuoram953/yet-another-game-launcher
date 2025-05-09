@@ -61,7 +61,7 @@ export const getGame = async (game: GameWithRelations | Game) => {
       name: item.company.name,
       description: item.company.description,
       country: item.company.country,
-      startedAt: item.company.start_date,
+      startedAt: BigInt(item.company.start_date ?? 0),
       url: item.company.url,
     }));
 
@@ -71,7 +71,7 @@ export const getGame = async (game: GameWithRelations | Game) => {
       name: item.company.name,
       description: item.company.description,
       country: item.company.country,
-      startedAt: item.company.start_date,
+      startedAt: BigInt(item.company.start_date ?? 0),
       url: item.company.url,
     }));
 

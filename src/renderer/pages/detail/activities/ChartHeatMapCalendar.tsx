@@ -42,7 +42,7 @@ const ChartHeatMapCalendar = () => {
 
         const endDate = new Date(endTimestamp);
 
-        if (!(endDate instanceof Date && !isNaN(endDate))) {
+        if (!(endDate instanceof Date && !isNaN(endDate.getTime()))) {
           console.error("Invalid date created from timestamp:", endTimestamp);
           return;
         }
@@ -123,104 +123,66 @@ const ChartHeatMapCalendar = () => {
     ],
   };
 
-  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const weekLabels = [
-    "This Week",
-    "1 Week Ago",
-    "2 Weeks Ago",
-    "3 Weeks Ago",
-    "4 Weeks Ago",
-    "5 Weeks Ago",
-    "6 Weeks Ago",
-    "7 Weeks Ago",
-  ];
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    showLine: false,
-    scales: {
-      x: {
-        type: "linear",
-        min: -0.5,
-        max: 6.5,
-        ticks: {
-          callback: (value) => (value >= 0 && value <= 6 ? dayLabels[value] : ""),
-          stepSize: 1,
-        },
-        title: {
-          display: true,
-          text: "Day of Week",
-        },
-        grid: {
-          display: false,
-        },
-      },
-      y: {
-        type: "linear",
-        min: -0.5,
-        max: 7.5,
-        reverse: true,
-        ticks: {
-          callback: (value) => (value >= 0 && value <= 7 ? weekLabels[value] : ""),
-          stepSize: 1,
-        },
-        title: {
-          display: true,
-          text: "Week",
-        },
-        grid: {
-          display: false,
-        },
-      },
-    },
-    plugins: {
-      tooltip: {
-        callbacks: {
-          title: (context) => {
-            if (!context.length) return "";
-            const dataPoint = context[0].raw;
-            if (!dataPoint || !dataPoint.date) return "Unknown date";
-            const date = dataPoint.date;
-            return `${date.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`;
-          },
-          label: (context) => {
-            if (!context || !context.raw) return "No data";
-            const minutes = context.raw.minutes;
-
-            if (minutes === 0) return "No gaming activity";
-
-            const hours = Math.floor(minutes / 60);
-            const remainingMinutes = Math.round(minutes % 60);
-
-            if (hours === 0) {
-              return `Playtime: ${remainingMinutes} min`;
-            } else if (remainingMinutes === 0) {
-              return `Playtime: ${hours} hr`;
-            } else {
-              return `Playtime: ${hours} hr ${remainingMinutes} min`;
-            }
-          },
-        },
-      },
-      legend: {
-        display: false,
-      },
-      title: {
-        display: false,
-        text: "Gaming Activity Heat Map",
-        font: {
-          size: 16,
-        },
-      },
-    },
-  };
-
   return (
     <Card title="Gaming Activity Heat Map">
       <div style={{ height: "500px", width: "100%" }}>
         {sessions && sessions.length > 0 ? (
-          <Scatter data={chartData} options={options} />
+          <Scatter
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              showLine: false,
+              scales: {
+                x: {
+                  type: "linear",
+                  min: 0,
+                  max: 100,
+                  ticks: {
+                    callback: (value) => `${value}`,
+                    stepSize: 10,
+                  },
+                  title: {
+                    display: true,
+                    text: "X-Axis",
+                  },
+                  grid: {
+                    drawOnChartArea: false,
+                  },
+                },
+                y: {
+                  type: "linear",
+                  min: 0,
+                  max: 100,
+                  ticks: {
+                    callback: (value) => `${value}`,
+                    stepSize: 10,
+                  },
+                  title: {
+                    display: true,
+                    text: "Y-Axis",
+                  },
+                },
+              },
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    title: (tooltipItems) => {
+                      if (!tooltipItems.length) return "";
+                      const raw = tooltipItems[0].raw as { date?: Date };
+                      if (!raw || !raw.date) return "Unknown date";
+                      return raw.date.toLocaleDateString(undefined, {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      });
+                    },
+                  },
+                },
+              },
+            }}
+          />
         ) : (
           <div style={{ textAlign: "center", padding: "20px" }}>No gaming session data available to display.</div>
         )}
