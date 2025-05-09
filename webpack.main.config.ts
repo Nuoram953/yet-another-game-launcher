@@ -46,7 +46,7 @@ export const mainConfig: Configuration = {
         scripts: [
           'echo "Post-build step executed!"',
           `chmod +x ${path.resolve(__dirname, ".webpack/main/native_modules/bin/yt-dlp")}`,
-          `chmod +x ${path.resolve(__dirname, "./webpack/main/loading.html")}`,
+          `chmod +x ${path.resolve(__dirname, ".webpack/main/loading.html")}`,
         ],
         blocking: false,
         parallel: true,
