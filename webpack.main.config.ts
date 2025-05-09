@@ -27,10 +27,7 @@ export const mainConfig: Configuration = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(
-            __dirname,
-            "node_modules/.prisma/client/libquery_engine-debian-openssl-3.0.x.so.node",
-          ),
+          from: path.resolve(__dirname, "node_modules/.prisma/client/libquery_engine-debian-openssl-3.0.x.so.node"),
           to: path.resolve(__dirname, ".webpack/main"),
         },
         {
@@ -45,6 +42,7 @@ export const mainConfig: Configuration = {
         scripts: [
           'echo "Post-build step executed!"',
           `chmod +x ${path.resolve(__dirname, ".webpack/main/native_modules/bin/yt-dlp")}`,
+          `chmod +x ${path.resolve(__dirname, "loading.html")}`,
         ],
         blocking: false,
         parallel: true,
