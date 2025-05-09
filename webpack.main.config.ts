@@ -34,6 +34,10 @@ export const mainConfig: Configuration = {
           from: path.resolve(__dirname, "locale"),
           to: path.resolve(__dirname, ".webpack/main/locale"),
         },
+        {
+          from: path.resolve(__dirname, "loading.html"),
+          to: path.resolve(__dirname, ".webpack/main/loading.html"),
+        },
       ],
     }),
 
