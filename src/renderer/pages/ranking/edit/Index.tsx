@@ -17,10 +17,10 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X, Gamepad2, ListOrdered, BookmarkPlus, Plus, ArrowRight } from "lucide-react";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import { useParams } from "react-router-dom";
 import { GameWithRelations, RankingWithRelation } from "src/common/types";
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 
 interface SortableItemProps {
   id: string;

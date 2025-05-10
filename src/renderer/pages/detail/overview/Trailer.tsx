@@ -1,5 +1,5 @@
-import VideoPlayer from "@/components/VideoPlayer";
-import { useGames } from "@/context/DatabaseContext";
+import VideoPlayer from "@render//components/VideoPlayer";
+import { useGames } from "@render//context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 
 export const Trailer = () => {
@@ -26,7 +26,7 @@ export const Trailer = () => {
   }
 
   return (
-    <div className="aspect-video max-h-[1080px] mx-auto">
+    <div className="mx-auto aspect-video max-h-[1080px]">
       <VideoPlayer path={trailer} />
     </div>
   );

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useGames } from "@/context/DatabaseContext";
-import { Card } from "@/components/card/Card";
+import { useGames } from "@render//context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
 import { MEDIA_TYPE } from "../../../../common/constant";
 import { Plus, Star, Trash } from "lucide-react";
-import { Image } from "@/components/image/Image";
-import { Button } from "@/components/button/Button";
-import { useNotifications } from "@/components/NotificationSystem";
+import { Image } from "@render//components/image/Image";
+import { Button } from "@render//components/button/Button";
+import { useNotifications } from "@render//components/NotificationSystem";
 import ImageAddDialogue from "./ImageAddDialogue";
 import { MediaItem, MediaState } from "./types";
 

@@ -19,6 +19,7 @@ import { RankingPage } from "./pages/ranking/Index";
 import { RankingEditPage } from "./pages/ranking/edit/Index";
 import NotFound from "./pages/error/notFound";
 import ErrorBoundary from "./components/ErrorBoundary";
+import "./index.css";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);

@@ -1,6 +1,6 @@
-import { Card } from "@/components/card/Card";
+import { Card } from "@render//components/card/Card";
 import { Trophy, Clock, Edit, Trash2, Pencil, Plus } from "lucide-react";
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
@@ -9,15 +9,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@render//components/ui/dialog";
+import { Input } from "@render//components/ui/input";
+import { Label } from "@render//components/ui/label";
 import { RankingWithRelation } from "../../../common/types";
 import { useNavigate } from "react-router-dom";
-import { Image } from "@/components/image/Image";
-import { unixToDate } from "@/utils/util";
-import { Button } from "@/components/button/Button";
-import { Header } from "@/components/layout/Header";
+import { Image } from "@render//components/image/Image";
+import { unixToDate } from "@render//utils/util";
+import { Button } from "@render//components/button/Button";
+import { Header } from "@render//components/layout/Header";
 import { RankingGame } from "@prisma/client";
 
 interface CoverImageProps {

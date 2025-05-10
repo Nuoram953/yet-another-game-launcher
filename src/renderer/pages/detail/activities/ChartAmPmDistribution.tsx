@@ -1,5 +1,5 @@
-import { Card } from "@/components/card/Card";
-import { useGames } from "@/context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
+import { useGames } from "@render//context/DatabaseContext";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, TooltipItem } from "chart.js";
 import React, { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";

@@ -1,4 +1,4 @@
-import { Button } from "@/components/button/Button";
+import { Button } from "@render//components/button/Button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -6,8 +6,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useGames } from "@/context/DatabaseContext";
+} from "@render//components/ui/dropdown-menu";
+import { useGames } from "@render//context/DatabaseContext";
 import { Game } from "@prisma/client";
 import _ from "lodash";
 import { ArrowDown, ArrowDownUp, ArrowUp, ArrowUpDown, FilterIcon } from "lucide-react";
@@ -17,11 +17,8 @@ import { SortConfig } from "src/common/types";
 export const Sort = () => {
   const { sortConfig, updateSort } = useGames();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [direction, setDirection] = useState<"asc" | "desc">(
-    sortConfig.direction,
-  );
-  const [selected, setSelected] =
-    useState<Omit<SortConfig, "direction">>(sortConfig);
+  const [direction, setDirection] = useState<"asc" | "desc">(sortConfig.direction);
+  const [selected, setSelected] = useState<Omit<SortConfig, "direction">>(sortConfig);
 
   const options: {
     field: keyof Game;
@@ -46,12 +43,7 @@ export const Sort = () => {
   ];
 
   const handleOnClick = (option: (typeof options)[0]) => {
-    const newDirection =
-      selected.field === option.field
-        ? direction === "asc"
-          ? "desc"
-          : "asc"
-        : "desc" ;
+    const newDirection = selected.field === option.field ? (direction === "asc" ? "desc" : "asc") : "desc";
 
     setSelected({
       field: option.field,
@@ -83,10 +75,7 @@ export const Sort = () => {
           }}
         />
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-56"
-        onInteractOutside={() => setIsOpen(false)}
-      >
+      <DropdownMenuContent className="w-56" onInteractOutside={() => setIsOpen(false)}>
         <DropdownMenuLabel>Sort</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {options.map((option) => (

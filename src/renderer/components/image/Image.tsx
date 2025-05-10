@@ -2,12 +2,12 @@ import React from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import _ from "lodash";
 
-const image = cva(["object-cover","rounded-xl"], {
+const image = cva(["object-cover"], {
   variants: {
     intent: {
-      cover: ["w-full"],
+      cover: ["w-full", "rounded-xl"],
       background: ["!w-[600px]", "h-[220px]", "object-cover"],
-      icon: ["w-16", "h-16", "object-cover"],
+      icon: ["w-16", "h-16", "object-cover", "rounded-full"],
     },
     size: {
       sm: ["w-16", "h-16"],
@@ -19,7 +19,7 @@ const image = cva(["object-cover","rounded-xl"], {
       square: ["aspect-square"],
       wide: ["aspect-[16/9]"],
       tall: ["aspect-[9/16]"],
-    }
+    },
   },
 });
 

@@ -4,7 +4,6 @@ import { app } from "electron";
 import path from "path";
 import fs from "fs";
 //@ts-ignore-error - Missing type definitions
-import vdf from "vdf";
 import { Storefront } from "../../../common/constant";
 import { Game, GameAchievement, GameConfigGamescope } from "@prisma/client";
 import { createOrUpdateGame } from "../../game/game.service";
@@ -16,7 +15,6 @@ import { metadataManager } from "../../../main";
 import { MEDIA_TYPE } from "../../../common/constant";
 import { GameWithRelations } from "src/common/types";
 const VDF = require("vdf-parser");
-import { readVdf } from "steam-binary-vdf";
 
 class Steam {
   private steamid: string | undefined;
@@ -57,7 +55,7 @@ class Steam {
     const steamConfigDirectory = path.join(app.getPath("userData"), "../../.steam/steam/config");
     const data = await fs.promises.readFile(`${steamConfigDirectory}/loginusers.vdf`, "utf8");
 
-    const loginUsersJson = await vdf.parse(data);
+    const loginUsersJson = await VDF.parse(data);
     const users = Object.entries(loginUsersJson.users);
 
     const user = users[0];
@@ -197,16 +195,6 @@ class Steam {
     }
   }
 
-  async getAppInfoFile() {
-    const steamConfigDirectory = path.join(app.getPath("userData"), `../../.steam/steam/appcache`);
-
-    const data = fs.readFileSync(`${steamConfigDirectory}/appinfo.vdf`);
-
-    const dataJson = readVdf(data, 600);
-
-    console.log(dataJson);
-  }
-
   async updateLaunchOptions(game: GameWithRelations, gamescope: GameConfigGamescope) {
     try {
       const steamConfigDirectory = path.join(app.getPath("userData"), `../../.steam/steam/userdata`);
@@ -216,7 +204,7 @@ class Steam {
         "utf8",
       );
 
-      const dataJson = await vdf.parse(data);
+      const dataJson = await VDF.parse(data);
 
       const gameConfigSteam = dataJson.UserLocalConfigStore.Software.Valve.Steam.apps[game.externalId];
 

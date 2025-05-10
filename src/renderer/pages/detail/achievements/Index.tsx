@@ -1,14 +1,14 @@
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import { CheckCircle, EyeOff, Lock, Medal, Filter, Search, Clock } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { unixToDate } from "@/utils/util";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { unixToDate } from "@render//utils/util";
+import { Checkbox } from "@render//components/ui/checkbox";
+import { Progress } from "@render//components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@render//components/ui/select";
 import AchievementTimeline from "./AchievementTimeline";
-import { Card } from "@/components/card/Card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/input/Input";
+import { Card } from "@render//components/card/Card";
+import { Badge } from "@render//components/ui/badge";
+import { Input } from "@render//components/input/Input";
 
 export const SectionAchievements = () => {
   const [achievementLogos, setAchievementLogos] = useState<string[]>([]);

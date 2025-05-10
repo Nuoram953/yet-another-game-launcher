@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@render//components/ui/badge";
 import { Star, Calendar, Users, Building, Heart, Share2, BookOpen } from "lucide-react";
-import { useGames } from "@/context/DatabaseContext";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
+import { useGames } from "@render//context/DatabaseContext";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@render//components/ui/tooltip";
+import { Progress } from "@render//components/ui/progress";
 import React from "react";
-import { Card } from "@/components/card/Card";
+import { Card } from "@render//components/card/Card";
 
 const GameInfo = () => {
   const { selectedGame } = useGames();

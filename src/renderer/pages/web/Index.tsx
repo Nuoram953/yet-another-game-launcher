@@ -1,4 +1,4 @@
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
@@ -13,7 +13,6 @@ const WebpageViewer = () => {
       { path: "/", label: "Web" },
       { path: `/web/steam`, label: "Steam" },
     ]);
-
   }, []);
 
   return (
@@ -34,7 +33,5 @@ const WebpageViewer = () => {
     </div>
   );
 };
-
-
 
 export default WebpageViewer;

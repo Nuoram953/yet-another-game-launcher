@@ -12,7 +12,7 @@ import {
   ArcElement,
 } from "chart.js";
 import { Clock, Calendar as CalendarIcon, Timer, Activity } from "lucide-react";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import { StatsCard } from "../StatsCard";
 import { ChartActiviy } from "./ChartActiviy";
 import { ChartActivityOs } from "./ChartActiviyOs";
@@ -21,17 +21,7 @@ import ChartStartEndTimeScatterPlot from "./ChartSartEndTimeScatterPlot";
 import ChartHeatMapCalendar from "./ChartHeatMapCalendar";
 import ChartAMPMPlaytimeDistribution from "./ChartAmPmDistribution";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement);
 
 type Session = {
   startedAt: number | string;
@@ -78,44 +68,34 @@ export const SectionActivities = () => {
         duration: Number(session.duration),
       }));
 
-      const weeklyData = normalizedSessions.reduce<Record<string, WeeklyData>>(
-        (acc, session) => {
-          const weekStart = new Date(session.startedAt);
-          weekStart.setHours(0, 0, 0, 0);
-          weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      const weeklyData = normalizedSessions.reduce<Record<string, WeeklyData>>((acc, session) => {
+        const weekStart = new Date(session.startedAt);
+        weekStart.setHours(0, 0, 0, 0);
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
-          const weekKey = weekStart.toISOString().split("T")[0];
+        const weekKey = weekStart.toISOString().split("T")[0];
 
-          if (!acc[weekKey]) {
-            acc[weekKey] = {
-              week: weekKey,
-              totalPlaytime: 0,
-              sessionCount: 0,
-              averageDuration: 0,
-            };
-          }
+        if (!acc[weekKey]) {
+          acc[weekKey] = {
+            week: weekKey,
+            totalPlaytime: 0,
+            sessionCount: 0,
+            averageDuration: 0,
+          };
+        }
 
-          acc[weekKey].totalPlaytime += session.duration / 60;
-          acc[weekKey].sessionCount += 1;
-          acc[weekKey].averageDuration =
-            acc[weekKey].totalPlaytime / acc[weekKey].sessionCount;
-          return acc;
-        },
-        {},
-      );
+        acc[weekKey].totalPlaytime += session.duration / 60;
+        acc[weekKey].sessionCount += 1;
+        acc[weekKey].averageDuration = acc[weekKey].totalPlaytime / acc[weekKey].sessionCount;
+        return acc;
+      }, {});
 
       const stats = {
         totalSessions: normalizedSessions.length,
         averageDuration:
-          normalizedSessions.reduce(
-            (acc, session) => acc + session.duration,
-            0,
-          ) / normalizedSessions.length,
+          normalizedSessions.reduce((acc, session) => acc + session.duration, 0) / normalizedSessions.length,
         longestSession: Math.max(...normalizedSessions.map((s) => s.duration)),
-        totalPlaytime: normalizedSessions.reduce(
-          (acc, session) => acc + session.duration,
-          0,
-        ),
+        totalPlaytime: normalizedSessions.reduce((acc, session) => acc + session.duration, 0),
       };
 
       setProcessedData({
@@ -216,26 +196,10 @@ export const SectionActivities = () => {
   return (
     <div className="mx-auto w-full space-y-4 py-4">
       <div className="flex w-full flex-row justify-around gap-4">
-        <StatsCard
-          icon={CalendarIcon}
-          label="Total Sessions"
-          value={String(processedData.stats.totalSessions)}
-        />
-        <StatsCard
-          icon={Clock}
-          label="Average Session"
-          value={formatDuration(processedData.stats.averageDuration)}
-        />
-        <StatsCard
-          icon={Timer}
-          label="Longest Session"
-          value={formatDuration(processedData.stats.longestSession)}
-        />
-        <StatsCard
-          icon={Activity}
-          label="Total Playtime"
-          value={formatDuration(processedData.stats.totalPlaytime)}
-        />
+        <StatsCard icon={CalendarIcon} label="Total Sessions" value={String(processedData.stats.totalSessions)} />
+        <StatsCard icon={Clock} label="Average Session" value={formatDuration(processedData.stats.averageDuration)} />
+        <StatsCard icon={Timer} label="Longest Session" value={formatDuration(processedData.stats.longestSession)} />
+        <StatsCard icon={Activity} label="Total Playtime" value={formatDuration(processedData.stats.totalPlaytime)} />
       </div>
 
       <ChartActiviy chartData={chartData} />

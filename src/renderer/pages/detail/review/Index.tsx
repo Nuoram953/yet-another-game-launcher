@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { GameReview } from "@prisma/client";
-import { useGames } from "@/context/DatabaseContext";
-import { Card } from "@/components/card/Card";
-import { Input } from "@/components/input/Input";
-import { useNotifications } from "@/components/NotificationSystem";
+import { useGames } from "@render//context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
+import { Input } from "@render//components/input/Input";
+import { useNotifications } from "@render//components/NotificationSystem";
 
 export function SectionReview() {
   const { selectedGame } = useGames();

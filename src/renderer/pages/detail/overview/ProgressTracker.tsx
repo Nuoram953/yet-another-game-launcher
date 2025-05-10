@@ -1,8 +1,8 @@
-import { Card } from "@/components/card/Card";
-import { useGames } from "@/context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
+import { useGames } from "@render//context/DatabaseContext";
 import { Award, Trophy, RefreshCcw, Clock } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { useNotifications } from "@/components/NotificationSystem";
+import { useNotifications } from "@render//components/NotificationSystem";
 import _ from "lodash";
 
 interface ProgressData {

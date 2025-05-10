@@ -1,13 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Activity,
-  HardDriveDownload,
-  House,
-  Medal,
-  Settings,
-} from "lucide-react";
+import { Activity, HardDriveDownload, House, Medal, Settings } from "lucide-react";
 
 import {
   Sidebar,
@@ -21,32 +15,27 @@ import {
   SidebarRail,
   SidebarSeparator,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@render/components/ui/sidebar";
 import { NavStorefront } from "./sidebar/nav-storefront";
 import { NavStatus } from "./sidebar/nav-status";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render/context/DatabaseContext";
 import { Badge } from "./ui/badge";
 import { GameStatus, Storefront } from "@prisma/client";
-import { CookieType, getCookie, setCookie } from "@/utils/cookieUtil";
+import { CookieType, getCookie, setCookie } from "@render/utils/cookieUtil";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { open, setOpen } = useSidebar();
   const navigate = useNavigate();
   const { games, downloading } = useGames();
   const [storefronts, setStorefronts] = useState<Storefront[]>([]);
-  const [status, setStatus] = useState<
-    (GameStatus & { count?: number }) | undefined
-  >(undefined);
+  const [status, setStatus] = useState<(GameStatus & { count?: number }) | undefined>(undefined);
 
   const hasMounted = useRef(false);
 
   useEffect(() => {
-    const sidebarState = getCookie(
-      CookieType.SIDEBAR_COLLAPSED,
-      "boolean",
-    ) as boolean;
+    const sidebarState = getCookie(CookieType.SIDEBAR_COLLAPSED, "boolean") as boolean;
     setOpen(sidebarState);
     console.log(sidebarState);
   }, []);
@@ -101,18 +90,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuItem key={"Home"} className="flex justify-between">
               <SidebarMenuButton asChild>
                 <div className="flex justify-between">
-                  <a
-                    className="flex flex-row gap-2"
-                    onClick={() => navigate("/download")}
-                  >
+                  <a className="flex flex-row gap-2" onClick={() => navigate("/download")}>
                     <HardDriveDownload />
-                    <span className="flex content-center items-center">
-                      Downloads
-                    </span>
+                    <span className="flex content-center items-center">Downloads</span>
                   </a>
-                  {downloading.length > 0 && (
-                    <Badge>{downloading.length}</Badge>
-                  )}
+                  {downloading.length > 0 && <Badge>{downloading.length}</Badge>}
                 </div>
               </SidebarMenuButton>
             </SidebarMenuItem>

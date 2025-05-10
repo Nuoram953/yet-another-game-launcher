@@ -1,5 +1,4 @@
-
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 
 export const SectionSession = () => {

@@ -1,4 +1,4 @@
-import { Card } from "@/components/card/Card";
+import { Card } from "@render//components/card/Card";
 
 import {
   Chart as ChartJS,
@@ -18,17 +18,7 @@ import { ChartData } from "chart.js";
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement);
 
 interface Props {
   chartData: ChartData;
@@ -70,13 +60,7 @@ export const ChartActiviy = ({ chartData }: Props) => {
     <Card title={"Activity"}>
       <div className="h-[400px]">
         <Bar
-          data={
-            chartData as ChartData<
-              "bar",
-              (number | [number, number] | Point | BubbleDataPoint | null)[],
-              unknown
-            >
-          }
+          data={chartData as ChartData<"bar", (number | [number, number] | Point | BubbleDataPoint | null)[], unknown>}
           options={{
             ...chartOptions,
             plugins: {

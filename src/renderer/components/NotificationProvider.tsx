@@ -1,8 +1,8 @@
 import React from "react";
 import { X } from "lucide-react";
-import { Toast, ToastProvider, ToastViewport } from "@/components/ui/toast";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Toast, ToastProvider, ToastViewport } from "@render//components/ui/toast";
+import { Progress } from "@render//components/ui/progress";
+import { Alert, AlertTitle, AlertDescription } from "@render//components/ui/alert";
 import { useNotifications } from "./NotificationSystem";
 
 type NotificationType = "success" | "error" | "warning" | "info" | "progress";

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Check, Upload } from "lucide-react";
-import { Button } from "@/components/button/Button";
-import { Image } from "@/components/image/Image";
+import { Button } from "@render//components/button/Button";
+import { Image } from "@render//components/image/Image";
 import { MEDIA_TYPE } from "src/common/constant";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import { MediaItem } from "./types";
 
 interface ImageSelectionDialogProps {

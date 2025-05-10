@@ -1,20 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Cover from "./cover/Cover";
 import _ from "lodash";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 
 //@ts-ignore
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { RecentlyPlayedCarousel } from "./RecentlyPlayedCarousel";
-import useGridScrollPersist from "@/hooks/usePersistentScroll";
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import useGridScrollPersist from "@render//hooks/usePersistentScroll";
+import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import { Filters } from "./Filter";
-import { Button } from "@/components/button/Button";
+import { Button } from "@render//components/button/Button";
 import { Filter, Plus, Search } from "lucide-react";
 import { Sort } from "./Sort";
-import { Input } from "@/components/input/Input";
-import { Header } from "@/components/layout/Header";
+import { Input } from "@render//components/input/Input";
+import { Header } from "@render//components/layout/Header";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -115,7 +115,7 @@ export const Grid = () => {
               value={search}
               onChange={handleSearch}
             />
-            <div className="flex flex-row ml-2">
+            <div className="ml-2 flex flex-row">
               <Button
                 intent={"icon"}
                 icon={Filter}

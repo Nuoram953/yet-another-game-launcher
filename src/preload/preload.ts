@@ -2,7 +2,7 @@ import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import { ConfigRoute, RouteGame, RouteLibrary, RouteMedia, RouteRanking, RouteStore } from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
-import { PathsToProperties } from "./manager/configManager";
+import { PathsToProperties } from "@main/manager/configManager";
 
 const { contextBridge, ipcRenderer } = require("electron");
 

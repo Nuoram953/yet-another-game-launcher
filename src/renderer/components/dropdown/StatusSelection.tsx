@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@render//components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useGames } from "@/context/DatabaseContext";
+} from "@render//components/ui/dropdown-menu";
+import { useGames } from "@render//context/DatabaseContext";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { Game, GameStatus } from "@prisma/client";
@@ -20,17 +20,13 @@ interface Props {
 const BadgeDropdown = ({ className, game }: Props) => {
   const [status, setStatus] = useState<GameStatus[]>([]);
   const { selectedGame } = useGames();
-  const [currentGame, setCurrentGame] = useState(
-    _.isUndefined(game) ? selectedGame : game,
-  );
+  const [currentGame, setCurrentGame] = useState(_.isUndefined(game) ? selectedGame : game);
 
   if (!currentGame) {
     return;
   }
   const { t } = useTranslation("GameStatus");
-  const [selectedOption, setSelectedOption] = useState<string>(
-    currentGame.gameStatus.name,
-  );
+  const [selectedOption, setSelectedOption] = useState<string>(currentGame.gameStatus.name);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,7 +52,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
     return colors[status] || "bg-gray-500";
   };
 
-  const handleOptionSelect = (e:React.MouseEvent, name: string) => {
+  const handleOptionSelect = (e: React.MouseEvent, name: string) => {
     e.stopPropagation();
     const newStatus = status.find((item) => item.name == name);
     const data: Partial<Game> = {
@@ -71,10 +67,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
     <DropdownMenu>
       <DropdownMenuTrigger className={className}>
         <Badge
-          className={
-            `cursor-pointer hover:bg-primary/80 ${getStatusColor(selectedOption)} ` +
-            className
-          }
+          className={`cursor-pointer hover:bg-primary/80 ${getStatusColor(selectedOption)} ` + className}
           variant="default"
         >
           {t(selectedOption)}
@@ -82,9 +75,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className={className}>
         {status.map((item) => (
-          <DropdownMenuItem onClick={(e) => handleOptionSelect(e, item.name)}>
-            {t(item.name)}
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(e) => handleOptionSelect(e, item.name)}>{t(item.name)}</DropdownMenuItem>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>

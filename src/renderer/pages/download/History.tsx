@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DownloadHistory } from "@prisma/client";
-import Tile from "@/components/Tile";
+import Tile from "@render//components/Tile";
 import { GameWithRelations } from "src/common/types";
 import _ from "lodash";
 

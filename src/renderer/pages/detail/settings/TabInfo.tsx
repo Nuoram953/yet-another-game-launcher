@@ -1,6 +1,6 @@
-import { Input } from "@/components/input/Input";
-import { useGames } from "@/context/DatabaseContext";
-import { unixToYYYYMMDD } from "@/utils/util";
+import { Input } from "@render//components/input/Input";
+import { useGames } from "@render//context/DatabaseContext";
+import { unixToYYYYMMDD } from "@render//utils/util";
 import _ from "lodash";
 import React from "react";
 
@@ -23,18 +23,8 @@ export const TabInfo = () => {
         value={selectedGame.summary ?? ""}
       />
       <div className="flex w-full flex-row gap-2">
-        <Input
-          label="Id"
-          color="dark"
-          value={selectedGame.id}
-          disabled={true}
-        />
-        <Input
-          label="External Id"
-          color="dark"
-          value={String(selectedGame.externalId)}
-          disabled={true}
-        />
+        <Input label="Id" color="dark" value={selectedGame.id} disabled={true} />
+        <Input label="External Id" color="dark" value={String(selectedGame.externalId)} disabled={true} />
       </div>
       <div className="flex w-full flex-row gap-2">
         <Input
@@ -53,14 +43,7 @@ export const TabInfo = () => {
           min={0}
           max={100}
         />
-        <Input
-          label="Score user"
-          color="dark"
-          value={String(selectedGame.scoreUser)}
-          type="number"
-          min={0}
-          max={100}
-        />
+        <Input label="Score user" color="dark" value={String(selectedGame.scoreUser)} type="number" min={0} max={100} />
       </div>
       <div className="flex w-full flex-row gap-2">
         <Input
@@ -69,12 +52,7 @@ export const TabInfo = () => {
           value={unixToYYYYMMDD(Number(selectedGame.lastTimePlayed))}
           type="date"
         />
-        <Input
-          label="Time played"
-          color="dark"
-          value={selectedGame.timePlayed}
-          type="number"
-        />
+        <Input label="Time played" color="dark" value={selectedGame.timePlayed} type="number" />
       </div>
     </div>
   );

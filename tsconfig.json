@@ -1,31 +1,26 @@
 {
-    "compilerOptions": {
-        "jsx": "react",
-        "target": "es2020",
-        "module": "commonjs",
-        "lib": ["dom", "es2019"],
-        "experimentalDecorators": true,
-        "composite": true,
-        "declaration": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowJs": false,
-        "esModuleInterop": true,
-        "noImplicitAny": true,
-        "sourceMap": true,
-        "strict": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/renderer/*"],
-            "~/*":[".src/main/"],
-            "@common/*":["src/common/"]
-        },
-        "outDir": "dist",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
+  "compilerOptions": {
+    "target": "ESNext",
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strictPropertyInitialization": false
+    "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "paths": {
+      "@render/*": ["src/renderer/*"],
+      "@main/*": ["src/main/*"],
+      "@common/*": ["src/common/*"]
     },
-    "include": ["src/**/*", "node_module/@prisma/client", "./i18n.ts"]
-
+    "resolveJsonModule": true,
+    "types": ["vite/client", "./src/preload"],
+    "strict": false,
+    "noImplicitAny": false,
+    "noEmit": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
