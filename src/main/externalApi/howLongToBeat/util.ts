@@ -1,8 +1,8 @@
-import { BASE_URL } from "./config";
+import { BASE_URL, DEFAULT_HEADERS } from "./config";
 
 export const fetchSearchId = async () => {
   try {
-    let response = await fetch(BASE_URL);
+    let response = await fetch(BASE_URL, { headers: DEFAULT_HEADERS });
     let html = await response.text();
 
     const jsMatch = html.match(/_app-\w*\.js/);
@@ -13,7 +13,7 @@ export const fetchSearchId = async () => {
     const jsFile = jsMatch[0];
     const jsUrl = `${BASE_URL}/_next/static/chunks/pages/${jsFile}`;
 
-    response = await fetch(jsUrl);
+    response = await fetch(jsUrl, { headers: DEFAULT_HEADERS });
     const jsContent = await response.text();
 
     const tokenMatch = jsContent.match(/"\/api\/seek\/"\.concat\("(\w*)"\)\.concat\("(\w*)"\)/);

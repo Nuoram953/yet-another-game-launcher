@@ -4,7 +4,6 @@
  */
 const { defineConfig } = require("electron-vite");
 const { resolve } = require("path");
-// import tailwindcss from '@tailwindcss/vite'
 
 module.exports = defineConfig({
   main: {
@@ -35,16 +34,14 @@ module.exports = defineConfig({
     build: {
       outDir: "dist/renderer",
     },
+    publicDir: resolve(__dirname, "public"),
     resolve: {
       alias: {
         "@render": resolve(__dirname, "src/renderer"),
         "@common": resolve(__dirname, "src/common"),
       },
     },
-    plugins: [
-      // tailwindcss(),
-    ],
-    // Basic Vite server settings
+    plugins: [],
     server: {
       port: 5173,
     },
@@ -56,4 +53,5 @@ module.exports = defineConfig({
     reportCompressedSize: true,
   },
   logLevel: "info", // Use 'info' for more verbose logs
+  plugins: [],
 });

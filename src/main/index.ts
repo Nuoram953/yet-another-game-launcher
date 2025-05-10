@@ -53,6 +53,9 @@ function createWindow() {
   // Set up handlers for the window
   mainWindow.setMenuBarVisibility(false);
 
+  notificationManager.setMainWindow(mainWindow);
+  dataChannelManager.setMainWindow(mainWindow);
+
   // Set up event listeners
   mainWindow.on("ready-to-show", () => {
     mainWindow.show();
@@ -98,6 +101,8 @@ async function electronAppInit() {
     // Initialize database path
     dbPath = path.join(app.getPath("userData"), "app.sqlite");
     process.env.DATABASE_URL = `file:${dbPath}`;
+
+    metadataManager = new MetadataManager();
 
     // Initialize logging
     log.initialize();

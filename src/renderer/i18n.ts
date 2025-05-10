@@ -1,6 +1,6 @@
 import { initReactI18next } from "react-i18next";
 import i18n from "i18next";
-import HttpBackend from 'i18next-http-backend';
+import HttpBackend from "i18next-http-backend";
 
 const i18nConfig = {
   fallbackLng: "en",
@@ -19,12 +19,10 @@ i18n
     },
     debug: true,
     backend: {
-      loadPath: "./locale/{{lng}}/{{ns}}.json",
+      loadPath: "/locales/{{lng}}/{{ns}}.json",
     },
     missingKeyHandler: (lng, ns, key) => {
-      console.log(
-        `Missing translation - Language: ${lng}, Namespace: ${ns}, Key: ${key}`,
-      );
+      console.log(`Missing translation - Language: ${lng}, Namespace: ${ns}, Key: ${key}`);
     },
   });
 i18n.on("initialized", (options) => {
