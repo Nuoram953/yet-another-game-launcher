@@ -5,6 +5,12 @@ import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";
 import { FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
 import { sanitizeGameName } from "../utils/utils";
+import {
+  buildDateAddedWhereClause,
+  buildLastTimePlayedWhereClause,
+  buildMainStoryWhereClause,
+  buildTimePlayedWhereClause,
+} from "./utils";
 
 const include = {
   gameStatus: true,
@@ -32,7 +38,7 @@ export async function update(id: string, newData: Partial<Game>) {
 }
 
 export async function getGames(limit?: number | null, filters?: FilterConfig, sort?: SortConfig) {
-  const where = filters
+  const where: any = filters
     ? {
         developers: !_.isNil(filters.developpers)
           ? {
@@ -66,11 +72,47 @@ export async function getGames(limit?: number | null, filters?: FilterConfig, so
 
         gameStatusId: !_.isNil(filters.status)
           ? {
-              in: filters.status.map((status) => status.value),
+              in: filters.status.map((status) => Number(status.value)),
+            }
+          : undefined,
+
+        isInstalled:
+          !_.isNil(filters.isInstalled) && filters.isInstalled
+            ? filters.isInstalled === "indeterminate"
+              ? false
+              : true
+            : undefined,
+
+        isFavorite:
+          !_.isNil(filters.isFavorite) && filters.isFavorite
+            ? filters.isFavorite === "indeterminate"
+              ? false
+              : true
+            : undefined,
+
+        storefrontId: !_.isNil(filters.storefronts)
+          ? {
+              in: filters.storefronts.map((store) => Number(store.value)),
             }
           : undefined,
       }
     : undefined;
+
+  if (!_.isNil(filters.timePlayed)) {
+    where.OR = [...(where?.OR || []), ...buildTimePlayedWhereClause(filters.timePlayed)];
+  }
+
+  if (!_.isNil(filters.mainStory)) {
+    where.OR = [...(where?.OR || []), ...buildMainStoryWhereClause(filters.mainStory)];
+  }
+
+  if (!_.isNil(filters.dateAdded)) {
+    where.OR = [...(where?.OR || []), ...buildDateAddedWhereClause(filters.dateAdded)];
+  }
+
+  if (!_.isNil(filters.lastTimePlayed)) {
+    where.OR = [...(where?.OR || []), ...buildLastTimePlayedWhereClause(filters.lastTimePlayed)];
+  }
 
   const games = await prisma.game.findMany({
     where,

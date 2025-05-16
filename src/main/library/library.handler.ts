@@ -3,6 +3,7 @@ import log from "electron-log/main";
 import { RouteLibrary } from "../../common/constant";
 import { ErrorMessage } from "../../common/error";
 import * as LibraryService from "./library.service";
+import logger from "@main/logger";
 
 ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {
   try {
@@ -109,6 +110,28 @@ ipcMain.handle(RouteLibrary.GET_FILTERS, async (_event) => {
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteLibrary.GET_FILTERS,
+      error: e,
+    });
+  }
+});
+
+ipcMain.handle(RouteLibrary.SET_FILTER_PRESET, async (_event, data) => {
+  try {
+    return await LibraryService.setFilterPreset(data);
+  } catch (e) {
+    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteLibrary.SET_FILTER_PRESET,
+      error: e,
+    });
+  }
+});
+
+ipcMain.handle(RouteLibrary.DELETE_FILTER_PRESET, async (_event, name) => {
+  try {
+    return await LibraryService.deleteFilterPreset(name);
+  } catch (e) {
+    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteLibrary.SET_FILTER_PRESET,
       error: e,
     });
   }

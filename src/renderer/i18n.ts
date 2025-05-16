@@ -5,7 +5,7 @@ import HttpBackend from "i18next-http-backend";
 const i18nConfig = {
   fallbackLng: "en",
   supportedLngs: ["en"],
-  ns: ["common", "GameStatus"],
+  ns: ["common", "GameStatus", "filter"],
   defaultNS: "common",
 };
 
