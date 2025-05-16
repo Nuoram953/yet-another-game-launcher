@@ -1,19 +1,9 @@
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@render//components/ui/sidebar";
 import React, { useState } from "react";
 import { Separator } from "@radix-ui/react-separator";
-import { AppSidebar } from "../AppSidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "../ui/breadcrumb";
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { AppSidebar } from "@render/components/sidebar/AppSidebar";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "../ui/breadcrumb";
+import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import { useNavigate } from "react-router-dom";
 
 interface LayoutProps {
@@ -48,17 +38,11 @@ export default function Layout({ children }: LayoutProps) {
                     {breadcrumbs.map((breadcrumb, index) => (
                       <React.Fragment key={breadcrumb.path}>
                         <BreadcrumbItem className="hidden md:block">
-                          <BreadcrumbLink
-                            onClick={() =>
-                              handleClickBreadcrumbs(breadcrumb.path)
-                            }
-                          >
+                          <BreadcrumbLink onClick={() => handleClickBreadcrumbs(breadcrumb.path)}>
                             {breadcrumb.label}
                           </BreadcrumbLink>
                         </BreadcrumbItem>
-                        {index !== breadcrumbs.length - 1 && (
-                          <BreadcrumbSeparator className="hidden md:block" />
-                        )}
+                        {index !== breadcrumbs.length - 1 && <BreadcrumbSeparator className="hidden md:block" />}
                       </React.Fragment>
                     ))}
                   </BreadcrumbList>

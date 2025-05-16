@@ -1,13 +1,7 @@
 import { BrowserWindow } from "electron";
-import { logger } from "../index";
-import { LogTag } from "./logManager";
+import logger, { LogTag } from "@main/logger";
 
-export type NotificationType =
-  | "info"
-  | "success"
-  | "warning"
-  | "error"
-  | "progress";
+export type NotificationType = "info" | "success" | "warning" | "error" | "progress";
 
 export interface BaseNotificationOptions {
   id?: string;
@@ -30,9 +24,7 @@ export interface ProgressNotificationOptions extends BaseNotificationOptions {
   autoClose?: boolean;
 }
 
-export type NotificationOptions =
-  | BaseNotificationOptions
-  | ProgressNotificationOptions;
+export type NotificationOptions = BaseNotificationOptions | ProgressNotificationOptions;
 
 class NotificationManager {
   private queue: NotificationOptions[] = [];
@@ -53,15 +45,12 @@ class NotificationManager {
       ...options,
       id: options.id || `notification-${Date.now()}`,
       type: options.type || "info",
-      duration:
-        options.type === "progress" ? undefined : options.duration || 5000,
+      duration: options.type === "progress" ? undefined : options.duration || 5000,
       priority: options.priority || "normal",
     };
 
     if (notification.type === "progress") {
-      const existingNotification = this.activeNotifications.get(
-        notification.id,
-      );
+      const existingNotification = this.activeNotifications.get(notification.id);
       if (existingNotification && existingNotification.type === "progress") {
         this.updateProgress(
           notification.id,
@@ -103,10 +92,7 @@ class NotificationManager {
       });
     }
 
-    if (
-      current >= progressNotification.total &&
-      progressNotification.autoClose
-    ) {
+    if (current >= progressNotification.total && progressNotification.autoClose) {
       setTimeout(() => {
         this.close(id);
       }, 1000);
@@ -126,12 +112,7 @@ class NotificationManager {
   }
 
   private async processQueue() {
-    if (
-      this.isProcessing ||
-      this.queue.length === 0 ||
-      !this.mainWindow ||
-      this.mainWindow.isDestroyed()
-    ) {
+    if (this.isProcessing || this.queue.length === 0 || !this.mainWindow || this.mainWindow.isDestroyed()) {
       return;
     }
 
@@ -140,10 +121,7 @@ class NotificationManager {
     try {
       this.queue.sort((a, b) => {
         const priorities = { high: 3, normal: 2, low: 1 };
-        return (
-          priorities[b.priority || "normal"] -
-          priorities[a.priority || "normal"]
-        );
+        return priorities[b.priority || "normal"] - priorities[a.priority || "normal"];
       });
 
       const notification = this.queue.shift();
@@ -156,11 +134,7 @@ class NotificationManager {
 
       if (!this.mainWindow.isDestroyed()) {
         this.mainWindow.webContents.send("notification", notification);
-        logger.debug(
-          `Notification sent to renderer:`,
-          { notification },
-          LogTag.NOTIFICATION,
-        );
+        logger.debug(`Notification sent to renderer:`, { notification }, LogTag.NOTIFICATION);
       }
 
       if (notification.type !== "progress" && notification.duration) {
@@ -177,7 +151,7 @@ class NotificationManager {
         }
       }
     } catch (error) {
-      logger.error("Error processing notification:", {error}, LogTag.NOTIFICATION);
+      logger.error("Error processing notification:", { error }, LogTag.NOTIFICATION);
       this.isProcessing = false;
 
       if (this.queue.length > 0) {

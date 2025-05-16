@@ -1,15 +1,11 @@
 import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@render//components/ui/badge";
 import { Star, Calendar, Users, Building, Heart, Share2, BookOpen } from "lucide-react";
-import { useGames } from "@/context/DatabaseContext";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Progress } from "@/components/ui/progress";
+import { useGames } from "@render//context/DatabaseContext";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@render//components/ui/tooltip";
+import { Progress } from "@render//components/ui/progress";
 import React from "react";
-import { Card } from "@/components/card/Card";
-
-const MotionDiv = ({ children, ...props }) => {
-  return <div {...props}>{children}</div>;
-};
+import { Card } from "@render//components/card/Card";
 
 const GameInfo = () => {
   const { selectedGame } = useGames();
@@ -19,7 +15,7 @@ const GameInfo = () => {
   useEffect(() => {
     if (selectedGame?.scoreCritic) {
       const timer = setTimeout(() => {
-        setScoreAnimation(selectedGame.scoreCritic);
+        setScoreAnimation(selectedGame.scoreCritic ?? 0);
       }, 300);
       return () => clearTimeout(timer);
     }
@@ -42,16 +38,15 @@ const GameInfo = () => {
   };
 
   const handleShareGame = () => {
-    // Share functionality would go here
     console.log("Sharing game:", selectedGame.name);
   };
 
   const toggleFavorite = () => {
-    window.game.setFavorite({id:selectedGame.id, isFavorite:!selectedGame.isFavorite});
+    window.game.setFavorite({ id: selectedGame.id, isFavorite: !selectedGame.isFavorite });
     setIsFavorite(!isFavorite);
   };
 
-  const getScoreColor = (score) => {
+  const getScoreColor = (score: number) => {
     if (score >= 85) return "text-green-500";
     if (score >= 70) return "text-yellow-500";
     return "text-red-500";
@@ -153,14 +148,14 @@ const GameInfo = () => {
       </div>
       {/* Score & Release Date */}
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <MotionDiv className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
+        <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
-              <Star className={`${getScoreColor(selectedGame.scoreCritic)}`} size={20} />
+              <Star className={`${getScoreColor(selectedGame.scoreCritic ?? 0)}`} size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className={`text-2xl font-bold ${getScoreColor(selectedGame.scoreCritic)}`}>
+                <span className={`text-2xl font-bold ${getScoreColor(selectedGame.scoreCritic ?? 0)}`}>
                   {selectedGame.scoreCritic || "N/A"}
                 </span>
                 <span className="text-xs text-gray-400">/100</span>
@@ -171,9 +166,9 @@ const GameInfo = () => {
               <div className="mt-1 text-xs text-gray-400">Metacritic Score</div>
             </div>
           </div>
-        </MotionDiv>
+        </div>
 
-        <MotionDiv className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
+        <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
               <Calendar className="text-blue-400" size={20} />
@@ -183,7 +178,7 @@ const GameInfo = () => {
               <div className="mt-1 text-xs text-gray-400">Release Date</div>
             </div>
           </div>
-        </MotionDiv>
+        </div>
       </div>
       <div>
         <h3 className="mb-2 text-lg font-medium text-gray-300">About</h3>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { convertToHoursAndMinutes } from "@/utils/util";
+import { convertToHoursAndMinutes } from "@render//utils/util";
 import { Clock } from "lucide-react";
 import { SkeletonCover } from "./skeleton";
 import { InstallBadge } from "./installBadge";
@@ -57,8 +57,7 @@ const Cover = ({ game }: CoverProps) => {
   };
 
   const handleMouseLeave = (cardElement: HTMLElement) => {
-    cardElement.style.transform =
-      "perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)";
+    cardElement.style.transform = "perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)";
   };
 
   const handleRunCommand = async () => {

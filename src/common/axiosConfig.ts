@@ -1,6 +1,5 @@
 import axios from "axios";
-import { logger } from "../main/index";
-import { LogTag } from "../main/manager/logManager";
+import logger, { LogTag } from "@main/logger";
 
 axios.interceptors.request.use(
   (config) => {
@@ -32,12 +31,12 @@ axios.interceptors.response.use(
         {
           url: error.response.config.url,
           error: error.message,
-          status: error.response.status
+          status: error.response.status,
         },
-        LogTag.NETWORK
+        LogTag.NETWORK,
       );
     } else {
-      logger.error("Response Error:", {error:error.message}, LogTag.NETWORK);
+      logger.error("Response Error:", { error: error.message }, LogTag.NETWORK);
     }
     return Promise.reject(error);
   },

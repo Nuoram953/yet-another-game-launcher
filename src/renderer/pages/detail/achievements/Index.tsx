@@ -1,24 +1,17 @@
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import { CheckCircle, EyeOff, Lock, Medal, Filter, Search, Clock } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { unixToDate } from "@/utils/util";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { GameAchievement } from "@prisma/client";
+import { unixToDate } from "@render//utils/util";
+import { Checkbox } from "@render//components/ui/checkbox";
+import { Progress } from "@render//components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@render//components/ui/select";
 import AchievementTimeline from "./AchievementTimeline";
-import { Card } from "@/components/card/Card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/input/Input";
+import { Card } from "@render//components/card/Card";
+import { Badge } from "@render//components/ui/badge";
+import { Input } from "@render//components/input/Input";
 
 export const SectionAchievements = () => {
-  const [achievementLogos, setAchievementLogos] = useState([]);
+  const [achievementLogos, setAchievementLogos] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [hideUnlocked, setHideUnlocked] = useState(false);
   const [hideHidden, setHideHidden] = useState(false);
@@ -30,7 +23,7 @@ export const SectionAchievements = () => {
   useEffect(() => {
     const fetchBackgroundPicture = async () => {
       try {
-        const resources = await window.media.getAchievements(selectedGame?.id);
+        const resources = await window.media.getAchievements(selectedGame!.id);
         setAchievementLogos(resources);
         setLoading(false);
       } catch (error) {
@@ -43,7 +36,7 @@ export const SectionAchievements = () => {
     }
   }, [selectedGame?.id]);
 
-  const sortAchievements = (a, b) => {
+  const sortAchievements = (a: any, b: any) => {
     switch (sortBy) {
       case "name":
         return a.name.localeCompare(b.name);
@@ -66,7 +59,7 @@ export const SectionAchievements = () => {
     return (
       <div className="flex h-64 w-full items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary mx-auto"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
           <p>Loading achievements...</p>
         </div>
       </div>
@@ -74,22 +67,26 @@ export const SectionAchievements = () => {
   }
 
   const totalAchievements = selectedGame.achievements.length;
-  const unlockedAchievements = selectedGame.achievements.filter(a => a.isUnlocked).length;
+  const unlockedAchievements = selectedGame.achievements.filter((a) => a.isUnlocked).length;
   const completionPercentage = (unlockedAchievements / totalAchievements) * 100;
 
   const filteredAchievements = selectedGame.achievements
-    .filter(achievement => {
+    .filter((achievement) => {
       if (hideUnlocked && achievement.isUnlocked) return false;
       if (hideHidden && achievement.isHidden) return false;
-      if (searchQuery && !achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
-          !achievement.description?.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (
+        searchQuery &&
+        !achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !achievement.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+        return false;
       return true;
     })
     .sort(sortAchievements);
 
   return (
     <div className="mx-auto w-full space-y-6 py-4">
-      {selectedGame?.achievements.filter(item => item.isUnlocked).length > 0 && (
+      {selectedGame?.achievements.filter((item) => item.isUnlocked).length > 0 && (
         <Card title="Achievement History">
           <AchievementTimeline />
         </Card>
@@ -111,7 +108,7 @@ export const SectionAchievements = () => {
           {/* Search and Filter Controls */}
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="relative flex-grow max-w-md">
+              <div className="relative max-w-md flex-grow">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <Input
                   color={"dark"}
@@ -127,9 +124,7 @@ export const SectionAchievements = () => {
               >
                 <Filter className="h-4 w-4" />
                 Filters
-                <Badge className="ml-1 bg-primary text-xs">
-                  {(hideUnlocked ? 1 : 0) + (hideHidden ? 1 : 0)}
-                </Badge>
+                <Badge className="ml-1 bg-primary text-xs">{(hideUnlocked ? 1 : 0) + (hideHidden ? 1 : 0)}</Badge>
               </button>
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-36">
@@ -160,20 +155,14 @@ export const SectionAchievements = () => {
             {showFilters && (
               <div className="flex flex-wrap items-center gap-6 rounded-md bg-gray-800/50 p-4 text-sm">
                 <label className="flex cursor-pointer items-center gap-2">
-                  <Checkbox
-                    checked={hideUnlocked}
-                    onCheckedChange={(checked) => setHideUnlocked(checked === true)}
-                  />
+                  <Checkbox checked={hideUnlocked} onCheckedChange={(checked) => setHideUnlocked(checked === true)} />
                   <span className="flex items-center gap-1">
                     <CheckCircle className="h-4 w-4" />
                     Hide Unlocked
                   </span>
                 </label>
                 <label className="flex cursor-pointer items-center gap-2">
-                  <Checkbox
-                    checked={hideHidden}
-                    onCheckedChange={(checked) => setHideHidden(checked === true)}
-                  />
+                  <Checkbox checked={hideHidden} onCheckedChange={(checked) => setHideHidden(checked === true)} />
                   <span className="flex items-center gap-1">
                     <EyeOff className="h-4 w-4" />
                     Hide Hidden
@@ -200,18 +189,14 @@ export const SectionAchievements = () => {
               <div
                 key={`all-${achievement.id}`}
                 className={`relative overflow-hidden rounded-lg border ${
-                  achievement.isUnlocked 
-                    ? "border-green-700 bg-green-900/10" 
-                    : "border-gray-700 bg-gray-800/50"
+                  achievement.isUnlocked ? "border-green-700 bg-green-900/10" : "border-gray-700 bg-gray-800/50"
                 } transition-all duration-300 hover:border-primary`}
               >
                 <div className="flex p-4">
                   <div className="mr-4">
                     {achievement.isUnlocked ? (
                       <img
-                        src={achievementLogos.find((logo) =>
-                          logo.includes(`achievement/${achievement.externalId}.`)
-                        )}
+                        src={achievementLogos.find((logo) => logo.includes(`achievement/${achievement.externalId}.`))}
                         alt={achievement.name}
                         className="h-16 w-16 rounded-md object-contain"
                       />
@@ -224,12 +209,10 @@ export const SectionAchievements = () => {
                   <div className="flex-grow space-y-1">
                     <div className="flex items-start justify-between">
                       <h3 className="text-lg font-bold leading-tight">{achievement.name}</h3>
-                      {achievement.isHidden && (
-                        <EyeOff className="ml-1 h-4 w-4 text-gray-400" title="Hidden Achievement" />
-                      )}
+                      {achievement.isHidden && <EyeOff className="ml-1 h-4 w-4 text-gray-400" />}
                     </div>
-                    <p className="text-sm text-gray-300 line-clamp-2">{achievement.description}</p>
-                    {achievement.isUnlocked && achievement.unlockedAt && (
+                    <p className="line-clamp-2 text-sm text-gray-300">{achievement.description}</p>
+                    {achievement.isUnlocked && (
                       <div className="flex items-center text-xs text-green-400">
                         <CheckCircle className="mr-1 h-3 w-3" />
                         <span>Unlocked: {unixToDate(Number(achievement.unlockedAt))}</span>
@@ -237,9 +220,7 @@ export const SectionAchievements = () => {
                     )}
                   </div>
                 </div>
-                {achievement.isUnlocked && (
-                  <div className="absolute inset-x-0 bottom-0 h-1 bg-green-500" />
-                )}
+                {achievement.isUnlocked && <div className="absolute inset-x-0 bottom-0 h-1 bg-green-500" />}
               </div>
             ))}
           </div>

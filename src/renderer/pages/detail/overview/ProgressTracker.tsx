@@ -1,8 +1,14 @@
-import { Card } from "@/components/card/Card";
-import { useGames } from "@/context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
+import { useGames } from "@render//context/DatabaseContext";
 import { Award, Trophy, RefreshCcw, Clock } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { useNotifications } from "@/components/NotificationSystem";
+import { useNotifications } from "@render//components/NotificationSystem";
+import _ from "lodash";
+
+interface ProgressData {
+  percent: number;
+  remaining: number;
+}
 
 export const ProgressTracker = () => {
   const { addNotification } = useNotifications();
@@ -10,8 +16,13 @@ export const ProgressTracker = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const totalPlaytime = (selectedGame?.timePlayed || 0) * 60;
 
+  const time = {
+    main: selectedGame?.mainStory ?? 0,
+    extras: selectedGame?.mainPlusExtra ?? 0,
+    completionist: selectedGame?.completionist ?? 0,
+  };
+
   useEffect(() => {
-    // Animation effect when game changes
     setIsAnimating(true);
     const timer = setTimeout(() => setIsAnimating(false), 800);
     return () => clearTimeout(timer);
@@ -27,7 +38,7 @@ export const ProgressTracker = () => {
     );
   }
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number): string => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
@@ -41,37 +52,43 @@ export const ProgressTracker = () => {
     }
   };
 
-  const getProgressData = (goalTime) => {
+  const getProgressData = (goalTime: number | null | undefined): ProgressData => {
+    if (_.isNil(goalTime) || goalTime <= 0) {
+      return { percent: 0, remaining: 0 };
+    }
     const percent = Math.min(100, (totalPlaytime / goalTime) * 100);
     const remaining = Math.max(0, goalTime - totalPlaytime);
     return { percent, remaining };
   };
 
-  const mainStoryData = getProgressData(selectedGame?.mainStory);
-  const extrasData = getProgressData(selectedGame?.mainPlusExtra);
-  const completionistData = getProgressData(selectedGame?.completionist);
+  const mainStoryData = getProgressData(selectedGame.mainStory);
+  const extrasData = getProgressData(selectedGame.mainPlusExtra);
+  const completionistData = getProgressData(selectedGame.completionist);
 
-  const getTimelinePosition = (timeValue) => {
-    const position = (timeValue / selectedGame?.completionist) * 100;
+  const getTimelinePosition = (timeValue: number | null | undefined): string => {
+    if (_.isNil(timeValue) || timeValue <= 0 || !selectedGame.completionist) {
+      return "0%";
+    }
+    const position = (timeValue / selectedGame.completionist) * 100;
     return `${Math.min(Math.max(position, 0), 100)}%`;
   };
 
   // Determine the current section based on playtime
-  const getCurrentSection = () => {
-    if (totalPlaytime <= selectedGame.mainStory) {
+  const getCurrentSection = (): { color: string; percent: number } => {
+    if (totalPlaytime <= (selectedGame.mainStory || 0)) {
       return {
         color: "from-blue-600 to-blue-400",
-        percent: (totalPlaytime / selectedGame.mainStory) * 100,
+        percent: selectedGame.mainStory ? (totalPlaytime / selectedGame.mainStory) * 100 : 0,
       };
-    } else if (totalPlaytime <= selectedGame.mainPlusExtra) {
+    } else if (totalPlaytime <= (selectedGame.mainPlusExtra || 0)) {
       return {
         color: "from-purple-600 to-purple-400",
-        percent: (totalPlaytime / selectedGame.mainPlusExtra) * 100,
+        percent: selectedGame.mainPlusExtra ? (totalPlaytime / selectedGame.mainPlusExtra) * 100 : 0,
       };
     } else {
       return {
         color: "from-amber-600 to-amber-400",
-        percent: (totalPlaytime / selectedGame.completionist) * 100,
+        percent: selectedGame.completionist ? (totalPlaytime / selectedGame.completionist) * 100 : 0,
       };
     }
   };
@@ -80,25 +97,23 @@ export const ProgressTracker = () => {
 
   return (
     <Card
-      title={
-        <div className="flex items-center space-x-2">
-          <Clock className="h-5 w-5 text-indigo-400" />
-          <span>Progress Tracker</span>
-        </div>
-      }
+      title={"Progress Tracker"}
       actions={[
         {
           icon: RefreshCcw,
           name: "Refresh",
           onClick: async () => {
             setIsAnimating(true);
-            await window.game.refreshProgressTracker(selectedGame.id);
-            addNotification({
-              title: "Progress Tracker",
-              message: "Progress Tracker refreshed successfully.",
-              type: "success",
-              duration: 2000,
-            });
+            // Type assertion for window.game or check if it exists
+            if ((window as any).game && (window as any).game.refreshProgressTracker) {
+              await (window as any).game.refreshProgressTracker(selectedGame.id);
+              addNotification({
+                title: "Progress Tracker",
+                message: "Progress Tracker refreshed successfully.",
+                type: "success",
+                duration: 2000,
+              });
+            }
             setTimeout(() => setIsAnimating(false), 800);
           },
         },
@@ -112,7 +127,7 @@ export const ProgressTracker = () => {
           <div
             className="absolute h-full rounded-l-full bg-gradient-to-r from-blue-600/30 to-blue-400/30"
             style={{
-              width: `${(selectedGame.mainStory / selectedGame.completionist) * 100}%`,
+              width: `${(time.main / time.completionist) * 100}%`,
               zIndex: 1,
             }}
           ></div>
@@ -121,8 +136,8 @@ export const ProgressTracker = () => {
           <div
             className="absolute h-full bg-gradient-to-r from-purple-600/30 to-purple-400/30"
             style={{
-              left: `${(selectedGame.mainStory / selectedGame.completionist) * 100}%`,
-              width: `${((selectedGame.mainPlusExtra - selectedGame.mainStory) / selectedGame.completionist) * 100}%`,
+              left: `${(time.main / time.completionist) * 100}%`,
+              width: `${((time.extras - time.main) / time.completionist) * 100}%`,
               zIndex: 1,
             }}
           ></div>
@@ -131,7 +146,7 @@ export const ProgressTracker = () => {
           <div
             className="absolute h-full rounded-r-full bg-gradient-to-r from-amber-600/30 to-amber-400/30"
             style={{
-              left: `${(selectedGame.mainPlusExtra / selectedGame.completionist) * 100}%`,
+              left: `${(time.extras / time.completionist) * 100}%`,
               right: 0,
               zIndex: 1,
             }}
@@ -167,12 +182,12 @@ export const ProgressTracker = () => {
         <div
           className="absolute top-6 -translate-y-1/2"
           style={{
-            left: `${(selectedGame.mainStory / selectedGame.completionist) * 100}%`,
+            left: `${(time.main / time.completionist) * 100}%`,
           }}
         >
           <div className="h-8 w-px bg-blue-400/70"></div>
           <div className="absolute left-0 top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-blue-900/40 px-2 py-1 text-xs font-medium text-blue-300 backdrop-blur-sm">
-            Main Story: {formatTime(selectedGame.mainStory)}
+            Main Story: {formatTime(time.main)}
           </div>
         </div>
 
@@ -180,23 +195,20 @@ export const ProgressTracker = () => {
         <div
           className="absolute top-6 -translate-y-1/2"
           style={{
-            left: `${(selectedGame.mainPlusExtra / selectedGame.completionist) * 100}%`,
+            left: `${(time.extras / time.completionist) * 100}%`,
           }}
         >
           <div className="h-8 w-px bg-purple-400/70"></div>
           <div className="absolute left-0 top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-purple-900/40 px-2 py-1 text-xs font-medium text-purple-300 backdrop-blur-sm">
-            With Extras: {formatTime(selectedGame.mainPlusExtra)}
+            With Extras: {formatTime(time.extras)}
           </div>
         </div>
 
         {/* Completionist marker */}
-        <div
-          className="absolute top-6 -translate-y-1/2"
-          style={{ left: `100%` }}
-        >
+        <div className="absolute top-6 -translate-y-1/2" style={{ left: `100%` }}>
           <div className="h-8 w-px bg-amber-400/70"></div>
           <div className="absolute right-0 top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-amber-900/40 px-2 py-1 text-xs font-medium text-amber-300 backdrop-blur-sm">
-            Completionist: {formatTime(selectedGame.completionist)}
+            Completionist: {formatTime(time.completionist)}
           </div>
         </div>
       </div>
@@ -215,19 +227,13 @@ export const ProgressTracker = () => {
               </div>
               <div>
                 <h4 className="font-medium text-blue-100">Main Story</h4>
-                <div className="text-xs text-blue-300/80">
-                  {formatTime(selectedGame.mainStory)}
-                </div>
+                <div className="text-xs text-blue-300/80">{formatTime(time.main)}</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-blue-100">
-                {Math.round(mainStoryData.percent)}%
-              </div>
+              <div className="text-lg font-bold text-blue-100">{Math.round(mainStoryData.percent)}%</div>
               <div className="text-xs text-blue-300/80">
-                {mainStoryData.remaining > 0
-                  ? `${formatTime(mainStoryData.remaining)} left`
-                  : "Completed ✓"}
+                {mainStoryData.remaining > 0 ? `${formatTime(mainStoryData.remaining)} left` : "Completed ✓"}
               </div>
             </div>
           </div>
@@ -237,9 +243,7 @@ export const ProgressTracker = () => {
               className={`absolute h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700 ease-out ${isAnimating ? "opacity-80" : ""}`}
               style={{ width: `${mainStoryData.percent}%` }}
             >
-              {mainStoryData.percent > 98 && (
-                <div className="absolute inset-0 bg-white/20"></div>
-              )}
+              {mainStoryData.percent > 98 && <div className="absolute inset-0 bg-white/20"></div>}
             </div>
           </div>
         </div>
@@ -256,19 +260,13 @@ export const ProgressTracker = () => {
               </div>
               <div>
                 <h4 className="font-medium text-purple-100">Main + Extras</h4>
-                <div className="text-xs text-purple-300/80">
-                  {formatTime(selectedGame.mainPlusExtra)}
-                </div>
+                <div className="text-xs text-purple-300/80">{formatTime(time.extras)}</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-purple-100">
-                {Math.round(extrasData.percent)}%
-              </div>
+              <div className="text-lg font-bold text-purple-100">{Math.round(extrasData.percent)}%</div>
               <div className="text-xs text-purple-300/80">
-                {extrasData.remaining > 0
-                  ? `${formatTime(extrasData.remaining)} left`
-                  : "Completed ✓"}
+                {extrasData.remaining > 0 ? `${formatTime(extrasData.remaining)} left` : "Completed ✓"}
               </div>
             </div>
           </div>
@@ -278,9 +276,7 @@ export const ProgressTracker = () => {
               className={`absolute h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-700 ease-out ${isAnimating ? "opacity-80" : ""}`}
               style={{ width: `${extrasData.percent}%` }}
             >
-              {extrasData.percent > 98 && (
-                <div className="absolute inset-0 bg-white/20"></div>
-              )}
+              {extrasData.percent > 98 && <div className="absolute inset-0 bg-white/20"></div>}
             </div>
           </div>
         </div>
@@ -297,19 +293,13 @@ export const ProgressTracker = () => {
               </div>
               <div>
                 <h4 className="font-medium text-amber-100">Completionist</h4>
-                <div className="text-xs text-amber-300/80">
-                  {formatTime(selectedGame.completionist)}
-                </div>
+                <div className="text-xs text-amber-300/80">{formatTime(time.completionist)}</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-amber-100">
-                {Math.round(completionistData.percent)}%
-              </div>
+              <div className="text-lg font-bold text-amber-100">{Math.round(completionistData.percent)}%</div>
               <div className="text-xs text-amber-300/80">
-                {completionistData.remaining > 0
-                  ? `${formatTime(completionistData.remaining)} left`
-                  : "Completed ✓"}
+                {completionistData.remaining > 0 ? `${formatTime(completionistData.remaining)} left` : "Completed ✓"}
               </div>
             </div>
           </div>
@@ -319,9 +309,7 @@ export const ProgressTracker = () => {
               className={`absolute h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-700 ease-out ${isAnimating ? "opacity-80" : ""}`}
               style={{ width: `${completionistData.percent}%` }}
             >
-              {completionistData.percent > 98 && (
-                <div className="absolute inset-0 bg-white/20"></div>
-              )}
+              {completionistData.percent > 98 && <div className="absolute inset-0 bg-white/20"></div>}
             </div>
           </div>
         </div>

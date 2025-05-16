@@ -1,13 +1,10 @@
 import { app } from "electron";
 import path from "path";
 import fs from "fs/promises";
-import { logger } from "..";
+import logger from "@main/logger";
 
-// Type for nested path strings like 'windowBounds.width'
 export type PathsToProperties<T> = {
-  [K in keyof T]: T[K] extends object
-    ? `${string & K}.${PathsToProperties<T[K]>}`
-    : string & K;
+  [K in keyof T]: T[K] extends object ? `${string & K}.${PathsToProperties<T[K]>}` : string & K;
 }[keyof T];
 
 interface Config {
@@ -41,9 +38,7 @@ class ConfigManager<T extends Config> {
       this.config = JSON.parse(data);
       return this.config as T;
     } catch (error) {
-      throw new Error(
-        `Failed to load config: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      throw new Error(`Failed to load config: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -52,24 +47,16 @@ class ConfigManager<T extends Config> {
       if (!this.config) {
         throw new Error("Config is not initialized");
       }
-      await fs.writeFile(
-        this.configPath,
-        JSON.stringify(this.config, null, 2),
-        "utf8",
-      );
+      await fs.writeFile(this.configPath, JSON.stringify(this.config, null, 2), "utf8");
     } catch (error) {
-      throw new Error(
-        `Failed to save config: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      throw new Error(`Failed to save config: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  // Get value by nested path
   getValue(obj: any, path: string) {
     return path.split(".").reduce((acc, part) => acc && acc[part], obj);
   }
 
-  // Set value by nested path
   setValue(obj: any, path: string, value: any) {
     const parts = path.split(".");
     const last = parts.pop()!;
@@ -80,8 +67,7 @@ class ConfigManager<T extends Config> {
     target[last] = value;
   }
 
-  // Get a value using dot notation
-  async get<K extends PathsToProperties<T>>(path: K){
+  async get<K extends PathsToProperties<T>>(path: K) {
     if (!this.config) {
       throw new Error("Config is not initialized");
     }
@@ -90,11 +76,7 @@ class ConfigManager<T extends Config> {
     return value;
   }
 
-  // Set a value using dot notation
-  async set<K extends PathsToProperties<T>>(
-    path: K,
-    value: any,
-  ): Promise<void> {
+  async set<K extends PathsToProperties<T>>(path: K, value: any): Promise<void> {
     if (!this.config) {
       throw new Error("Config is not initialized");
     }

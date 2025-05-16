@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { DownloadHistory } from "@prisma/client";
-import Tile from "@/components/Tile";
 import { GameWithRelations } from "src/common/types";
 import _ from "lodash";
 
@@ -59,11 +58,11 @@ const DownloadHistory = () => {
   }, []);
 
   return (
-    <Tile title="Download history">
+    <div title="Download history">
       {downloadHistory.map((item) => (
         <DownloadHistoryRow id={item.gameId} />
       ))}
-    </Tile>
+    </div>
   );
 };
 

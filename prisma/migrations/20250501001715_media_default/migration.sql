@@ -21,10 +21,10 @@ CREATE UNIQUE INDEX "MediaDefault_mediaTypeId_gameId_key" ON "MediaDefault"("med
 -- CreateIndex
 CREATE UNIQUE INDEX "MediaType_name_key" ON "MediaType"("name");
 
-insert ignore into "MediaType" (name) values ("cover");
-insert ignore into "MediaType" (name) values ("background");
-insert ignore into "MediaType" (name) values ("logo");
-insert ignore into "MediaType" (name) values ("icon");
-insert ignore into "MediaType" (name) values ("trailer");
-insert ignore into "MediaType" (name) values ("achievement");
-insert ignore into "MediaType" (name) values ("screenshot");
+INSERT  INTO "MediaType" (name) VALUES ('cover');
+INSERT  into "MediaType" (name) values ('background');
+INSERT  into "MediaType" (name) values ('logo');
+INSERT  into "MediaType" (name) values ('icon');
+INSERT  into "MediaType" (name) values ('trailer');
+INSERT  into "MediaType" (name) values ('achievement');
+INSERT  into "MediaType" (name) values ('screenshot');

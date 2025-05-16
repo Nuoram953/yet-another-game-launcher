@@ -1,0 +1,15 @@
+{
+  "storefront": {
+    "steam": "Steam",
+    "egs": "Epic"
+  },
+  "loadingProgress": {
+    "components": "Initializing components...",
+    "metadata": "Loading metadata manager...",
+    "igdb": "Connecting to IGDB...",
+    "i18n": "Setting up localization...",
+    "config": "Loading configuration...",
+    "database": "Preparing database...",
+    "mainWindow": "Creating main window..."
+  }
+}

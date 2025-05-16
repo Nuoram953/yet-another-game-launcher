@@ -1,25 +1,10 @@
 import React, { useMemo } from "react";
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { useGames } from "@/context/DatabaseContext";
-import { Card } from "@/components/card/Card";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { useGames } from "@render//context/DatabaseContext";
+import { Card } from "@render//components/card/Card";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ChartSessionDurationDistribution = () => {
   const { selectedGame } = useGames();
@@ -41,10 +26,7 @@ const ChartSessionDurationDistribution = () => {
       const sessionDuration = session.duration;
 
       for (let i = 0; i < durationBuckets.length; i++) {
-        if (
-          sessionDuration >= durationBuckets[i].min &&
-          sessionDuration < durationBuckets[i].max
-        ) {
+        if (sessionDuration >= durationBuckets[i].min && sessionDuration < durationBuckets[i].max) {
           counts[i]++;
           break;
         }
@@ -67,48 +49,38 @@ const ChartSessionDurationDistribution = () => {
     ],
   };
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: false,
-      },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            return `${context.dataset.label}: ${context.raw} sessions`;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Number of Sessions",
-        },
-        ticks: {
-          precision: 0,
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: "Session Duration",
-        },
-      },
-    },
-  };
-
   return (
     <Card title="Session Duration Distribution">
       <div style={{ height: "400px", width: "100%" }}>
-        <Bar data={data} options={options} />
+        <Bar
+          data={data}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: false,
+                text: "Session Distribution",
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context) => `${context.raw} sessions`,
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+              x: {
+                beginAtZero: true,
+              },
+            },
+          }}
+        />
       </div>
     </Card>
   );

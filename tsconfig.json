@@ -1,31 +1,37 @@
 {
-    "compilerOptions": {
-        "jsx": "react",
-        "target": "es2020",
-        "module": "commonjs",
-        "lib": ["dom", "es2019"],
-        "experimentalDecorators": true,
-        "composite": true,
-        "declaration": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowJs": false,
-        "esModuleInterop": true,
-        "noImplicitAny": true,
-        "sourceMap": true,
-        "strict": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/renderer/*"],
-            "~/*":[".src/main/"],
-            "@common/*":["src/common/"]
-        },
-        "outDir": "dist",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
+  "compilerOptions": {
+    "target": "ES2020",
+    "jsx": "preserve",
+    "lib": ["esnext", "dom"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strictPropertyInitialization": false
+    "baseUrl": ".",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "paths": {
+      "@render/*": ["src/renderer/*"],
+      "@main/*": ["src/main/*"],
+      "@common/*": ["src/common/*"],
+      "@preload/*": ["src/preload/*"],
+      "@hook/*": ["src/renderer/hooks/*"],
+      "@component/*": ["src/renderer/components/*"]
     },
-    "include": ["src/**/*", "node_module/@prisma/client", "./i18n.ts"]
-
+    "resolveJsonModule": true,
+    "types": ["vite/client", "node", "mocha"],
+    "typeRoots": ["./node_modules/@types", "./src/preload"],
+    "strict": false,
+    "noImplicitAny": false,
+    "noEmit": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/**/*.d.ts",
+    "src/preload/preload.d.ts",
+    "test/**/*.ts"
+  ]
 }

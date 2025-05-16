@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { GameStatus, Storefront } from "../constant";
+import { GameStatus, Storefront } from "../../common/constant";
 import { prisma } from "..";
 import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";
@@ -174,6 +174,9 @@ export async function createOrUpdateExternal(
       timePlayedWindows: data.timePlayedWindows,
       timePlayedMac: data.timePlayedMac,
       timePlayedSteamdeck: data.timePlayedSteamdeck,
+      size: data.size,
+      location: data.location,
+      isInstalled: data.isInstalled,
     },
     create: {
       name: sanitizeGameName(data.name!),

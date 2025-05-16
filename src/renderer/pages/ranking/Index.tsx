@@ -1,6 +1,6 @@
-import { Card } from "@/components/card/Card";
+import { Card } from "@render//components/card/Card";
 import { Trophy, Clock, Edit, Trash2, Pencil, Plus } from "lucide-react";
-import { useBreadcrumbsContext } from "@/context/BreadcrumbsContext";
+import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
@@ -9,17 +9,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@render//components/ui/dialog";
+import { Input } from "@render//components/ui/input";
+import { Label } from "@render//components/ui/label";
 import { RankingWithRelation } from "../../../common/types";
 import { useNavigate } from "react-router-dom";
-import { Image } from "@/components/image/Image";
-import { unixToDate } from "@/utils/util";
-import { Button } from "@/components/button/Button";
-import { Header } from "@/components/layout/Header";
+import { Image } from "@render//components/image/Image";
+import { unixToDate } from "@render//utils/util";
+import { Button } from "@render//components/button/Button";
+import { Header } from "@render//components/layout/Header";
+import { RankingGame } from "@prisma/client";
 
-const CoverImage = ({ game, isFirst = false }) => {
+interface CoverImageProps {
+  game: RankingGame;
+  isFirst?: boolean;
+}
+
+const CoverImage = ({ game, isFirst = false }: CoverImageProps) => {
   const [image, setImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,16 +42,11 @@ const CoverImage = ({ game, isFirst = false }) => {
   }, []);
 
   return (
-    <div
-      key={game.id}
-      className={`relative mr-2 flex-shrink-0 ${isFirst ? "" : "self-end"}`}
-    >
+    <div key={game.id} className={`relative mr-2 flex-shrink-0 ${isFirst ? "" : "self-end"}`}>
       <Image
         src={image}
-        alt={game.id}
-        className={`rounded object-cover shadow-sm ${
-          isFirst ? "h-48 w-32" : "h-36 w-24"
-        }`}
+        alt={String(game.id)}
+        className={`rounded object-cover shadow-sm ${isFirst ? "h-48 w-32" : "h-36 w-24"}`}
       />
     </div>
   );
@@ -55,7 +56,6 @@ export const RankingPage = () => {
   const navigate = useNavigate();
   const { setBreadcrumbs } = useBreadcrumbsContext();
   const [rankings, setRankings] = useState<RankingWithRelation[]>([]);
-  const [selectedRanking, setSelectedRanking] = useState<number | null>(null);
   const [openNewDialog, setOpenNewDialog] = useState(false);
 
   const [name, setName] = useState("");
@@ -83,19 +83,16 @@ export const RankingPage = () => {
     fetchData();
   }, []);
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     setRankings(rankings.filter((ranking) => ranking.id !== id));
     window.ranking.delete(id);
-    if (selectedRanking?.id === id) {
-      setSelectedRanking(null);
-    }
   };
 
   const handleNewRanking = () => {
     setOpenNewDialog(true);
   };
 
-  const handleEdit = (id) => {
+  const handleEdit = (id: number) => {
     navigate(`/ranking/${id}`);
   };
 
@@ -107,7 +104,7 @@ export const RankingPage = () => {
   return (
     <div className="flex h-screen flex-col text-white">
       <Header>
-        <div className="m-4 flex items-center justify-between w-full">
+        <div className="m-4 flex w-full items-center justify-between">
           <h1 className="text-2xl font-semibold text-white"></h1>
           <Button
             intent={"primary"}
@@ -141,26 +138,14 @@ export const RankingPage = () => {
                 {ranking.rankings.length > 0 && (
                   <>
                     <Trophy size={16} className="mr-1" />
-                    <span className="mr-4">
-                      {
-                        ranking.rankings.filter((game) => game.rank !== null)
-                          .length
-                      }{" "}
-                      games
-                    </span>
+                    <span className="mr-4">{ranking.rankings.filter((game) => game.rank !== null).length} games</span>
                   </>
                 )}
 
                 {ranking.rankings.length > 0 && (
                   <>
                     <Pencil size={16} className="mr-1" />
-                    <span className="mr-4">
-                      {
-                        ranking.rankings.filter((game) => game.rank === null)
-                          .length
-                      }{" "}
-                      games
-                    </span>
+                    <span className="mr-4">{ranking.rankings.filter((game) => game.rank === null).length} games</span>
                   </>
                 )}
 
@@ -179,11 +164,7 @@ export const RankingPage = () => {
                   {ranking.rankings
                     .filter((game) => game.rank !== null)
                     .map((game, index) => (
-                      <CoverImage
-                        key={game.id}
-                        game={game}
-                        isFirst={index < 3}
-                      />
+                      <CoverImage key={game.id} game={game} isFirst={index < 3} />
                     ))}
                 </div>
               </div>
@@ -198,27 +179,17 @@ export const RankingPage = () => {
         )}
       </div>
       <Dialog open={openNewDialog}>
-        <DialogContent
-          className="sm:max-w-[425px]"
-          onInteractOutside={() => setOpenNewDialog(false)}
-        >
+        <DialogContent className="sm:max-w-[425px]" onInteractOutside={() => setOpenNewDialog(false)}>
           <DialogHeader>
             <DialogTitle>New Ranking</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
-            </DialogDescription>
+            <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 Name
               </Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="col-span-3"
-              />
+              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="username" className="text-right">

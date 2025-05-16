@@ -1,7 +1,7 @@
 import { ArrowDownToLine, CircleX, Play } from "lucide-react";
 import { Button } from "../ui/button";
 import React, { useState } from "react";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,14 +11,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@render//components/ui/alert-dialog";
 
 export const ButtonPlay = () => {
   const { running, selectedGame } = useGames();
   const [open, setOpen] = useState<boolean>(false);
 
-  if(!selectedGame){
-    return
+  if (!selectedGame) {
+    return;
   }
 
   const handleOnPlay = async () => {
@@ -58,17 +58,13 @@ export const ButtonPlay = () => {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                This action cannot be undone. This will permanently delete your account and remove your data from our
+                servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={handleOnAlertDialogNegatif}>
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={handleOnAlertDialogPositif}>
-                Continue
-              </AlertDialogAction>
+              <AlertDialogCancel onClick={handleOnAlertDialogNegatif}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleOnAlertDialogPositif}>Continue</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

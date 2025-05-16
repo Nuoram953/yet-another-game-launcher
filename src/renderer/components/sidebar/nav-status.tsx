@@ -2,11 +2,7 @@
 
 import { ChevronRight, SquareTerminal, type LucideIcon } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@render//components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -15,10 +11,10 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
+} from "@render//components/ui/sidebar";
 import React from "react";
 import { Badge } from "../ui/badge";
-import { useGames } from "@/context/DatabaseContext";
+import { useGames } from "@render//context/DatabaseContext";
 
 export function NavStatus({
   items,
@@ -26,19 +22,14 @@ export function NavStatus({
   items: {
     id: number;
     name: string;
-    count?: number
+    count?: number;
   }[];
 }) {
   const { updateFilters } = useGames();
   return (
     <SidebarGroup>
       <SidebarMenu>
-        <Collapsible
-          key={"status"}
-          asChild
-          defaultOpen={true}
-          className="group/collapsible"
-        >
+        <Collapsible key={"status"} asChild defaultOpen={true} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
               <SidebarMenuButton tooltip="status">
@@ -50,10 +41,7 @@ export function NavStatus({
             <CollapsibleContent>
               <SidebarMenuSub>
                 {items?.map((subItem) => (
-                  <SidebarMenuSubItem
-                    key={subItem.name}
-                    className="flex justify-between"
-                  >
+                  <SidebarMenuSubItem key={subItem.name} className="flex justify-between">
                     <SidebarMenuSubButton asChild>
                       <>
                         <div
@@ -72,7 +60,6 @@ export function NavStatus({
             </CollapsibleContent>
           </SidebarMenuItem>
         </Collapsible>
-        
       </SidebarMenu>
     </SidebarGroup>
   );

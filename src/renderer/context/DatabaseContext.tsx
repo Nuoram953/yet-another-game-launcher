@@ -1,20 +1,9 @@
 import { Game, Prisma } from "@prisma/client";
 import _ from "lodash";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
-import {
-  DownloadStats,
-  FilterConfig,
-  GameWithRelations,
-  SortConfig,
-} from "../../common/types";
-import { DataRoute, RouteDownload } from "../../common/constant";
-import { CookieType, deleteCookie} from "@/utils/cookieUtil";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { DownloadStats, FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
+import { DataRoute, RouteDownload } from "@common/constant";
+import { CookieType, deleteCookie } from "@render/utils/cookieUtil";
 
 interface GamesContextValue {
   games: Game[];
@@ -56,9 +45,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     field: "lastTimePlayed",
     direction: "desc",
   });
-  const [selectedGame, setSelectedGame] = useState<GameWithRelations | null>(
-    null,
-  );
+  const [selectedGame, setSelectedGame] = useState<GameWithRelations | null>(null);
 
   const fetchGames = useCallback(async () => {
     setLoading(true);
@@ -96,13 +83,10 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     });
   }, []);
 
-  const updateSelectedGame = useCallback(
-    async (game: GameWithRelations | null) => {
-      deleteCookie(CookieType.ACTIVE_SECTION);
-      setSelectedGame(game);
-    },
-    [],
-  );
+  const updateSelectedGame = useCallback(async (game: GameWithRelations | null) => {
+    deleteCookie(CookieType.ACTIVE_SECTION);
+    setSelectedGame(game);
+  }, []);
 
   const updateSort = useCallback((newSort: SortConfig) => {
     setSortConfig(newSort);
@@ -123,42 +107,27 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
     window.data.on(DataRoute.RUNNING_GAME, (payload) => {
       if (payload.data.isRunning) {
-        setRunning((prevItems) => [
-          ...prevItems,
-          { id: payload.data.id, time: 0 },
-        ]);
+        setRunning((prevItems) => [...prevItems, { id: payload.data.id, time: 0 }]);
       } else {
-        setRunning((prevItems) =>
-          prevItems.filter((item) => item.id !== payload.data.id),
-        );
+        setRunning((prevItems) => prevItems.filter((item) => item.id !== payload.data.id));
       }
     });
 
-    window.data.on(
-      RouteDownload.ON_DOWNLOAD_STATUS,
-      (payload: { data: DownloadStats }) => {
-        setDownloading((prevData) => {
-          const exists = prevData.some((item) => item.id === payload.data.id);
+    window.data.on(RouteDownload.ON_DOWNLOAD_STATUS, (payload: { data: DownloadStats }) => {
+      setDownloading((prevData) => {
+        const exists = prevData.some((item) => item.id === payload.data.id);
 
-          if (exists) {
-            return prevData.map((item) =>
-              item.id === payload.data.id ? { ...item, ...payload.data } : item,
-            );
-          } else {
-            return [...prevData, payload.data];
-          }
-        });
-      },
-    );
+        if (exists) {
+          return prevData.map((item) => (item.id === payload.data.id ? { ...item, ...payload.data } : item));
+        } else {
+          return [...prevData, payload.data];
+        }
+      });
+    });
 
-    window.data.on(
-      RouteDownload.ON_DOWNLOAD_STOP,
-      (payload: { data: { id: string } }) => {
-        setDownloading((prevData) =>
-          prevData.filter((item) => item.id !== payload.data.id),
-        );
-      },
-    );
+    window.data.on(RouteDownload.ON_DOWNLOAD_STOP, (payload: { data: { id: string } }) => {
+      setDownloading((prevData) => prevData.filter((item) => item.id !== payload.data.id));
+    });
 
     return () => {
       window.data.removeAllListeners(DataRoute.REQUEST_GAME);
@@ -169,7 +138,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
 
   useEffect(() => {
     fetchGames();
-    window.library.refresh()
+    window.library.refresh();
   }, []);
 
   const value: GamesContextValue = {
@@ -187,7 +156,5 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     updateSelectedGame,
   };
 
-  return (
-    <GamesContext.Provider value={value}>{children}</GamesContext.Provider>
-  );
+  return <GamesContext.Provider value={value}>{children}</GamesContext.Provider>;
 };
