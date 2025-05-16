@@ -15,16 +15,15 @@ import { Filter, Plus, Search } from "lucide-react";
 import { Sort } from "./Sort";
 import { Input } from "@render//components/input/Input";
 import { Header } from "@render//components/layout/Header";
+import { FilterSheet } from "./FilterSheet";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
 const GAP = 16;
 
 export const Grid = () => {
-  const { games, loading, error, refreshGames, updateFilters } = useGames();
+  const { games, loading, error, refreshGames, filters } = useGames();
   const [search, setSearch] = React.useState("");
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [searchBarExpanded, setSearchBarExpanded] = useState(false);
   const { updateSelectedGame } = useGames();
   const { setBreadcrumbs } = useBreadcrumbsContext();
   const gridRef = useRef(null);
@@ -107,7 +106,7 @@ export const Grid = () => {
       <RecentlyPlayedCarousel />
       <div className="flex-none">
         <Header>
-          <div className="flex w-1/3 flex-row items-center p-4 align-middle">
+          <div className="flex w-1/2 flex-row items-center p-4 align-middle">
             <Input
               color={"dark"}
               type="search"
@@ -116,15 +115,9 @@ export const Grid = () => {
               onChange={handleSearch}
             />
             <div className="ml-2 flex flex-row">
-              <Button
-                intent={"icon"}
-                icon={Filter}
-                size={"fit"}
-                onClick={() => {
-                  setIsExpanded(!isExpanded);
-                }}
-              />
+              <FilterSheet />
               <Sort />
+              {/* {filters && <Button color={"dark"} intent="primary" text="Clear filters" /> } */}
             </div>
           </div>
           <div>
@@ -138,7 +131,6 @@ export const Grid = () => {
             />
           </div>
         </Header>
-        <Filters expand={isExpanded} />
       </div>
 
       <div className="mt-8 min-h-0 flex-1">

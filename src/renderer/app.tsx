@@ -20,91 +20,94 @@ import { RankingEditPage } from "./pages/ranking/edit/Index";
 import NotFound from "./pages/error/notFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
+import { ThemeProvider } from "./components/theme-provider";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <NotificationProvider>
-        <NotificationSystem />
-        <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
-          <GamesProvider>
-            <HashRouter>
-              <Routes>
-                <Route
-                  index
-                  path="/"
-                  element={
-                    <Layout>
-                      <Grid />
-                    </Layout>
-                  }
-                />
-                <Route
-                  index
-                  path="/game/:id"
-                  element={
-                    <Layout>
-                      <GameDetail />
-                    </Layout>
-                  }
-                />
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <I18nextProvider i18n={i18n}>
+        <NotificationProvider>
+          <NotificationSystem />
+          <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
+            <GamesProvider>
+              <HashRouter>
+                <Routes>
+                  <Route
+                    index
+                    path="/"
+                    element={
+                      <Layout>
+                        <Grid />
+                      </Layout>
+                    }
+                  />
+                  <Route
+                    index
+                    path="/game/:id"
+                    element={
+                      <Layout>
+                        <GameDetail />
+                      </Layout>
+                    }
+                  />
 
-                <Route
-                  index
-                  path="/ranking"
-                  element={
-                    <Layout>
-                      <RankingPage />
-                    </Layout>
-                  }
-                />
+                  <Route
+                    index
+                    path="/ranking"
+                    element={
+                      <Layout>
+                        <RankingPage />
+                      </Layout>
+                    }
+                  />
 
-                <Route
-                  index
-                  path="/ranking/:id"
-                  element={
-                    <Layout>
-                      <RankingEditPage />
-                    </Layout>
-                  }
-                />
+                  <Route
+                    index
+                    path="/ranking/:id"
+                    element={
+                      <Layout>
+                        <RankingEditPage />
+                      </Layout>
+                    }
+                  />
 
-                <Route
-                  index
-                  path="/download"
-                  element={
-                    <Layout>
-                      <DownloadViewer />
-                    </Layout>
-                  }
-                />
+                  <Route
+                    index
+                    path="/download"
+                    element={
+                      <Layout>
+                        <DownloadViewer />
+                      </Layout>
+                    }
+                  />
 
-                <Route
-                  index
-                  path="/web"
-                  element={
-                    <Layout>
-                      <WebsiteViewer />
-                    </Layout>
-                  }
-                />
-                <Route
-                  path="*"
-                  element={
-                    <Layout>
-                      <NotFound />
-                    </Layout>
-                  }
-                />
-              </Routes>
-            </HashRouter>
-            <Toaster />
-          </GamesProvider>
-        </BreadcrumbContext.Provider>
-      </NotificationProvider>
-    </I18nextProvider>
+                  <Route
+                    index
+                    path="/web"
+                    element={
+                      <Layout>
+                        <WebsiteViewer />
+                      </Layout>
+                    }
+                  />
+                  <Route
+                    path="*"
+                    element={
+                      <Layout>
+                        <NotFound />
+                      </Layout>
+                    }
+                  />
+                </Routes>
+              </HashRouter>
+              <Toaster />
+            </GamesProvider>
+          </BreadcrumbContext.Provider>
+        </NotificationProvider>
+      </I18nextProvider>
+    </ThemeProvider>
   );
 };
 

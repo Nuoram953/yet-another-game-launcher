@@ -2,7 +2,7 @@ import React, { MouseEvent, createElement } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import _ from "lodash";
 
-const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
+const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w-fit"], {
   variants: {
     intent: {
       primary: ["bg-gray-600", "text-white", "border-transparent", "hover:bg-gray-700", "active:bg-gray-800"],
