@@ -99,6 +99,7 @@ export interface LibraryAPI {
     companies: Company[];
     tags: Tag[];
     status: GameStatus[];
+    storefronts: Storefront[];
   }>;
 }
 

@@ -66,7 +66,27 @@ export async function getGames(limit?: number | null, filters?: FilterConfig, so
 
         gameStatusId: !_.isNil(filters.status)
           ? {
-              in: filters.status.map((status) => status.value),
+              in: filters.status.map((status) => Number(status.value)),
+            }
+          : undefined,
+
+        isInstalled:
+          !_.isNil(filters.isInstalled) && filters.isInstalled
+            ? filters.isInstalled === "indeterminate"
+              ? false
+              : true
+            : undefined,
+
+        isFavorite:
+          !_.isNil(filters.isFavorite) && filters.isFavorite
+            ? filters.isFavorite === "indeterminate"
+              ? false
+              : true
+            : undefined,
+
+        storefrontId: !_.isNil(filters.storefronts)
+          ? {
+              in: filters.storefronts.map((store) => Number(store.value)),
             }
           : undefined,
       }

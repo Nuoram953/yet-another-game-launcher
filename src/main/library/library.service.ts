@@ -17,7 +17,7 @@ import { monitorDirectoryProcesses } from "../utils/tracking";
 import logger, { LogTag } from "@main/logger";
 
 export const getStorefronts = async () => {
-  return await queries.Storefront.getAll();
+  return await queries.Storefront.findAll();
 };
 
 export const refresh = async () => {
@@ -93,8 +93,9 @@ export const getFilters = async () => {
   const companies = await queries.Company.findAll();
   const tags = await queries.Tag.findAll();
   const status = await queries.GameStatus.findAll();
+  const storefronts = await queries.Storefront.findAll();
 
-  return { companies, tags, status };
+  return { companies, tags, status, storefronts };
 };
 
 export const preLaunch = async (game: GameWithRelations) => {

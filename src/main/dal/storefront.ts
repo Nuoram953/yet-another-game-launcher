@@ -1,5 +1,5 @@
 import { prisma } from "..";
 
-export async function getAll() {
+export async function findAll() {
   return await prisma.storefront.findMany();
 }

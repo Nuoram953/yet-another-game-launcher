@@ -106,7 +106,7 @@ export const Grid = () => {
       <RecentlyPlayedCarousel />
       <div className="flex-none">
         <Header>
-          <div className="flex w-1/2 flex-row items-center p-4 align-middle">
+          <div className="flex w-1/3 flex-row items-center p-4 align-middle">
             <Input
               color={"dark"}
               type="search"
@@ -117,7 +117,6 @@ export const Grid = () => {
             <div className="ml-2 flex flex-row">
               <FilterSheet />
               <Sort />
-              {/* {filters && <Button color={"dark"} intent="primary" text="Clear filters" /> } */}
             </div>
           </div>
           <div>
