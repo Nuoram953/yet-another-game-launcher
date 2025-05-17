@@ -40,6 +40,8 @@ export function FilterSheet() {
   const [status, setStatus] = useState(filters.status || []);
   const [installed, setInstalled] = useState(filters.isInstalled || false);
   const [favorite, setFavorite] = useState(filters.isFavorite || false);
+  const [timePlayed, setTimePlayed] = useState(filters.timePlayed || []);
+  const [mainStory, setMainStory] = useState(filters.mainStory || []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,7 +58,17 @@ export function FilterSheet() {
   }, []);
 
   const handleSave = () => {
-    updateFilters({ developpers, publishers, tags, status, isInstalled: installed, isFavorite: favorite, storefronts });
+    updateFilters({
+      developpers,
+      publishers,
+      tags,
+      status,
+      isInstalled: installed,
+      isFavorite: favorite,
+      storefronts,
+      timePlayed,
+      mainStory,
+    });
   };
 
   return (
@@ -121,6 +133,7 @@ export function FilterSheet() {
 
             <Select
               label="Storefront"
+              allowCustomValues={true}
               options={filtersData.storefronts.map((store) => ({
                 value: String(store.id),
                 label: store.name,
@@ -130,8 +143,113 @@ export function FilterSheet() {
               }}
               values={storefronts}
             />
-            <TimePlayedFilter />
+
+            <Select
+              label="Time played"
+              options={[
+                {
+                  value: "0",
+                  label: "Never",
+                },
+                {
+                  value: "<1",
+                  label: "<1 hour",
+                },
+                {
+                  value: "<5",
+                  label: "<5 hours",
+                },
+                {
+                  value: "<10",
+                  label: "<10 hours",
+                },
+                {
+                  value: "<25",
+                  label: "<25 hours",
+                },
+                {
+                  value: "<50",
+                  label: "<50 hours",
+                },
+                {
+                  value: ">100",
+                  label: ">100 hours",
+                },
+              ]}
+              onChange={(choice) => {
+                setTimePlayed([...choice]);
+              }}
+              values={timePlayed}
+            />
+
+            <Select
+              label="How long to beat"
+              options={[
+                {
+                  value: "<5",
+                  label: "<5 hours",
+                },
+                {
+                  value: "<10",
+                  label: "<10 hours",
+                },
+                {
+                  value: "<25",
+                  label: "<25 hours",
+                },
+                {
+                  value: "<50",
+                  label: "<50 hours",
+                },
+                {
+                  value: ">100",
+                  label: ">100 hours",
+                },
+              ]}
+              onChange={(choice) => {
+                setMainStory([...choice]);
+              }}
+              values={mainStory}
+            />
+
+            <Select
+              label="Date added"
+              options={filtersData.storefronts.map((store) => ({
+                value: String(store.id),
+                label: store.name,
+              }))}
+              onChange={(choice) => {
+                setStorefronts([...choice]);
+              }}
+              values={storefronts}
+            />
+            <Select
+              label="Last time played"
+              options={[
+                {
+                  value: "year",
+                  label: "This year",
+                },
+                {
+                  value: "today",
+                  label: "Today",
+                },
+                {
+                  value: "week",
+                  label: "This week",
+                },
+                {
+                  value: "month",
+                  label: "This month",
+                },
+              ]}
+              onChange={(choice) => {
+                setStorefronts([...choice]);
+              }}
+              values={storefronts}
+            />
           </div>
+
           <SheetFooter className="mt-4">
             <SheetClose asChild>
               <Button type="submit" intent={"primary"} text="save" onClick={handleSave} />
@@ -142,124 +260,3 @@ export function FilterSheet() {
     </>
   );
 }
-
-const TimePlayedFilter = () => {
-  const [timePlayed, setTimePlayed] = useState([]);
-  const [isCustomOpen, setIsCustomOpen] = useState(false);
-  const [customRange, setCustomRange] = useState([0, 100]);
-
-  // Predefined time options
-  const timeOptions = [
-    { value: "lt1", label: "< 1h" },
-    { value: "lt10", label: "< 10h" },
-    { value: "lt50", label: "< 50h" },
-    { value: "gt100", label: "≥ 100h" },
-    { value: "custom", label: "Custom Range..." },
-  ];
-
-  const handleTimeChange = (choice) => {
-    // Check if "Custom Range" is selected
-    if (choice.some((option) => option.value === "custom")) {
-      setIsCustomOpen(true);
-      // Filter out any predefined options if custom is selected
-      const filteredChoices = choice.filter((option) => option.value !== "custom");
-      setTimePlayed([
-        ...filteredChoices,
-        { value: `${customRange[0]}-${customRange[1]}`, label: `${customRange[0]}h - ${customRange[1]}h` },
-      ]);
-    } else {
-      setIsCustomOpen(false);
-      setTimePlayed([...choice]);
-    }
-  };
-
-  const handleRangeChange = (e, index) => {
-    const newValue = parseInt(e.target.value);
-    const newRange = [...customRange];
-    newRange[index] = newValue;
-
-    // Ensure min <= max
-    if (index === 0 && newValue > customRange[1]) {
-      newRange[1] = newValue;
-    } else if (index === 1 && newValue < customRange[0]) {
-      newRange[0] = newValue;
-    }
-
-    setCustomRange(newRange);
-
-    // Update the time played with the new custom range
-    const customOption = { value: `${newRange[0]}-${newRange[1]}`, label: `${newRange[0]}h - ${newRange[1]}h` };
-
-    // Replace the existing custom option if it exists
-    const customIndex = timePlayed.findIndex((option) => option.value.includes("-"));
-    if (customIndex >= 0) {
-      const updatedTimePlayed = [...timePlayed];
-      updatedTimePlayed[customIndex] = customOption;
-      setTimePlayed(updatedTimePlayed);
-    } else {
-      setTimePlayed([...timePlayed, customOption]);
-    }
-  };
-
-  return (
-    <div className="w-full text-gray-200">
-      <Select
-        label="Time Played"
-        options={timeOptions}
-        onChange={(choice) => handleTimeChange(choice)}
-        values={timePlayed}
-      />
-
-      {isCustomOpen && (
-        <div className="mt-2 rounded-md border border-gray-700 bg-gray-800 p-3">
-          <div className="mb-2 flex justify-between">
-            <span>Custom Range:</span>
-            <span>
-              {customRange[0]}h - {customRange[1]}h
-            </span>
-          </div>
-
-          <div className="mb-3">
-            <label className="mb-1 block text-sm font-medium text-gray-300">Minimum Hours</label>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              value={customRange[0]}
-              onChange={(e) => handleRangeChange(e, 0)}
-              className="w-full accent-blue-500"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              value={customRange[0]}
-              onChange={(e) => handleRangeChange(e, 0)}
-              className="mt-1 w-20 rounded border border-gray-600 bg-gray-700 p-1 text-gray-200"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-300">Maximum Hours</label>
-            <input
-              type="range"
-              min="0"
-              max="500"
-              value={customRange[1]}
-              onChange={(e) => handleRangeChange(e, 1)}
-              className="w-full accent-blue-500"
-            />
-            <input
-              type="number"
-              min="0"
-              max="500"
-              value={customRange[1]}
-              onChange={(e) => handleRangeChange(e, 1)}
-              className="mt-1 w-20 rounded border border-gray-600 bg-gray-700 p-1 text-gray-200"
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};

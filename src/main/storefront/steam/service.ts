@@ -11,9 +11,22 @@ import * as MetadataService from "@main/metadata/index";
 //@ts-ignore-error - Missing type definitions
 import acfParser from "steam-acf2json";
 import { app } from "electron";
+import _ from "lodash";
+import logger, { LogTag } from "@main/logger";
 
 export const refresh = async () => {
   const res = await SteamEndpoints.getOwnedGames();
+  if (_.isNil(res.data.response)) {
+    logger.warn(
+      LogTag.STORE,
+      {
+        store: "Steam",
+      },
+      "Failed to get owned games",
+    );
+    return;
+  }
+
   for (const entry of res.data?.response.games) {
     const { size, location, isInstalled } = await getInstalledGameDetail(entry.appid.toString());
     const data: Partial<Game> = {

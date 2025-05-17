@@ -5,6 +5,7 @@ import { Game, Prisma } from "@prisma/client";
 import queries from "./dal";
 import { FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
 import { sanitizeGameName } from "../utils/utils";
+import { buildMainStoryWhereClause, buildTimePlayedWhereClause } from "./utils";
 
 const include = {
   gameStatus: true,
@@ -32,7 +33,7 @@ export async function update(id: string, newData: Partial<Game>) {
 }
 
 export async function getGames(limit?: number | null, filters?: FilterConfig, sort?: SortConfig) {
-  const where = filters
+  const where: any = filters
     ? {
         developers: !_.isNil(filters.developpers)
           ? {
@@ -91,6 +92,14 @@ export async function getGames(limit?: number | null, filters?: FilterConfig, so
           : undefined,
       }
     : undefined;
+
+  if (!_.isNil(filters.timePlayed)) {
+    where.OR = [...(where?.OR || []), ...buildTimePlayedWhereClause(filters.timePlayed)];
+  }
+
+  if (!_.isNil(filters.mainStory)) {
+    where.OR = [...(where?.OR || []), ...buildMainStoryWhereClause(filters.mainStory)];
+  }
 
   const games = await prisma.game.findMany({
     where,

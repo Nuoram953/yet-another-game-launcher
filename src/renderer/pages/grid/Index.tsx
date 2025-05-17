@@ -22,7 +22,7 @@ const ROW_HEIGHT = 520;
 const GAP = 16;
 
 export const Grid = () => {
-  const { games, loading, error, refreshGames, filters } = useGames();
+  const { games, loading, error, refreshGames, filters, clearFilters } = useGames();
   const [search, setSearch] = React.useState("");
   const { updateSelectedGame } = useGames();
   const { setBreadcrumbs } = useBreadcrumbsContext();
@@ -117,6 +117,15 @@ export const Grid = () => {
             <div className="ml-2 flex flex-row">
               <FilterSheet />
               <Sort />
+              {filters.hasActiveFilters && (
+                <Button
+                  intent="secondary"
+                  size="small"
+                  text="Clear filters"
+                  onClick={() => clearFilters()}
+                  className="whitespace-nowrap"
+                />
+              )}
             </div>
           </div>
           <div>

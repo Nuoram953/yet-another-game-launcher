@@ -99,14 +99,11 @@ async function electronAppInit() {
   }
 
   try {
-    console.log(process.env.NODE_ENV);
     if (process.env.NODE_ENV === "test") {
       process.env.DATABASE_URL = `file:${path.join(app.getPath("userData"), "test_app.sqlite")}`;
     } else {
       process.env.DATABASE_URL = `file:${path.join(app.getPath("userData"), "app.sqlite")}`;
     }
-
-    console.log(process.env.DATABASE_URL);
 
     i18n = await initMainI18n();
 

@@ -31,6 +31,9 @@ export interface FilterConfig {
   status?: { value: string; label: string }[];
   isInstalled?: boolean | "indeterminate";
   isFavorite?: boolean | "indeterminate";
+  timePlayed?: { value: string; label: string }[];
+  mainStory?: { value: string; label: string }[];
+  hasActiveFilters?: boolean;
 }
 
 export interface SortConfig extends Partial<GameWithRelations> {

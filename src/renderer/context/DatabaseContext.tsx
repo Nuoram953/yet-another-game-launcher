@@ -14,6 +14,7 @@ interface GamesContextValue {
   filters: FilterConfig;
   sortConfig: SortConfig;
   updateFilters: (newFilters: Partial<FilterConfig>) => void;
+  clearFilters: () => void;
   updateSort: (newSort: SortConfig) => void;
   refreshGames: () => Promise<void>;
   selectedGame: GameWithRelations | null;
@@ -40,7 +41,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [running, setRunning] = useState<{ id: string; time: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<FilterConfig | {}>({});
+  const [filters, setFilters] = useState<FilterConfig>({ hasActiveFilters: false });
   const [sort, setSortConfig] = useState<SortConfig>({
     field: "lastTimePlayed",
     direction: "desc",
@@ -79,8 +80,14 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
         }),
       );
 
+      cleanedFilters.hasActiveFilters = Object.keys(cleanedFilters).length > 0;
+
       return cleanedFilters;
     });
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setFilters({});
   }, []);
 
   const updateSelectedGame = useCallback(async (game: GameWithRelations | null) => {
@@ -150,6 +157,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     filters,
     sortConfig: sort,
     updateFilters,
+    clearFilters,
     updateSort,
     refreshGames: fetchGames,
     selectedGame,

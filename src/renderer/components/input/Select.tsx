@@ -1,4 +1,5 @@
-import SelectComonent, { ActionMeta, GroupBase, MultiValue, OptionsOrGroups, PropsValue } from "react-select";
+import SelectComponent, { ActionMeta, GroupBase, MultiValue, OptionsOrGroups, PropsValue } from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { Label } from "../ui/label";
 import React from "react";
 
@@ -32,39 +33,76 @@ const darkStyles = {
   }),
 };
 
-interface SelectProps {
+interface SelectOption {
+  value: string;
   label: string;
-  options: OptionsOrGroups<{ value: string; label: string }, GroupBase<{ value: string; label: string }>>;
-  onChange: (
-    newValue: MultiValue<{
-      value: string;
-      label: string;
-    }>,
-    actionMeta: ActionMeta<{
-      value: string;
-      label: string;
-    }>,
-  ) => void;
-  values: PropsValue<{ value: string; label: string }>[];
 }
 
-export const Select = ({ label, options, onChange, values }: SelectProps) => {
+interface SelectProps {
+  label: string;
+  options: OptionsOrGroups<SelectOption, GroupBase<SelectOption>>;
+  onChange: (newValue: MultiValue<SelectOption>, actionMeta: ActionMeta<SelectOption>) => void;
+  values: PropsValue<SelectOption>[];
+  allowCustomValues?: boolean;
+  placeholder?: string;
+}
+
+export const Select = ({
+  label,
+  options,
+  onChange,
+  values,
+  allowCustomValues = false,
+  placeholder = "Select options...",
+}: SelectProps) => {
+  // Function to handle custom value creation
+  const handleCreateOption = (inputValue: string) => {
+    const newOption = { value: inputValue, label: inputValue };
+    // Call onChange with the new option added to the current values
+    const currentValues = Array.isArray(values) ? values : values ? [values] : [];
+    onChange(
+      [...currentValues, newOption] as MultiValue<SelectOption>,
+      {
+        action: "create-option",
+        option: newOption,
+      } as ActionMeta<SelectOption>,
+    );
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor="name" className="text-left">
         {label}
       </Label>
-      <SelectComonent
-        isMulti
-        theme={(theme) => ({ ...theme, ...darkTheme })}
-        styles={darkStyles}
-        name="colors"
-        options={options}
-        className="basic-multi-select z-9999 dark"
-        classNamePrefix="select"
-        onChange={onChange}
-        value={values}
-      />
+      {allowCustomValues ? (
+        <CreatableSelect
+          isMulti
+          theme={(theme) => ({ ...theme, ...darkTheme })}
+          styles={darkStyles}
+          name="colors"
+          options={options}
+          className="basic-multi-select z-9999 dark"
+          classNamePrefix="select"
+          onChange={onChange}
+          value={values}
+          placeholder={placeholder}
+          formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
+          onCreateOption={handleCreateOption}
+        />
+      ) : (
+        <SelectComponent
+          isMulti
+          theme={(theme) => ({ ...theme, ...darkTheme })}
+          styles={darkStyles}
+          name="colors"
+          options={options}
+          className="basic-multi-select z-9999 dark"
+          classNamePrefix="select"
+          onChange={onChange}
+          value={values}
+          placeholder={placeholder}
+        />
+      )}
     </div>
   );
 };
