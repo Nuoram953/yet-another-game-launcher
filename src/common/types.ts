@@ -9,10 +9,10 @@ export type GameWithRelations = Prisma.GameGetPayload<{
     developers: { include: { company: true } };
     publishers: { include: { company: true } };
     tags: { include: { tag: true } };
-    review: true
-    gamescope:true
-    downloadHistory:true
-    statusHistory: {include: {gameStatus:true}}
+    review: true;
+    gamescope: true;
+    downloadHistory: true;
+    statusHistory: { include: { gameStatus: true } };
   };
 }>;
 
@@ -23,21 +23,30 @@ export type RankingWithRelation = Prisma.RankingGetPayload<{
 }>;
 
 export interface FilterConfig {
+  selectedPreset: { value: string; label: string } | null;
   gameStatusId?: number;
-  developpers?: {value:string, label:string}[]
-  publishers?: {value:string, label:string}[]
-  tags?: {value:string, label:string}[]
-  status?: {value:number, label:string}[]
+  developpers?: { value: string; label: string }[];
+  publishers?: { value: string; label: string }[];
+  tags?: { value: string; label: string }[];
+  storefronts?: { value: string; label: string }[];
+  status?: { value: string; label: string }[];
+  isInstalled?: boolean | "indeterminate";
+  isFavorite?: boolean | "indeterminate";
+  timePlayed?: { value: string; label: string }[];
+  mainStory?: { value: string; label: string }[];
+  hasActiveFilters?: boolean;
+  dateAdded?: { value: string; label: string }[];
+  lastTimePlayed?: { value: string; label: string }[];
 }
 
 export interface SortConfig extends Partial<GameWithRelations> {
   field: keyof Game;
   direction: "asc" | "desc";
-  label?: string
+  label?: string;
 }
 
 export interface DownloadStats {
-  id:string,
+  id: string;
   progress: number;
   speed: number;
   timeRemaining: number;

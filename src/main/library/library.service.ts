@@ -15,9 +15,10 @@ import { createGameActiviy } from "../dal/gameActiviy";
 import { getMinutesBetween } from "../utils/utils";
 import { monitorDirectoryProcesses } from "../utils/tracking";
 import logger, { LogTag } from "@main/logger";
+import { FilterPreset } from "@prisma/client";
 
 export const getStorefronts = async () => {
-  return await queries.Storefront.getAll();
+  return await queries.Storefront.findAll();
 };
 
 export const refresh = async () => {
@@ -90,11 +91,21 @@ export const getLastPlayed = async (max: number) => {
 };
 
 export const getFilters = async () => {
+  const presets = await queries.FilterPreset.findAll();
   const companies = await queries.Company.findAll();
   const tags = await queries.Tag.findAll();
   const status = await queries.GameStatus.findAll();
+  const storefronts = await queries.Storefront.findAll();
 
-  return { companies, tags, status };
+  return { presets, companies, tags, status, storefronts };
+};
+
+export const setFilterPreset = async (data: Partial<FilterPreset>) => {
+  await queries.FilterPreset.createOrUpdate(data);
+};
+
+export const deleteFilterPreset = async (name: string) => {
+  await queries.FilterPreset.deleteByName(name);
 };
 
 export const preLaunch = async (game: GameWithRelations) => {

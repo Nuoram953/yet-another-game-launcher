@@ -1,4 +1,4 @@
-import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
+import { FilterPreset, Game, GameConfigGamescope, GameReview } from "@prisma/client";
 import { ConfigRoute, RouteGame, RouteLibrary, RouteMedia, RouteRanking, RouteStore } from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
@@ -45,6 +45,8 @@ contextBridge.exposeInMainWorld("library", {
   getDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
   getStorefronts: () => ipcRenderer.invoke(RouteLibrary.GET_STOREFRONTS),
   getFilters: () => ipcRenderer.invoke(RouteLibrary.GET_FILTERS),
+  setFilterPreset: (data: Partial<FilterPreset>) => ipcRenderer.invoke(RouteLibrary.SET_FILTER_PRESET, data),
+  deleteFilterPreset: (name: string) => ipcRenderer.invoke(RouteLibrary.DELETE_FILTER_PRESET, name),
 });
 
 contextBridge.exposeInMainWorld("ranking", {

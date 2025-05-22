@@ -265,3 +265,11 @@ model MediaType {
   name         String         @unique
   MediaDefault MediaDefault[]
 }
+
+model FilterPreset {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  config    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { DownloadStats, FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
 import { DataRoute, RouteDownload } from "@common/constant";
 import { CookieType, deleteCookie } from "@render/utils/cookieUtil";
+import { LOCAL_STORAGE_KEYS } from "@render/constants";
 
 interface GamesContextValue {
   games: Game[];
@@ -14,6 +15,7 @@ interface GamesContextValue {
   filters: FilterConfig;
   sortConfig: SortConfig;
   updateFilters: (newFilters: Partial<FilterConfig>) => void;
+  clearFilters: () => void;
   updateSort: (newSort: SortConfig) => void;
   refreshGames: () => Promise<void>;
   selectedGame: GameWithRelations | null;
@@ -40,7 +42,9 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
   const [running, setRunning] = useState<{ id: string; time: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<FilterConfig | {}>({});
+  const [filters, setFilters] = useState<FilterConfig>(
+    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.FILTERS)) || { hasActiveFilters: false },
+  );
   const [sort, setSortConfig] = useState<SortConfig>({
     field: "lastTimePlayed",
     direction: "desc",
@@ -79,8 +83,16 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
         }),
       );
 
+      cleanedFilters.hasActiveFilters = Object.keys(cleanedFilters).length > 0;
+
+      localStorage.setItem(LOCAL_STORAGE_KEYS.FILTERS, JSON.stringify(cleanedFilters));
       return cleanedFilters;
     });
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setFilters({});
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.FILTERS);
   }, []);
 
   const updateSelectedGame = useCallback(async (game: GameWithRelations | null) => {
@@ -150,6 +162,7 @@ export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
     filters,
     sortConfig: sort,
     updateFilters,
+    clearFilters,
     updateSort,
     refreshGames: fetchGames,
     selectedGame,

@@ -1,6 +1,7 @@
 import type {
   Company,
   DownloadHistory,
+  FilterPreset,
   Game,
   GameConfigGamescope,
   GameReview,
@@ -96,10 +97,14 @@ export interface LibraryAPI {
   getDownloadHistory: () => Promise<DownloadHistory[]>;
   getStorefronts: () => Promise<Storefront[]>;
   getFilters: () => Promise<{
+    presets: FilterPreset[];
     companies: Company[];
     tags: Tag[];
     status: GameStatus[];
+    storefronts: Storefront[];
   }>;
+  setFilterPreset: (data: Partial<FilterPreset>) => Promise<void>;
+  deleteFilterPreset: (name: string) => Promise<void>;
 }
 
 export interface GameAPI {

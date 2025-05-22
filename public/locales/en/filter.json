@@ -1,0 +1,76 @@
+{
+  "title": "Edit Filters",
+  "description": "Make changes to your filters here. Click save when you're done.",
+  "apply": "Apply filters",
+  "filters": {
+    "preset": {
+      "label": "Filter Presets",
+      "tooltip": "You can create a new preset by entering a name and clicking on 'Add <preset>'"
+    },
+    "isInstalled": {
+      "label": "Installed"
+    },
+    "isFavorite": {
+      "label": "Favorite"
+    },
+    "status": {
+      "label": "Status"
+    },
+    "developer": {
+      "label": "Developer"
+    },
+    "publisher": {
+      "label": "Publisher"
+    },
+    "tags": {
+      "label": "Tags"
+    },
+    "store": {
+      "label": "Store"
+    },
+    "timePlayed": {
+      "label": "Time Played",
+      "tooltip": "You can use < for less than and > for greater than with a number",
+      "options": {
+        "never": "Never",
+        "lessThan1Hour": "Less than 1 hour",
+        "lessThan5Hours": "Less than 5 hours",
+        "lessThan10Hours": "Less than 10 hours",
+        "lessThan20Hours": "Less than 20 hours",
+        "lessThan50Hours": "Less than 50 hours",
+        "moreThan100Hours": "More than 100 hours"
+      }
+    },
+    "howLongToBeat": {
+      "label": "How Long to Beat",
+      "tooltip": "You can use < for less than and > for greater than with a number",
+      "options": {
+        "never": "Never",
+        "lessThan1Hour": "Less than 1 hour",
+        "lessThan5Hours": "Less than 5 hours",
+        "lessThan10Hours": "Less than 10 hours",
+        "lessThan20Hours": "Less than 20 hours",
+        "lessThan50Hours": "Less than 50 hours",
+        "moreThan100Hours": "More than 100 hours"
+      }
+    },
+    "dateAdded": {
+      "label": "Date Added",
+      "options": {
+        "today": "Today",
+        "week": "This week",
+        "month": "This month",
+        "year": "This year"
+      }
+    },
+    "lastTimePlayed": {
+      "label": "Last Time Played",
+      "options": {
+        "today": "Today",
+        "week": "This week",
+        "month": "This month",
+        "year": "This year"
+      }
+    }
+  }
+}

@@ -2,10 +2,10 @@ import React, { MouseEvent, createElement } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import _ from "lodash";
 
-const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
+const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w-fit"], {
   variants: {
     intent: {
-      primary: ["bg-gray-600", "text-white", "border-transparent", "hover:bg-gray-700", "active:bg-gray-800"],
+      primary: ["bg-white", "text-black", "border-transparent", "hover:bg-gray-300", "active:bg-gray-400"],
       secondary: ["bg-white", "text-gray-800", "border-gray-400"],
       install: ["bg-yellow-500", "text-white", "border-yellow-400"],
       play: ["bg-green-600", "text-white", "hover:bg-green-500", "active:bg-green-700"],
@@ -14,7 +14,7 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row"], {
       icon: ["text-white", "border-transparent", "hover:opacity-50", "active:opacity-75"],
     },
     size: {
-      small: ["text-sm", "py-1", "px-2"],
+      small: ["text-sm", "py-1", "px-2", "h-8"],
       medium: ["text-base", "py-2", "px-4"],
       fit: ["text-base"],
     },

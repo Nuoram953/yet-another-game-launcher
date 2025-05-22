@@ -1,3 +1,9 @@
+export enum LOCALE_NAMESPACE {
+  COMMON = "common",
+  GAME_STATUS = "GameStatus",
+  FILTER = "filter",
+}
+
 export enum MEDIA_TYPE {
   COVER = "cover",
   BACKGROUND = "background",
@@ -37,6 +43,8 @@ export enum RouteLibrary {
   GET_DOWNLOAD_HISTORY = "library:getDownloadHistory",
   GET_STOREFRONTS = "library:storefront",
   GET_FILTERS = "library:getFilters",
+  SET_FILTER_PRESET = "library:setFilterPreset",
+  DELETE_FILTER_PRESET = "library:deleteFilterPreset",
 }
 
 export enum ConfigRoute {
