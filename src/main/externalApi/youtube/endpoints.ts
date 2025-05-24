@@ -13,10 +13,8 @@ export const search = async (game: Game, maxResults: number = 5) => {
     limit: maxResults,
   });
 
-  console.log(searchResults);
-
   const filteredResults = searchResults.filter((result: Video) => {
-    return result.duration && result.duration <= 300000;
+    return result.duration && result.duration <= 500000;
   });
 
   return filteredResults;
@@ -39,6 +37,6 @@ export const download = async (game: Game, id: string) => {
       addHeader: ["referer:youtube.com", "user-agent:firefox"],
     });
   } catch (e) {
-    logger.error(e);
+    logger.warn(e);
   }
 };

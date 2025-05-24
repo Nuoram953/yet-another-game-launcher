@@ -13,7 +13,6 @@ export const downloadVideoForGame = async (game: Game) => {
   }
 
   const searchResults = await YoutubeEndpoints.search(game, 3);
-  console.log(searchResults);
   for (const result of searchResults) {
     await YoutubeEndpoints.download(game, result.id);
   }
