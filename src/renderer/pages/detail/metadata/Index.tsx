@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useGames } from "@render//context/DatabaseContext";
 import { Card } from "@render//components/card/Card";
 import { MEDIA_TYPE } from "../../../../common/constant";
-import { Plus, Star, Trash } from "lucide-react";
+import { Plus, Star, Trash, Video } from "lucide-react";
 import { Image } from "@render//components/image/Image";
 import { Button } from "@render//components/button/Button";
 import { useNotifications } from "@render//components/NotificationSystem";
@@ -50,6 +50,10 @@ export function SectionMetadata() {
         screenshot: {
           all: formatMediaItems(mediaData.screenshots.all, MEDIA_TYPE.SCREENSHOT),
           default: mediaData.screenshots.default,
+        },
+        trailer: {
+          all: formatMediaItems(mediaData.trailers.all, MEDIA_TYPE.TRAILER),
+          default: mediaData.trailers.default,
         },
       };
 
@@ -152,6 +156,7 @@ export function SectionMetadata() {
       case "icon":
         return "h-16 w-full";
       case "screenshot":
+      case "trailer":
         return "h-40 w-full";
       case "background":
         return "h-36 w-full";
@@ -206,7 +211,11 @@ export function SectionMetadata() {
                     <div
                       className={`relative flex items-center justify-center overflow-hidden rounded bg-gray-900 ${dimensionClass}`}
                     >
-                      <Image src={item.src} alt={item.alt || "image"} className="max-h-full object-contain" />
+                      {mediaKey === "trailer" ? (
+                        <Video />
+                      ) : (
+                        <Image src={item.src} alt={item.alt || "image"} className="max-h-full object-contain" />
+                      )}
 
                       <div className="absolute bottom-0 left-0 right-0 flex justify-end gap-1 bg-gradient-to-t from-black p-2">
                         <Button

@@ -6,6 +6,7 @@ import path from "path";
 import fs from "fs";
 import { ErrorMessage } from "../../common/error";
 import * as MetadataService from "@main/metadata/index";
+import * as YoutubeApi from "@main/externalApi/youtube/endpoints";
 
 export const getAllMedia = async (gameId: string) => {
   const game = await queries.Game.getGameById(gameId);
@@ -115,7 +116,11 @@ export const downloadByUrl = async (gameId: string, mediaType: MEDIA_TYPE, url: 
     throw new Error(ErrorMessage.INVALID_GAME);
   }
 
-  return await MetadataService.downloadImage(mediaType, game, url);
+  if (mediaType === MEDIA_TYPE.TRAILER) {
+    return await YoutubeApi.download(game, url);
+  } else {
+    return await MetadataService.downloadImage(mediaType, game, url);
+  }
 };
 
 export const setDefault = async (gameId: string, mediaType: MEDIA_TYPE, name: string) => {

@@ -14,6 +14,7 @@ import type { FilterConfig, GameWithRelations, RankingWithRelation, SortConfig }
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "../main/manager/configManager";
 import { MEDIA_TYPE } from "../common/constant";
+import { Video } from "@main/externalApi/youtube/types";
 
 export interface ConfigAPI {
   get: (key: PathsToProperties<AppConfig>) => Promise<any>;
@@ -72,7 +73,7 @@ export interface MediaAPI {
   getAchievements: (gameId: string, count?: number) => Promise<string[]>;
   getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
   delete: (gameId: string, mediaType: string, mediaId: string) => Promise<void>;
-  search: (gameId: string, mediaType: MEDIA_TYPE, page: number) => Promise<string[]>;
+  search: (gameId: string, mediaType: MEDIA_TYPE, page: number) => Promise<string[] | Video[]>;
   downloadByUrl: (gameId: string, mediaType: MEDIA_TYPE, url: string) => Promise<void>;
   setDefault: (gameId: string, mediaType: MEDIA_TYPE, name: string) => Promise<void>;
   removeDefault: (gameId: string, mediaType: MEDIA_TYPE) => Promise<void>;
