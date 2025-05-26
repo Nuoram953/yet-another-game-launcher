@@ -21,6 +21,7 @@ import NotFound from "./pages/error/notFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
+import { SettingPage } from "./pages/setting/Index";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
@@ -92,6 +93,17 @@ const App = () => {
                       </Layout>
                     }
                   />
+
+                  <Route
+                    index
+                    path="/setting"
+                    element={
+                      <Layout>
+                        <SettingPage />
+                      </Layout>
+                    }
+                  />
+
                   <Route
                     path="*"
                     element={

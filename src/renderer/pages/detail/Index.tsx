@@ -28,6 +28,7 @@ import { Container } from "@render/components/layout/Container";
 import { Image } from "@component/image/Image";
 import useWindowSize from "@hook/useWindowSize";
 import { CookieType, getCookie, setCookie } from "@render/utils/cookieUtil";
+import { Header } from "@render/components/layout/Header";
 
 interface Section {
   id: string;
@@ -207,6 +208,7 @@ const GameDetailsContent: React.FC = () => {
 
   return (
     <div className="flex h-screen flex-col bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+      <Header>Go back</Header>
       <Background>
         <div className="flex flex-col items-center justify-center gap-8">
           <Logo />

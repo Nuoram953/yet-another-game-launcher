@@ -116,9 +116,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
 
-            <SidebarMenuItem key={"Settings"}>
+            <SidebarMenuItem key={"Setting"}>
               <SidebarMenuButton asChild>
-                <a onClick={() => navigate("/settings")}>
+                <a onClick={() => navigate("/setting")}>
                   <Settings />
                   <span>Settings</span>
                 </a>
