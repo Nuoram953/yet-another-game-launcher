@@ -5,6 +5,8 @@ import { AppSidebar } from "@render/components/sidebar/AppSidebar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "../ui/breadcrumb";
 import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../button/Button";
+import { House, SidebarIcon } from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,9 +31,19 @@ export default function Layout({ children }: LayoutProps) {
         <AppSidebar />
         <SidebarInset className="flex min-h-0 flex-1 flex-col">
           <main className="flex min-h-0 flex-1 flex-col bg-gradient-to-br from-gray-900 to-gray-800">
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800">
+            <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800 bg-sidebar">
               <div className="flex items-center gap-2 px-4">
-                <SidebarTrigger className="dark" />
+                <Button
+                  icon={SidebarIcon}
+                  intent="icon"
+                  size="fit"
+                  onClick={() => {
+                    setOpen(!open);
+                  }}
+                />
+                {breadcrumbs.length > 0 && (
+                  <Button icon={House} intent="icon" size="fit" onClick={() => navigate("/")} />
+                )}
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <Breadcrumb>
                   <BreadcrumbList>

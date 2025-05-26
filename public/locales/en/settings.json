@@ -1,0 +1,30 @@
+{
+  "storefront": {
+    "steam": {
+      "sectionTitles": {
+        "enable": "Enable",
+        "authentication": "Authentication",
+        "global": "Global Settings"
+      },
+      "enable": {
+        "title": "Enable Steam integration",
+        "description": "Enable or disable Steam integration in the application."
+      },
+      "apiKey": {
+        "title": "Steam API Key",
+        "description": "To use Steam integration, you need to provide your Steam API key. You can get it from the Steam developer portal.",
+        "placeholder": "Enter your Steam API key"
+      },
+      "accountName": {
+        "title": "Account name",
+        "description": "Enter a name if you have multipe accout. Leave blank to use default ",
+        "placeholder": "Enter your Steam account name"
+      },
+      "customPath": {
+        "title": "Custom installation path",
+        "description": "Leave off if you're using the default steam installation path",
+        "placeholder": "Enter your Steam installation path"
+      }
+    }
+  }
+}
