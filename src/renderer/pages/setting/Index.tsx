@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Globe, Settings } from "lucide-react";
 import { SettingStoreSteam } from "./store/Steam";
 import { SettingStoreEpic } from "./store/Epic";
+import { useBreadcrumbsContext } from "@render/context/BreadcrumbsContext";
 
 export const SettingPage = () => {
   const [activeCategory, setActiveCategory] = useState("storefront");
   const [activeSubcategory, setActiveSubcategory] = useState("steam");
+  const { setBreadcrumbs } = useBreadcrumbsContext();
+
+  useEffect(() => {
+    setBreadcrumbs([{ path: "/setting", label: "Settings" }]);
+  }, []);
 
   const categories = {
     storefront: {
@@ -30,7 +36,7 @@ export const SettingPage = () => {
   return (
     <div className="flex h-screen flex-col text-white">
       <div className="flex h-full">
-        <div className="flex h-full w-80 flex-col dark:bg-slate-800">
+        <div className="flex h-full w-64 flex-col dark:bg-slate-800">
           <div className="p-6">
             <div className="flex items-center space-x-3">
               <Settings className="h-6 w-6 text-white" />
@@ -54,7 +60,7 @@ export const SettingPage = () => {
                   </button>
 
                   {activeCategory === key && (
-                    <div className="bg-slate-600">
+                    <div className="">
                       {Object.entries(category.subcategories).map(([subKey, subcategory]) => (
                         <button
                           key={subKey}

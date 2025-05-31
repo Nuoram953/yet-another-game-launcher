@@ -13,6 +13,7 @@ import { NotificationType, RouteDownload } from "../../../common/constant";
 import { delay } from "../../utils/utils";
 import notificationManager from "../../manager/notificationManager";
 import * as SteamService from "./service";
+import * as SteamConfig from "./config";
 
 interface DownloadStats {
   id: string;
@@ -40,7 +41,11 @@ class DownloadTracker {
 
   private async estimateTotalSize() {
     try {
-      const manifestPath = path.join(getDefaultSteamPath(), "steamapps", `appmanifest_${this.gameId}.acf`);
+      const manifestPath = path.join(
+        await SteamConfig.getDefaultSteamPath(),
+        "steamapps",
+        `appmanifest_${this.gameId}.acf`,
+      );
 
       const file = fs.readFileSync(manifestPath, "utf-8");
       const decode = acfParser.decode(file);
@@ -54,7 +59,11 @@ class DownloadTracker {
   async getDownloadStats() {
     let isDownloadInProgress = true;
     while (isDownloadInProgress) {
-      const downloadingFolder = path.join(getDefaultSteamPath(), "steamapps/downloading", this.gameId);
+      const downloadingFolder = path.join(
+        await SteamConfig.getDefaultSteamPath(),
+        "steamapps/downloading",
+        this.gameId,
+      );
 
       if (!fs.existsSync(downloadingFolder)) {
         isDownloadInProgress = false;
@@ -91,7 +100,11 @@ class DownloadTracker {
   }
 
   async stop() {
-    const manifestPath = path.join(getDefaultSteamPath(), "steamapps", `appmanifest_${this.gameId}.acf`);
+    const manifestPath = path.join(
+      await SteamConfig.getDefaultSteamPath(),
+      "steamapps",
+      `appmanifest_${this.gameId}.acf`,
+    );
     if (fs.existsSync(manifestPath)) {
       await queries.DownloadHistory.create(this.game.id);
 

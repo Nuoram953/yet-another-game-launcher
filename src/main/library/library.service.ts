@@ -9,6 +9,7 @@ import { Epic } from "../storefront/epic/api";
 import * as SteamCommand from "../storefront/steam/commands";
 import * as SteamService from "@main/storefront/steam/service";
 import * as EpicCommand from "../storefront/epic/commands";
+import * as GameService from "@main/game/game.service";
 import * as YoutubeEndpoints from "@main/externalApi/youtube/endpoints";
 import dataManager from "../manager/dataChannelManager";
 import { createGameActiviy } from "../dal/gameActiviy";

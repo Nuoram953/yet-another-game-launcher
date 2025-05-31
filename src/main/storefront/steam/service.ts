@@ -6,6 +6,7 @@ import { join } from "path";
 import fs from "fs";
 import queries from "@main/dal/dal";
 import * as SteamEndpoints from "./endpoints";
+import * as SteamConfig from "./config";
 import * as MetadataService from "@main/metadata/index";
 
 //@ts-ignore-error - Missing type definitions
@@ -51,7 +52,7 @@ export const refresh = async () => {
 };
 
 export const getInstalledGameDetail = async (appId: string): Promise<Partial<Game>> => {
-  const steamDir = join(getDefaultSteamPath(), "steamapps");
+  const steamDir = join(await SteamConfig.getDefaultSteamPath(), "steamapps");
   const manifestFile = `appmanifest_${appId}.acf`;
   const file = join(steamDir, manifestFile);
 

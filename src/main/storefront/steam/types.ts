@@ -48,3 +48,16 @@ export interface GetPlayerAchievementsResponse {
     success: boolean;
   };
 }
+
+export interface SteamAccountInfo {
+  AccountName: string;
+  PersonaName: string;
+  RememberPassword: number;
+  WantsOfflineMode: number;
+  SkipOfflineModeWarning: number;
+  AllowAutoLogin: number;
+  MostRecent: number;
+  Timestamp: number;
+}
+
+export type SteamAccountsArray = [string, SteamAccountInfo][];

@@ -111,7 +111,7 @@ async function electronAppInit() {
 
     await config.init({
       store: {
-        steam: { enable: true },
+        steam: { enable: true, apiKey: "", accountName: "", isntallationPath: null },
         epic: { enable: true },
       },
     });

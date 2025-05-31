@@ -1,10 +1,13 @@
 import fs from "fs";
 import path from "path";
 import os from "os";
+import * as ConfigService from "@main/config/config.service";
 
 import VDF from "vdf-parser";
+import { SteamAccountsArray } from "./types";
+import _ from "lodash";
 
-export const getDefaultSteamPath = (): string => {
+export const getDefaultSteamPath = async (): Promise<string> => {
   const platform = os.platform();
   const homeDir = os.homedir();
 
@@ -38,13 +41,19 @@ export const getDefaultSteamPath = (): string => {
 };
 
 export const getSteamUserId = async () => {
-  const steamDir = getDefaultSteamPath();
+  const steamDir = await getDefaultSteamPath();
   const steamConfigDirectory = path.join(steamDir, "config");
   const data = await fs.promises.readFile(`${steamConfigDirectory}/loginusers.vdf`, "utf8");
 
   const loginUsersJson: any = await VDF.parse(data);
-  const users = Object.entries(loginUsersJson.users);
+  const users: SteamAccountsArray = Object.entries(loginUsersJson.users);
 
-  const user = users[0];
+  const configUser = await ConfigService.get("store.steam.accountName");
+
+  const user = users.find(([_, info]) => info.AccountName === configUser);
+
+  if (_.isNil(user)) {
+    return users[0][0];
+  }
   return user[0];
 };
