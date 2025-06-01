@@ -2,6 +2,7 @@ export enum LOCALE_NAMESPACE {
   COMMON = "common",
   GAME_STATUS = "GameStatus",
   FILTER = "filter",
+  SETTINGS = "settings",
 }
 
 export enum MEDIA_TYPE {

@@ -28,6 +28,7 @@ import { Container } from "@render/components/layout/Container";
 import { Image } from "@component/image/Image";
 import useWindowSize from "@hook/useWindowSize";
 import { CookieType, getCookie, setCookie } from "@render/utils/cookieUtil";
+import { Header } from "@render/components/layout/Header";
 
 interface Section {
   id: string;

@@ -3,11 +3,7 @@ import { AppConfig } from "../../common/interface";
 import { PathsToProperties } from "../manager/configManager";
 
 export const get = async (key: PathsToProperties<AppConfig>) => {
-  const value = await config.get(key);
-  if (!value) {
-    throw new Error(`Config key ${key} not found`);
-  }
-  return value;
+  return await config.get(key);
 };
 
 export const getAll = async () => {
