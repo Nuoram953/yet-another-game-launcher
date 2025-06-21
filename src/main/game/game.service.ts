@@ -299,3 +299,14 @@ export const refreshProgressTracker = async (id: string) => {
 
   await refreshGame(game.id);
 };
+
+export const refreshInfo = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  await createOrUpdateGame(game, game.storefrontId, true);
+
+  await refreshGame(game.id);
+};

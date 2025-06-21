@@ -36,6 +36,7 @@ model Game {
   summary                String?
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
+  releasedAt             DateTime?
   openedAt               DateTime?
   mainStory              Int?
   mainPlusExtra          Int?

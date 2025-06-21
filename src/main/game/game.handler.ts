@@ -105,3 +105,14 @@ ipcMain.handle(RouteGame.SET_FAVORITE, async (_event, data) => {
     });
   }
 });
+
+ipcMain.handle(RouteGame.REFRESH_INFO, async (_event, id) => {
+  try {
+    await GameService.refreshInfo(id);
+  } catch (e) {
+    log.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteGame.REFRESH_INFO,
+      error: e,
+    });
+  }
+});

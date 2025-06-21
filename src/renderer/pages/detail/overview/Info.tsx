@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@render//components/ui/badge";
-import { Star, Calendar, Users, Building, Heart, Share2, BookOpen } from "lucide-react";
+import { Star, Calendar, Users, Building, Heart, Share2, BookOpen, RefreshCcw } from "lucide-react";
 import { useGames } from "@render//context/DatabaseContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@render//components/ui/tooltip";
 import { Progress } from "@render//components/ui/progress";
@@ -38,7 +38,7 @@ const GameInfo = () => {
   }
 
   const getReleaseYear = () => {
-    return new Date(selectedGame?.createdAt).getFullYear();
+    return new Date(selectedGame?.releasedAt).getFullYear();
   };
 
   const handleShareGame = () => {
@@ -65,7 +65,7 @@ const GameInfo = () => {
       <Badge
         key={genre.tag.name}
         variant="outline"
-        className="border-none bg-gray-800 px-3 py-1 text-gray-100 hover:bg-gray-700"
+        className="border-none bg-gray-700 px-3 py-1 text-gray-200 hover:bg-gray-600"
       >
         {genre.tag.name}
       </Badge>
@@ -85,14 +85,38 @@ const GameInfo = () => {
     ));
   };
 
-  const formattedDate = new Date(selectedGame?.createdAt).toLocaleDateString(undefined, {
+  const renderGameMode = () => {
+    const gameModes = selectedGame?.tags?.filter((tag) => tag.isGameMode) || [];
+    return gameModes.map((theme) => (
+      <Badge
+        key={theme.tag.name}
+        variant="outline"
+        className="border-none bg-gray-700 px-3 py-1 text-gray-200 hover:bg-gray-600"
+      >
+        {theme.tag.name}
+      </Badge>
+    ));
+  };
+
+  const formattedDate = new Date(selectedGame?.releasedAt).toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
   return (
-    <Card title="">
+    <Card
+      title=""
+      actions={[
+        {
+          icon: RefreshCcw,
+          name: "Refresh",
+          onClick: async () => {
+            await window.game.refreshInfo(selectedGame.id);
+          },
+        },
+      ]}
+    >
       <div className="h-fit bg-gray-800 bg-opacity-50" />
       <div className="flex items-start justify-between">
         <div className="flex-1">
@@ -158,26 +182,28 @@ const GameInfo = () => {
           </TooltipProvider>
         </div>
       </div>
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
-              <Star className={`${getScoreColor(selectedGame.scoreCritic ?? 0)}`} size={20} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className={`text-2xl font-bold ${getScoreColor(selectedGame.scoreCritic ?? 0)}`}>
-                  {selectedGame.scoreCritic || "N/A"}
-                </span>
-                <span className="text-xs text-gray-400">/100</span>
+      <div className="mt-6 flex flex-row gap-4">
+        {selectedGame.scoreCritic && (
+          <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
+                <Star className={`${getScoreColor(selectedGame.scoreCritic ?? 0)}`} size={20} />
               </div>
-              <div className="mt-1">
-                <Progress value={scoreAnimation} className="h-1 w-24" />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-2xl font-bold ${getScoreColor(selectedGame.scoreCritic ?? 0)}`}>
+                    {selectedGame.scoreCritic || "N/A"}
+                  </span>
+                  <span className="text-xs text-gray-400">/100</span>
+                </div>
+                <div className="mt-1">
+                  <Progress value={scoreAnimation} className="h-1 w-24" />
+                </div>
+                <div className="mt-1 text-xs text-gray-400">Critic Score</div>
               </div>
-              <div className="mt-1 text-xs text-gray-400">Metacritic Score</div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
           <div className="flex items-center gap-3">
@@ -191,17 +217,23 @@ const GameInfo = () => {
           </div>
         </div>
       </div>
-      <div>
-        <h3 className="mb-2 text-lg font-medium text-gray-300">About</h3>
-        <p className="leading-relaxed text-gray-400">{selectedGame.summary}</p>
-      </div>
-      <div>
-        <h3 className="mb-3 text-lg font-medium text-gray-300">Genres</h3>
-        <div className="flex flex-wrap gap-2">{renderGenres()}</div>
-      </div>
-      <div>
-        <h3 className="mb-3 text-lg font-medium text-gray-300">Themes</h3>
-        <div className="flex flex-wrap gap-2">{renderThemes()}</div>
+      <div className="mt-6 flex flex-col gap-4">
+        <div>
+          <h3 className="mb-2 text-lg font-medium text-gray-300">About</h3>
+          <p className="leading-relaxed text-gray-400">{selectedGame.summary}</p>
+        </div>
+        <div>
+          <h3 className="mb-3 text-lg font-medium text-gray-300">Genres</h3>
+          <div className="flex flex-wrap gap-2">{renderGenres()}</div>
+        </div>
+        <div>
+          <h3 className="mb-3 text-lg font-medium text-gray-300">Themes</h3>
+          <div className="flex flex-wrap gap-2">{renderThemes()}</div>
+        </div>
+        <div>
+          <h3 className="mb-3 text-lg font-medium text-gray-300">Game Modes</h3>
+          <div className="flex flex-wrap gap-2">{renderGameMode()}</div>
+        </div>
       </div>
     </Card>
   );

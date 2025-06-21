@@ -95,6 +95,7 @@ export enum RouteGame {
   SET_FAVORITE = "game:setFavorite",
   SET_SETTING_GAMESCOPE = "game:setGamescope",
   REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
+  REFRESH_INFO = "game:refreshInfo",
 }
 
 export enum GameStatus {

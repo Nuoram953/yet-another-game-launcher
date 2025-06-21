@@ -26,6 +26,11 @@ export const downloadImage = async (
     return;
   }
 
+  if (countFiles >= 15) {
+    logger.debug(`${game.name} (${game.id}) has ${countFiles} ${type} and the max was ${15}. Skipping`);
+    return;
+  }
+
   const response = await axios.get<Buffer>(url, {
     responseType: "arraybuffer",
   });

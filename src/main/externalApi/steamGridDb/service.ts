@@ -25,7 +25,7 @@ export const downloadMedia = async (game: GameWithRelations, mediaType: MEDIA_TY
 
   let path = MetadataService.getImageDirectoryPath(mediaType, game.id);
   let files = MetadataService.getNumberOfFiles(path);
-  if (files >= max) {
+  if (files) {
     logger.debug(`${game.name} (${game.id}) has ${files} ${mediaType} and the max was ${max}. Skipping`);
     return;
   }

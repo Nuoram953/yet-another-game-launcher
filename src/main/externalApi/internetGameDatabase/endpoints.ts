@@ -86,6 +86,7 @@ export const getGame = async (game: GameWithRelations | Game) => {
     summary: data.storyline ?? data.summary,
     scoreCritic: data.aggregated_rating ?? null,
     scoreCommunity: data.rating ?? null,
+    releasedAt: data.first_release_date ? new Date(data.first_release_date * 1000) : null,
   };
 
   return {

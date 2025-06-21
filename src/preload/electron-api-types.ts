@@ -118,6 +118,7 @@ export interface GameAPI {
   setGamescope: (data: GameConfigGamescope) => Promise<void>;
   setFavorite: (data: Partial<Game>) => Promise<void>;
   refreshProgressTracker: (id: string) => Promise<void>;
+  refreshInfo: (id: string) => Promise<void>;
 }
 
 export interface DataAPI {
