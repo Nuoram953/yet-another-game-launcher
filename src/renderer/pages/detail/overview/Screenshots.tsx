@@ -1,4 +1,10 @@
-import { Carousel, CarouselContent, CarouselItem } from "@render//components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@render//components/ui/carousel";
 import { useGames } from "@render//context/DatabaseContext";
 import React, { useEffect, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
@@ -16,7 +22,6 @@ export const Screenshots = () => {
     const fetch = async () => {
       try {
         const response = await window.media.getScreenshots(selectedGame.id);
-
         setScreenshots(response);
         setLoading(false);
       } catch (error) {
@@ -33,15 +38,8 @@ export const Screenshots = () => {
   return (
     <>
       {screenshots.length > 0 && (
-        <Carousel
-          className="mx-auto flex items-center justify-center"
-          plugins={[
-            Autoplay({
-              delay: 5000,
-            }),
-          ]}
-        >
-          <CarouselContent className="min-h-48">
+        <Carousel className="mx-auto flex items-center justify-center" plugins={[]}>
+          <CarouselContent className="overflow-x-auto">
             {screenshots.map((screenshot, index) => (
               <CarouselItem key={index} className="pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
                 <img

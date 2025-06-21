@@ -3,14 +3,13 @@ import Cover from "./cover/Cover";
 import _ from "lodash";
 import { useGames } from "@render//context/DatabaseContext";
 
-//@ts-ignore
 import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { RecentlyPlayedCarousel } from "./RecentlyPlayedCarousel";
 import useGridScrollPersist from "@render//hooks/usePersistentScroll";
 import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import { Button } from "@render//components/button/Button";
-import { Plus } from "lucide-react";
+import { EllipsisVertical, Plus } from "lucide-react";
 import { Sort } from "./Sort";
 import { Input } from "@render//components/input/Input";
 import { Header } from "@render//components/layout/Header";
@@ -127,15 +126,17 @@ export const Grid = () => {
               )}
             </div>
           </div>
-          <div>
+          <div className="flew-row flex gap-2">
             <Button
               intent={"primary"}
+              iconColor="black"
               text="Add game"
               icon={Plus}
               size={"small"}
               className="w-fit"
               onClick={() => {}}
             />
+            <Button intent={"icon"} icon={EllipsisVertical} size={"fit"} onClick={() => {}} />
           </div>
         </Header>
       </div>

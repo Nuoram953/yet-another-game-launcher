@@ -154,6 +154,32 @@ export const createOrUpdateGame = async (
       const url = `https:${image}`;
       await MetadataService.downloadImage(MEDIA_TYPE.SCREENSHOT, game, url.replace("t_thumb", "t_1080p"), "jpg");
     }
+
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepDownloadingTags"),
+      i18n.t("newGame.stepDownloadingTags", { ns: "notification" }),
+    );
+    for (const tag of igdbData.themes) {
+      await queries.GameTag.findOrCreate(game.id, tag, {
+        gameId: game.id,
+        isTheme: true,
+      });
+    }
+
+    for (const tag of igdbData.gameModes) {
+      await queries.GameTag.findOrCreate(game.id, tag, {
+        gameId: game.id,
+        isGameMode: true,
+      });
+    }
+
+    for (const tag of igdbData.genres) {
+      await queries.GameTag.findOrCreate(game.id, tag, {
+        gameId: game.id,
+        isGenre: true,
+      });
+    }
   }
 
   notificationManager.updateProgress(

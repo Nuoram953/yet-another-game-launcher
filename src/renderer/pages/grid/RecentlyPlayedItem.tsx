@@ -6,6 +6,7 @@ import { Image } from "@render//components/image/Image";
 import { Clock, Trophy } from "lucide-react";
 import { convertToHoursAndMinutes } from "@render//utils/util";
 import { GameWithRelations } from "src/common/types";
+import { Skeleton } from "@render/components/ui/skeleton";
 
 interface Props {
   index: number;
@@ -36,7 +37,7 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Skeleton className="h-40 w-full" />;
   }
 
   return (

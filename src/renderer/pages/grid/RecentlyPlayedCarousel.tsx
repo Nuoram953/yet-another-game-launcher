@@ -4,6 +4,7 @@ import { useState } from "react";
 import { RecentlyPlayedCarouselItem } from "./RecentlyPlayedItem";
 import { Game } from "@prisma/client";
 import { GameWithRelations } from "src/common/types";
+import { Skeleton } from "@render/components/ui/skeleton";
 
 export const RecentlyPlayedCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,7 +34,7 @@ export const RecentlyPlayedCarousel = () => {
   }, [recentGames]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Skeleton className="h-40 w-full" />;
   }
 
   const nextSlide = () => {

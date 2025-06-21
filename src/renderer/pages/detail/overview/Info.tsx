@@ -6,11 +6,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@rende
 import { Progress } from "@render//components/ui/progress";
 import React from "react";
 import { Card } from "@render//components/card/Card";
+import { Image } from "@render/components/image/Image";
+import { useTranslation } from "react-i18next";
+import { LOCALE_NAMESPACE } from "@common/constant";
 
 const GameInfo = () => {
   const { selectedGame } = useGames();
   const [isFavorite, setIsFavorite] = useState(selectedGame?.isFavorite || false);
   const [scoreAnimation, setScoreAnimation] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (selectedGame?.scoreCritic) {
@@ -89,8 +93,7 @@ const GameInfo = () => {
 
   return (
     <Card title="">
-      {/* Game Header */}
-      <div className="h-fit bg-gray-800 bg-opacity-50" /> {/* Game cover image would go here */}
+      <div className="h-fit bg-gray-800 bg-opacity-50" />
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="mb-1 flex flex-row items-center">
@@ -106,6 +109,15 @@ const GameInfo = () => {
             <div className="flex items-center gap-1.5">
               <Users size={16} className="text-gray-400" />
               <span className="text-sm text-gray-300">{publisher}</span>
+            </div>
+          </div>
+
+          <div className="mt-3 flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <Image src={`/icons/${selectedGame.storefront.name}.png`} alt={""} height={24} width={24} />
+              <span className="text-sm text-gray-300">
+                {t(`storefront.${selectedGame.storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON })}
+              </span>
             </div>
           </div>
         </div>
@@ -146,7 +158,6 @@ const GameInfo = () => {
           </TooltipProvider>
         </div>
       </div>
-      {/* Score & Release Date */}
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
           <div className="flex items-center gap-3">

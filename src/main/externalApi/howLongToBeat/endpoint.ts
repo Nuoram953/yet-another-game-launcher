@@ -55,8 +55,8 @@ export const search = async (name: string) => {
   const game = data.data[0];
 
   return {
-    mainStory: game.comp_main,
-    mainPlusExtra: game.comp_plus,
-    completionist: game.comp_100,
+    mainStory: game?.comp_main,
+    mainPlusExtra: game?.comp_plus,
+    completionist: game?.comp_100,
   };
 };
