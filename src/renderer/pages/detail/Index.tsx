@@ -29,6 +29,8 @@ import { Image } from "@component/image/Image";
 import useWindowSize from "@hook/useWindowSize";
 import { CookieType, getCookie, setCookie } from "@render/utils/cookieUtil";
 import { Header } from "@render/components/layout/Header";
+import { useTranslation } from "react-i18next";
+import { LOCALE_NAMESPACE } from "@common/constant";
 
 interface Section {
   id: string;
@@ -47,6 +49,7 @@ const GameDetailsContent: React.FC = () => {
   const [cover, setCover] = useState<string | null>(null);
   const [icon, setIcon] = useState<string | null>(null);
   const { selectedGame, running, updateSelectedGame } = useGames();
+  const { t } = useTranslation();
 
   useEffect(() => {
     setCollapsed(width < 1200);
@@ -69,7 +72,11 @@ const GameDetailsContent: React.FC = () => {
 
           setBreadcrumbs([
             { path: "/", label: "Library" },
-            { path: `/game/${result.id}`, label: result.name },
+            {
+              path: `/library/${result.storefront.name}`,
+              label: t(`storefront.${result.storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON }),
+            },
+            { path: `/library/${result.storefront.name}/game/${result.id}`, label: result.name },
           ]);
         }
       } catch (error) {
@@ -110,12 +117,6 @@ const GameDetailsContent: React.FC = () => {
     system: [
       { id: "metadata", icon: ImageIcon, label: "Metadata", show: true },
       { id: "settings", icon: Settings, label: "Settings", show: true },
-      {
-        id: "uninstall",
-        icon: Trash,
-        label: "Uninstall",
-        show: selectedGame?.isInstalled ?? false,
-      },
     ],
   };
 
@@ -222,15 +223,6 @@ const GameDetailsContent: React.FC = () => {
           } shadow-lg dark:bg-slate-800`}
         >
           <div className="relative p-4 backdrop-blur-lg dark:bg-slate-800">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute right-2 top-2 h-8 w-8 p-0"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              <ChevronLeft className={`h-4 w-4 transition-transform ${collapsed ? "rotate-180" : ""}`} />
-            </Button>
-
             <div className="overflow-hidden rounded-lg shadow-md">
               <Image src={(collapsed ? icon! : cover!) ?? ""} alt={undefined} />
             </div>

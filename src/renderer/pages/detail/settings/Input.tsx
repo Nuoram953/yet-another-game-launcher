@@ -44,9 +44,17 @@ interface InputTextProps {
   inputOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   inputPlaceholder: string;
   inputValue: string;
+  customClass?: string;
 }
 
-export const InputText = ({ title, description, inputOnChange, inputPlaceholder, inputValue }: InputTextProps) => {
+export const InputText = ({
+  title,
+  description,
+  inputOnChange,
+  inputPlaceholder,
+  inputValue,
+  customClass,
+}: InputTextProps) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
@@ -55,7 +63,13 @@ export const InputText = ({ title, description, inputOnChange, inputPlaceholder,
           <span className="text-sm text-gray-500">{description}</span>
         </Label>
       </div>
-      <Input color={"dark"} placeholder={inputPlaceholder} value={inputValue} onChange={inputOnChange} />
+      <Input
+        className={customClass}
+        color={"dark"}
+        placeholder={inputPlaceholder}
+        value={inputValue}
+        onChange={inputOnChange}
+      />
     </div>
   );
 };

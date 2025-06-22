@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@render//components/ui/badge";
-import { Star, Calendar, Users, Building, Heart, Share2, BookOpen, RefreshCcw } from "lucide-react";
+import { Star, Calendar, Users, Building, Heart, Share2, BookOpen, RefreshCcw, Trash } from "lucide-react";
 import { useGames } from "@render//context/DatabaseContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@render//components/ui/tooltip";
 import { Progress } from "@render//components/ui/progress";
@@ -39,10 +39,6 @@ const GameInfo = () => {
 
   const getReleaseYear = () => {
     return new Date(selectedGame?.releasedAt).getFullYear();
-  };
-
-  const handleShareGame = () => {
-    console.log("Sharing game:", selectedGame.name);
   };
 
   const toggleFavorite = () => {
@@ -115,6 +111,14 @@ const GameInfo = () => {
             await window.game.refreshInfo(selectedGame.id);
           },
         },
+        {
+          icon: Trash,
+          name: "Uninstall",
+          onClick: async () => {
+            await window.game.uninstall(selectedGame.id);
+          },
+          disabled: !selectedGame.isInstalled,
+        },
       ]}
     >
       <div className="h-fit bg-gray-800 bg-opacity-50" />
@@ -146,41 +150,25 @@ const GameInfo = () => {
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={toggleFavorite}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-gray-700 ${
-                    isFavorite ? "text-red-500" : "text-gray-400"
-                  }`}
-                >
-                  <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>{selectedGame.isFavorite ? "Remove from favorites" : "Add to favorites"}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleShareGame}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-colors hover:bg-gray-700"
-                >
-                  <Share2 size={18} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>Share</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        {/* <div className="flex gap-2"> */}
+        {/*   <TooltipProvider> */}
+        {/*     <Tooltip> */}
+        {/*       <TooltipTrigger asChild> */}
+        {/*         <button */}
+        {/*           onClick={toggleFavorite} */}
+        {/*           className={`flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-gray-700 ${ */}
+        {/*             isFavorite ? "text-red-500" : "text-gray-400" */}
+        {/*           }`} */}
+        {/*         > */}
+        {/*           <Heart size={18} fill={isFavorite ? "currentColor" : "none"} /> */}
+        {/*         </button> */}
+        {/*       </TooltipTrigger> */}
+        {/*       <TooltipContent side="bottom"> */}
+        {/*         <p>{selectedGame.isFavorite ? "Remove from favorites" : "Add to favorites"}</p> */}
+        {/*       </TooltipContent> */}
+        {/*     </Tooltip> */}
+        {/*   </TooltipProvider> */}
+        {/* </div> */}
       </div>
       <div className="mt-6 flex flex-row gap-4">
         {selectedGame.scoreCritic && (
