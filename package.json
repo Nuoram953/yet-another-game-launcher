@@ -30,7 +30,10 @@
     "prebuild": "electron-vite build",
     "lint": "eslint --ext .ts,.tsx .",
     "prepare": "husky",
-    "test": "NODE_ENV=test npx electron-mocha -r ts-node/register -r tsconfig-paths/register test/**/*.test.ts"
+    "test": "NODE_ENV=test npx electron-mocha -r ts-node/register -r tsconfig-paths/register test/**/*.test.ts",
+    "build:win": "npm run build && electron-builder --win --config",
+    "build:mac": "npm run build && electron-builder --mac --config",
+    "build:linux": "npm run build && electron-builder --linux --config"
   },
   "commitlint": {
     "extends": [
