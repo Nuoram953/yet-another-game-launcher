@@ -17,14 +17,14 @@ export default defineConfig({
       },
     },
     plugins: [
-      viteStaticCopy({
-        targets: [
-          {
-            src: './public/yt-dlp',
-            dest: '../bin'
-          }
-        ]
-      }),
+      // viteStaticCopy({
+      //   targets: [
+      //     {
+      //       src: './public/yt-dlp',
+      //       dest: '../bin'
+      //     }
+      //   ]
+      // }),
     ]
   },
   preload: {
@@ -65,13 +65,13 @@ export default defineConfig({
   },
   logLevel: "info",
   plugins: [
-    viteStaticCopy({
-      targets: [
-        {
-          src: './public/yt-dlp',
-          dest: 'bin'
-        }
-      ]
-    }),
+    // viteStaticCopy({
+    //   targets: [
+    //     {
+    //       src: './public/yt-dlp',
+    //       dest: 'bin'
+    //     }
+    //   ]
+    // }),
   ],
 });
