@@ -25,6 +25,23 @@
       "dist/main/**/*",
       "dist/preload/**/*",
       "dist/renderer/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources",
+        "to": "resources",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "node_modules/.prisma",
+        "to": ".prisma"
+      },
+      {
+        "from": "prisma",
+        "to": "prisma"
+      }
     ]
   },
   "scripts": {
