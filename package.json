@@ -25,15 +25,16 @@
     ]
   },
   "scripts": {
-    "start": "electron-vite preview",
-    "dev": "electron-vite dev",
-    "prebuild": "electron-vite build",
-    "lint": "eslint --ext .ts,.tsx .",
-    "prepare": "husky",
-    "test": "NODE_ENV=test npx electron-mocha -r ts-node/register -r tsconfig-paths/register test/**/*.test.ts",
-    "build:win": "npm run build && electron-builder --win --config",
-    "build:mac": "npm run build && electron-builder --mac --config",
-    "build:linux": "npm run build && electron-builder --linux --config"
+    "dev": "vite",
+    "build": "vite build && electron-builder",
+    "build:electron": "electron-builder",
+    "build:dir": "electron-builder --dir",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder"
   },
   "commitlint": {
     "extends": [

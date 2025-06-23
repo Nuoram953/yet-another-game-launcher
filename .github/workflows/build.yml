@@ -18,43 +18,56 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20"
+          cache: "npm"
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: build-linux
-        if: matrix.os == 'ubuntu-latest'
-        run: npm run build:linux
+      - name: Build application
+        run: npm run build
 
-      # - name: build-mac
-      #   if: matrix.os == 'macos-latest'
-      #   run: npm run build:mac
-      #
-      # - name: build-win
+      - name: Build Electron app
+        run: npm run build:electron
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Upload artifacts (Windows)
       #   if: matrix.os == 'windows-latest'
-      #   run: npm run build:win
-
-      # - name: release
-      #   uses: softprops/action-gh-release@v1
+      #   uses: actions/upload-artifact@v4
       #   with:
-      #     draft: true
-      #     files: |
+      #     name: windows-build
+      #     path: |
       #       dist/*.exe
-      #       dist/*.zip
+      #       dist/*.msi
+      #       dist/*.appx
+      #     retention-days: 30
+
+      # - name: Upload artifacts (macOS)
+      #   if: matrix.os == 'macos-latest'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: macos-build
+      #     path: |
       #       dist/*.dmg
-      #       dist/*.AppImage
-      #       dist/*.snap
-      #       dist/*.deb
-      #       dist/*.rpm
-      #       dist/*.tar.gz
-      #       dist/*.yml
-      #       dist/*.blockmap
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      #       dist/*.zip
+      #       dist/*.pkg
+      #     retention-days: 30
+
+      - name: Upload artifacts (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.rpm
+            dist/*.tar.gz
+          retention-days: 30
