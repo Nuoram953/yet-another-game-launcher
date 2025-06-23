@@ -20,6 +20,7 @@ import ChartSessionDurationDistribution from "./ChartSessionDistribution";
 import ChartStartEndTimeScatterPlot from "./ChartSartEndTimeScatterPlot";
 import ChartHeatMapCalendar from "./ChartHeatMapCalendar";
 import ChartAMPMPlaytimeDistribution from "./ChartAmPmDistribution";
+import ChartDailyPlaytimeDistribution from "./ChartDailyPlaytimeDistribution";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -213,6 +214,15 @@ export const SectionActivities = () => {
       </div>
       <ChartStartEndTimeScatterPlot />
       <ChartSessionDurationDistribution />
+
+      <div className="flex w-full flex-row gap-4">
+        <div className="w-1/2">
+          <ChartDailyPlaytimeDistribution />
+        </div>
+        <div className="w-1/2">
+          <ChartAMPMPlaytimeDistribution />
+        </div>
+      </div>
       <ChartHeatMapCalendar />
 
       <div className="h-20"></div>
