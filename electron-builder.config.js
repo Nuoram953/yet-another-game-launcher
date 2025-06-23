@@ -7,7 +7,7 @@ const config = {
   linux: {
     target: [
       {
-        target: ["rpm"],
+        target: ["rpm", "AppImage"],
       },
     ],
   },
