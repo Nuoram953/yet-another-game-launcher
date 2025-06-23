@@ -14,12 +14,8 @@
     },
     "linux": {
       "target": [
-        {
-          "target": [
-            "rpm",
-            "AppImage"
-          ]
-        }
+        "rpm",
+        "AppImage"
       ]
     },
     "publish": null,
