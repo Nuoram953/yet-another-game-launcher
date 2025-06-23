@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -35,27 +35,27 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload artifacts (Windows)
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-build
-          path: |
-            dist/*.exe
-            dist/*.msi
-            dist/*.appx
-          retention-days: 30
-
-      - name: Upload artifacts (macOS)
-        if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-build
-          path: |
-            dist/*.dmg
-            dist/*.zip
-            dist/*.pkg
-          retention-days: 30
+      # - name: Upload artifacts (Windows)
+      #   if: matrix.os == 'windows-latest'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: windows-build
+      #     path: |
+      #       dist/*.exe
+      #       dist/*.msi
+      #       dist/*.appx
+      #     retention-days: 30
+      #
+      # - name: Upload artifacts (macOS)
+      #   if: matrix.os == 'macos-latest'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: macos-build
+      #     path: |
+      #       dist/*.dmg
+      #       dist/*.zip
+      #       dist/*.pkg
+      #     retention-days: 30
 
       - name: Upload artifacts (Linux)
         if: matrix.os == 'ubuntu-latest'
