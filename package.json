@@ -21,10 +21,14 @@
     "publish": null,
     "npmRebuild": false,
     "files": [
-      "!temp/**/*",
       "dist/main/**/*",
       "dist/preload/**/*",
-      "dist/renderer/**/*"
+      "dist/renderer/**/*",
+      "dist/bin/**/*",
+      "node_modules/.prisma/**/*",
+      "node_modules/@prisma/client/**/*",
+      "prisma/**/*",
+      "node_modules/**/*"
     ],
     "extraResources": [
       {
@@ -46,17 +50,18 @@
   },
   "scripts": {
     "dev": "electron-vite dev",
-    "build": "electron-vite build",
-    "build:electron": "electron-vite build && electron-builder",
-    "build:dir": "electron-vite build && electron-builder --dir",
-    "build:win": "electron-vite build && electron-builder --win",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux",
-    "build:dev": "electron-vite build --mode development",
+    "build": "prisma generate && electron-vite build",
+    "build:electron": "prisma generate && electron-vite build && electron-builder",
+    "build:dir": "prisma generate && electron-vite build && electron-builder --dir",
+    "build:win": "prisma generate && electron-vite build && electron-builder --win",
+    "build:mac": "prisma generate && electron-vite build && electron-builder --mac",
+    "build:linux": "prisma generate && electron-vite build && electron-builder --linux",
+    "build:dev": "prisma generate && electron-vite build --mode development",
     "preview": "electron-vite preview",
     "electron:dev": "electron-vite dev",
-    "electron:build": "electron-vite build && electron-builder",
-    "electron:pack": "electron-vite build && electron-builder --dir"
+    "electron:build": "prisma generate && electron-vite build && electron-builder",
+    "electron:pack": "prisma generate && electron-vite build && electron-builder --dir",
+    "postinstall": "prisma generate"
   },
   "commitlint": {
     "extends": [
