@@ -58,8 +58,8 @@ jobs:
         with:
           name: linux-build
           path: |
-            dist/*.AppImage
-            dist/*.deb
-            dist/*.rpm
-            dist/*.tar.gz
+            dist/electron/*.AppImage
+            dist/electron/*.deb
+            dist/electron/*.rpm
+            dist/electron/*.tar.gz
           retention-days: 30
