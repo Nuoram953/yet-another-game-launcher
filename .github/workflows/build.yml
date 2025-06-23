@@ -10,12 +10,12 @@ on:
   #     - main
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout code
@@ -30,35 +30,32 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build application
-        run: npm run build
-
       - name: Build Electron app
         run: npm run build:electron
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Upload artifacts (Windows)
-      #   if: matrix.os == 'windows-latest'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: windows-build
-      #     path: |
-      #       dist/*.exe
-      #       dist/*.msi
-      #       dist/*.appx
-      #     retention-days: 30
+      - name: Upload artifacts (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: |
+            dist/*.exe
+            dist/*.msi
+            dist/*.appx
+          retention-days: 30
 
-      # - name: Upload artifacts (macOS)
-      #   if: matrix.os == 'macos-latest'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: macos-build
-      #     path: |
-      #       dist/*.dmg
-      #       dist/*.zip
-      #       dist/*.pkg
-      #     retention-days: 30
+      - name: Upload artifacts (macOS)
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/*.pkg
+          retention-days: 30
 
       - name: Upload artifacts (Linux)
         if: matrix.os == 'ubuntu-latest'

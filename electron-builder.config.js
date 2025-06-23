@@ -11,7 +11,7 @@ const config = {
       },
     ],
   },
-  files: ["!temp/**/*", "dist/main/**/*", "dist/preload/**/*", "dist/render/**/*"],
+  files: ["!temp/**/*", "dist/main/**/*", "dist/preload/**/*", "dist/renderer/**/*"],
 };
 
 module.exports = config;
