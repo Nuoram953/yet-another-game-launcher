@@ -182,12 +182,5 @@
     "vdf-parser": "^1.2.1",
     "youtube-dl-exec": "3.0.20",
     "youtube-sr": "^4.3.11"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@swc/core",
-      "electron",
-      "esbuild"
-    ]
   }
 }
