@@ -16,15 +16,12 @@ export const StatsPanel = () => {
   const calculateRankings = () => {
     if (!games || games.length === 0) return { storefrontRank: 0, libraryRank: 0, storefrontTotal: 0, libraryTotal: 0 };
 
-    // Get all games sorted by playtime (descending)
     const allGamesSorted = [...games].sort((a, b) => (b.timePlayed || 0) - (a.timePlayed || 0));
 
-    // Get games from the same storefront
-    const currentStorefront = selectedGame.storefrontId; // Assuming storefront property exists
+    const currentStorefront = selectedGame.storefrontId;
     const storefrontGames = games.filter((game) => game.storefrontId === currentStorefront);
     const storefrontGamesSorted = [...storefrontGames].sort((a, b) => (b.timePlayed || 0) - (a.timePlayed || 0));
 
-    // Find positions (1-indexed)
     const libraryRank = allGamesSorted.findIndex((game) => game.id === selectedGame.id) + 1;
     const storefrontRank = storefrontGamesSorted.findIndex((game) => game.id === selectedGame.id) + 1;
 
@@ -96,7 +93,7 @@ export const StatsPanel = () => {
         label="Playtime Rank"
         value={`#${storefrontRank} in ${t(`storefront.${selectedGame.storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON }) || "Store"}`}
         detail={`#${libraryRank} in entire library`}
-        hide={libraryTotal <= 1}
+        hide={libraryTotal <= 1 || selectedGame.timePlayed === 0}
       />
     </div>
   );

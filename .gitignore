@@ -99,3 +99,4 @@ prisma/${process.env.USER_DATA_PATH}
 temp
 dist
 public/yt-dlp
+release/1.0.0
