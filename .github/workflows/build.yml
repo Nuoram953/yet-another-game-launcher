@@ -1,5 +1,4 @@
 name: Build/release Electron app
-
 on:
   workflow_dispatch:
   # push:
@@ -11,8 +10,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,37 +24,38 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm install
+      - name: Clean npm cache
+        run: npm cache clean --force
 
-      - name: Build Electron app
-        run: npm run build:electron
+      - name: Install dependencies
+        run: npm ci
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Upload artifacts (Windows)
+      - name: Clean build output
+        run: rm -rf dist
+
+      - name: Build Electron app (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run build:linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USE_HARD_LINKS: false
+
+      # - name: Build Electron app (Windows)
       #   if: matrix.os == 'windows-latest'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: windows-build
-      #     path: |
-      #       dist/*.exe
-      #       dist/*.msi
-      #       dist/*.appx
-      #     retention-days: 30
+      #   run: npm run build:windows
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #
-      # - name: Upload artifacts (macOS)
+      # - name: Build Electron app (macOS)
       #   if: matrix.os == 'macos-latest'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: macos-build
-      #     path: |
-      #       dist/*.dmg
-      #       dist/*.zip
-      #       dist/*.pkg
-      #     retention-days: 30
+      #   run: npm run build:mac
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifacts (Linux)
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
@@ -63,3 +65,45 @@ jobs:
             dist/electron/*.rpm
             dist/electron/*.tar.gz
           retention-days: 30
+
+      # - name: Upload artifacts (Windows)
+      #   if: matrix.os == 'windows-latest'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: windows-build
+      #     path: |
+      #       dist/electron/*.exe
+      #       dist/electron/*.msi
+      #       dist/electron/*.appx
+      #     retention-days: 30
+      #
+      # - name: Upload artifacts (macOS)
+      #   if: matrix.os == 'macos-latest'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: macos-build
+      #     path: |
+      #       dist/electron/*.dmg
+      #       dist/electron/*.zip
+      #       dist/electron/*.pkg
+      #     retention-days: 30
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for semantic-release
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run semantic release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release

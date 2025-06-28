@@ -142,7 +142,7 @@ const GameInfo = () => {
 
           <div className="mt-3 flex items-center gap-4">
             <div className="flex items-center gap-1.5">
-              <Image src={`/icons/${selectedGame.storefront.name}.png`} alt={""} height={24} width={24} />
+              <Image src={`./icons/${selectedGame.storefront.name}.png`} alt={""} height={24} width={24} />
               <span className="text-sm text-gray-300">
                 {t(`storefront.${selectedGame.storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON })}
               </span>
