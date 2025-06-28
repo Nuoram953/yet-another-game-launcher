@@ -98,6 +98,10 @@ export enum RouteGame {
   REFRESH_INFO = "game:refreshInfo",
 }
 
+export enum RouteDialog {
+  OPEN = "dialog:open",
+}
+
 export enum GameStatus {
   UNPLAYED = 1,
   PLAYED = 2,

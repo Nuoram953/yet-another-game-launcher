@@ -26,5 +26,59 @@
         "placeholder": "Enter your Steam installation path"
       }
     }
+  },
+  "extension": {
+    "youtube": {
+      "sectionTitles": {
+        "enable": "Enable",
+        "global": "Global Settings",
+        "ytDlp": "yt-dlp"
+      },
+      "enable": {
+        "title": "Enable YouTube integration",
+        "description": "Enable or disable YouTube integration in the application."
+      },
+      "ytDlp": {
+        "title": "yt-dlp binary path",
+        "description": "To use YouTube integration, you need to provide the path to yt-dlp. You can download it from the official repository."
+      }
+    },
+    "steamGridDb": {
+      "sectionTitles": {
+        "enable": "Enable",
+        "global": "Global Settings",
+        "authentication": "Authentication"
+      },
+      "enable": {
+        "title": "Enable SteamGridDB integration",
+        "description": "Enable or disable SteamGridDB integration in the application."
+      },
+      "apiKey": {
+        "title": "SteamGridDB API Key",
+        "description": "To use SteamGridDB integration, you need to provide your SteamGridDB API key. You can get it from the SteamGridDB website.",
+        "placeholder": "Enter your SteamGridDB API key"
+      }
+    },
+    "igdb": {
+      "sectionTitles": {
+        "enable": "Enable",
+        "global": "Global Settings",
+        "authentication": "Authentication"
+      },
+      "enable": {
+        "title": "Enable IGDB integration",
+        "description": "Enable or disable IGDB integration in the application."
+      },
+      "clientId": {
+        "title": "Client ID",
+        "description": "To use IGDB integration, you need to provide your IGDB Client ID. You can get it from the IGDB developer portal.",
+        "placeholder": "Enter your IGDB Client ID"
+      },
+      "clientSecret": {
+        "title": "Client Secret",
+        "description": "To use IGDB integration, you need to provide your IGDB Client Secret. You can get it from the IGDB developer portal.",
+        "placeholder": "Enter your IGDB Client Secret"
+      }
+    }
   }
 }
