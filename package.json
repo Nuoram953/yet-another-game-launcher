@@ -14,39 +14,49 @@
     },
     "linux": {
       "target": [
-        "rpm",
         "AppImage"
       ]
     },
-    "publish": null,
-    "npmRebuild": false,
     "files": [
-      "dist/main/**/*",
-      "dist/preload/**/*",
-      "dist/renderer/**/*",
-      "dist/bin/**/*",
-      "node_modules/.prisma/**/*",
+      "dist/**/*",
+      "public/**/*",
       "node_modules/@prisma/client/**/*",
-      "prisma/**/*",
-      "node_modules/**/*"
+      "node_modules/.prisma/client/**/*",
+      "prisma/**/*"
     ],
-    "extraResources": [
+    "extraFiles": [
       {
-        "from": "resources",
-        "to": "resources",
+        "from": "node_modules/@prisma/client",
+        "to": "resources/app/node_modules/@prisma/client",
         "filter": [
           "**/*"
         ]
       },
       {
-        "from": "node_modules/.prisma",
-        "to": ".prisma"
+        "from": "node_modules/.prisma/client",
+        "to": "resources/app/node_modules/.prisma/client",
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "prisma",
-        "to": "prisma"
+        "to": "resources/app/prisma",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "public",
+        "to": "resources/app/public",
+        "filter": [
+          "**/*"
+        ]
       }
-    ]
+    ],
+    "asar": false,
+    "publish": null,
+    "npmRebuild": false
   },
   "scripts": {
     "dev": "electron-vite dev",
@@ -83,6 +93,9 @@
     "@electron-forge/maker-rpm": "^6.2.1",
     "@electron-forge/maker-squirrel": "^6.2.1",
     "@electron-forge/maker-zip": "^6.2.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.5",
     "@types/react": "^18.2.15",
@@ -112,7 +125,7 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "prisma": "^6.3.0-dev.4",
     "rimraf": "6.0.1",
-    "semantic-release": "^24.2.3",
+    "semantic-release": "^24.2.5",
     "style-loader": "^3.3.3",
     "tinyglobby": "0.2.9",
     "ts-loader": "^9.4.4",

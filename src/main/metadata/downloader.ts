@@ -13,6 +13,7 @@ export const downloadImage = async (
   url: string,
   extension?: string,
   customName?: string,
+  skipLimit: boolean = false,
 ): Promise<void> => {
   const folderPath = getOrCreateImageDirectory(type, game.id);
   const countFiles = getNumberOfFiles(folderPath);
@@ -26,7 +27,7 @@ export const downloadImage = async (
     return;
   }
 
-  if (countFiles >= 15) {
+  if (!skipLimit && countFiles >= 15) {
     logger.debug(`${game.name} (${game.id}) has ${countFiles} ${type} and the max was ${15}. Skipping`);
     return;
   }

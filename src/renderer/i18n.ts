@@ -19,7 +19,7 @@ i18n
     },
     debug: true,
     backend: {
-      loadPath: "/locales/{{lng}}/{{ns}}.json",
+      loadPath: "./locales/{{lng}}/{{ns}}.json",
     },
     missingKeyHandler: (lng, ns, key) => {
       console.log(`Missing translation - Language: ${lng}, Namespace: ${ns}, Key: ${key}`);

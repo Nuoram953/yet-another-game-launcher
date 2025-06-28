@@ -117,7 +117,9 @@ async function electronAppInit() {
     });
 
     try {
-      execSync("npx prisma migrate deploy");
+      const schemaPath = join(__dirname, "../../prisma/schema.prisma");
+      execSync(`npx prisma migrate deploy --schema=${schemaPath}`);
+
       prisma = new PrismaClient();
     } catch (error) {
       console.error("Error running Prisma migrations:", error);

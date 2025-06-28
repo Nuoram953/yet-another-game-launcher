@@ -98,7 +98,7 @@ export const getGameAchievements = async (game: Game) => {
     };
 
     await queries.GameAchievements.findOrCreate(game.id, data);
-    await MetadataService.downloadImage(MEDIA_TYPE.ACHIEVEMENT, game, achievement.icon, "jpg", achievement.name);
+    await MetadataService.downloadImage(MEDIA_TYPE.ACHIEVEMENT, game, achievement.icon, "jpg", achievement.name, true);
   }
 };
 
