@@ -12,7 +12,7 @@ export const LOGOS_URL = BASE_URL + "logos/game/";
 export const axiosInstance = axios.create();
 
 axiosInstance.interceptors.request.use(async (request) => {
-  request.headers.Authorization = `Bearer ${(await configService.get("extension.steamGridDb.enable")) || process.env.STEAM_GRID_DB_API_KEY}`;
+  request.headers.Authorization = `Bearer ${(await configService.get("extension.steamGridDb.apiKey")) || process.env.STEAM_GRID_DB_API_KEY}`;
   request.headers.Accept = `application/json`;
   return request;
 });
