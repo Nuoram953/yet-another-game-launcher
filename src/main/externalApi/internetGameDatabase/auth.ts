@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AUTH_URL } from "./config";
+import { getAuthUrl } from "./config";
 import { authenticationResponse } from "./types";
 
 let cachedToken: string;
@@ -12,7 +12,7 @@ export const getToken = async (): Promise<string> => {
     return cachedToken;
   }
 
-  const res = await axios.post<authenticationResponse>(AUTH_URL);
+  const res = await axios.post<authenticationResponse>(await getAuthUrl());
 
   cachedToken = res.data.access_token;
   expirationInSeconds = currentTimeInSeconds + Number(res.data.expires_in);
