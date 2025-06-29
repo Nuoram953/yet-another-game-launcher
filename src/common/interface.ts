@@ -14,6 +14,7 @@ export interface AppConfig {
     youtube: {
       enable: boolean;
       ytDlpPath: string;
+      cookie: string;
     };
     howLongToBeat: {
       enable: boolean;

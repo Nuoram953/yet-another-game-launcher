@@ -14,6 +14,7 @@ import notificationManager from "../manager/notificationManager";
 import * as SteamService from "@main/storefront/steam/service";
 import * as YoutubeService from "../externalApi/youtube/service";
 import * as MetadataService from "@main/metadata/index";
+import * as ConfigService from "@main/config/config.service";
 
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
@@ -113,100 +114,111 @@ export const createOrUpdateGame = async (
 
   const notificationsObject = i18n.t("newGame", { ns: "notification", returnObjects: true });
 
-  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.COVER, 3, 5);
-  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.LOGO, 3, 5);
-  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.ICON, 3, 5);
-  await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.BACKGROUND, 3, 5);
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingAssets"),
-    i18n.t("newGame.stepDownloadingAssets", { ns: "notification" }),
-  );
+  if (await ConfigService.get("extension.steamGridDb.enable")) {
+    await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.COVER, 3, 5);
+    await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.LOGO, 3, 5);
+    await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.ICON, 3, 5);
+    await SteamGridDbService.downloadMedia(game, MEDIA_TYPE.BACKGROUND, 3, 5);
+  }
 
-  const igdbData = await internetGameDatabaseApi.getGame(game);
-  if (!_.isNil(igdbData)) {
-    await queries.Game.update(game.id, igdbData.partialGameData);
-
+  if (await ConfigService.get("extension.igdb.enable")) {
     notificationManager.updateProgress(
       notificationId,
-      getKeyPercentage(notificationsObject, "stepAddingDevelopers"),
-      i18n.t("newGame.stepAddingDevelopers", { ns: "notification" }),
+      getKeyPercentage(notificationsObject, "stepDownloadingAssets"),
+      i18n.t("newGame.stepDownloadingAssets", { ns: "notification" }),
     );
-    for (const developer of igdbData.developers) {
-      await queries.GameDeveloper.findOrCreate(game.id, developer);
-    }
 
-    notificationManager.updateProgress(
-      notificationId,
-      getKeyPercentage(notificationsObject, "stepAddingPublishers"),
-      i18n.t("newGame.stepAddingPublishers", { ns: "notification" }),
-    );
-    for (const publisher of igdbData.publishers) {
-      await queries.GamePublisher.findOrCreate(game.id, publisher);
-    }
+    const igdbData = await internetGameDatabaseApi.getGame(game);
+    if (!_.isNil(igdbData)) {
+      await queries.Game.update(game.id, igdbData.partialGameData);
 
-    notificationManager.updateProgress(
-      notificationId,
-      getKeyPercentage(notificationsObject, "stepDownloadingScreenshots"),
-      i18n.t("newGame.stepDownloadingScreenshots", { ns: "notification" }),
-    );
-    for (const image of igdbData.screenshots) {
-      const url = `https:${image}`;
-      await MetadataService.downloadImage(MEDIA_TYPE.SCREENSHOT, game, url.replace("t_thumb", "t_1080p"), "jpg");
-    }
+      notificationManager.updateProgress(
+        notificationId,
+        getKeyPercentage(notificationsObject, "stepAddingDevelopers"),
+        i18n.t("newGame.stepAddingDevelopers", { ns: "notification" }),
+      );
+      for (const developer of igdbData.developers) {
+        await queries.GameDeveloper.findOrCreate(game.id, developer);
+      }
 
-    notificationManager.updateProgress(
-      notificationId,
-      getKeyPercentage(notificationsObject, "stepDownloadingTags"),
-      i18n.t("newGame.stepDownloadingTags", { ns: "notification" }),
-    );
-    for (const tag of igdbData.themes) {
-      await queries.GameTag.findOrCreate(game.id, tag, {
-        gameId: game.id,
-        isTheme: true,
-      });
-    }
+      notificationManager.updateProgress(
+        notificationId,
+        getKeyPercentage(notificationsObject, "stepAddingPublishers"),
+        i18n.t("newGame.stepAddingPublishers", { ns: "notification" }),
+      );
+      for (const publisher of igdbData.publishers) {
+        await queries.GamePublisher.findOrCreate(game.id, publisher);
+      }
 
-    for (const tag of igdbData.gameModes) {
-      await queries.GameTag.findOrCreate(game.id, tag, {
-        gameId: game.id,
-        isGameMode: true,
-      });
-    }
+      notificationManager.updateProgress(
+        notificationId,
+        getKeyPercentage(notificationsObject, "stepDownloadingScreenshots"),
+        i18n.t("newGame.stepDownloadingScreenshots", { ns: "notification" }),
+      );
+      for (const image of igdbData.screenshots) {
+        const url = `https:${image}`;
+        await MetadataService.downloadImage(MEDIA_TYPE.SCREENSHOT, game, url.replace("t_thumb", "t_1080p"), "jpg");
+      }
 
-    for (const tag of igdbData.genres) {
-      await queries.GameTag.findOrCreate(game.id, tag, {
-        gameId: game.id,
-        isGenre: true,
-      });
+      notificationManager.updateProgress(
+        notificationId,
+        getKeyPercentage(notificationsObject, "stepDownloadingTags"),
+        i18n.t("newGame.stepDownloadingTags", { ns: "notification" }),
+      );
+      for (const tag of igdbData.themes) {
+        await queries.GameTag.findOrCreate(game.id, tag, {
+          gameId: game.id,
+          isTheme: true,
+        });
+      }
+
+      for (const tag of igdbData.gameModes) {
+        await queries.GameTag.findOrCreate(game.id, tag, {
+          gameId: game.id,
+          isGameMode: true,
+        });
+      }
+
+      for (const tag of igdbData.genres) {
+        await queries.GameTag.findOrCreate(game.id, tag, {
+          gameId: game.id,
+          isGenre: true,
+        });
+      }
     }
   }
 
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingTrailer"),
-    i18n.t("newGame.stepDownloadingTrailer", { ns: "notification" }),
-  );
-  await YoutubeService.downloadVideoForGame(game);
+  if (await ConfigService.get("extension.youtube.enable")) {
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepDownloadingTrailer"),
+      i18n.t("newGame.stepDownloadingTrailer", { ns: "notification" }),
+    );
+    await YoutubeService.downloadVideoForGame(game);
+  }
 
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepDownloadingHltb"),
-    i18n.t("newGame.stepDownloadingHltb", { ns: "notification" }),
-  );
-  const HowLongToBeatData = await howLongToBeatApi.search(game.name);
-  await queries.Game.update(game.id, {
-    mainStory: HowLongToBeatData?.mainStory,
-    mainPlusExtra: HowLongToBeatData?.mainPlusExtra,
-    completionist: HowLongToBeatData?.completionist,
-  });
+  if (await ConfigService.get("extension.howLongToBeat.enable")) {
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepDownloadingHltb"),
+      i18n.t("newGame.stepDownloadingHltb", { ns: "notification" }),
+    );
+    const HowLongToBeatData = await howLongToBeatApi.search(game.name);
+    await queries.Game.update(game.id, {
+      mainStory: HowLongToBeatData?.mainStory,
+      mainPlusExtra: HowLongToBeatData?.mainPlusExtra,
+      completionist: HowLongToBeatData?.completionist,
+    });
+  }
 
-  notificationManager.updateProgress(
-    notificationId,
-    getKeyPercentage(notificationsObject, "stepOpenCritcicData"),
-    i18n.t("newGame.stepOpenCritcicData", { ns: "notification" }),
-  );
-  const openCriticData = await openCriticApi.getGame(game.name);
+  if (await ConfigService.get("extension.openCritic.enable")) {
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepOpenCritcicData"),
+      i18n.t("newGame.stepOpenCritcicData", { ns: "notification" }),
+    );
+    const openCriticData = await openCriticApi.getGame(game.name);
+  }
 
   notificationManager.updateProgress(
     notificationId,

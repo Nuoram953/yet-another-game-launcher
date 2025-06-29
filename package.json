@@ -1,6 +1,6 @@
 {
   "name": "yagl",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.2",
   "description": "Ready-to-use project template for building cross-platform desktop applications with Electron, React, TypeScript, and Tailwind CSS.",
   "main": "./dist/main/index.js",
   "author": {

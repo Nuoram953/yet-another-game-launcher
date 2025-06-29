@@ -4,7 +4,6 @@ import * as MetadataService from "@main/metadata/index";
 import * as ConfigService from "@main/config/config.service";
 
 const YouTube = require("youtube-sr").default;
-import { COOKIE_PATH } from "./config";
 import { Video } from "./types";
 import logger from "@main/logger";
 
@@ -36,7 +35,7 @@ export const download = async (game: Game, id: string) => {
       noCheckCertificates: true,
       noWarnings: true,
       preferFreeFormats: true,
-      cookies: COOKIE_PATH,
+      cookies: await ConfigService.get("extension.youtube.cookie"),
       addHeader: ["referer:youtube.com", "user-agent:firefox"],
     });
   } catch (e) {
