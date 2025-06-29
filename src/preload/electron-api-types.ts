@@ -16,6 +16,10 @@ import { PathsToProperties } from "../main/manager/configManager";
 import { MEDIA_TYPE } from "../common/constant";
 import { Video } from "@main/externalApi/youtube/types";
 
+export interface DialogAPI {
+  open: () => Promise<string | null>;
+}
+
 export interface ConfigAPI {
   get: (key: PathsToProperties<AppConfig>) => Promise<any>;
   set: (key: PathsToProperties<AppConfig>, value: any) => Promise<void>;
@@ -130,6 +134,7 @@ export interface DataAPI {
 }
 
 export interface ElectronAPI {
+  dialog: DialogAPI;
   config: ConfigAPI;
   notifications: NotificationsAPI;
   store: StoreAPI;
