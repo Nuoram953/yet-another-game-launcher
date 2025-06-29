@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Globe, Settings } from "lucide-react";
+import { Blocks, Globe, Settings } from "lucide-react";
 import { SettingStoreSteam } from "./store/Steam";
 import { SettingStoreEpic } from "./store/Epic";
 import { useBreadcrumbsContext } from "@render/context/BreadcrumbsContext";
+import { SettingExtensionYoutube } from "./extension/Youtube";
+import { SettingExtensionSteamGridDb } from "./extension/SteamGridDb";
+import { SettingExtensionIGDB } from "./extension/IGDB";
 
 export const SettingPage = () => {
   const [activeCategory, setActiveCategory] = useState("storefront");
@@ -20,6 +23,17 @@ export const SettingPage = () => {
       subcategories: {
         steam: { title: "Steam", component: SettingStoreSteam },
         epic: { title: "Epic", component: SettingStoreEpic },
+      },
+    },
+    extensions: {
+      title: "Extensions",
+      icon: Blocks,
+      subcategories: {
+        youtube: { title: "Youtube", component: SettingExtensionYoutube },
+        openCritic: { title: "Open Critic", component: SettingStoreEpic },
+        howLongToBeat: { title: "How Long To Beat", component: SettingStoreEpic },
+        steamGridDb: { title: "SteamGridDb", component: SettingExtensionSteamGridDb },
+        igdb: { title: "IGDB", component: SettingExtensionIGDB },
       },
     },
   };
@@ -55,12 +69,12 @@ export const SettingPage = () => {
                       activeCategory === key ? "border-r-2 border-blue-600 bg-slate-700" : ""
                     }`}
                   >
-                    <IconComponent className={`h-5 w-5 ${activeCategory === key ? "text-blue-600" : "text-white"}`} />
+                    <IconComponent className={`h-5 w-5 text-white`} />
                     <span className={`font-medium`}>{category.title}</span>
                   </button>
 
                   {activeCategory === key && (
-                    <div className="">
+                    <div className="bg-slate-600">
                       {Object.entries(category.subcategories).map(([subKey, subcategory]) => (
                         <button
                           key={subKey}

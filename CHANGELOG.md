@@ -1,3 +1,10 @@
+# [1.0.0-beta.2](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-06-29)
+
+
+### Features
+
+* manage extension settings ([ef43df3](https://github.com/Nuoram953/yet-another-game-launcher/commit/ef43df376a6eb8a7c3f4a6d2a48e3779ef54173b))
+
 # 1.0.0-beta.1 (2025-06-28)
 
 

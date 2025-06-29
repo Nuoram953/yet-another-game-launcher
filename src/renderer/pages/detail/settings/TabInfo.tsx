@@ -53,7 +53,7 @@ export const TabInfo = () => {
             description={t("storefront.steam.apiKey.description", { ns: LOCALE_NAMESPACE.SETTINGS })}
             inputOnChange={(e) => {}}
             inputPlaceholder={t("storefront.steam.apiKey.placeholder", { ns: LOCALE_NAMESPACE.SETTINGS })}
-            inputValue={selectedGame.timePlayed}
+            inputValue={String(selectedGame.timePlayed)}
           />
           <InputText
             title={"Play count"}
@@ -72,28 +72,28 @@ export const TabInfo = () => {
             description={t("storefront.steam.apiKey.description", { ns: LOCALE_NAMESPACE.SETTINGS })}
             inputOnChange={(e) => {}}
             inputPlaceholder={t("storefront.steam.apiKey.placeholder", { ns: LOCALE_NAMESPACE.SETTINGS })}
-            inputValue={selectedGame.createdAt}
+            inputValue={String(selectedGame.createdAt)}
           />
           <InputText
             title={"Released date"}
             description={t("storefront.steam.apiKey.description", { ns: LOCALE_NAMESPACE.SETTINGS })}
             inputOnChange={(e) => {}}
             inputPlaceholder={t("storefront.steam.apiKey.placeholder", { ns: LOCALE_NAMESPACE.SETTINGS })}
-            inputValue={selectedGame.releasedAt}
+            inputValue={String(selectedGame.releasedAt)}
           />
           <InputText
             title={"Last time updated"}
             description={t("storefront.steam.apiKey.description", { ns: LOCALE_NAMESPACE.SETTINGS })}
             inputOnChange={(e) => {}}
             inputPlaceholder={t("storefront.steam.apiKey.placeholder", { ns: LOCALE_NAMESPACE.SETTINGS })}
-            inputValue={selectedGame.updatedAt}
+            inputValue={String(selectedGame.updatedAt)}
           />
           <InputText
             title={"Last played date"}
             description={t("storefront.steam.apiKey.description", { ns: LOCALE_NAMESPACE.SETTINGS })}
             inputOnChange={(e) => {}}
             inputPlaceholder={t("storefront.steam.apiKey.placeholder", { ns: LOCALE_NAMESPACE.SETTINGS })}
-            inputValue={selectedGame.lastTimePlayed}
+            inputValue={String(selectedGame.lastTimePlayed)}
           />
         </div>
       </Card>
