@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, beta]
+    branches: [main, beta, alpha]
   pull_request:
-    branches: [main, beta]
+    branches: [main, beta, alpha]
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
