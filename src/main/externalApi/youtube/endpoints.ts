@@ -36,7 +36,7 @@ export const download = async (game: Game, id: string) => {
       noCheckCertificates: true,
       noWarnings: true,
       preferFreeFormats: true,
-      cookies: COOKIE_PATH,
+      cookies: await ConfigService.get("extension.youtube.cookie"),
       addHeader: ["referer:youtube.com", "user-agent:firefox"],
     });
   } catch (e) {

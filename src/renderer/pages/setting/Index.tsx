@@ -6,6 +6,9 @@ import { useBreadcrumbsContext } from "@render/context/BreadcrumbsContext";
 import { SettingExtensionYoutube } from "./extension/Youtube";
 import { SettingExtensionSteamGridDb } from "./extension/SteamGridDb";
 import { SettingExtensionIGDB } from "./extension/IGDB";
+import { SettingExtensionHowLongToBeat } from "./extension/HowLongToBeat";
+import { SettingExtensionOpenCritic } from "./extension/openCritic";
+import { Container } from "@render/components/layout/Container";
 
 export const SettingPage = () => {
   const [activeCategory, setActiveCategory] = useState("storefront");
@@ -30,8 +33,8 @@ export const SettingPage = () => {
       icon: Blocks,
       subcategories: {
         youtube: { title: "Youtube", component: SettingExtensionYoutube },
-        openCritic: { title: "Open Critic", component: SettingStoreEpic },
-        howLongToBeat: { title: "How Long To Beat", component: SettingStoreEpic },
+        openCritic: { title: "Open Critic", component: SettingExtensionOpenCritic },
+        howLongToBeat: { title: "How Long To Beat", component: SettingExtensionHowLongToBeat },
         steamGridDb: { title: "SteamGridDb", component: SettingExtensionSteamGridDb },
         igdb: { title: "IGDB", component: SettingExtensionIGDB },
       },
@@ -94,23 +97,20 @@ export const SettingPage = () => {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <Container>
           <div className="p-8">
-            <div className="max-w-4xl">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white">
-                  {categories[activeCategory]?.subcategories[activeSubcategory]?.title}
-                </h2>
-                <p className="mt-1 text-gray-600">
-                  Manage your {categories[activeCategory]?.subcategories[activeSubcategory]?.title.toLowerCase()}{" "}
-                  settings
-                </p>
-              </div>
-
-              <ActiveComponent />
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                {categories[activeCategory]?.subcategories[activeSubcategory]?.title}
+              </h2>
+              <p className="mt-1 text-gray-600">
+                Manage your {categories[activeCategory]?.subcategories[activeSubcategory]?.title.toLowerCase()} settings
+              </p>
             </div>
+
+            <ActiveComponent />
           </div>
-        </div>
+        </Container>
       </div>
     </div>
   );

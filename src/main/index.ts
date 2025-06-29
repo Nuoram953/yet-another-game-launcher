@@ -116,7 +116,7 @@ async function electronAppInit() {
         epic: { enable: true },
       },
       extension: {
-        youtube: { enable: true, ytDlpPath: "" },
+        youtube: { enable: true, ytDlpPath: "", cookie: "" },
         howLongToBeat: {
           enable: false,
         },
