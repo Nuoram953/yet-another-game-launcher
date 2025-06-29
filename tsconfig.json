@@ -17,7 +17,7 @@
       "@component/*": ["src/renderer/components/*"]
     },
     "resolveJsonModule": true,
-    "types": ["vite/client", "node", "mocha"],
+    "types": ["node"],
     "typeRoots": ["./node_modules/@types", "./src/preload"],
     "strict": false,
     "noImplicitAny": false,

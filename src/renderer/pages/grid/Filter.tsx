@@ -125,7 +125,7 @@ export const Filters = ({ expand }: Props) => {
                 isMulti
                 name="colors"
                 options={filtersData.status.map((status) => ({
-                  value: status.id,
+                  value: String(status.id),
                   label: status.name,
                 }))}
                 className="basic-multi-select z-9999"

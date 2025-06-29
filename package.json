@@ -59,6 +59,8 @@
     "npmRebuild": false
   },
   "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint",
     "dev": "electron-vite dev",
     "build": "prisma generate && electron-vite build",
     "build:electron": "prisma generate && electron-vite build && electron-builder",

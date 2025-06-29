@@ -111,7 +111,7 @@ ipcMain.handle(RouteGame.REFRESH_INFO, async (_event, id) => {
     await GameService.refreshInfo(id);
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteGame.REFRESH_INFO,
+      route: RouteGame.REFRESH_PROGRESS_TRACKER,
       error: e,
     });
   }
