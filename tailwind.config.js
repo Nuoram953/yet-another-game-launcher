@@ -8,6 +8,7 @@ module.exports = {
         design: {
           background: "#161E2D",
           foreground: "#1E293B",
+          popup: "#374151",
           border: "#364151",
           card: "#1F2937",
           normal: "white",
@@ -28,6 +29,14 @@ module.exports = {
           },
           sidebar: {
             background: "#18181B",
+          },
+          status: {
+            playing: "#2b7fff",
+            played: "#efb100",
+            planned: "#ad46ff",
+            dropped: "#fb2c36",
+            completed: "#00c951",
+            none: "#6a7282",
           },
         },
         border: "hsl(var(--border))",

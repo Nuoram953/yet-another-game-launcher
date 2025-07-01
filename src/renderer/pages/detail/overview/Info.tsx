@@ -102,7 +102,7 @@ const GameInfo = () => {
 
   return (
     <Card
-      title=""
+      title={"Details"}
       actions={[
         {
           icon: RefreshCcw,

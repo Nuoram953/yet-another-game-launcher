@@ -46,14 +46,13 @@ export const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, In
     const inputProps = props as React.InputHTMLAttributes<HTMLInputElement>;
     const textareaProps = props as React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
-    // Modify padding when there's an action button
     const inputClassName = actionRight
       ? inputStyles({
           variant,
           size,
           disabled,
           color,
-          className: `pr-10 ${className || ""}`, // Add right padding for button space
+          className: `pr-10 ${className || ""}`,
         })
       : inputStyles({
           variant,

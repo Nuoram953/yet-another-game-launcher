@@ -34,6 +34,10 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w
       large: ["text-base", "py-3", "px-8"],
       fit: ["text-base"],
     },
+    background: {
+      false: "!bg-transparent",
+      true: null,
+    },
     disabled: {
       false: null,
       true: ["opacity-50", "cursor-not-allowed"],
@@ -79,6 +83,7 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w
     size: "medium",
     disabled: false,
     state: false,
+    background: true,
   },
 });
 
@@ -95,6 +100,7 @@ export const Button: React.FC<ButtonProps> = ({
   className,
   intent,
   size,
+  background,
   disabled,
   text,
   state,
@@ -104,7 +110,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => (
   <button
-    className={button({ intent, size, state, disabled, className })}
+    className={button({ intent, size, state, background, disabled, className })}
     disabled={disabled || undefined}
     onClick={onClick}
     {...props}

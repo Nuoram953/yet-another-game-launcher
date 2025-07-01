@@ -43,13 +43,13 @@ const BadgeDropdown = ({ className, game }: Props) => {
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      playing: "bg-blue-500",
-      played: "bg-yellow-500",
-      planned: "bg-purple-500",
-      dropped: "bg-red-500",
-      completed: "bg-green-500",
+      playing: "bg-design-status-playing",
+      played: "bg-design-status-played",
+      plan: "bg-design-status-planned",
+      dropped: "bg-design-status-dropped",
+      completed: "bg-design-status-completed",
     };
-    return colors[status] || "bg-gray-500";
+    return colors[status] || "bg-design-status-none";
   };
 
   const handleOptionSelect = (e: React.MouseEvent, name: string) => {
