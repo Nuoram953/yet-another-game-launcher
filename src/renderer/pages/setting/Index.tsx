@@ -129,7 +129,10 @@ export const SettingPage = () => {
             <div className="space-y-2 p-3">
               {Object.entries(categories).map(([key, category]) => {
                 const IconComponent = category.icon;
-                const hasSubcategories = category.subcategories && Object.keys(category.subcategories).length > 0;
+                const hasSubcategories =
+                  "subcategories" in category &&
+                  category.subcategories &&
+                  Object.keys(category.subcategories).length > 0;
                 const isActive = activeCategory === key;
 
                 return (
