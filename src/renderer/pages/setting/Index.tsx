@@ -6,6 +6,10 @@ import { useBreadcrumbsContext } from "@render/context/BreadcrumbsContext";
 import { SettingExtensionYoutube } from "./extension/Youtube";
 import { SettingExtensionSteamGridDb } from "./extension/SteamGridDb";
 import { SettingExtensionIGDB } from "./extension/IGDB";
+import { SettingExtensionHowLongToBeat } from "./extension/HowLongToBeat";
+import { SettingExtensionOpenCritic } from "./extension/openCritic";
+import { Container } from "@render/components/layout/Container";
+import { SettingSidebar } from "./SettingSidebar";
 
 export const SettingPage = () => {
   const [activeCategory, setActiveCategory] = useState("storefront");
@@ -30,87 +34,181 @@ export const SettingPage = () => {
       icon: Blocks,
       subcategories: {
         youtube: { title: "Youtube", component: SettingExtensionYoutube },
-        openCritic: { title: "Open Critic", component: SettingStoreEpic },
-        howLongToBeat: { title: "How Long To Beat", component: SettingStoreEpic },
+        openCritic: { title: "Open Critic", component: SettingExtensionOpenCritic },
+        howLongToBeat: { title: "How Long To Beat", component: SettingExtensionHowLongToBeat },
         steamGridDb: { title: "SteamGridDb", component: SettingExtensionSteamGridDb },
         igdb: { title: "IGDB", component: SettingExtensionIGDB },
       },
     },
+    sidebar: {
+      title: "Sidebar",
+      icon: Settings,
+      component: SettingSidebar,
+    },
+    // Example of a category without subcategories
+    // general: {
+    //   title: "General",
+    //   icon: Settings,
+    //   component: SettingGeneral,
+    // },
   };
 
   const handleCategoryChange = (categoryKey: string) => {
     setActiveCategory(categoryKey);
-    const firstSubcategory = Object.keys(categories[categoryKey].subcategories)[0];
-    setActiveSubcategory(firstSubcategory);
+    const category = categories[categoryKey];
+
+    // If category has subcategories, set the first one as active
+    if (category.subcategories && Object.keys(category.subcategories).length > 0) {
+      const firstSubcategory = Object.keys(category.subcategories)[0];
+      setActiveSubcategory(firstSubcategory);
+    } else {
+      // If no subcategories, clear the active subcategory
+      setActiveSubcategory(null);
+    }
   };
 
-  const ActiveComponent =
-    categories[activeCategory]?.subcategories[activeSubcategory]?.component || (() => <div>Settings not found</div>);
+  const getActiveComponent = () => {
+    const category = categories[activeCategory];
+
+    if (!category) {
+      return () => <div>Settings not found</div>;
+    }
+
+    // If category has a direct component (no subcategories)
+    if (category.component) {
+      return category.component;
+    }
+
+    // If category has subcategories, get the active subcategory's component
+    if (category.subcategories && activeSubcategory) {
+      return category.subcategories[activeSubcategory]?.component || (() => <div>Settings not found</div>);
+    }
+
+    return () => <div>Settings not found</div>;
+  };
+
+  const ActiveComponent = getActiveComponent();
+
+  const getActiveTitle = () => {
+    const category = categories[activeCategory];
+
+    if (!category) return "Settings";
+
+    // If category has a direct component (no subcategories)
+    if (category.component) {
+      return category.title;
+    }
+
+    // If category has subcategories, get the active subcategory's title
+    if (category.subcategories && activeSubcategory) {
+      return category.subcategories[activeSubcategory]?.title || category.title;
+    }
+
+    return category.title;
+  };
 
   return (
-    <div className="flex h-screen flex-col text-white">
+    <div className="flex h-screen flex-col bg-slate-900 text-white">
       <div className="flex h-full">
-        <div className="flex h-full w-64 flex-col dark:bg-slate-800">
-          <div className="p-6">
+        {/* Sidebar */}
+        <div className="flex h-full w-72 flex-col border-r border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+          {/* Header */}
+          <div className="border-b border-slate-700/50 p-6">
             <div className="flex items-center space-x-3">
-              <Settings className="h-6 w-6 text-white" />
-              <h1 className="text-xl font-semibold">Settings</h1>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto">
-            {Object.entries(categories).map(([key, category]) => {
-              const IconComponent = category.icon;
-              return (
-                <div key={key} className="">
-                  <button
-                    onClick={() => handleCategoryChange(key)}
-                    className={`flex w-full items-center space-x-3 px-6 py-4 text-left transition-colors hover:opacity-50 ${
-                      activeCategory === key ? "border-r-2 border-blue-600 bg-slate-700" : ""
-                    }`}
-                  >
-                    <IconComponent className={`h-5 w-5 text-white`} />
-                    <span className={`font-medium`}>{category.title}</span>
-                  </button>
-
-                  {activeCategory === key && (
-                    <div className="bg-slate-600">
-                      {Object.entries(category.subcategories).map(([subKey, subcategory]) => (
-                        <button
-                          key={subKey}
-                          onClick={() => setActiveSubcategory(subKey)}
-                          className={`w-full px-12 py-3 text-left text-sm transition-colors hover:opacity-50 ${
-                            activeSubcategory === subKey ? "font-medium text-blue-600" : "text-white"
-                          }`}
-                        >
-                          {subcategory.title}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-8">
-            <div className="max-w-4xl">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white">
-                  {categories[activeCategory]?.subcategories[activeSubcategory]?.title}
-                </h2>
-                <p className="mt-1 text-gray-600">
-                  Manage your {categories[activeCategory]?.subcategories[activeSubcategory]?.title.toLowerCase()}{" "}
-                  settings
-                </p>
+              <div className="rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 p-2">
+                <Settings className="h-5 w-5 text-white" />
               </div>
+              <h1 className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-xl font-semibold text-transparent">
+                Settings
+              </h1>
+            </div>
+          </div>
 
-              <ActiveComponent />
+          {/* Navigation */}
+          <div className="scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent flex-1 overflow-y-auto">
+            <div className="space-y-2 p-3">
+              {Object.entries(categories).map(([key, category]) => {
+                const IconComponent = category.icon;
+                const hasSubcategories =
+                  "subcategories" in category &&
+                  category.subcategories &&
+                  Object.keys(category.subcategories).length > 0;
+                const isActive = activeCategory === key;
+
+                return (
+                  <div key={key} className="space-y-1">
+                    <button
+                      onClick={() => handleCategoryChange(key)}
+                      className={`group flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-left transition-all duration-200 ${
+                        isActive
+                          ? "border border-blue-500/30 bg-gradient-to-r from-blue-500/20 to-purple-500/20 shadow-lg shadow-blue-500/10"
+                          : "border border-transparent hover:border-slate-600/50 hover:bg-slate-700/50"
+                      }`}
+                    >
+                      <div
+                        className={`rounded-lg p-2 transition-all duration-200 ${
+                          isActive
+                            ? "bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg"
+                            : "bg-slate-700/50 group-hover:bg-slate-600/50"
+                        }`}
+                      >
+                        <IconComponent className="h-4 w-4 text-white" />
+                      </div>
+                      <span
+                        className={`font-medium transition-all duration-200 ${
+                          isActive ? "text-white" : "text-slate-300 group-hover:text-white"
+                        }`}
+                      >
+                        {category.title}
+                      </span>
+                    </button>
+
+                    {isActive && hasSubcategories && (
+                      <div className="ml-4 space-y-1 duration-200 animate-in slide-in-from-left-2">
+                        {Object.entries(category.subcategories).map(([subKey, subcategory]) => (
+                          <button
+                            key={subKey}
+                            onClick={() => setActiveSubcategory(subKey)}
+                            className={`group w-full rounded-lg px-4 py-2.5 text-left text-sm transition-all duration-200 ${
+                              activeSubcategory === subKey
+                                ? "border border-blue-500/30 bg-blue-500/20 font-medium text-blue-300"
+                                : "border border-transparent text-slate-400 hover:bg-slate-700/30 hover:text-white"
+                            }`}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <span>{subcategory.title}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
+
+        {/* Main Content */}
+        <Container>
+          <div className="scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent h-full overflow-y-auto">
+            {/* Header */}
+            <div className="mb-8">
+              <div className="mb-2 flex items-center space-x-3">
+                <div className="h-8 w-2 rounded-full bg-gradient-to-b from-blue-500 to-purple-600" />
+                <h2 className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-3xl font-bold text-transparent">
+                  {getActiveTitle()}
+                </h2>
+              </div>
+              <p className="ml-5 text-lg text-slate-400">
+                Manage your {getActiveTitle().toLowerCase()} settings and preferences
+              </p>
+            </div>
+
+            {/* Content */}
+            <ActiveComponent />
+          </div>
+        </Container>
       </div>
     </div>
   );

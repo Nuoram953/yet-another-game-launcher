@@ -1,4 +1,9 @@
 export interface AppConfig {
+  sidebar: {
+    display: {
+      showGameCount: boolean;
+    };
+  };
   store: {
     steam: {
       enable: boolean;
@@ -14,6 +19,7 @@ export interface AppConfig {
     youtube: {
       enable: boolean;
       ytDlpPath: string;
+      cookie: string;
     };
     howLongToBeat: {
       enable: boolean;

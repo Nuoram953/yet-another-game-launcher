@@ -136,3 +136,14 @@ ipcMain.handle(RouteLibrary.DELETE_FILTER_PRESET, async (_event, name) => {
     });
   }
 });
+
+ipcMain.handle(RouteLibrary.GET_SIDEBAR, async (_event) => {
+  try {
+    return await LibraryService.getSidebarData();
+  } catch (e) {
+    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteLibrary.GET_SIDEBAR,
+      error: e,
+    });
+  }
+});

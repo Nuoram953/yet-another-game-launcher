@@ -111,12 +111,17 @@ async function electronAppInit() {
     config = new ConfigManager<AppConfig>();
 
     await config.init({
+      sidebar: {
+        display: {
+          showGameCount: true,
+        },
+      },
       store: {
         steam: { enable: true, apiKey: "", accountName: "", isntallationPath: null },
         epic: { enable: true },
       },
       extension: {
-        youtube: { enable: true, ytDlpPath: "" },
+        youtube: { enable: true, ytDlpPath: "", cookie: "" },
         howLongToBeat: {
           enable: false,
         },

@@ -1,47 +1,78 @@
-# 🚀 Electron React TypeScript Tailwind Starter
+# YAGL - Yet Another Game Launcher
 
-This starter repository provides a ready-to-use project template for building cross-platform desktop applications with Electron, React, TypeScript, and Tailwind CSS, utilizing Electron Forge for easy packaging and publishing.
+**This app is in early development and is not ready for everyday use.**
+
+![home page](assets/home.png)
+
+Managing games is always a pain, especially when you have multiple platforms and launchers. YAGL aims to simplify this process by providing a unified interface for launching games across different platforms but also use external servives to enhance your library experience. Filter games by their how long to beat, download youtube trailers, and much more.
 
 ## Features
-- Electron for building cross-platform desktop applications
-- React for creating scalable, component-based UIs
-- TypeScript for strongly-typed and maintainable JavaScript code
-- Tailwind CSS for utility-first styling and rapid UI development
-- Electron Forge for simple packaging and publishing of Electron applications
 
+### See the important information about your games
 
-## Getting Started
+YAGL provides a comprehensive overview of your games, including playtime, last played date, and more. This information helps you keep track of your gaming habits and preferences.
+
+![filters](assets/detail.png)
+
+### Filters
+
+Use filters to quickly find games based on various criteria such as genre, platform, and release date. Create presets to save your favorite filter combinations for easy access.
+More filters will be added in the future.
+
+![filters](assets/filters.png)
+
+### Metadata
+
+YAGL automatically fetches metadata for your games, including titles, descriptions, cover art, and more. This ensures that your game library is always up-to-date and visually appealing.
+
+![metadata](assets/metadata.png)
+
+### Achievements
+
+Visualize your achievements
+
+![achievements](assets/achievements.png)
+
+### Rankings
+
+Create custom rankings based on your preferences. Best game of the year, worst RPG etc...
+
+![achievements](assets/rankings.png)
+
+## Supported Platforms
+
+YAGL currently supports the following platforms:
+
+| Platforms | Achievements | Reviews | Launch | Uninstall | Track download |
+| --------- | :----------: | :-----: | :----: | :-------: | :------------: |
+| Steam     |      ✅      |   ❌    |   ✅   |    ✅     |       ✅       |
+| Epic      |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
+| gog       |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
+| ea        |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
+| Uplay     |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
+
+## Development
+
 Clone the repository:
+
 ```bash
-git clone https://github.com/rostislavjadavan/electron-react-typescript-tailwind-starter.git
+git clone https://github.com/Nuoram953/yet-another-game-launcher.git
 ```
 
 Navigate to the project folder:
+
 ```bash
-cd electron-react-typescript-tailwind-starter
+cd yet-another-game-launcher
 ```
 
 Install dependencies:
+
 ```bash
 npm install
 ```
 
 Start the development server:
-```bash
-npm run start
-```
-
-# Package the project
-
-Package the project as an Electron app:
 
 ```bash
-npm run make
+npm run dev
 ```
-
-For detailed configuration visit: https://www.electronforge.io
-
-## Customization
-
-You can easily customize the project to suit your needs by modifying the source code within the `src` directory. The project is set up with a simple example that you can use as a starting point for your application.
-

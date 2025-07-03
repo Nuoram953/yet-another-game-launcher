@@ -10,11 +10,13 @@ import React, { useCallback, useEffect, useState } from "react";
 export const SettingExtensionYoutube = () => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [ytDlpPath, setYtDlpPath] = useState<string | null>(null);
+  const [cookie, setCookie] = useState<string | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
       setIsEnabled(await window.config.get("extension.youtube.enable"));
       setYtDlpPath(await window.config.get("extension.youtube.ytDlpPath"));
+      setCookie(await window.config.get("extension.youtube.cookie"));
     };
     fetch();
   }, []);
@@ -58,6 +60,26 @@ export const SettingExtensionYoutube = () => {
                       const path = await window.dialog.open();
                       window.config.set("extension.youtube.ytDlpPath", path);
                       setYtDlpPath(path);
+                    }}
+                  />
+                }
+              />
+
+              <InputText
+                title={t("extension.youtube.cookie.title", { ns: LOCALE_NAMESPACE.SETTINGS })}
+                description={t("extension.youtube.cookie.description", { ns: LOCALE_NAMESPACE.SETTINGS })}
+                inputValue={cookie}
+                inputOnChange={(e) => setCookie(e.target.files?.[0].name || null)}
+                inputPlaceholder={""}
+                actionRight={
+                  <Button
+                    icon={File}
+                    size="fit"
+                    intent="icon"
+                    onClick={async () => {
+                      const path = await window.dialog.open();
+                      window.config.set("extension.youtube.cookie", path);
+                      setCookie(path);
                     }}
                   />
                 }

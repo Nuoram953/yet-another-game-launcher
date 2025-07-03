@@ -1,4 +1,17 @@
 {
+  "sidebar": {
+    "sectionTitles": {
+      "layout": "Appearance & Layout",
+      "display": "Visiblity & Display",
+      "content": "Content & Navigation"
+    },
+    "display": {
+      "showGameCount": {
+        "title": "Show game count",
+        "description": "Display the number of games in each section of the sidebar."
+      }
+    }
+  },
   "storefront": {
     "steam": {
       "sectionTitles": {
@@ -41,6 +54,10 @@
       "ytDlp": {
         "title": "yt-dlp binary path",
         "description": "To use YouTube integration, you need to provide the path to yt-dlp. You can download it from the official repository."
+      },
+      "cookie": {
+        "title": "YouTube cookies",
+        "description": "To use YouTube integration, you need to provide your YouTube cookies. You can export them from your browser."
       }
     },
     "steamGridDb": {
@@ -78,6 +95,24 @@
         "title": "Client Secret",
         "description": "To use IGDB integration, you need to provide your IGDB Client Secret. You can get it from the IGDB developer portal.",
         "placeholder": "Enter your IGDB Client Secret"
+      }
+    },
+    "openCritic": {
+      "sectionTitles": {
+        "enable": "Enable"
+      },
+      "enable": {
+        "title": "Enable OpenCritic integration",
+        "description": "Enable or disable OpenCritic integration in the application."
+      }
+    },
+    "howLongToBeat": {
+      "sectionTitles": {
+        "enable": "Enable"
+      },
+      "enable": {
+        "title": "Enable HowLongToBeat integration",
+        "description": "Enable or disable HowLongToBeat integration in the application."
       }
     }
   }
