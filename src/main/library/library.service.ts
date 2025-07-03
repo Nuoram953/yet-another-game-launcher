@@ -2,7 +2,7 @@ import _ from "lodash";
 import queries from "../dal/dal";
 import { config } from "../index";
 import { refreshGame, updateAchievements } from "../game/game.service";
-import { FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
+import { FilterConfig, GameWithRelations, SidebarData, SortConfig } from "../../common/types";
 import notificationManager from "../manager/notificationManager";
 import { DataRoute, NotificationType, Storefront } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
@@ -165,4 +165,35 @@ export const postLaunch = async (game: GameWithRelations, startTime: Date, endTi
   });
 
   await refreshGame(game.id);
+};
+
+export const getSidebarData = async (): Promise<SidebarData> => {
+  const storefronts = await queries.Storefront.findAll();
+  if (_.isNil(storefronts)) {
+    throw new Error("No storefronts found");
+  }
+
+  const status = await queries.GameStatus.getAll();
+  if (_.isNil(status)) {
+    throw new Error("No status found");
+  }
+
+  return {
+    storefronts: await Promise.all(
+      storefronts.map(async (storefront) => ({
+        id: storefront.id,
+        name: storefront.name,
+        count: await queries.Game.getCountByStoreId(storefront.id),
+        hasWeb: storefront.url,
+        hasExecutable: storefront.hasLauncher,
+      })),
+    ),
+    status: await Promise.all(
+      status.map(async (s) => ({
+        id: s.id,
+        name: s.name,
+        count: await queries.Game.getCountByStatusId(s.id),
+      })),
+    ),
+  };
 };

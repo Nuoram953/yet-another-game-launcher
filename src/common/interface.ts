@@ -1,4 +1,9 @@
 export interface AppConfig {
+  sidebar: {
+    display: {
+      showGameCount: boolean;
+    };
+  };
   store: {
     steam: {
       enable: boolean;
