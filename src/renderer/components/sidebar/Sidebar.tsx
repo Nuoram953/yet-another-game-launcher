@@ -11,6 +11,7 @@ import { getLibrary } from "@render/api/electron";
 import { SidebarData } from "@common/types";
 import { Badge } from "../ui/badge";
 import { AppConfig } from "@common/interface";
+import { useConfig } from "../ConfigProvider";
 
 interface SidebarProps {
   open: boolean;
@@ -22,16 +23,13 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
   const navigate = useNavigate();
   const { games, updateFilters } = useGames();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const { renderKey, forceRefresh, getConfigValue } = useConfig();
   const [sidebarData, setSidebarData] = React.useState<SidebarData>();
-  const [config, setConfig] = React.useState<AppConfig>(null);
 
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
       setSidebarData(await getLibrary().getSidebar());
-      const config = await window.config.getAll();
-      console.log(config);
-      setConfig(config);
     };
 
     fetchData();
@@ -57,13 +55,13 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
     });
   };
 
-  if (loading || _.isNil(sidebarData) || _.isNil(config)) {
+  if (loading || _.isNil(sidebarData)) {
     return <div className="flex h-full items-center justify-center">Loading...</div>;
   }
 
   return (
     <>
-      <Sheet key={"button"} open={open} onOpenChange={setOpen}>
+      <Sheet key={renderKey} open={open} onOpenChange={setOpen}>
         <SheetContent side={"left"} color="#1e293b">
           <div className="flex flex-col gap-2">
             <SidebarNavigateItem handleNavigate={handleNavigate} icon={<Home />} label={"Home"} path={"/"} />
@@ -72,28 +70,24 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
               icon={<HardDriveDownload />}
               label={"Downloads"}
               path={"/download"}
-              config={config}
             />
             <SidebarNavigateItem
               handleNavigate={handleNavigate}
               icon={<Activity />}
               label={"Activiy"}
               path={"/activity"}
-              config={config}
             />
             <SidebarNavigateItem
               handleNavigate={handleNavigate}
               icon={<Medal />}
               label={"Rankings"}
               path={"/ranking"}
-              config={config}
             />
             <SidebarNavigateItem
               handleNavigate={handleNavigate}
               icon={<Settings />}
               label={"Settings"}
               path={"/setting"}
-              config={config}
             />
             <div className="my-4 flex flex-col">
               <div className="flex flex-row gap-3 rounded p-2">
@@ -109,7 +103,6 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
                     label={t(`storefront.${storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON })}
                     path={`/storefront/${storefront.id}`}
                     count={storefront.count}
-                    config={config}
                   />
                 ))}
               </div>
@@ -128,7 +121,6 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
                     label={t(status.name, { ns: LOCALE_NAMESPACE.GAME_STATUS })}
                     path={`/storefront/${status.id}`}
                     count={status.count}
-                    config={config}
                   />
                 ))}
               </div>
@@ -150,10 +142,11 @@ interface SidebarNavigateItemProps {
   path: string;
   handleNavigate: (path: string) => void;
   count?: number;
-  config?: AppConfig;
 }
 
-const SidebarNavigateItem = ({ icon, label, path, handleNavigate, count, config }: SidebarNavigateItemProps) => {
+const SidebarNavigateItem = ({ icon, label, path, handleNavigate, count }: SidebarNavigateItemProps) => {
+  const { config } = useConfig();
+
   return (
     <a
       className="flex flex-row justify-between gap-3 rounded p-2 hover:bg-gray-400/50"
