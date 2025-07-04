@@ -30,10 +30,12 @@ export enum DataRoute {
   REQUEST_GAMES = "data:request:games",
   REQUEST_GAME = "data:request:game",
   RUNNING_GAME = "data:running:game",
+  CONFIG_CHANGE = "data:request:config",
 }
 
 export enum RouteLibrary {
   REFRESH = "library:refresh",
+  GET_SIDEBAR = "library:getSidebar",
   GET_GAME = "library:getGame",
   GET_GAMES = "library:getGames",
   GET_LAST_PLAYED = "library:getLastPlayed",

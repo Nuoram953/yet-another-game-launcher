@@ -1,4 +1,17 @@
 {
+  "sidebar": {
+    "sectionTitles": {
+      "layout": "Appearance & Layout",
+      "display": "Visiblity & Display",
+      "content": "Content & Navigation"
+    },
+    "display": {
+      "showGameCount": {
+        "title": "Show game count",
+        "description": "Display the number of games in each section of the sidebar."
+      }
+    }
+  },
   "storefront": {
     "steam": {
       "sectionTitles": {

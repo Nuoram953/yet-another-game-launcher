@@ -49,6 +49,7 @@ contextBridge.exposeInMainWorld("media", {
 
 contextBridge.exposeInMainWorld("library", {
   refresh: () => ipcRenderer.invoke(RouteLibrary.REFRESH),
+  getSidebar: () => ipcRenderer.invoke(RouteLibrary.GET_SIDEBAR),
   getGame: (id: string) => ipcRenderer.invoke(RouteLibrary.GET_GAME, id),
   getGames: (filters?: FilterConfig, sort?: SortConfig) => ipcRenderer.invoke(RouteLibrary.GET_GAMES, filters, sort),
   getLastPlayed: (max: number) => ipcRenderer.invoke(RouteLibrary.GET_LAST_PLAYED, max),
