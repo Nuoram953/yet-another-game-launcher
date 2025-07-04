@@ -1,3 +1,19 @@
+# [1.0.0-beta.3](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2025-07-04)
+
+
+### Bug Fixes
+
+* ci error [skip release] ([d9e0fa6](https://github.com/Nuoram953/yet-another-game-launcher/commit/d9e0fa671e6fa9bc28c944fc290f2c7ab400c302))
+* extension properly using the api key ([79c1eb9](https://github.com/Nuoram953/yet-another-game-launcher/commit/79c1eb93eb19aecc2f224a0ae85d17153e712f66))
+* extension properly using the enable key ([ae6eb84](https://github.com/Nuoram953/yet-another-game-launcher/commit/ae6eb846d72d123d329591c044a1705039467e5b))
+
+
+### Features
+
+* add open critic, how long to beat and youtube settings ([13d5931](https://github.com/Nuoram953/yet-another-game-launcher/commit/13d59311b40844257df51c22ab735aafc861828a))
+* added configProvider ([cc17b97](https://github.com/Nuoram953/yet-another-game-launcher/commit/cc17b972379abd673ee090d174c6c1fec8d6e22d))
+* fix typo [skip release] ([c8fae54](https://github.com/Nuoram953/yet-another-game-launcher/commit/c8fae545d7c47ed184bc24b0d114a0a8fbce611c))
+
 # [1.0.0-beta.2](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2025-06-29)
 
 
