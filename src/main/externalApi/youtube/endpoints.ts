@@ -1,12 +1,13 @@
 import { MEDIA_TYPE } from "@common/constant";
 import { Game } from "@prisma/client";
 import * as MetadataService from "@main/metadata/index";
+import * as ConfigService from "@main/config/config.service";
 
 const YouTube = require("youtube-sr").default;
-import youtubedl from "youtube-dl-exec";
-import { COOKIE_PATH } from "./config";
 import { Video } from "./types";
 import logger from "@main/logger";
+
+const { create: createYoutubeDl } = require("youtube-dl-exec");
 
 export const search = async (game: Game, maxResults: number = 5) => {
   const searchResults: Video[] = await YouTube.search(`${game.name} game ${MEDIA_TYPE.TRAILER}`, {
@@ -21,6 +22,7 @@ export const search = async (game: Game, maxResults: number = 5) => {
 };
 
 export const download = async (game: Game, id: string) => {
+  const youtubedl = createYoutubeDl(await ConfigService.get("extension.youtube.ytDlpPath"));
   const trailerDir = MetadataService.getOrCreateImageDirectory(MEDIA_TYPE.TRAILER, game.id);
   const numberOfFiles = MetadataService.getNumberOfFiles(trailerDir);
   const output = `${trailerDir}/trailer_${numberOfFiles + 1}`;
@@ -33,10 +35,11 @@ export const download = async (game: Game, id: string) => {
       noCheckCertificates: true,
       noWarnings: true,
       preferFreeFormats: true,
-      cookies: COOKIE_PATH,
+      cookies: await ConfigService.get("extension.youtube.cookie"),
       addHeader: ["referer:youtube.com", "user-agent:firefox"],
     });
   } catch (e) {
+    console.log(e);
     logger.warn(e);
   }
 };

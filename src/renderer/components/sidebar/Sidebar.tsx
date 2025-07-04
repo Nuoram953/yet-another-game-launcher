@@ -1,137 +1,167 @@
-"use client";
-
-import * as React from "react";
-import { Activity, HardDriveDownload, House, Medal, Settings } from "lucide-react";
-
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-  SidebarSeparator,
-  useSidebar,
-} from "@render/components/ui/sidebar";
-import { NavStorefront } from "./nav-storefront";
-import { NavStatus } from "./nav-status";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
+import { Sheet, SheetClose, SheetContent, SheetFooter } from "@render/components/ui/sheet";
+import { Activity, ChartNoAxesColumn, HardDriveDownload, Home, Medal, Settings, Store } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import _ from "lodash";
+import { LOCALE_NAMESPACE } from "@common/constant";
 import { useNavigate } from "react-router-dom";
+import Divider from "../Divider";
 import { useGames } from "@render/context/DatabaseContext";
+import { getLibrary } from "@render/api/electron";
+import { SidebarData } from "@common/types";
 import { Badge } from "../ui/badge";
-import { GameStatus, Storefront } from "@prisma/client";
-import { CookieType, getCookie, setCookie } from "@render/utils/cookieUtil";
+import { AppConfig } from "@common/interface";
+import { useConfig } from "../ConfigProvider";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { open, setOpen } = useSidebar();
+interface SidebarProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export const Sidebar = ({ open, setOpen }: SidebarProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { games, downloading } = useGames();
-  const [storefronts, setStorefronts] = useState<Storefront[]>([]);
-  const [status, setStatus] = useState<(GameStatus & { count?: number }) | undefined>(undefined);
-
-  const hasMounted = useRef(false);
-
-  useEffect(() => {
-    const sidebarState = getCookie(CookieType.SIDEBAR_COLLAPSED, "boolean") as boolean;
-    setOpen(sidebarState);
-    console.log(sidebarState);
-  }, []);
+  const { games, updateFilters } = useGames();
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const { renderKey, forceRefresh, getConfigValue } = useConfig();
+  const [sidebarData, setSidebarData] = React.useState<SidebarData>();
 
   useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
-      return;
-    }
-
-    if (typeof open !== "boolean") {
-      return;
-    }
-
-    setCookie(CookieType.SIDEBAR_COLLAPSED, open);
-  }, [open]);
-
-  useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
-      try {
-        const status = await window.library.getCountForAllStatus();
-        // setStatus(status);
-      } catch (error) {
-        console.error("Error fetching picture path:", error);
-      }
-
-      try {
-        const storefronts = await window.library.getStorefronts();
-        setStorefronts(storefronts);
-      } catch (error) {
-        console.error("Error fetching picture path:", error);
-      }
+      setSidebarData(await getLibrary().getSidebar());
     };
 
     fetchData();
+    setLoading(false);
   }, [games]);
 
+  const handleNavigate = (path: string) => {
+    setOpen(false);
+    navigate(path);
+  };
+
+  const handleStorefront = (id: number) => {
+    setOpen(false);
+    updateFilters({
+      storefronts: [{ label: String(id), value: String(id) }],
+    });
+  };
+
+  const handleStatus = (id: number) => {
+    setOpen(false);
+    updateFilters({
+      status: [{ label: String(id), value: String(id) }],
+    });
+  };
+
+  if (loading || _.isNil(sidebarData)) {
+    return <div className="flex h-full items-center justify-center">Loading...</div>;
+  }
+
   return (
-    <Sidebar {...props}>
-      <SidebarHeader></SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            <SidebarMenuItem key={"Home"}>
-              <SidebarMenuButton asChild>
-                <a onClick={() => navigate("/")}>
-                  <House />
-                  <span>Home</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem key={"Home"} className="flex justify-between">
-              <SidebarMenuButton asChild>
-                <div className="flex justify-between">
-                  <a className="flex flex-row gap-2" onClick={() => navigate("/download")}>
-                    <HardDriveDownload />
-                    <span className="flex content-center items-center">Downloads</span>
-                  </a>
-                  {downloading.length > 0 && <Badge>{downloading.length}</Badge>}
-                </div>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem key={"Home"}>
-              <SidebarMenuButton asChild>
-                <a onClick={() => navigate("/activity")}>
-                  <Activity />
-                  <span>Activity</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+    <>
+      <Sheet key={renderKey} open={open} onOpenChange={setOpen}>
+        <SheetContent side={"left"} color="#1e293b">
+          <div className="flex flex-col gap-2">
+            <SidebarNavigateItem handleNavigate={handleNavigate} icon={<Home />} label={"Home"} path={"/"} />
+            <SidebarNavigateItem
+              handleNavigate={handleNavigate}
+              icon={<HardDriveDownload />}
+              label={"Downloads"}
+              path={"/download"}
+            />
+            <SidebarNavigateItem
+              handleNavigate={handleNavigate}
+              icon={<Activity />}
+              label={"Activiy"}
+              path={"/activity"}
+            />
+            <SidebarNavigateItem
+              handleNavigate={handleNavigate}
+              icon={<Medal />}
+              label={"Rankings"}
+              path={"/ranking"}
+            />
+            <SidebarNavigateItem
+              handleNavigate={handleNavigate}
+              icon={<Settings />}
+              label={"Settings"}
+              path={"/setting"}
+            />
+            <div className="my-4 flex flex-col">
+              <div className="flex flex-row gap-3 rounded p-2">
+                <Store />
+                <h2 className="text-lg">Storefronts</h2>
+              </div>
+              <Divider />
+              <div className="ml-3">
+                {sidebarData.storefronts.map((storefront) => (
+                  <SidebarNavigateItem
+                    key={storefront.id}
+                    handleNavigate={() => handleStorefront(storefront.id)}
+                    label={t(`storefront.${storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON })}
+                    path={`/storefront/${storefront.id}`}
+                    count={storefront.count}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="flex flex-row gap-3 rounded p-2">
+                <ChartNoAxesColumn />
+                <h2 className="text-lg">Status</h2>
+              </div>
+              <Divider />
+              <div className="ml-3">
+                {sidebarData.status.map((status) => (
+                  <SidebarNavigateItem
+                    key={status.id}
+                    handleNavigate={() => handleStatus(status.id)}
+                    label={t(status.name, { ns: LOCALE_NAMESPACE.GAME_STATUS })}
+                    path={`/storefront/${status.id}`}
+                    count={status.count}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
 
-            <SidebarMenuItem key={"Ranking"}>
-              <SidebarMenuButton asChild>
-                <a onClick={() => navigate("/ranking")}>
-                  <Medal />
-                  <span>Ranking</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem key={"Settings"}>
-              <SidebarMenuButton asChild>
-                <a onClick={() => navigate("/settings")}>
-                  <Settings />
-                  <span>Settings</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-          <SidebarSeparator className="mt-8" />
-        </SidebarGroup>
-        <NavStorefront items={storefronts} />
-        {/* <NavStatus items={status} /> */}
-      </SidebarContent>
-      <SidebarFooter></SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+          <SheetFooter className="mt-4">
+            <SheetClose asChild></SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    </>
   );
+};
+
+interface SidebarNavigateItemProps {
+  icon?: React.ReactNode;
+  label: string;
+  path: string;
+  handleNavigate: (path: string) => void;
+  count?: number;
 }
+
+const SidebarNavigateItem = ({ icon, label, path, handleNavigate, count }: SidebarNavigateItemProps) => {
+  const { config } = useConfig();
+
+  return (
+    <a
+      className="flex flex-row justify-between gap-3 rounded p-2 hover:bg-gray-400/50"
+      onClick={() => handleNavigate(path)}
+    >
+      <div className="flex flex-row gap-2">
+        {icon}
+        <span>{label}</span>
+      </div>
+
+      {!_.isNil(count) && config.sidebar.display.showGameCount && (
+        <div>
+          <Badge>{count}</Badge>
+        </div>
+      )}
+    </a>
+  );
+};

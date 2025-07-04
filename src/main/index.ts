@@ -15,6 +15,7 @@ import "@main/store/store.handler";
 import "@main/ranking/ranking.handler";
 import "@main/library/library.handler";
 import "@main/game/game.handler";
+import "@main/dialog/dialog.handler";
 
 import notificationManager from "@main/manager/notificationManager";
 import ConfigManager from "@main/manager/configManager";
@@ -110,9 +111,32 @@ async function electronAppInit() {
     config = new ConfigManager<AppConfig>();
 
     await config.init({
+      sidebar: {
+        display: {
+          showGameCount: true,
+        },
+      },
       store: {
         steam: { enable: true, apiKey: "", accountName: "", isntallationPath: null },
         epic: { enable: true },
+      },
+      extension: {
+        youtube: { enable: true, ytDlpPath: "", cookie: "" },
+        howLongToBeat: {
+          enable: false,
+        },
+        openCritic: {
+          enable: false,
+        },
+        steamGridDb: {
+          enable: false,
+          apiKey: "",
+        },
+        igdb: {
+          enable: false,
+          clientId: "",
+          clientSecret: "",
+        },
       },
     });
 

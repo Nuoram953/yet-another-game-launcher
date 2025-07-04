@@ -10,11 +10,15 @@ import type {
   Storefront,
   Tag,
 } from "@prisma/client";
-import type { FilterConfig, GameWithRelations, RankingWithRelation, SortConfig } from "../common/types";
+import type { FilterConfig, GameWithRelations, RankingWithRelation, SidebarData, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "../main/manager/configManager";
 import { MEDIA_TYPE } from "../common/constant";
 import { Video } from "@main/externalApi/youtube/types";
+
+export interface DialogAPI {
+  open: () => Promise<string | null>;
+}
 
 export interface ConfigAPI {
   get: (key: PathsToProperties<AppConfig>) => Promise<any>;
@@ -90,6 +94,7 @@ export interface RankingAPI {
 
 export interface LibraryAPI {
   refresh: () => Promise<void>;
+  getSidebar: () => Promise<SidebarData>;
   getGame: (id: string) => Promise<GameWithRelations>;
   getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<GameWithRelations[]>;
   getLastPlayed: (max: number) => Promise<GameWithRelations[]>;
@@ -130,6 +135,7 @@ export interface DataAPI {
 }
 
 export interface ElectronAPI {
+  dialog: DialogAPI;
   config: ConfigAPI;
   notifications: NotificationsAPI;
   store: StoreAPI;

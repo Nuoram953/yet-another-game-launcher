@@ -247,12 +247,24 @@ export async function getCountByStatus() {
   });
 }
 
+export async function getCountByStatusId(statusId: number) {
+  return await prisma.game.count({
+    where: { gameStatusId: statusId },
+  });
+}
+
 export async function getCountByStore() {
   return await prisma.game.groupBy({
     by: ["storefrontId"],
     _count: {
       storefrontId: true,
     },
+  });
+}
+
+export async function getCountByStoreId(storefrontId: number) {
+  return await prisma.game.count({
+    where: { storefrontId },
   });
 }
 

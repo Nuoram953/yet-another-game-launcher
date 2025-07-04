@@ -1,5 +1,5 @@
 const config = {
-  name: "your-app",
+  name: "yagl",
   version: "1.0.0",
   directories: {
     output: "dist/electron",

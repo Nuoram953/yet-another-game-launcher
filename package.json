@@ -1,6 +1,6 @@
 {
   "name": "yagl",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.2",
   "description": "Ready-to-use project template for building cross-platform desktop applications with Electron, React, TypeScript, and Tailwind CSS.",
   "main": "./dist/main/index.js",
   "author": {
@@ -59,6 +59,8 @@
     "npmRebuild": false
   },
   "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint",
     "dev": "electron-vite dev",
     "build": "prisma generate && electron-vite build",
     "build:electron": "prisma generate && electron-vite build && electron-builder",

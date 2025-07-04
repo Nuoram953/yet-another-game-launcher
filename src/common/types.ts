@@ -53,3 +53,8 @@ export interface DownloadStats {
   downloadedBytes: number;
   totalBytes: number;
 }
+
+export interface SidebarData {
+  storefronts?: { id: number; name: string; count?: number; web?: string; hasExecutable: boolean }[];
+  status?: { id: number; name: string; count?: number }[];
+}
