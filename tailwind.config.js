@@ -1,42 +1,97 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+import tailwindcssAnimate from "tailwindcss-animate";
+
+export default {
   darkMode: ["class"],
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
         design: {
-          background: "#161E2D",
-          foreground: "#1E293B",
-          popup: "#374151",
-          border: "#364151",
-          card: "#1F2937",
-          normal: "white",
-          inverted: "black",
-          subtle: "#99A1AF",
+          white: "var(--design-white)",
+          black: "var(--design-white)",
+          transparent: "var(--design-transparent)",
+          text: {
+            normal: "var(--design-text-normal)",
+            inverted: "var(--design-text-inverted)",
+            subtle: "var(--design-text-subtle)",
+            disabled: "var(--design-text-disabled)",
+          },
+          divider: "var(--design-divider)",
+          background: "var(--design-background)",
+          foreground: "var(--design-foreground)",
+          sidebar: "var(--design-sidebar)",
+          popup: "var(--design-popup)",
+          border: {
+            DEFAULT: "var(--design-border)",
+            hover: "var(--design-border-hover)",
+          },
+          card: "var(--design-card)",
+          badge: {
+            background: "var(--design-badge-background)",
+            hover: "var(--design-badge-hover)",
+          },
           button: {
-            primary: "white",
-            secondary: "white",
+            primary: "var(--design-button-primary)",
+            secondary: "var(--design-button-secondary)",
             state: {
-              play: "#00a63e",
-              install: "#efb100",
-              running: "#155dfc",
+              play: "var(--design-button-state-play)",
+              install: "var(--design-button-state-install)",
+              running: "var(--design-button-state-running)",
             },
-            destructive: "#dc2626",
+            destructive: "var(--design-button-destructive)",
+          },
+          input: {
+            border: "var(--design-input-border)",
+            focus: {
+              border: "var(--design-input-focus-border)",
+              ring: "var(--design-input-focus-ring)",
+            },
+          },
+          progress: {
+            main: {
+              background: "var(--design-progress-main-background)",
+              text: "var(--design-progress-main-text)",
+            },
+            extra: {
+              background: "var(--design-progress-extra-background)",
+              text: "var(--design-progress-extra-text)",
+            },
+            completionist: {
+              background: "var(--design-progress-completionist-background)",
+              text: "var(--design-progress-completionist-text)",
+            },
+          },
+          achievement: {
+            unlocked: {
+              DEFAULT: "var(--design-achievement-unlocked)",
+              background: "var(--design-achievement-unlocked-background)",
+              border: "var(--design-achievement-unlocked-border)",
+              underline: "var(--design-achievement-unlocked-underline)",
+            },
+            locked: {
+              DEFAULT: "var(--design-achievement-locked)",
+              background: "var(--design-achievement-locked-background)",
+              border: "var(--design-achievement-locked-border)",
+              underline: "var(--design-achievement-locked-underline)",
+            },
           },
           notification: {
-            background: "#18181B",
+            background: "var(--design-notification-background)",
+            foreground: "var(--design-notification-foreground)",
+            text: "var(--design-notification-text)",
           },
-          sidebar: {
-            background: "#18181B",
+          error: {
+            DEFAULT: "var(--design-error)",
+            placeholder: "var(--design-error-placeholder)",
           },
           status: {
-            playing: "#2b7fff",
-            played: "#efb100",
-            planned: "#ad46ff",
-            dropped: "#fb2c36",
-            completed: "#00c951",
-            none: "#6a7282",
+            playing: "var(--design-status-playing)",
+            played: "var(--design-status-played)",
+            planned: "var(--design-status-planned)",
+            dropped: "var(--design-status-dropped)",
+            completed: "var(--design-status-completed)",
+            none: "var(--design-status-none)",
           },
         },
         border: "hsl(var(--border))",
@@ -112,5 +167,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 };

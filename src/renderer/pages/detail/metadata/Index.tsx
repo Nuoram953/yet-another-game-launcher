@@ -196,7 +196,7 @@ export function SectionMetadata() {
         >
           {group.all.length === 0 ? (
             <div className="flex h-32 items-center justify-center">
-              <p className="text-gray-400">No {mediaKey} images added yet</p>
+              <p className="text-design-text-subtle">No {mediaKey} images added yet</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -206,10 +206,10 @@ export function SectionMetadata() {
                 return (
                   <div
                     key={item.src}
-                    className="relative cursor-pointer rounded-md border-2 border-gray-700 p-2 transition hover:border-gray-500 hover:shadow-md"
+                    className="relative cursor-pointer rounded-md border-2 border-design-border p-2 transition hover:border-design-border-hover hover:shadow-md"
                   >
                     <div
-                      className={`relative flex items-center justify-center overflow-hidden rounded bg-gray-900 ${dimensionClass}`}
+                      className={`relative flex items-center justify-center overflow-hidden rounded ${dimensionClass}`}
                     >
                       {mediaKey === "trailer" ? (
                         <Video />
@@ -243,7 +243,7 @@ export function SectionMetadata() {
                         />
                       </div>
                     </div>
-                    <div className="mt-2 truncate text-sm text-gray-300">{item.name}</div>
+                    <div className="mt-2 truncate text-sm text-design-text-subtle">{item.name}</div>
                   </div>
                 );
               })}

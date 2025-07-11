@@ -9,7 +9,7 @@ const dividerVariants = cva("w-full flex items-center", {
       secondary: "border-purple-500",
       success: "border-green-500",
       warning: "border-yellow-500",
-      danger: "border-red-500",
+      danger: "border-design-error",
     },
     thickness: {
       thin: "border-t",
@@ -57,14 +57,14 @@ export default function Divider({ variant, thickness, alignment, label, classNam
       })}
       {...props}
     >
-      {label && alignment === "left" && <span className="text-sm font-medium text-neutral-500">{label}</span>}
+      {label && alignment === "left" && <span className="text-design-text-divider text-sm font-medium">{label}</span>}
 
       {label && alignment === "center" && (
-        <span className="whitespace-nowrap px-4 text-sm font-medium text-neutral-500">{label}</span>
+        <span className="text-design-text-divider whitespace-nowrap px-4 text-sm font-medium">{label}</span>
       )}
 
       {label && alignment !== "left" && alignment !== "center" && (
-        <span className="text-sm font-medium text-neutral-500">{label}</span>
+        <span className="text-design-text-divider text-sm font-medium">{label}</span>
       )}
     </div>
   );

@@ -28,10 +28,10 @@ export const StatsCard = ({
   const content = (
     <div
       className={cn(
-        "flex flex-1 flex-grow flex-col rounded-lg bg-gray-800 p-4",
+        "flex flex-1 flex-grow flex-col rounded-lg bg-design-card p-4",
         "transform transition-all duration-300 hover:scale-105",
         "content-center items-start justify-center",
-        "border border-gray-700 hover:border-gray-600",
+        "border border-design-border hover:border-design-border-hover",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         "focus-visible:ring-gray-500",
         onClick && "cursor-pointer",
@@ -60,13 +60,13 @@ export const StatsCard = ({
         </>
       ) : (
         <>
-          <div className="mb-2 flex items-center">
-            <Icon className="mr-2 h-5 w-5 text-gray-400" aria-hidden="true" />
-            <span className="text-sm text-gray-400">{label}</span>
+          <div className="mb-2 flex items-center text-design-text-subtle">
+            <Icon className="mr-2 h-5 w-5" aria-hidden="true" />
+            <span className="text-sm">{label}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-bold">{value}</span>
-            {detail && <span className="mt-1 text-sm text-gray-400">{detail}</span>}
+            {detail && <span className="mt-1 text-sm text-design-text-subtle">{detail}</span>}
           </div>
         </>
       )}

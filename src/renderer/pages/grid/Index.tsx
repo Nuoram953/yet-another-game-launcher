@@ -91,16 +91,8 @@ export const Grid = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex min-h-[200px] items-center justify-center">
-        <div className="text-red-500">Error: {error}</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="flex h-screen flex-col overflow-hidden bg-design-background">
       <RecentlyPlayedCarousel />
       <div className="flex-none">
         <Header>

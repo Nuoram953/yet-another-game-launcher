@@ -28,7 +28,7 @@ export const Logo = () => {
     <img
       src={LogoPicture}
       alt={`game name logo`}
-      className="max-h-32 transform object-contain transition-transform duration-300 hover:scale-105"
+      className="max-h-28 transform object-contain transition-transform duration-300 hover:scale-105"
     />
   );
 };

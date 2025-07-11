@@ -7,20 +7,20 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w
     intent: {
       primary: [
         "bg-design-button-primary",
-        "text-design-inverted",
+        "text-design-text-inverted",
         "border-transparent",
         "hover:bg-design-button-primary/90",
         "active:bg-design-button-primary/80",
       ],
       secondary: [
         "bg-design-button-secondary",
-        "text-design-inverted",
+        "text-design-text-inverted",
         "border-transparent",
         "hover:bg-design-button-secondary/90",
         "active:bg-design-button-secondary/80",
       ],
-      destructive: ["bg-design-button-destructive", "text-gray-800", "border-gray-400"],
-      icon: ["text-design-normal", "border-transparent", "hover:opacity-50", "active:opacity-75"],
+      destructive: ["bg-design-button-destructive", "text-design-text-inverted", "border-design-border"],
+      icon: ["text-design-text-normal", "border-transparent", "hover:opacity-50", "active:opacity-75"],
     },
     state: {
       false: null,
@@ -48,7 +48,7 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w
       intent: "primary",
       state: "play",
       className: [
-        "text-design-normal",
+        "text-design-text-normal",
         "bg-design-button-state-play",
         "hover:bg-design-button-state-play/90",
         "active:bg-design-button-state-play/80",
@@ -59,7 +59,7 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w
       intent: "primary",
       state: "install",
       className: [
-        "text-design-normal",
+        "text-design-text-normal",
         "bg-design-button-state-install",
         "hover:bg-design-button-state-install/90",
         "active:bg-design-button-state-install/80",
@@ -70,7 +70,7 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w
       intent: "primary",
       state: "running",
       className: [
-        "text-design-normal",
+        "text-design-text-normal",
         "bg-design-button-state-running",
         "hover:bg-design-button-state-running/90",
         "active:bg-design-button-state-running/80",

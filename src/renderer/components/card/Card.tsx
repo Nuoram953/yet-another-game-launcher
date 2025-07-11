@@ -39,7 +39,7 @@ export const Card = ({ title, subtitle, children, actions, className }: CardProp
       <div className="p-4">
         <div className="flex flex-row justify-between">
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-semibold text-white">{title}</h2>
+            <h2 className="text-xl font-semibold text-design-text-normal">{title}</h2>
             <h3>{subtitle}</h3>
           </div>
           {actions && actions.length > 0 && (
@@ -51,11 +51,11 @@ export const Card = ({ title, subtitle, children, actions, className }: CardProp
                 aria-label="Open actions menu"
               />
               {isDropdownOpen && (
-                <div className="absolute right-0 z-[100] mt-2 w-48 rounded-md bg-design-popup py-1 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="absolute right-0 z-[100] mt-2 w-48 rounded-md bg-design-popup py-1 shadow-xl ring-1 ring-design-black ring-opacity-5 focus:outline-none">
                   {actions.map((action, index) => (
                     <button
                       key={index}
-                      className="z-[100] flex w-full items-center px-4 py-2 text-left text-sm text-design-normal hover:bg-gray-600 disabled:text-gray-500"
+                      className="z-[100] flex w-full items-center px-4 py-2 text-left text-sm text-design-text-normal hover:border-design-border-hover disabled:text-design-text-disabled"
                       disabled={action.disabled ?? false}
                       onClick={() => {
                         action.onClick();
