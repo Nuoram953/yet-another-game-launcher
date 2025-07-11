@@ -31,7 +31,7 @@ export const ProgressTracker = () => {
   if (!selectedGame) {
     return (
       <Card title="Progress Tracker">
-        <div className="flex h-64 items-center justify-center text-white/60">
+        <div className="flex h-64 items-center justify-center text-design-normal/60">
           <p>Select a game to track progress</p>
         </div>
       </Card>
@@ -173,7 +173,7 @@ export const ProgressTracker = () => {
         >
           <div className="z-10 h-6 w-6 rounded-full bg-white shadow-lg shadow-indigo-500/50 ring-2 ring-indigo-300 ring-offset-2 ring-offset-indigo-800"></div>
           <div className="my-1 h-8 w-px bg-white/50"></div>
-          <div className="whitespace-nowrap rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 px-4 py-1 text-sm font-medium text-white shadow-lg">
+          <div className="whitespace-nowrap rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 px-4 py-1 text-sm font-medium text-design-normal shadow-lg">
             Your Time: {formatTime(totalPlaytime)}
           </div>
         </div>
@@ -223,7 +223,7 @@ export const ProgressTracker = () => {
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 p-2 shadow-lg shadow-blue-500/20">
-                <Trophy className="h-5 w-5 text-white" />
+                <Trophy className="h-5 w-5 text-design-normal" />
               </div>
               <div>
                 <h4 className="font-medium text-blue-100">Main Story</h4>
@@ -256,7 +256,7 @@ export const ProgressTracker = () => {
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 p-2 shadow-lg shadow-purple-500/20">
-                <Award className="h-5 w-5 text-white" />
+                <Award className="h-5 w-5 text-design-normal" />
               </div>
               <div>
                 <h4 className="font-medium text-purple-100">Main + Extras</h4>
@@ -289,7 +289,7 @@ export const ProgressTracker = () => {
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-amber-600 to-amber-400 p-2 shadow-lg shadow-amber-500/20">
-                <Award className="h-5 w-5 text-white" />
+                <Award className="h-5 w-5 text-design-normal" />
               </div>
               <div>
                 <h4 className="font-medium text-amber-100">Completionist</h4>

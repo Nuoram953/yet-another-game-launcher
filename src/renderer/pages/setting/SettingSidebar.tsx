@@ -1,7 +1,7 @@
 import { LOCALE_NAMESPACE } from "@common/constant";
 import { useConfig } from "@render/components/ConfigProvider";
 import { Card } from "@render/components/card/Card";
-import { InputSwitch, InputText } from "@render/pages/detail/settings/Input";
+import { InputSwitch } from "@render/pages/detail/settings/Input";
 import { t } from "i18next";
 import _ from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,13 +16,6 @@ export const SettingSidebar = () => {
     };
     fetch();
   }, []);
-
-  const debouncedSetPath = useCallback(
-    _.debounce((key, value) => {
-      window.config.set(key, value);
-    }, 500),
-    [],
-  );
 
   return (
     <div className="flex flex-col gap-4">

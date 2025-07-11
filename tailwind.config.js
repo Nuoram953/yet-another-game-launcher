@@ -8,6 +8,7 @@ module.exports = {
         design: {
           background: "#161E2D",
           foreground: "#1E293B",
+          sidebar: "#1D293A",
           popup: "#374151",
           border: "#364151",
           card: "#1F2937",
@@ -24,11 +25,22 @@ module.exports = {
             },
             destructive: "#dc2626",
           },
+          input: {
+            border: "",
+            focus: {
+              border: "",
+              ring: "",
+            },
+          },
           notification: {
             background: "#18181B",
           },
           sidebar: {
             background: "#18181B",
+          },
+          error: {
+            DEFAULT: "#fb2c36",
+            placeholder: "",
           },
           status: {
             playing: "#2b7fff",

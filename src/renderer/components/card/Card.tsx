@@ -39,7 +39,7 @@ export const Card = ({ title, subtitle, children, actions, className }: CardProp
       <div className="p-4">
         <div className="flex flex-row justify-between">
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-semibold text-white">{title}</h2>
+            <h2 className="text-xl font-semibold text-design-normal">{title}</h2>
             <h3>{subtitle}</h3>
           </div>
           {actions && actions.length > 0 && (

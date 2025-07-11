@@ -27,7 +27,7 @@ const GameInfo = () => {
 
   if (!selectedGame) {
     return (
-      <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-white shadow-xl">
+      <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-design-normal shadow-xl">
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <BookOpen className="mb-4 h-16 w-16 text-gray-400" />
           <h3 className="mb-2 text-2xl font-bold">No Game Selected</h3>
@@ -49,7 +49,7 @@ const GameInfo = () => {
   const getScoreColor = (score: number) => {
     if (score >= 85) return "text-green-500";
     if (score >= 70) return "text-yellow-500";
-    return "text-red-500";
+    return "text-design-error";
   };
 
   const developer = selectedGame?.developers?.length ? selectedGame.developers[0].company.name : "Unknown";
@@ -157,7 +157,7 @@ const GameInfo = () => {
         {/*         <button */}
         {/*           onClick={toggleFavorite} */}
         {/*           className={`flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-gray-700 ${ */}
-        {/*             isFavorite ? "text-red-500" : "text-gray-400" */}
+        {/*             isFavorite ? "text-design-error" : "text-gray-400" */}
         {/*           }`} */}
         {/*         > */}
         {/*           <Heart size={18} fill={isFavorite ? "currentColor" : "none"} /> */}

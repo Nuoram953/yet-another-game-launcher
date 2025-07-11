@@ -9,7 +9,7 @@ const dividerVariants = cva("w-full flex items-center", {
       secondary: "border-purple-500",
       success: "border-green-500",
       warning: "border-yellow-500",
-      danger: "border-red-500",
+      danger: "border-design-error",
     },
     thickness: {
       thin: "border-t",
