@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindcssLineClamp from "@tailwindcss/line-clamp";
 
 export default {
   darkMode: ["class"],
@@ -74,6 +75,11 @@ export default {
               background: "var(--design-achievement-locked-background)",
               border: "var(--design-achievement-locked-border)",
               underline: "var(--design-achievement-locked-underline)",
+            },
+          },
+          download: {
+            progressBar: {
+              DEFAULT: "var(--design-download-progressbar)",
             },
           },
           notification: {
@@ -167,5 +173,5 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, tailwindcssLineClamp],
 };

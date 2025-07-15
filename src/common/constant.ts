@@ -44,6 +44,7 @@ export enum RouteLibrary {
   GET_COUNT_STORE = "library:countStore",
   GET_STATUS = "library:getStatus",
   GET_DOWNLOAD_HISTORY = "library:getDownloadHistory",
+  CLEAR_DOWNLOAD_HISTORY = "library:clearDownloadHistory",
   GET_STOREFRONTS = "library:storefront",
   GET_FILTERS = "library:getFilters",
   SET_FILTER_PRESET = "library:setFilterPreset",

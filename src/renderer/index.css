@@ -44,6 +44,7 @@
   --design-achievement-locked-background: #18181B;
   --design-achievement-locked-border: #6a7282;
   --design-achievement-locked-underline: #6a7282;
+  --design-download-progressbar:#6a7282;
   --design-notification-background: #18181B;
   --design-notification-foreground: #f4f4f5;
   --design-notification-text: #99A1AF;
@@ -169,4 +170,13 @@
 /* Hide scrollbar when not in use (optional) */
 ::-webkit-scrollbar-thumb {
   transition: background 0.2s;
+}
+
+.multiline-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }

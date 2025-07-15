@@ -95,12 +95,13 @@ export interface RankingAPI {
 export interface LibraryAPI {
   refresh: () => Promise<void>;
   getSidebar: () => Promise<SidebarData>;
-  getGame: (id: string) => Promise<GameWithRelations>;
+  getGame: (id: string, refreshAchievements?: boolean) => Promise<GameWithRelations>;
   getGames: (filters?: FilterConfig, sort?: SortConfig) => Promise<GameWithRelations[]>;
   getLastPlayed: (max: number) => Promise<GameWithRelations[]>;
   getCountForAllStatus: () => Promise<{ id: number; name: string; count: number }[]>;
   getStatus: () => Promise<GameStatus[]>;
   getDownloadHistory: () => Promise<DownloadHistory[]>;
+  clearDownloadHistory: () => Promise<void>;
   getStorefronts: () => Promise<Storefront[]>;
   getFilters: () => Promise<{
     presets: FilterPreset[];
