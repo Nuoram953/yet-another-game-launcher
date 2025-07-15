@@ -95,7 +95,7 @@ const SortableItem = ({ id, name, index, removeFn }: SortableItemProps) => {
         </button>
         <button
           onClick={() => removeFn(id)}
-          className="text-slate-400 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100 dark:hover:text-red-400"
+          className="hover:text-design-text-error text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 dark:hover:text-red-400"
           type="button"
         >
           <X size={18} />
@@ -324,7 +324,7 @@ export function RankingEditPage() {
     <div className="flex h-screen flex-col overflow-hidden bg-slate-100 dark:bg-slate-900">
       <header className="bg-white px-6 py-4 shadow-md dark:bg-slate-800">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Top 10 Games Ranking</h1>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-design-text-normal">Top 10 Games Ranking</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Create your definitive ranking of the best video games
           </p>
@@ -338,7 +338,7 @@ export function RankingEditPage() {
             {/* Top 10 Ranking Section */}
             <div className="flex flex-col">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-white">
+                <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-design-text-normal">
                   <ListOrdered size={20} />
                   Your Top 10 Games
                 </h2>
@@ -378,7 +378,7 @@ export function RankingEditPage() {
             {/* Placeholder Section */}
             <div className="flex flex-col">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-white">
+                <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-design-text-normal">
                   <BookmarkPlus size={20} />
                   Placeholder Games
                 </h2>
@@ -421,7 +421,7 @@ export function RankingEditPage() {
           {/* Right Column - Available Games */}
           <div className="flex flex-col overflow-auto">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-white">
+              <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-design-text-normal">
                 <Gamepad2 size={20} />
                 Available Games
               </h2>

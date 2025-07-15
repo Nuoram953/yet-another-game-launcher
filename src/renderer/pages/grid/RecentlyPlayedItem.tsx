@@ -49,7 +49,7 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
     >
       <Image src={backgroundPicture} alt={game.name} className="h-full w-full object-cover" />
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
-        <h2 className="mb-2 text-4xl font-bold text-white">{game.name}</h2>
+        <h2 className="mb-2 text-4xl font-bold text-design-text-normal">{game.name}</h2>
         <div className="flex flex-row gap-8">
           <div className="flex flex-row items-center justify-center gap-1 text-gray-300">
             <Clock className="mr-1" size={16} />

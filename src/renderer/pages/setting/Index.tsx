@@ -10,6 +10,7 @@ import { SettingExtensionHowLongToBeat } from "./extension/HowLongToBeat";
 import { SettingExtensionOpenCritic } from "./extension/openCritic";
 import { Container } from "@render/components/layout/Container";
 import { SettingSidebar } from "./SettingSidebar";
+import { SettingApperanceColors } from "./apperance/Colors";
 
 export const SettingPage = () => {
   const [activeCategory, setActiveCategory] = useState("storefront");
@@ -45,24 +46,23 @@ export const SettingPage = () => {
       icon: Settings,
       component: SettingSidebar,
     },
-    // Example of a category without subcategories
-    // general: {
-    //   title: "General",
-    //   icon: Settings,
-    //   component: SettingGeneral,
-    // },
+    appearance: {
+      title: "Look & Feel",
+      icon: Settings,
+      subcategories: {
+        colors: { title: "Colors", component: SettingApperanceColors },
+      },
+    },
   };
 
   const handleCategoryChange = (categoryKey: string) => {
     setActiveCategory(categoryKey);
     const category = categories[categoryKey];
 
-    // If category has subcategories, set the first one as active
     if (category.subcategories && Object.keys(category.subcategories).length > 0) {
       const firstSubcategory = Object.keys(category.subcategories)[0];
       setActiveSubcategory(firstSubcategory);
     } else {
-      // If no subcategories, clear the active subcategory
       setActiveSubcategory(null);
     }
   };
@@ -74,12 +74,10 @@ export const SettingPage = () => {
       return () => <div>Settings not found</div>;
     }
 
-    // If category has a direct component (no subcategories)
     if (category.component) {
       return category.component;
     }
 
-    // If category has subcategories, get the active subcategory's component
     if (category.subcategories && activeSubcategory) {
       return category.subcategories[activeSubcategory]?.component || (() => <div>Settings not found</div>);
     }
@@ -94,12 +92,10 @@ export const SettingPage = () => {
 
     if (!category) return "Settings";
 
-    // If category has a direct component (no subcategories)
     if (category.component) {
       return category.title;
     }
 
-    // If category has subcategories, get the active subcategory's title
     if (category.subcategories && activeSubcategory) {
       return category.subcategories[activeSubcategory]?.title || category.title;
     }
@@ -108,15 +104,13 @@ export const SettingPage = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-slate-900 text-white">
-      <div className="flex h-full">
-        {/* Sidebar */}
-        <div className="flex h-full w-72 flex-col border-r border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
-          {/* Header */}
+    <div className="flex h-screen flex-col bg-design-background text-design-text-normal">
+      <div className="mt-16 flex h-full">
+        <div className="flex h-full w-72 flex-col border-r border-slate-700/50 bg-design-foreground backdrop-blur-sm">
           <div className="border-b border-slate-700/50 p-6">
             <div className="flex items-center space-x-3">
               <div className="rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 p-2">
-                <Settings className="h-5 w-5 text-white" />
+                <Settings className="h-5 w-5 text-design-text-normal" />
               </div>
               <h1 className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-xl font-semibold text-transparent">
                 Settings
@@ -124,7 +118,6 @@ export const SettingPage = () => {
             </div>
           </div>
 
-          {/* Navigation */}
           <div className="scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent flex-1 overflow-y-auto">
             <div className="space-y-2 p-3">
               {Object.entries(categories).map(([key, category]) => {
@@ -152,11 +145,11 @@ export const SettingPage = () => {
                             : "bg-slate-700/50 group-hover:bg-slate-600/50"
                         }`}
                       >
-                        <IconComponent className="h-4 w-4 text-white" />
+                        <IconComponent className="h-4 w-4 text-design-text-normal" />
                       </div>
                       <span
                         className={`font-medium transition-all duration-200 ${
-                          isActive ? "text-white" : "text-slate-300 group-hover:text-white"
+                          isActive ? "text-design-text-normal" : "group-hover:text-design-normal text-slate-300"
                         }`}
                       >
                         {category.title}
@@ -172,7 +165,7 @@ export const SettingPage = () => {
                             className={`group w-full rounded-lg px-4 py-2.5 text-left text-sm transition-all duration-200 ${
                               activeSubcategory === subKey
                                 ? "border border-blue-500/30 bg-blue-500/20 font-medium text-blue-300"
-                                : "border border-transparent text-slate-400 hover:bg-slate-700/30 hover:text-white"
+                                : "border border-transparent text-slate-400 hover:bg-slate-700/30 hover:text-design-text-normal"
                             }`}
                           >
                             <div className="flex items-center space-x-2">
@@ -189,10 +182,8 @@ export const SettingPage = () => {
           </div>
         </div>
 
-        {/* Main Content */}
         <Container>
           <div className="scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent h-full overflow-y-auto">
-            {/* Header */}
             <div className="mb-8">
               <div className="mb-2 flex items-center space-x-3">
                 <div className="h-8 w-2 rounded-full bg-gradient-to-b from-blue-500 to-purple-600" />
@@ -205,7 +196,6 @@ export const SettingPage = () => {
               </p>
             </div>
 
-            {/* Content */}
             <ActiveComponent />
           </div>
         </Container>

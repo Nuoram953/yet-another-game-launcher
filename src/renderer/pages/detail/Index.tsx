@@ -196,7 +196,7 @@ const GameDetailsContent: React.FC = () => {
               >
                 <section.icon className={`h-4 w-4 ${getIconStyle(section.id)}`} />
               </div>
-              <span className={activeSection === section.id ? "font-medium text-white" : "text-gray-300"}>
+              <span className={activeSection === section.id ? "font-medium text-design-text-normal" : "text-gray-300"}>
                 {section.label}
               </span>
               {activeSection === section.id && <div className="ml-auto h-2 w-2 rounded-full bg-blue-400"></div>}
@@ -208,7 +208,7 @@ const GameDetailsContent: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+    <div className="flex h-screen flex-col bg-gradient-to-br from-gray-900 to-gray-800 text-design-text-normal">
       <Background>
         <div className="flex flex-col items-center justify-center gap-8">
           <Logo />
@@ -229,7 +229,7 @@ const GameDetailsContent: React.FC = () => {
 
             {!collapsed && (
               <div className="mt-3 text-center">
-                <h2 className="text-sm font-bold text-white">{selectedGame?.name}</h2>
+                <h2 className="text-sm font-bold text-design-text-normal">{selectedGame?.name}</h2>
               </div>
             )}
           </div>

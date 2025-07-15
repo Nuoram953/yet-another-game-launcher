@@ -59,15 +59,20 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
             <h3 className="font-semibold">{notification.title}</h3>
-            <p className="text-sm text-muted-foreground">{notification.message}</p>
+            <p className="text-design-text-notification-foreground text-sm">{notification.message}</p>
             {isProgressNotification(notification) && (
               <div className="mt-2">
                 <Progress value={progress} className="h-2" />
-                <p className="mt-1 text-xs text-muted-foreground">{Math.round(progress)}% Complete</p>
+                <p className="text-design-text-notification-foreground mt-1 text-xs">
+                  {Math.round(progress)}% Complete
+                </p>
               </div>
             )}
           </div>
-          <button onClick={() => onClose(notification.id)} className="text-muted-foreground hover:text-foreground">
+          <button
+            onClick={() => onClose(notification.id)}
+            className="text-design-text-notification-foreground hover:text-design-notification-text"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -84,11 +89,14 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onClo
           {isProgressNotification(notification) && (
             <div className="mt-3">
               <Progress value={progress} className="h-2" />
-              <p className="mt-1 text-xs text-muted-foreground">{Math.round(progress)}% Complete</p>
+              <p className="text-design-text-notification-foreground mt-1 text-xs">{Math.round(progress)}% Complete</p>
             </div>
           )}
         </div>
-        <button onClick={() => onClose(notification.id)} className="text-muted-foreground hover:text-foreground">
+        <button
+          onClick={() => onClose(notification.id)}
+          className="text-design-text-notification-foreground hover:text-design-notification-text"
+        >
           <X className="h-4 w-4" />
         </button>
       </div>

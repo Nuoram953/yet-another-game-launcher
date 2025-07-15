@@ -25,18 +25,6 @@ const GameInfo = () => {
     }
   }, [selectedGame?.scoreCritic]);
 
-  if (!selectedGame) {
-    return (
-      <div className="rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-white shadow-xl">
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <BookOpen className="mb-4 h-16 w-16 text-gray-400" />
-          <h3 className="mb-2 text-2xl font-bold">No Game Selected</h3>
-          <p className="text-gray-400">Select a game from your library to view details</p>
-        </div>
-      </div>
-    );
-  }
-
   const getReleaseYear = () => {
     return new Date(selectedGame?.releasedAt).getFullYear();
   };
@@ -49,7 +37,7 @@ const GameInfo = () => {
   const getScoreColor = (score: number) => {
     if (score >= 85) return "text-green-500";
     if (score >= 70) return "text-yellow-500";
-    return "text-red-500";
+    return "text-design-text-error";
   };
 
   const developer = selectedGame?.developers?.length ? selectedGame.developers[0].company.name : "Unknown";
@@ -61,7 +49,7 @@ const GameInfo = () => {
       <Badge
         key={genre.tag.name}
         variant="outline"
-        className="border-none bg-gray-700 px-3 py-1 text-gray-200 hover:bg-gray-600"
+        className="border-none bg-design-badge-background px-3 py-1 text-design-text-normal hover:bg-design-badge-hover"
       >
         {genre.tag.name}
       </Badge>
@@ -74,7 +62,7 @@ const GameInfo = () => {
       <Badge
         key={theme.tag.name}
         variant="outline"
-        className="border-none bg-gray-700 px-3 py-1 text-gray-200 hover:bg-gray-600"
+        className="border-none bg-design-badge-background px-3 py-1 text-design-text-normal hover:bg-design-badge-hover"
       >
         {theme.tag.name}
       </Badge>
@@ -87,7 +75,7 @@ const GameInfo = () => {
       <Badge
         key={theme.tag.name}
         variant="outline"
-        className="border-none bg-gray-700 px-3 py-1 text-gray-200 hover:bg-gray-600"
+        className="border-none bg-design-badge-background px-3 py-1 text-design-text-normal hover:bg-design-badge-hover"
       >
         {theme.tag.name}
       </Badge>
@@ -102,7 +90,7 @@ const GameInfo = () => {
 
   return (
     <Card
-      title=""
+      title={"Details"}
       actions={[
         {
           icon: RefreshCcw,
@@ -121,58 +109,38 @@ const GameInfo = () => {
         },
       ]}
     >
-      <div className="h-fit bg-gray-800 bg-opacity-50" />
+      <div className="h-fit bg-design-background bg-opacity-50" />
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="mb-1 flex flex-row items-center">
             <h1 className="text-3xl font-bold">{selectedGame.name}</h1>
-            <span className="inline-block rounded bg-gray-800 px-2 py-1 text-xs font-medium">{getReleaseYear()}</span>
+            <span className="inline-block rounded px-2 py-1 text-xs font-medium">{getReleaseYear()}</span>
           </div>
 
           <div className="mt-3 flex items-center gap-4">
             <div className="flex items-center gap-1.5">
-              <Building size={16} className="text-gray-400" />
-              <span className="text-sm text-gray-300">{developer}</span>
+              <Building size={16} className="text-design-text-subtle" />
+              <span className="text-sm text-design-text-subtle">{developer}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Users size={16} className="text-gray-400" />
-              <span className="text-sm text-gray-300">{publisher}</span>
+              <Users size={16} className="text-design-text-subtle" />
+              <span className="text-sm text-design-text-subtle">{publisher}</span>
             </div>
           </div>
 
           <div className="mt-3 flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <Image src={`./icons/${selectedGame.storefront.name}.png`} alt={""} height={24} width={24} />
-              <span className="text-sm text-gray-300">
+              <span className="text-sm text-design-text-subtle">
                 {t(`storefront.${selectedGame.storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON })}
               </span>
             </div>
           </div>
         </div>
-
-        {/* <div className="flex gap-2"> */}
-        {/*   <TooltipProvider> */}
-        {/*     <Tooltip> */}
-        {/*       <TooltipTrigger asChild> */}
-        {/*         <button */}
-        {/*           onClick={toggleFavorite} */}
-        {/*           className={`flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-gray-700 ${ */}
-        {/*             isFavorite ? "text-red-500" : "text-gray-400" */}
-        {/*           }`} */}
-        {/*         > */}
-        {/*           <Heart size={18} fill={isFavorite ? "currentColor" : "none"} /> */}
-        {/*         </button> */}
-        {/*       </TooltipTrigger> */}
-        {/*       <TooltipContent side="bottom"> */}
-        {/*         <p>{selectedGame.isFavorite ? "Remove from favorites" : "Add to favorites"}</p> */}
-        {/*       </TooltipContent> */}
-        {/*     </Tooltip> */}
-        {/*   </TooltipProvider> */}
-        {/* </div> */}
       </div>
       <div className="mt-6 flex flex-row gap-4">
         {selectedGame.scoreCritic && (
-          <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
+          <div className="rounded-lg p-4 transition-all">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
                 <Star className={`${getScoreColor(selectedGame.scoreCritic ?? 0)}`} size={20} />
@@ -182,18 +150,18 @@ const GameInfo = () => {
                   <span className={`text-2xl font-bold ${getScoreColor(selectedGame.scoreCritic ?? 0)}`}>
                     {selectedGame.scoreCritic || "N/A"}
                   </span>
-                  <span className="text-xs text-gray-400">/100</span>
+                  <span className="text-xs text-design-text-subtle">/100</span>
                 </div>
                 <div className="mt-1">
                   <Progress value={scoreAnimation} className="h-1 w-24" />
                 </div>
-                <div className="mt-1 text-xs text-gray-400">Critic Score</div>
+                <div className="mt-1 text-xs text-design-text-subtle">Critic Score</div>
               </div>
             </div>
           </div>
         )}
 
-        <div className="rounded-lg bg-gray-800 p-4 transition-all hover:bg-gray-700">
+        <div className="rounded-lg p-4 transition-all">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-700">
               <Calendar className="text-blue-400" size={20} />

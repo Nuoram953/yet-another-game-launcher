@@ -97,8 +97,8 @@ export const SectionAchievements = () => {
           {/* Progress Section */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-300">Overall Progress</span>
-              <span className="font-medium text-gray-300">
+              <span className="text-design-text-normal">Overall Progress</span>
+              <span className="font-medium text-design-text-subtle">
                 {unlockedAchievements} of {totalAchievements} ({completionPercentage.toFixed(0)}%)
               </span>
             </div>
@@ -109,7 +109,7 @@ export const SectionAchievements = () => {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative max-w-md flex-grow">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-design-text-subtle" />
                 <Input
                   color={"dark"}
                   placeholder="Search achievements..."
@@ -120,7 +120,7 @@ export const SectionAchievements = () => {
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 rounded-md border border-gray-700 px-3 py-2 text-sm hover:bg-gray-800"
+                className="flex items-center gap-2 rounded-md border border-design-border px-3 py-2 text-sm hover:bg-design-background"
               >
                 <Filter className="h-4 w-4" />
                 Filters
@@ -153,7 +153,7 @@ export const SectionAchievements = () => {
             </div>
 
             {showFilters && (
-              <div className="flex flex-wrap items-center gap-6 rounded-md bg-gray-800/50 p-4 text-sm">
+              <div className="flex flex-wrap items-center gap-6 rounded-md p-4 text-sm">
                 <label className="flex cursor-pointer items-center gap-2">
                   <Checkbox checked={hideUnlocked} onCheckedChange={(checked) => setHideUnlocked(checked === true)} />
                   <span className="flex items-center gap-1">
@@ -175,11 +175,11 @@ export const SectionAchievements = () => {
           {/* No results message */}
           {filteredAchievements.length === 0 && (
             <div className="flex h-40 flex-col items-center justify-center text-center">
-              <div className="mb-2 rounded-full bg-gray-800 p-3">
-                <Search className="h-6 w-6 text-gray-400" />
+              <div className="mb-2 rounded-full bg-design-foreground p-3">
+                <Search className="h-6 w-6 text-design-text-subtle" />
               </div>
               <h3 className="text-lg font-medium">No achievements found</h3>
-              <p className="text-sm text-gray-400">Try adjusting your filters or search query</p>
+              <p className="text-sm text-design-text-subtle">Try adjusting your filters or search query</p>
             </div>
           )}
 
@@ -189,7 +189,9 @@ export const SectionAchievements = () => {
               <div
                 key={`all-${achievement.id}`}
                 className={`relative overflow-hidden rounded-lg border ${
-                  achievement.isUnlocked ? "border-green-700 bg-green-900/10" : "border-gray-700 bg-gray-800/50"
+                  achievement.isUnlocked
+                    ? "border-design-achievement-unlocked-border"
+                    : "border-design-achievement-locked-border"
                 } transition-all duration-300 hover:border-primary`}
               >
                 <div className="flex p-4">
@@ -201,26 +203,28 @@ export const SectionAchievements = () => {
                         className="h-16 w-16 rounded-md object-contain"
                       />
                     ) : (
-                      <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-700">
-                        <Lock className="h-8 w-8 text-gray-400" />
+                      <div className="flex h-16 w-16 items-center justify-center rounded-md border border-design-border">
+                        <Lock className="h-8 w-8 text-design-text-subtle" />
                       </div>
                     )}
                   </div>
                   <div className="flex-grow space-y-1">
                     <div className="flex items-start justify-between">
                       <h3 className="text-lg font-bold leading-tight">{achievement.name}</h3>
-                      {achievement.isHidden && <EyeOff className="ml-1 h-4 w-4 text-gray-400" />}
+                      {achievement.isHidden && <EyeOff className="ml-1 h-4 w-4 text-design-text-subtle" />}
                     </div>
-                    <p className="line-clamp-2 text-sm text-gray-300">{achievement.description}</p>
+                    <p className="line-clamp-2 text-sm text-design-text-normal">{achievement.description}</p>
                     {achievement.isUnlocked && (
-                      <div className="flex items-center text-xs text-green-400">
+                      <div className="text-design-text-achievement-unlocked flex items-center text-xs">
                         <CheckCircle className="mr-1 h-3 w-3" />
                         <span>Unlocked: {unixToDate(Number(achievement.unlockedAt))}</span>
                       </div>
                     )}
                   </div>
                 </div>
-                {achievement.isUnlocked && <div className="absolute inset-x-0 bottom-0 h-1 bg-green-500" />}
+                {achievement.isUnlocked && (
+                  <div className="absolute inset-x-0 bottom-0 h-1 bg-design-achievement-unlocked-underline" />
+                )}
               </div>
             ))}
           </div>

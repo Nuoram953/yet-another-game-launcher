@@ -72,7 +72,7 @@ const Cover = ({ game }: CoverProps) => {
 
   return (
     <div
-      className="relative w-full text-white"
+      className="relative w-full text-design-text-normal"
       onClick={handleRunCommand}
       onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
       onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
@@ -91,7 +91,7 @@ const Cover = ({ game }: CoverProps) => {
 
       {game.isFavorite && <FavoriteBadge />}
       <div className="w-wull flex flex-col truncate text-left">
-        <p className="w-full truncate text-white">{game.name}</p>
+        <p className="w-full truncate text-design-text-normal">{game.name}</p>
         <div className="flex flex-row items-center text-gray-300">
           <Clock className="mr-1" size={16} />
           <p>{convertToHoursAndMinutes(game.timePlayed)}</p>

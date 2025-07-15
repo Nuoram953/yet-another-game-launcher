@@ -39,7 +39,9 @@ export const SectionSettings = () => {
       <div className="flex border-b border-gray-300">
         <button
           className={`px-4 py-2 font-medium ${
-            activeTab === Tabs.INFO ? "border-b-2 border-blue-500 text-blue-600" : "text-white hover:text-gray-700"
+            activeTab === Tabs.INFO
+              ? "border-b-2 border-blue-500 text-blue-600"
+              : "text-design-text-normal hover:text-gray-700"
           }`}
           onClick={() => handleTabClick(Tabs.INFO)}
         >
@@ -47,7 +49,9 @@ export const SectionSettings = () => {
         </button>
         <button
           className={`px-4 py-2 font-medium ${
-            activeTab === Tabs.LAUNCH ? "border-b-2 border-blue-500 text-blue-600" : "text-white hover:text-gray-700"
+            activeTab === Tabs.LAUNCH
+              ? "border-b-2 border-blue-500 text-blue-600"
+              : "text-design-text-normal hover:text-gray-700"
           }`}
           onClick={() => handleTabClick(Tabs.LAUNCH)}
         >
@@ -55,7 +59,9 @@ export const SectionSettings = () => {
         </button>
         <button
           className={`px-4 py-2 font-medium ${
-            activeTab === Tabs.UTILITY ? "border-b-2 border-blue-500 text-blue-600" : "text-white hover:text-gray-700"
+            activeTab === Tabs.UTILITY
+              ? "border-b-2 border-blue-500 text-blue-600"
+              : "text-design-text-normal hover:text-gray-700"
           }`}
           onClick={() => handleTabClick(Tabs.UTILITY)}
         >

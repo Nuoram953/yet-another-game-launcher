@@ -76,7 +76,7 @@ export function SectionReview() {
   };
 
   const getCategoryColor = (value: number) => {
-    if (value <= 2) return "bg-red-500";
+    if (value <= 2) return "bg-design-error";
     if (value <= 4) return "bg-yellow-500";
     if (value <= 7) return "bg-blue-500";
     return "bg-green-500";
@@ -106,7 +106,7 @@ export function SectionReview() {
                 <div className="mb-1 flex justify-between">
                   <label className="font-medium">{label}</label>
                   <span
-                    className={`rounded-md px-2 py-1 text-xs text-white ${getCategoryColor(categoryRatings[key as keyof typeof categoryRatings])}`}
+                    className={`rounded-md px-2 py-1 text-xs text-design-text-normal ${getCategoryColor(categoryRatings[key as keyof typeof categoryRatings])}`}
                   >
                     {categoryRatings[key as keyof typeof categoryRatings]}/10 -{" "}
                     {getCategoryLabel(categoryRatings[key as keyof typeof categoryRatings])}

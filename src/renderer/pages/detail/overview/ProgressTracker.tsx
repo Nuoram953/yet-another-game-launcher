@@ -1,6 +1,6 @@
 import { Card } from "@render//components/card/Card";
 import { useGames } from "@render//context/DatabaseContext";
-import { Award, Trophy, RefreshCcw, Clock } from "lucide-react";
+import { Award, Trophy, RefreshCcw } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNotifications } from "@render//components/NotificationSystem";
 import _ from "lodash";
@@ -31,7 +31,7 @@ export const ProgressTracker = () => {
   if (!selectedGame) {
     return (
       <Card title="Progress Tracker">
-        <div className="flex h-64 items-center justify-center text-white/60">
+        <div className="text-design-text-normal/60 flex h-64 items-center justify-center">
           <p>Select a game to track progress</p>
         </div>
       </Card>
@@ -73,7 +73,6 @@ export const ProgressTracker = () => {
     return `${Math.min(Math.max(position, 0), 100)}%`;
   };
 
-  // Determine the current section based on playtime
   const getCurrentSection = (): { color: string; percent: number } => {
     if (totalPlaytime <= (selectedGame.mainStory || 0)) {
       return {
@@ -104,7 +103,6 @@ export const ProgressTracker = () => {
           name: "Refresh",
           onClick: async () => {
             setIsAnimating(true);
-            // Type assertion for window.game or check if it exists
             if ((window as any).game && (window as any).game.refreshProgressTracker) {
               await (window as any).game.refreshProgressTracker(selectedGame.id);
               addNotification({
@@ -121,9 +119,7 @@ export const ProgressTracker = () => {
       className="overflow-hidden"
     >
       <div className="relative mb-12 h-24 pt-2">
-        {/* Timeline base - thicker and with segments */}
         <div className="absolute left-0 right-0 top-6 h-4 rounded-full bg-white/10 shadow-inner">
-          {/* Main story section */}
           <div
             className="absolute h-full rounded-l-full bg-gradient-to-r from-blue-600/30 to-blue-400/30"
             style={{
@@ -132,7 +128,6 @@ export const ProgressTracker = () => {
             }}
           ></div>
 
-          {/* Main+Extras section */}
           <div
             className="absolute h-full bg-gradient-to-r from-purple-600/30 to-purple-400/30"
             style={{
@@ -142,7 +137,6 @@ export const ProgressTracker = () => {
             }}
           ></div>
 
-          {/* Completionist section */}
           <div
             className="absolute h-full rounded-r-full bg-gradient-to-r from-amber-600/30 to-amber-400/30"
             style={{
@@ -152,7 +146,6 @@ export const ProgressTracker = () => {
             }}
           ></div>
 
-          {/* Progress indicator with pulse animation when refreshing */}
           <div
             className={`absolute h-full rounded-l-full bg-gradient-to-r ${currentSection.color} transition-all duration-700 ease-out ${isAnimating ? "animate-pulse" : ""}`}
             style={{
@@ -162,7 +155,6 @@ export const ProgressTracker = () => {
           ></div>
         </div>
 
-        {/* Your position indicator */}
         <div
           className={`absolute top-0 flex flex-col items-center transition-all duration-700 ease-out ${isAnimating ? "scale-110" : "scale-100"}`}
           style={{
@@ -173,12 +165,11 @@ export const ProgressTracker = () => {
         >
           <div className="z-10 h-6 w-6 rounded-full bg-white shadow-lg shadow-indigo-500/50 ring-2 ring-indigo-300 ring-offset-2 ring-offset-indigo-800"></div>
           <div className="my-1 h-8 w-px bg-white/50"></div>
-          <div className="whitespace-nowrap rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 px-4 py-1 text-sm font-medium text-white shadow-lg">
+          <div className="whitespace-nowrap rounded-full bg-gradient-to-r from-indigo-600 to-indigo-400 px-4 py-1 text-sm font-medium text-design-text-normal shadow-lg">
             Your Time: {formatTime(totalPlaytime)}
           </div>
         </div>
 
-        {/* Main Story marker */}
         <div
           className="absolute top-6 -translate-y-1/2"
           style={{
@@ -191,7 +182,6 @@ export const ProgressTracker = () => {
           </div>
         </div>
 
-        {/* Main + Extras marker */}
         <div
           className="absolute top-6 -translate-y-1/2"
           style={{
@@ -204,7 +194,6 @@ export const ProgressTracker = () => {
           </div>
         </div>
 
-        {/* Completionist marker */}
         <div className="absolute top-6 -translate-y-1/2" style={{ left: `100%` }}>
           <div className="h-8 w-px bg-amber-400/70"></div>
           <div className="absolute right-0 top-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-amber-900/40 px-2 py-1 text-xs font-medium text-amber-300 backdrop-blur-sm">
@@ -213,9 +202,7 @@ export const ProgressTracker = () => {
         </div>
       </div>
 
-      {/* Progress cards with improved glassmorphism */}
       <div className="grid gap-4 md:grid-cols-3">
-        {/* Main Story */}
         <div
           className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-900/30 to-blue-800/10 p-4 backdrop-blur-sm transition-all duration-500 ${isAnimating ? "translate-y-1" : ""}`}
         >
@@ -223,7 +210,7 @@ export const ProgressTracker = () => {
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
               <div className="mr-3 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 p-2 shadow-lg shadow-blue-500/20">
-                <Trophy className="h-5 w-5 text-white" />
+                <Trophy className="h-5 w-5 text-design-text-normal" />
               </div>
               <div>
                 <h4 className="font-medium text-blue-100">Main Story</h4>
@@ -248,57 +235,59 @@ export const ProgressTracker = () => {
           </div>
         </div>
 
-        {/* Main + Extras */}
         <div
           className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-900/30 to-purple-800/10 p-4 backdrop-blur-sm transition-all duration-500 ${isAnimating ? "translate-y-1" : ""}`}
         >
           <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-purple-500/10 blur-2xl"></div>
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
-              <div className="mr-3 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 p-2 shadow-lg shadow-purple-500/20">
-                <Award className="h-5 w-5 text-white" />
+              <div className="mr-3 rounded-lg bg-design-progress-extra-background p-2 shadow-lg shadow-purple-500/20">
+                <Award className="h-5 w-5 text-design-text-normal" />
               </div>
               <div>
-                <h4 className="font-medium text-purple-100">Main + Extras</h4>
-                <div className="text-xs text-purple-300/80">{formatTime(time.extras)}</div>
+                <h4 className="font-medium text-design-progress-extra-text">Main + Extras</h4>
+                <div className="text-design-progress-extra-background/80 text-xs">{formatTime(time.extras)}</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-purple-100">{Math.round(extrasData.percent)}%</div>
-              <div className="text-xs text-purple-300/80">
+              <div className="text-lg font-bold text-design-progress-extra-text">{Math.round(extrasData.percent)}%</div>
+              <div className="text-design-progress-extra-background/80 text-xs">
                 {extrasData.remaining > 0 ? `${formatTime(extrasData.remaining)} left` : "Completed ✓"}
               </div>
             </div>
           </div>
 
-          <div className="relative h-3 overflow-hidden rounded-full bg-white/10 shadow-inner">
+          <div className="relative h-3 overflow-hidden rounded-full shadow-inner">
             <div
-              className={`absolute h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-700 ease-out ${isAnimating ? "opacity-80" : ""}`}
+              className={`absolute h-full rounded-full bg-design-progress-extra-background transition-all duration-700 ease-out ${isAnimating ? "opacity-80" : ""}`}
               style={{ width: `${extrasData.percent}%` }}
             >
-              {extrasData.percent > 98 && <div className="absolute inset-0 bg-white/20"></div>}
+              {extrasData.percent > 98 && <div className="absolute inset-0"></div>}
             </div>
           </div>
         </div>
 
-        {/* Completionist */}
         <div
           className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-amber-900/30 to-amber-800/10 p-4 backdrop-blur-sm transition-all duration-500 ${isAnimating ? "translate-y-1" : ""}`}
         >
           <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-amber-500/10 blur-2xl"></div>
           <div className="mb-3 flex justify-between">
             <div className="flex items-center">
-              <div className="mr-3 rounded-lg bg-gradient-to-br from-amber-600 to-amber-400 p-2 shadow-lg shadow-amber-500/20">
-                <Award className="h-5 w-5 text-white" />
+              <div className="shadow-design-progress-completionist-background/20 mr-3 rounded-lg bg-design-progress-completionist-background p-2 shadow-lg">
+                <Award className="h-5 w-5 text-design-text-normal" />
               </div>
               <div>
-                <h4 className="font-medium text-amber-100">Completionist</h4>
-                <div className="text-xs text-amber-300/80">{formatTime(time.completionist)}</div>
+                <h4 className="font-medium text-design-progress-completionist-text">Completionist</h4>
+                <div className="text-design-progress-completionist-text/80 text-xs">
+                  {formatTime(time.completionist)}
+                </div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-amber-100">{Math.round(completionistData.percent)}%</div>
-              <div className="text-xs text-amber-300/80">
+              <div className="text-lg font-bold text-design-progress-completionist-text">
+                {Math.round(completionistData.percent)}%
+              </div>
+              <div className="text-design-progress-completionist-text/80 text-xs">
                 {completionistData.remaining > 0 ? `${formatTime(completionistData.remaining)} left` : "Completed ✓"}
               </div>
             </div>
@@ -306,7 +295,7 @@ export const ProgressTracker = () => {
 
           <div className="relative h-3 overflow-hidden rounded-full bg-white/10 shadow-inner">
             <div
-              className={`absolute h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-700 ease-out ${isAnimating ? "opacity-80" : ""}`}
+              className={`absolute h-full rounded-full bg-design-progress-completionist-background transition-all duration-700 ease-out ${isAnimating ? "opacity-80" : ""}`}
               style={{ width: `${completionistData.percent}%` }}
             >
               {completionistData.percent > 98 && <div className="absolute inset-0 bg-white/20"></div>}

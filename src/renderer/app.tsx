@@ -23,6 +23,7 @@ import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { SettingPage } from "./pages/setting/Index";
 import { ConfigProvider } from "./components/ConfigProvider";
+import { ColorProvider } from "./context/ColorContext";
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
@@ -30,97 +31,99 @@ const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <ConfigProvider>
-        <I18nextProvider i18n={i18n}>
-          <NotificationProvider>
-            <NotificationSystem />
-            <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
-              <GamesProvider>
-                <HashRouter>
-                  <Routes>
-                    <Route
-                      index
-                      path="/"
-                      element={
-                        <Layout>
-                          <Grid />
-                        </Layout>
-                      }
-                    />
-                    <Route
-                      index
-                      path="/game/:id"
-                      element={
-                        <Layout>
-                          <GameDetail />
-                        </Layout>
-                      }
-                    />
+        <ColorProvider>
+          <I18nextProvider i18n={i18n}>
+            <NotificationProvider>
+              <NotificationSystem />
+              <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
+                <GamesProvider>
+                  <HashRouter>
+                    <Routes>
+                      <Route
+                        index
+                        path="/"
+                        element={
+                          <Layout>
+                            <Grid />
+                          </Layout>
+                        }
+                      />
+                      <Route
+                        index
+                        path="/game/:id"
+                        element={
+                          <Layout>
+                            <GameDetail />
+                          </Layout>
+                        }
+                      />
 
-                    <Route
-                      index
-                      path="/ranking"
-                      element={
-                        <Layout>
-                          <RankingPage />
-                        </Layout>
-                      }
-                    />
+                      <Route
+                        index
+                        path="/ranking"
+                        element={
+                          <Layout>
+                            <RankingPage />
+                          </Layout>
+                        }
+                      />
 
-                    <Route
-                      index
-                      path="/ranking/:id"
-                      element={
-                        <Layout>
-                          <RankingEditPage />
-                        </Layout>
-                      }
-                    />
+                      <Route
+                        index
+                        path="/ranking/:id"
+                        element={
+                          <Layout>
+                            <RankingEditPage />
+                          </Layout>
+                        }
+                      />
 
-                    <Route
-                      index
-                      path="/download"
-                      element={
-                        <Layout>
-                          <DownloadViewer />
-                        </Layout>
-                      }
-                    />
+                      <Route
+                        index
+                        path="/download"
+                        element={
+                          <Layout>
+                            <DownloadViewer />
+                          </Layout>
+                        }
+                      />
 
-                    <Route
-                      index
-                      path="/web"
-                      element={
-                        <Layout>
-                          <WebsiteViewer />
-                        </Layout>
-                      }
-                    />
+                      <Route
+                        index
+                        path="/web"
+                        element={
+                          <Layout>
+                            <WebsiteViewer />
+                          </Layout>
+                        }
+                      />
 
-                    <Route
-                      index
-                      path="/setting"
-                      element={
-                        <Layout>
-                          <SettingPage />
-                        </Layout>
-                      }
-                    />
+                      <Route
+                        index
+                        path="/setting"
+                        element={
+                          <Layout>
+                            <SettingPage />
+                          </Layout>
+                        }
+                      />
 
-                    <Route
-                      path="*"
-                      element={
-                        <Layout>
-                          <NotFound />
-                        </Layout>
-                      }
-                    />
-                  </Routes>
-                </HashRouter>
-                <Toaster />
-              </GamesProvider>
-            </BreadcrumbContext.Provider>
-          </NotificationProvider>
-        </I18nextProvider>
+                      <Route
+                        path="*"
+                        element={
+                          <Layout>
+                            <NotFound />
+                          </Layout>
+                        }
+                      />
+                    </Routes>
+                  </HashRouter>
+                  <Toaster />
+                </GamesProvider>
+              </BreadcrumbContext.Provider>
+            </NotificationProvider>
+          </I18nextProvider>
+        </ColorProvider>
       </ConfigProvider>
     </ThemeProvider>
   );

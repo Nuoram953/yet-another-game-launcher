@@ -33,7 +33,7 @@ export default function Layout({ children }: LayoutProps) {
     <div className="flex h-screen w-screen overflow-hidden">
       <Sidebar open={open} setOpen={setOpen} />
       <main className="flex min-h-0 flex-1 flex-col bg-gradient-to-br from-gray-900 to-gray-800">
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-800 bg-sidebar">
+        <header className="absolute z-50 flex h-16 w-full shrink-0 items-center gap-2 text-design-text-normal">
           <div className="flex items-center gap-2 px-4">
             <Button
               icon={SidebarIcon}
