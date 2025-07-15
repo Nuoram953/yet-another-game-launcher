@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
-import { Card, CardHeader, CardTitle, CardContent } from "@render//components/ui/card";
-import { Download } from "lucide-react";
+import { CardHeader, CardTitle, CardContent } from "@render//components/ui/card";
+import { Download, Settings } from "lucide-react";
 import { useGames } from "@render//context/DatabaseContext";
-import DownloadHistory from "./History";
+import { DownloadHistoryRow } from "./History";
+import { Column, Container } from "@render/components/layout/Container";
+import { Card } from "@render/components/card/Card";
+import { getLibrary } from "@render/api/electron";
 
 const formatBytes = (bytes: number, decimals = 2) => {
   if (!bytes) return "0 Bytes";
@@ -91,30 +94,53 @@ const GameDownloadRow = ({ data, title, speedHistory }: GameDownloadRowProps) =>
 };
 
 const DownloadView = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [downloadHistory, setDownloadHistory] = useState([]);
   const { downloading } = useGames();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setDownloadHistory(await getLibrary().getDownloadHistory());
+    };
+    fetchData();
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return <div>...Loading...</div>;
+  }
+
   return (
-    <div className="w-full p-4">
-      <Card>
-        <CardHeader className="border-b">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5" />
-              Downloads
-            </CardTitle>
-            <div className="text-sm">
-              Total Speed: <span className="font-bold text-blue-600">{formatSpeed(0)}</span>
+    <div className="flex h-screen flex-col">
+      <div className="relative flex flex-1 overflow-hidden">
+        <div className="mt-16 flex h-screen flex-col gap-4">
+          <Container>
+            <div className="flex flex-col gap-4">
+              <Card title="Stats">
+                <div>Stats</div>
+              </Card>
+
+              <Card title="Downloading">
+                <div>Stats</div>
+              </Card>
+
+              <Card title="Recent Downloads">
+                <Column>
+                  {downloadHistory.map((download) => (
+                    <DownloadHistoryRow id={download.gameId} dateInstalled={download.createdAt} />
+                  ))}
+                </Column>
+              </Card>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {downloading.map((download) => (
-            <GameDownloadRow key={download.id} title={download.id} data={download} speedHistory={[]} />
-          ))}
-        </CardContent>
-      </Card>
+          </Container>
+        </div>
+      </div>
     </div>
   );
 };
+
+// {downloading.map((download) => (
+//   <GameDownloadRow key={download.id} title={download.id} data={download} speedHistory={[]} />
+// ))}
 
 export default DownloadView;

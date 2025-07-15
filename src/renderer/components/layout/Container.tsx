@@ -11,3 +11,7 @@ export const Container = ({ children }: Props) => {
     </div>
   );
 };
+
+export const Column = ({ children }: Props) => {
+  return <div className={`flex flex-col gap-16 overflow-hidden`}>{children}</div>;
+};

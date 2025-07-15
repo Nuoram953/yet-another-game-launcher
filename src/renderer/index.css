@@ -170,3 +170,12 @@
 ::-webkit-scrollbar-thumb {
   transition: background 0.2s;
 }
+
+.multiline-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
