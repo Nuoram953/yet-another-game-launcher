@@ -101,6 +101,7 @@ export interface LibraryAPI {
   getCountForAllStatus: () => Promise<{ id: number; name: string; count: number }[]>;
   getStatus: () => Promise<GameStatus[]>;
   getDownloadHistory: () => Promise<DownloadHistory[]>;
+  clearDownloadHistory: () => Promise<void>;
   getStorefronts: () => Promise<Storefront[]>;
   getFilters: () => Promise<{
     presets: FilterPreset[];

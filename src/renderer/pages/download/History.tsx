@@ -4,11 +4,12 @@ import _ from "lodash";
 import { getMedia } from "@render/api/electron";
 import { Image } from "@render/components/image/Image";
 import { Button } from "@render/components/button/Button";
-import { Calendar, Store } from "lucide-react";
-import { unixToDate, formatDateWithOrdinalYear } from "@render/utils/util";
+import { ArrowDownToLine, Store } from "lucide-react";
+import { formatDateWithOrdinalYear } from "@render/utils/util";
 import { useTranslation } from "react-i18next";
 import { LOCALE_NAMESPACE } from "@common/constant";
 import { useNavigate } from "react-router-dom";
+import { useGames } from "@render/context/DatabaseContext";
 
 interface DownloadHistoryRowProps {
   id: string;
@@ -16,6 +17,7 @@ interface DownloadHistoryRowProps {
 }
 
 export const DownloadHistoryRow = ({ id, dateInstalled }: DownloadHistoryRowProps) => {
+  const { games } = useGames();
   const [game, setGame] = useState<GameWithRelations>();
   const [cover, setCover] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,9 +27,9 @@ export const DownloadHistoryRow = ({ id, dateInstalled }: DownloadHistoryRowProp
   useEffect(() => {
     const fetchGame = async () => {
       try {
-        const data = await window.library.getGame(id);
+        const data = games.find((game) => game.id === id);
         const cover = await getMedia().getCovers(id, 1);
-        setGame(data);
+        setGame(data as GameWithRelations);
         setCover(cover[0]);
         setLoading(false);
       } catch (error) {
@@ -51,7 +53,7 @@ export const DownloadHistoryRow = ({ id, dateInstalled }: DownloadHistoryRowProp
         <h1 className="text-lg font-bold">{game.name}</h1>
         <div className="flex flex-row gap-8">
           <div className="flex flex-row items-center justify-center gap-1 text-gray-300">
-            <Calendar className="mr-1" size={16} />
+            <ArrowDownToLine className="mr-1" size={16} />
             <p>{formatDateWithOrdinalYear(Number(dateInstalled))}</p>
           </div>
           <div className="flex flex-row items-center justify-center gap-1 text-gray-300">

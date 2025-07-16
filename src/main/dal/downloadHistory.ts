@@ -12,6 +12,10 @@ export async function create(gameId: string) {
 
 export async function getAll(limit?: number) {
   return await prisma.downloadHistory.findMany({
-    ...(limit && { take: limit, orderBy: { createdAt: "desc" } }),
+    ...(limit && { where: { isHidden: false }, take: limit, orderBy: { createdAt: "desc" } }),
   });
+}
+
+export async function hideAll() {
+  return await prisma.downloadHistory.updateMany({ data: { isHidden: true }, where: { isHidden: false } });
 }

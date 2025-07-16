@@ -86,9 +86,10 @@ model GameActivity {
 }
 
 model DownloadHistory {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   gameId    String
-  game      Game   @relation(fields: [gameId], references: [id])
+  game      Game    @relation(fields: [gameId], references: [id])
+  isHidden  Boolean @default(false)
   createdAt BigInt
 
   @@index([gameId])

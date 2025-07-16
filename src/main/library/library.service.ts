@@ -68,6 +68,10 @@ export const getDownloadHistory = async () => {
   return await queries.DownloadHistory.getAll(10);
 };
 
+export const clearDownloadHistory = async () => {
+  return await queries.DownloadHistory.hideAll();
+};
+
 export const getGame = async (id: string) => {
   let game = await queries.Game.getGameById(id);
   if (_.isNil(game)) {

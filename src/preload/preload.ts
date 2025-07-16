@@ -56,6 +56,7 @@ contextBridge.exposeInMainWorld("library", {
   getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
   getStatus: () => ipcRenderer.invoke(RouteLibrary.GET_STATUS),
   getDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
+  clearDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.CLEAR_DOWNLOAD_HISTORY),
   getStorefronts: () => ipcRenderer.invoke(RouteLibrary.GET_STOREFRONTS),
   getFilters: () => ipcRenderer.invoke(RouteLibrary.GET_FILTERS),
   setFilterPreset: (data: Partial<FilterPreset>) => ipcRenderer.invoke(RouteLibrary.SET_FILTER_PRESET, data),

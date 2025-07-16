@@ -69,7 +69,10 @@
     "build:mac": "prisma generate && electron-vite build && electron-builder --mac",
     "build:linux": "prisma generate && electron-vite build && electron-builder --linux",
     "build:dev": "prisma generate && electron-vite build --mode development",
-    "preview": "electron-vite preview"
+    "preview": "electron-vite preview",
+    "prisma:format": "npx prisma format",
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:generate": "npx prisma generate"
   },
   "commitlint": {
     "extends": [
