@@ -68,13 +68,19 @@ export const getDownloadHistory = async () => {
   return await queries.DownloadHistory.getAll(10);
 };
 
-export const getGame = async (id: string) => {
+export const clearDownloadHistory = async () => {
+  return await queries.DownloadHistory.hideAll();
+};
+
+export const getGame = async (id: string, refreshAchievements: boolean = true) => {
   let game = await queries.Game.getGameById(id);
   if (_.isNil(game)) {
     throw new Error("Invalid game id ${id}");
   }
 
-  await updateAchievements(game);
+  if (refreshAchievements) {
+    await updateAchievements(game);
+  }
 
   await queries.Game.update(id, {
     openedAt: new Date(),

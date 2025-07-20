@@ -50,12 +50,14 @@ contextBridge.exposeInMainWorld("media", {
 contextBridge.exposeInMainWorld("library", {
   refresh: () => ipcRenderer.invoke(RouteLibrary.REFRESH),
   getSidebar: () => ipcRenderer.invoke(RouteLibrary.GET_SIDEBAR),
-  getGame: (id: string) => ipcRenderer.invoke(RouteLibrary.GET_GAME, id),
+  getGame: (id: string, refreshAchievements: boolean = true) =>
+    ipcRenderer.invoke(RouteLibrary.GET_GAME, id, refreshAchievements),
   getGames: (filters?: FilterConfig, sort?: SortConfig) => ipcRenderer.invoke(RouteLibrary.GET_GAMES, filters, sort),
   getLastPlayed: (max: number) => ipcRenderer.invoke(RouteLibrary.GET_LAST_PLAYED, max),
   getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
   getStatus: () => ipcRenderer.invoke(RouteLibrary.GET_STATUS),
   getDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
+  clearDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.CLEAR_DOWNLOAD_HISTORY),
   getStorefronts: () => ipcRenderer.invoke(RouteLibrary.GET_STOREFRONTS),
   getFilters: () => ipcRenderer.invoke(RouteLibrary.GET_FILTERS),
   setFilterPreset: (data: Partial<FilterPreset>) => ipcRenderer.invoke(RouteLibrary.SET_FILTER_PRESET, data),

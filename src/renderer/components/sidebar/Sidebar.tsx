@@ -21,7 +21,7 @@ interface SidebarProps {
 export const Sidebar = ({ open, setOpen }: SidebarProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { games, updateFilters } = useGames();
+  const { games, updateFilters, downloading } = useGames();
   const [loading, setLoading] = React.useState<boolean>(true);
   const { renderKey, forceRefresh, getConfigValue } = useConfig();
   const [sidebarData, setSidebarData] = React.useState<SidebarData>();
@@ -70,6 +70,7 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
               icon={<HardDriveDownload />}
               label={"Downloads"}
               path={"/download"}
+              count={downloading.length}
             />
             <SidebarNavigateItem
               handleNavigate={handleNavigate}

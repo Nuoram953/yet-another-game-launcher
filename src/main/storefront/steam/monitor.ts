@@ -15,15 +15,6 @@ import notificationManager from "../../manager/notificationManager";
 import * as SteamService from "./service";
 import * as SteamConfig from "./config";
 
-interface DownloadStats {
-  id: string;
-  progress: number;
-  speed: number;
-  timeRemaining: number;
-  downloadedBytes: number;
-  totalBytes: number;
-}
-
 class DownloadTracker {
   private steamLibraryPath: string;
   private gameId: string;

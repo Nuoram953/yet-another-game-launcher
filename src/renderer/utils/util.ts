@@ -12,15 +12,41 @@ export function unixToDate(unixTime: number) {
   return `${day}/${month}/${year}`;
 }
 
-export function unixToYYYYMMDD(unixTimestamp:number) {
+export function unixToYYYYMMDD(unixTimestamp: number) {
   const date = new Date(unixTimestamp * 1000);
-  
+
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  
-  const formattedMonth = month < 10 ? '0' + month : month;
-  const formattedDay = day < 10 ? '0' + day : day;
-  
+
+  const formattedMonth = month < 10 ? "0" + month : month;
+  const formattedDay = day < 10 ? "0" + day : day;
+
   return `${year}-${formattedMonth}-${formattedDay}`;
+}
+
+export function formatDateWithOrdinalYear(timestamp: number): string {
+  const date = new Date(timestamp > 1e12 ? timestamp : timestamp * 1000);
+
+  const day = date.getDate();
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const year = date.getFullYear();
+
+  const ordinal = getOrdinalSuffix(day);
+
+  return `${month} ${day}${ordinal}, ${year}`;
+}
+
+function getOrdinalSuffix(day: number): string {
+  if (day >= 11 && day <= 13) return "th";
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
 }
