@@ -1,10 +1,10 @@
 import { GameReview } from "@prisma/client";
 import { prisma } from "..";
 
-export const createOrUpdate = async (data:Partial<GameReview>)=>{
+export const createOrUpdate = async (data: Partial<GameReview>) => {
   return await prisma.gameReview.upsert({
     where: {
-      gameId: data.gameId
+      gameId: data.gameId,
     },
     update: {
       gameId: data.gameId!,
@@ -29,5 +29,12 @@ export const createOrUpdate = async (data:Partial<GameReview>)=>{
       review: data.review,
     },
   });
+};
 
-}
+export const deleteByGameId = async (gameId: string) => {
+  await prisma.gameReview.deleteMany({
+    where: {
+      gameId: gameId,
+    },
+  });
+};

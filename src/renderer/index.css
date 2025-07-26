@@ -19,6 +19,7 @@
   --design-text-inverted: black;
   --design-text-subtle: #99A1AF;
   --design-text-disabled: #99A1AF;
+  --design-text-link: #2b7fff;
   --design-badge-background: #364153;
   --design-badge-hover: #4a5565;
   --design-button-primary: white;
@@ -57,6 +58,11 @@
   --design-status-dropped: #fb2c36;
   --design-status-completed: #00c951;
   --design-status-none: #6a7282;
+  --design-score-masterpiece: #00c951;
+  --design-score-positive: #2b7fff;
+  --design-score-mixed: #efb100;
+  --design-score-disappointing: #fb2c36;
+  --design-score-none: #6a7282;
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;

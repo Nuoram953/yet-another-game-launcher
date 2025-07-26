@@ -85,6 +85,7 @@ contextBridge.exposeInMainWorld("game", {
   setGamescope: (data: GameConfigGamescope) => ipcRenderer.invoke(RouteGame.SET_SETTING_GAMESCOPE, data),
   refreshProgressTracker: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_PROGRESS_TRACKER, id),
   refreshInfo: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_INFO, id),
+  resetReview: (id: string) => ipcRenderer.invoke(RouteGame.RESET_REVIEW, id),
 });
 
 contextBridge.exposeInMainWorld("data", {

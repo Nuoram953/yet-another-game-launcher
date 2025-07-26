@@ -1,0 +1,86 @@
+{
+  "review": {
+    "titleCard": {
+      "yourReview": "Your Review",
+      "overview": "Overview",
+      "userReview": "User Reviews",
+      "criticReview": "Critic Reviews"
+    },
+    "overview": {
+      "critics": {
+        "label": "Critics",
+        "subLabel": "Professional reviews from gaming critics"
+      },
+      "community": {
+        "label": "Community",
+        "subLabel": "Average rating from the gaming community"
+      },
+      "user": {
+        "label": "User",
+        "subLabel": "Your personal rating"
+      }
+    },
+    "yourReview": {
+      "actions": {
+        "reset": "Reset review"
+      },
+      "category": {
+        "graphics": "Graphics",
+        "gameplay": "Gameplay",
+        "story": "Story",
+        "sound": "Sound",
+        "content": "Content"
+      },
+      "yourThoughts": {
+        "placeholder": "What did you think about the game? What did you like or dislike? How does it compare to other games you've played?",
+        "label": "Your thoughts"
+      },
+      "startReview": "Start your review"
+    },
+    "reveal": {
+      "title": "Please click to reveal",
+      "subTitle": "Click anywhere to view reviews",
+      "subTitle2": "Can be disable in the option menu"
+    },
+    "category": {
+      "poor": "Poor",
+      "fair": "Fair",
+      "good": "Good",
+      "great": "Great",
+      "excellent": "Excellent"
+    },
+    "critic": {
+      "description": "Aggregated professional critic reviews"
+    },
+    "community": {
+      "description": "Average rating from the gaming community"
+    },
+    "user": {
+      "description": "Your personal rating"
+    },
+    "score": {
+      "masterpiece": {
+        "name": "Universal Acclaim",
+        "shortName": "Masterpiece",
+        "description": "Exceptional quality that defines the medium"
+      },
+      "positive": {
+        "name": "Generally Positive",
+        "shortName": "Great",
+        "description": "High quality with broad appeal"
+      },
+      "mixed": {
+        "name": "Mixed Reviews",
+        "shortName": "Okay",
+        "description": "Some interesting ideas but notable flaws"
+      },
+      "disappointing": {
+        "name": "Poor Reception",
+        "shortName": "Disappointing",
+        "description": "Significant issues that impact enjoyment"
+      }
+    },
+    "ratingBased_one": "Overall rating based on {{count}} source",
+    "ratingBased_other": "Overall rating based on {{count}} sources"
+  }
+}
