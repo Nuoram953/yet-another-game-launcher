@@ -79,6 +79,7 @@ export const updateAchievements = async (game: GameWithRelations) => {
     case Storefront.STEAM: {
       await SteamService.getGameAchievements(game);
       await SteamService.getPlayerAchievements(game);
+      await SteamService.updateGlobalAchievmentPercentages(game);
     }
     case Storefront.EPIC: {
       // const storeEpic = new Steam();

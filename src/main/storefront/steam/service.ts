@@ -123,6 +123,19 @@ export const getPlayerAchievements = async (game: Game) => {
   }
 };
 
+export const updateGlobalAchievmentPercentages = async (game: Game) => {
+  if (!game.hasAchievements) {
+    return;
+  }
+
+  const res = await SteamEndpoints.getGlobalAchievementPercentagesForApp(game.externalId);
+
+  const achievements = res.data.achievementpercentages.achievements;
+  for (const achievement of achievements) {
+    await queries.GameAchievements.updateRarity(game.id, achievement.name, Math.floor(achievement.percent));
+  }
+};
+
 export const getAppReviews = async (game: GameWithRelations) => {
   if (!game.storefrontId || game.storefrontId !== Storefront.STEAM) {
     return;

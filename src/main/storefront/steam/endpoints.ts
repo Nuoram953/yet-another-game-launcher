@@ -1,5 +1,6 @@
 import {
   GET_APP_REVIEWS,
+  GET_GLOBAL_ACHIEVEMENT_PERCENTAGES_FOR_APP,
   GET_OWNED_GAMES_URL,
   GET_PLAYER_ACHIEVEMENTS_URL,
   GET_PLAYER_SUMMARIES,
@@ -9,6 +10,7 @@ import {
 import { getSteamUserId } from "./utils";
 import {
   GetAppReviewsResponse,
+  GetGlobalAchievementPercentagesForAppResponse,
   GetOwnedGamesResponse,
   GetPlayerAchievementsResponse,
   GetPlayerSummariesResponse,
@@ -65,6 +67,15 @@ export const getAppReviews = async (appId: string) => {
       cursor: "*",
       json: 1,
       num_per_page: 15,
+    },
+  });
+};
+
+export const getGlobalAchievementPercentagesForApp = async (appId: string) => {
+  return await axios.get<GetGlobalAchievementPercentagesForAppResponse>(GET_GLOBAL_ACHIEVEMENT_PERCENTAGES_FOR_APP, {
+    params: {
+      format: "json",
+      gameid: appId,
     },
   });
 };

@@ -73,6 +73,15 @@ export interface GetPlayerSummariesResponse {
   };
 }
 
+export interface GetGlobalAchievementPercentagesForAppResponse {
+  achievementpercentages: {
+    achievements: {
+      name: string;
+      percent: number;
+    }[];
+  };
+}
+
 export interface GetAppReviewsResponse {
   success: number;
   query_summary: {
