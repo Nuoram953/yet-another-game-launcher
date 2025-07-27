@@ -9,12 +9,18 @@ interface ConfigContextType {
   loading: boolean;
   error: string | null;
   renderKey: number;
+
   getConfigValue: <T = any>(path: PathsToProperties<AppConfig>, defaultValue?: T) => Promise<T>;
   setConfigValue: <T = any>(path: PathsToProperties<AppConfig>, value: T) => Promise<void>;
   getCurrentConfig: () => AppConfig;
   getCurrentConfigValue: <T = any>(path: PathsToProperties<AppConfig>, defaultValue?: T) => T;
   forceRefresh: () => Promise<void>;
   loadConfig: () => Promise<void>;
+
+  getConfigValueSync: <T = any>(path: PathsToProperties<AppConfig>, defaultValue?: T) => T;
+  setConfigValueSync: <T = any>(path: PathsToProperties<AppConfig>, value: T) => void;
+  hasConfigValue: (path: PathsToProperties<AppConfig>) => boolean;
+  isConfigReady: () => boolean;
 }
 
 const ConfigContext = createContext<ConfigContextType | undefined>(null);
@@ -64,7 +70,6 @@ export const ConfigProvider = ({ children }) => {
         const newConfig = { ...prev };
         const parts = path.split(".");
         const lastKey = parts.pop();
-
         let current = newConfig;
         for (const key of parts) {
           if (!(key in current)) {
@@ -72,7 +77,6 @@ export const ConfigProvider = ({ children }) => {
           }
           current = current[key];
         }
-
         current[lastKey] = value;
         return newConfig;
       });
@@ -97,12 +101,79 @@ export const ConfigProvider = ({ children }) => {
       const getValue = (obj, path) => {
         return path.split(".").reduce((acc, part) => acc && acc[part], obj);
       };
+      const value = getValue(config, path);
+      return value !== undefined ? value : defaultValue;
+    },
+    [config],
+  );
+
+  const getConfigValueSync = useCallback(
+    <T = any,>(path: PathsToProperties<AppConfig>, defaultValue?: T): T => {
+      if (!config) {
+        console.warn(`Config not loaded yet, returning default value for path: ${path}`);
+        return defaultValue;
+      }
+
+      const getValue = (obj, path) => {
+        return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+      };
 
       const value = getValue(config, path);
       return value !== undefined ? value : defaultValue;
     },
     [config],
   );
+
+  const setConfigValueSync = useCallback(
+    <T = any,>(path: PathsToProperties<AppConfig>, value: T): void => {
+      if (!config) {
+        console.warn(`Config not loaded yet, cannot set value for path: ${path}`);
+        return;
+      }
+
+      setConfig((prev) => {
+        const newConfig = { ...prev };
+        const parts = path.split(".");
+        const lastKey = parts.pop();
+        let current = newConfig;
+        for (const key of parts) {
+          if (!(key in current)) {
+            current[key] = {};
+          }
+          current = current[key];
+        }
+        current[lastKey] = value;
+        return newConfig;
+      });
+
+      getConfig()
+        .set(path, value)
+        .catch((err) => {
+          console.error("Failed to persist config value:", err);
+          setError(err.message);
+          loadConfig();
+        });
+    },
+    [config, loadConfig],
+  );
+
+  const hasConfigValue = useCallback(
+    (path: PathsToProperties<AppConfig>): boolean => {
+      if (!config) return false;
+
+      const getValue = (obj, path) => {
+        return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+      };
+
+      const value = getValue(config, path);
+      return value !== undefined;
+    },
+    [config],
+  );
+
+  const isConfigReady = useCallback((): boolean => {
+    return !loading && config !== undefined;
+  }, [loading, config]);
 
   useEffect(() => {
     loadConfig();
@@ -113,7 +184,6 @@ export const ConfigProvider = ({ children }) => {
       setConfig(payload);
       setRenderKey((prev) => prev + 1);
     });
-
     return () => {
       window.data.removeAllListeners(DataRoute.CONFIG_CHANGE);
     };
@@ -130,6 +200,10 @@ export const ConfigProvider = ({ children }) => {
     getCurrentConfigValue,
     forceRefresh,
     loadConfig,
+    getConfigValueSync,
+    setConfigValueSync,
+    hasConfigValue,
+    isConfigReady,
   };
 
   return <ConfigContext.Provider value={contextValue}>{children}</ConfigContext.Provider>;

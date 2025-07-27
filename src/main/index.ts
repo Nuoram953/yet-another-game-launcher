@@ -120,6 +120,13 @@ async function electronAppInit() {
         steam: { enable: true, apiKey: "", accountName: "", isntallationPath: null },
         epic: { enable: true },
       },
+      page: {
+        detail: {
+          review: {
+            blurExternalReviews: true,
+          },
+        },
+      },
       extension: {
         youtube: { enable: true, ytDlpPath: "", cookie: "" },
         howLongToBeat: {

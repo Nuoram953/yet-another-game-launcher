@@ -11,6 +11,7 @@ import { SettingExtensionOpenCritic } from "./extension/openCritic";
 import { Container } from "@render/components/layout/Container";
 import { SettingSidebar } from "./SettingSidebar";
 import { SettingApperanceColors } from "./apperance/Colors";
+import { SettingPageGameDetails } from "./page/SettingPageDetail";
 
 export const SettingPage = () => {
   const [activeCategory, setActiveCategory] = useState("storefront");
@@ -51,6 +52,13 @@ export const SettingPage = () => {
       icon: Settings,
       subcategories: {
         colors: { title: "Colors", component: SettingApperanceColors },
+      },
+    },
+    page: {
+      title: "Pages",
+      icon: Settings,
+      subcategories: {
+        colors: { title: "Game's details", component: SettingPageGameDetails },
       },
     },
   };

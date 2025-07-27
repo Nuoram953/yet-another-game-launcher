@@ -125,6 +125,7 @@ export interface GameAPI {
   setFavorite: (data: Partial<Game>) => Promise<void>;
   refreshProgressTracker: (id: string) => Promise<void>;
   refreshInfo: (id: string) => Promise<void>;
+  resetReview: (gameId: string) => Promise<void>;
 }
 
 export interface DataAPI {

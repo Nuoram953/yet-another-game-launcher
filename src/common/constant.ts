@@ -3,6 +3,7 @@ export enum LOCALE_NAMESPACE {
   GAME_STATUS = "GameStatus",
   FILTER = "filter",
   SETTINGS = "settings",
+  DETAIL = "detail",
 }
 
 export enum MEDIA_TYPE {
@@ -99,6 +100,7 @@ export enum RouteGame {
   SET_SETTING_GAMESCOPE = "game:setGamescope",
   REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
   REFRESH_INFO = "game:refreshInfo",
+  RESET_REVIEW = "game:resetReview",
 }
 
 export enum RouteDialog {
@@ -110,7 +112,7 @@ export enum GameStatus {
   PLAYED = 2,
   COMPLETED = 3,
   beaten = 4,
-  dropped = 5,
+  DROPPED = 5,
   playing = 6,
   planned = 7,
 }

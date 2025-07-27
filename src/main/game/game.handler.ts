@@ -116,3 +116,14 @@ ipcMain.handle(RouteGame.REFRESH_INFO, async (_event, id) => {
     });
   }
 });
+
+ipcMain.handle(RouteGame.RESET_REVIEW, async (_event, id) => {
+  try {
+    await GameService.resetReview(id);
+  } catch (e) {
+    log.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteGame.RESET_REVIEW,
+      error: e,
+    });
+  }
+});

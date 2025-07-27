@@ -105,7 +105,6 @@ export const SectionAchievements = () => {
             <Progress value={completionPercentage} className="h-6" />
           </div>
 
-          {/* Search and Filter Controls */}
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-4">
               <div className="relative max-w-md flex-grow">

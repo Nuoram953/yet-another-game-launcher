@@ -24,6 +24,7 @@ const include = {
   gamescope: true,
   downloadHistory: true,
   statusHistory: { include: { gameStatus: true } },
+  externalReviewMap: { include: { externalReview: true } },
 };
 
 export async function update(id: string, newData: Partial<Game>) {

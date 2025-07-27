@@ -10,13 +10,14 @@ export default {
       colors: {
         design: {
           white: "var(--design-white)",
-          black: "var(--design-white)",
+          black: "var(--design-black)",
           transparent: "var(--design-transparent)",
           text: {
             normal: "var(--design-text-normal)",
             inverted: "var(--design-text-inverted)",
             subtle: "var(--design-text-subtle)",
             disabled: "var(--design-text-disabled)",
+            link: "var(--design-text-link)",
           },
           divider: "var(--design-divider)",
           background: "var(--design-background)",
@@ -98,6 +99,13 @@ export default {
             dropped: "var(--design-status-dropped)",
             completed: "var(--design-status-completed)",
             none: "var(--design-status-none)",
+          },
+          score: {
+            masterpiece: "var(--design-score-masterpiece)",
+            positive: "var(--design-score-positive)",
+            mixed: "var(--design-score-mixed)",
+            disappointing: "var(--design-score-disappointing)",
+            none: "var(--design-score-none)",
           },
         },
         border: "hsl(var(--border))",

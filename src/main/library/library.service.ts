@@ -11,6 +11,7 @@ import * as SteamService from "@main/storefront/steam/service";
 import * as EpicCommand from "../storefront/epic/commands";
 import * as GameService from "@main/game/game.service";
 import * as YoutubeEndpoints from "@main/externalApi/youtube/endpoints";
+import * as OpenCriticEndpoints from "@main/externalApi/openCritic/endpoints";
 import dataManager from "../manager/dataChannelManager";
 import { createGameActiviy } from "../dal/gameActiviy";
 import { getMinutesBetween } from "../utils/utils";
@@ -79,7 +80,7 @@ export const getGame = async (id: string, refreshAchievements: boolean = true) =
   }
 
   if (refreshAchievements) {
-    await updateAchievements(game);
+    await GameService.updateAchievements(game);
   }
 
   await queries.Game.update(id, {

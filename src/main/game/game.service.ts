@@ -14,6 +14,7 @@ import notificationManager from "../manager/notificationManager";
 import * as SteamService from "@main/storefront/steam/service";
 import * as YoutubeService from "../externalApi/youtube/service";
 import * as MetadataService from "@main/metadata/index";
+import * as OpenCriticService from "../externalApi/openCritic/service";
 import * as ConfigService from "@main/config/config.service";
 
 import * as SteamCommand from "../storefront/steam/commands";
@@ -83,6 +84,14 @@ export const updateAchievements = async (game: GameWithRelations) => {
       // const storeEpic = new Steam();
       // await storeEpic.getAchievementsForGame(game);
       // await storeEpic.getUserAchievementsForGame(game);
+    }
+  }
+};
+
+export const updateExternalUserReviews = async (game: GameWithRelations) => {
+  switch (game.storefrontId) {
+    case Storefront.STEAM: {
+      await SteamService.getAppReviews(game);
     }
   }
 };
@@ -211,13 +220,19 @@ export const createOrUpdateGame = async (
     });
   }
 
+  notificationManager.updateProgress(
+    notificationId,
+    getKeyPercentage(notificationsObject, "stepOpenCritcicData"),
+    i18n.t("newGame.stepOpenCritcicData", { ns: "notification" }),
+  );
+  await updateExternalUserReviews(game);
+
   if (await ConfigService.get("extension.openCritic.enable")) {
-    notificationManager.updateProgress(
-      notificationId,
-      getKeyPercentage(notificationsObject, "stepOpenCritcicData"),
-      i18n.t("newGame.stepOpenCritcicData", { ns: "notification" }),
-    );
     const openCriticData = await openCriticApi.getGame(game.name);
+    await OpenCriticService.setGameReviewLanding(game, openCriticData.id);
+    await queries.Game.update(game.id, {
+      scoreCritic: openCriticData?.topCriticScore,
+    });
   }
 
   notificationManager.updateProgress(
@@ -319,6 +334,17 @@ export const refreshInfo = async (id: string) => {
   }
 
   await createOrUpdateGame(game, game.storefrontId, true);
+
+  await refreshGame(game.id);
+};
+
+export const resetReview = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  await queries.GameReview.deleteByGameId(game.id);
 
   await refreshGame(game.id);
 };
