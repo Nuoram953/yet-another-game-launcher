@@ -73,7 +73,7 @@ export const AchievementHighlights = ({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <AchievementCard
           achievement={rarest}
-          title={t("achievements.highlights.rare", { ns: LOCALE_NAMESPACE.DETAIL })}
+          title={t("achievements.highlights.rare.title", { ns: LOCALE_NAMESPACE.DETAIL })}
           subtitle={`Only ${rarest.rarity.toFixed(1)}% of players have this`}
           icon={<Award className="h-4 w-4 text-purple-500" />}
           iconColor="bg-purple-100 dark:bg-purple-900/30"
