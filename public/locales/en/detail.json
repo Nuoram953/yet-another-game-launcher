@@ -30,6 +30,32 @@
       "daily": "Max Daily Streak",
       "ultraRare": "Ultra Rare (<5%)",
       "avg": "Avg. Rarity Score"
+    },
+    "timeline": {
+      "totalPeriod": "Total in Period",
+      "dailyAvg": "Daily Average",
+      "bestDay": "Best Day",
+      "peakDate": "Peak Date"
+    },
+    "all": {
+      "search": {
+        "placeholder": "Search achievements...",
+        "clear": "Clear search"
+      },
+      "sort": {
+        "text": "Sort by ...",
+        "options": {
+          "recent": "Recent",
+          "alphabetical": "Alphabetical",
+          "rarity": "Rarity"
+        }
+      },
+      "filter": {
+        "clear": "Clear all filters",
+        "advanced": "Advanced",
+        "hideHidden": "Hide Hidden",
+        "hideUnlocked": "Hide Unlocked"
+      }
     }
   },
   "review": {

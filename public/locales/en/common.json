@@ -1,4 +1,10 @@
 {
+  "time": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
+  },
   "storefront": {
     "steam": "Steam",
     "egs": "Epic"

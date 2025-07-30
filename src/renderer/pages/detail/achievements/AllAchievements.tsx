@@ -13,8 +13,10 @@ import { useTranslation } from "react-i18next";
 import { getMedia } from "@render/api/electron";
 import { AchievementHighlights } from "./Hightlights";
 import { AchievementOverview } from "./Overview";
+import { LOCALE_NAMESPACE } from "@common/constant";
 
 export const AchievementAll = () => {
+  const { t } = useTranslation();
   const [achievementLogos, setAchievementLogos] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,7 +97,7 @@ export const AchievementAll = () => {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-design-text-subtle" />
           <Input
             color="dark"
-            placeholder="Search achievements..."
+            placeholder={t("achievements.all.search.placeholder", { ns: LOCALE_NAMESPACE.DETAIL })}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -110,19 +112,19 @@ export const AchievementAll = () => {
             <SelectItem value="date">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                <span>Recent First</span>
+                <span>{t("achievements.all.sort.options.recent", { ns: LOCALE_NAMESPACE.DETAIL })}</span>
               </div>
             </SelectItem>
             <SelectItem value="alphabetical">
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4" />
-                <span>Alphabetical</span>
+                <span>{t("achievements.all.sort.options.aplphabetical", { ns: LOCALE_NAMESPACE.DETAIL })}</span>
               </div>
             </SelectItem>
             <SelectItem value="rarity">
               <div className="flex items-center gap-2">
                 <Medal className="h-4 w-4" />
-                <span>Rarity</span>
+                <span>{t("achievements.all.sort.options.rarity", { ns: LOCALE_NAMESPACE.DETAIL })}</span>
               </div>
             </SelectItem>
           </SelectContent>
@@ -133,7 +135,7 @@ export const AchievementAll = () => {
           className="flex items-center gap-2 rounded-md border border-design-border px-3 py-2 text-sm hover:bg-design-background"
         >
           <Filter className="h-4 w-4" />
-          Advanced
+          {t("achievements.all.filter.advanced", { ns: LOCALE_NAMESPACE.DETAIL })}
           {activeFiltersCount > 0 && <Badge className="ml-1 bg-primary text-xs">{activeFiltersCount}</Badge>}
         </button>
       </div>
@@ -146,14 +148,14 @@ export const AchievementAll = () => {
               <Checkbox checked={hideUnlocked} onCheckedChange={(checked) => setHideUnlocked(checked === true)} />
               <span className="flex items-center gap-1">
                 <CheckCircle className="h-4 w-4" />
-                Hide Unlocked
+                {t("achievements.all.filter.hideUnlocked", { ns: LOCALE_NAMESPACE.DETAIL })}
               </span>
             </label>
             <label className="flex cursor-pointer items-center gap-2">
               <Checkbox checked={hideHidden} onCheckedChange={(checked) => setHideHidden(checked === true)} />
               <span className="flex items-center gap-1">
                 <EyeOff className="h-4 w-4" />
-                Hide Hidden
+                {t("achievements.all.filter.hideHidden", { ns: LOCALE_NAMESPACE.DETAIL })}
               </span>
             </label>
           </div>
@@ -164,7 +166,7 @@ export const AchievementAll = () => {
         <span>Showing {filteredAchievements.length} achievements</span>
         {searchQuery && (
           <button onClick={() => setSearchQuery("")} className="text-primary hover:underline">
-            Clear search
+            {t("achievements.all.search.clear", { ns: LOCALE_NAMESPACE.DETAIL })}
           </button>
         )}
       </div>
@@ -188,7 +190,7 @@ export const AchievementAll = () => {
               }}
               className="text-sm text-primary hover:underline"
             >
-              Clear all filters
+              {t("achievements.all.search.clear", { ns: LOCALE_NAMESPACE.DETAIL })}
             </button>
           )}
         </div>

@@ -74,31 +74,43 @@ export const AchievementHighlights = ({
         <AchievementCard
           achievement={rarest}
           title={t("achievements.highlights.rare.title", { ns: LOCALE_NAMESPACE.DETAIL })}
-          subtitle={`Only ${rarest.rarity.toFixed(1)}% of players have this`}
+          subtitle={t("achievements.highlights.rare.subTitle", {
+            ns: LOCALE_NAMESPACE.DETAIL,
+            percentage: rarest.rarity.toFixed(1),
+          })}
           icon={<Award className="h-4 w-4 text-purple-500" />}
           iconColor="bg-purple-100 dark:bg-purple-900/30"
         />
 
         <AchievementCard
           achievement={mostCommon}
-          title="Most Common"
-          subtitle={`${mostCommon.rarity.toFixed(1)}% of players have this`}
+          title={t("achievements.highlights.common.title", { ns: LOCALE_NAMESPACE.DETAIL })}
+          subtitle={t("achievements.highlights.common.subTitle", {
+            ns: LOCALE_NAMESPACE.DETAIL,
+            percentage: rarest.rarity.toFixed(1),
+          })}
           icon={<Trophy className="h-4 w-4 text-yellow-500" />}
           iconColor="bg-yellow-100 dark:bg-yellow-900/30"
         />
 
         <AchievementCard
           achievement={firstAchievement}
-          title="First Achievement"
-          subtitle={`Unlocked on ${unixToDate(Number(firstAchievement.unlockedAt))}`}
+          title={t("achievements.highlights.first.title", { ns: LOCALE_NAMESPACE.DETAIL })}
+          subtitle={t("achievements.highlights.first.subTitle", {
+            ns: LOCALE_NAMESPACE.DETAIL,
+            date: unixToDate(Number(firstAchievement.unlockedAt)),
+          })}
           icon={<Target className="h-4 w-4 text-blue-500" />}
           iconColor="bg-blue-100 dark:bg-blue-900/30"
         />
 
         <AchievementCard
           achievement={latestAchievement}
-          title="Latest Achievement"
-          subtitle={`Unlocked on ${unixToDate(Number(latestAchievement.unlockedAt))}`}
+          title={t("achievements.highlights.last.title", { ns: LOCALE_NAMESPACE.DETAIL })}
+          subtitle={t("achievements.highlights.last.subTitle", {
+            ns: LOCALE_NAMESPACE.DETAIL,
+            date: unixToDate(Number(latestAchievement.unlockedAt)),
+          })}
           icon={<Clock className="h-4 w-4 text-green-500" />}
           iconColor="bg-green-100 dark:bg-green-900/30"
         />
@@ -107,14 +119,18 @@ export const AchievementHighlights = ({
       <div className="flex flex-grow flex-row gap-4">
         <div className="grow rounded-lg border border-design-border bg-design-foreground p-3 text-center">
           <div className="mb-1 text-2xl font-bold text-design-text-normal">{maxStreak}</div>
-          <div className="text-xs text-design-text-subtle">Max Daily Streak</div>
+          <div className="text-xs text-design-text-subtle">
+            {t("achievements.highlights.daily", { ns: LOCALE_NAMESPACE.DETAIL })}
+          </div>
         </div>
 
         <div className="grow rounded-lg border border-design-border bg-design-foreground p-3 text-center">
           <div className="mb-1 text-2xl font-bold text-design-text-normal">
             {unlockedAchievements.filter((a) => a.rarity < 5).length}
           </div>
-          <div className="text-xs text-design-text-subtle">Ultra Rare (&lt;5%)</div>
+          <div className="text-xs text-design-text-subtle">
+            {t("achievements.highlights.ultraRare", { ns: LOCALE_NAMESPACE.DETAIL })}
+          </div>
         </div>
 
         <div className="grow rounded-lg border border-design-border bg-design-foreground p-3 text-center">
@@ -123,7 +139,9 @@ export const AchievementHighlights = ({
               0,
             )}
           </div>
-          <div className="text-xs text-design-text-subtle">Avg. Rarity Score</div>
+          <div className="text-xs text-design-text-subtle">
+            {t("achievements.highlights.avg", { ns: LOCALE_NAMESPACE.DETAIL })}
+          </div>
         </div>
       </div>
     </div>

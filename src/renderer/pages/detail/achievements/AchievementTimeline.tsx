@@ -13,11 +13,14 @@ import {
 } from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
 import { useGames } from "@render//context/DatabaseContext";
-import { Calendar, BarChart3, TrendingUp, Clock } from "lucide-react";
+import { BarChart3, TrendingUp, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LOCALE_NAMESPACE } from "@common/constant";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler);
 
 const AchievementTimeline = () => {
+  const { t } = useTranslation();
   const { selectedGame } = useGames();
   const [viewMode, setViewMode] = useState<"daily" | "weekly" | "monthly">("daily");
   const [chartType, setChartType] = useState<"line" | "bar">("line");
@@ -93,19 +96,19 @@ const AchievementTimeline = () => {
     switch (viewMode) {
       case "weekly":
         return {
-          border: "rgb(168, 85, 247)", // purple
+          border: "rgb(168, 85, 247)",
           background: "rgba(168, 85, 247, 0.1)",
           point: "rgb(168, 85, 247)",
         };
       case "monthly":
         return {
-          border: "rgb(249, 115, 22)", // orange
+          border: "rgb(249, 115, 22)",
           background: "rgba(249, 115, 22, 0.1)",
           point: "rgb(249, 115, 22)",
         };
       default:
         return {
-          border: "rgb(59, 130, 246)", // blue
+          border: "rgb(59, 130, 246)",
           background: "rgba(59, 130, 246, 0.1)",
           point: "rgb(59, 130, 246)",
         };
@@ -212,7 +215,6 @@ const AchievementTimeline = () => {
 
   return (
     <div className="space-y-4">
-      {/* Controls */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <div className="flex rounded-lg border border-design-border bg-design-foreground p-1">
@@ -226,7 +228,7 @@ const AchievementTimeline = () => {
                     : "text-design-text-normal hover:bg-design-background"
                 }`}
               >
-                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                {t(`time.${mode}`, { ns: LOCALE_NAMESPACE.COMMON })}
               </button>
             ))}
           </div>
@@ -258,32 +260,38 @@ const AchievementTimeline = () => {
         </div>
       </div>
 
-      {/* Stats Row */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div className="rounded-lg border border-design-border bg-design-foreground p-3">
           <div className="text-lg font-bold text-design-text-normal">{stats.total}</div>
-          <div className="text-xs text-design-text-subtle">Total in Period</div>
+          <div className="text-xs text-design-text-subtle">
+            {t("achievements.timeline.totalPeriod", { ns: LOCALE_NAMESPACE.DETAIL })}
+          </div>
         </div>
 
         <div className="rounded-lg border border-design-border bg-design-foreground p-3">
           <div className="text-lg font-bold text-design-text-normal">{stats.average.toFixed(1)}</div>
-          <div className="text-xs text-design-text-subtle">Daily Average</div>
+          <div className="text-xs text-design-text-subtle">
+            {t("achievements.timeline.dailyAvg", { ns: LOCALE_NAMESPACE.DETAIL })}
+          </div>
         </div>
 
         <div className="rounded-lg border border-design-border bg-design-foreground p-3">
           <div className="text-lg font-bold text-design-text-normal">{stats.max}</div>
-          <div className="text-xs text-design-text-subtle">Best Day</div>
+          <div className="text-xs text-design-text-subtle">
+            {t("achievements.timeline.bestDay", { ns: LOCALE_NAMESPACE.DETAIL })}
+          </div>
         </div>
 
         <div className="rounded-lg border border-design-border bg-design-foreground p-3">
           <div className="text-lg font-bold text-design-text-normal">
             {new Date(stats.maxDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </div>
-          <div className="text-xs text-design-text-subtle">Peak Date</div>
+          <div className="text-xs text-design-text-subtle">
+            {t("achievements.timeline.peakDate", { ns: LOCALE_NAMESPACE.DETAIL })}
+          </div>
         </div>
       </div>
 
-      {/* Chart */}
       <div className="h-80 w-full rounded-lg border border-design-border bg-design-foreground p-4">
         {chartType === "line" ? <Line options={options} data={data} /> : <Bar options={options} data={data} />}
       </div>
