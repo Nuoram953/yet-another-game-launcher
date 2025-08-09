@@ -56,9 +56,7 @@ export const SectionAchievements = () => {
 
   return (
     <div className="mx-auto w-full space-y-6 py-4">
-      <Card title="Overview">
-        <AchievementOverview achievementStats={achievementStats} />
-      </Card>
+      <AchievementOverview achievementStats={achievementStats} />
 
       {achievementStats.unlocked > 0 && (
         <Card title="Highlights">

@@ -77,7 +77,9 @@ export default {
               border: "var(--design-achievement-locked-border)",
               underline: "var(--design-achievement-locked-underline)",
             },
-            rarity: {},
+            rarity: {
+              rare: "var(--design-achievement-rarity-rare)",
+            },
           },
           download: {
             progressBar: {

@@ -228,7 +228,7 @@ export const AchievementAll = () => {
                   </h3>
                   {achievement.isHidden && <EyeOff className="h-4 w-4 flex-shrink-0 text-design-text-subtle" />}
                   {achievement.rarity && achievement.rarity < 10 && (
-                    <Award className="h-4 w-4 flex-shrink-0 text-purple-500" />
+                    <Award className="h-4 w-4 flex-shrink-0 text-design-achievement-rarity-rare" />
                   )}
                 </div>
                 <p className="text-sm text-design-text-normal">{achievement.description}</p>
@@ -237,7 +237,7 @@ export const AchievementAll = () => {
               <div className="flex flex-shrink-0 flex-col items-end space-y-1 text-right">
                 {achievement.isUnlocked ? (
                   <>
-                    <div className="flex items-center text-sm text-green-600">
+                    <div className="flex items-center text-sm text-design-achievement-unlocked">
                       <CheckCircle className="mr-1 h-4 w-4" />
                       <span className="font-medium">Unlocked</span>
                     </div>

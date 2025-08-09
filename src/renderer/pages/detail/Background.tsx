@@ -18,6 +18,9 @@ export const Background = ({ children }: Props) => {
         const backgrounds = await window.media.getBackgrounds(selectedGame!.id);
         if (backgrounds.length > 0) {
           setBackgroundPictures(backgrounds);
+        } else {
+          const backgrounds = await window.media.getScreenshots(selectedGame!.id, 3);
+          setBackgroundPictures(backgrounds);
         }
       } catch (error) {
         console.error("Error fetching picture paths:", error);
@@ -47,7 +50,7 @@ export const Background = ({ children }: Props) => {
   if (backgroundPictures.length === 0) {
     return (
       <div className="space-y-4 p-6">
-        <div className="h-64 animate-pulse rounded-xl bg-gray-800"></div>
+        <div className="h-64 animate-pulse rounded-xl bg-gray-800">{children}</div>
       </div>
     );
   }
