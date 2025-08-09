@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Sheet, SheetClose, SheetContent, SheetFooter } from "@render/components/ui/sheet";
-import { Activity, ChartNoAxesColumn, HardDriveDownload, Home, Medal, Settings, Store } from "lucide-react";
+import { Activity, ChartNoAxesColumn, Gift, HardDriveDownload, Home, Medal, Settings, Store } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { LOCALE_NAMESPACE } from "@common/constant";
@@ -10,7 +10,6 @@ import { useGames } from "@render/context/DatabaseContext";
 import { getLibrary } from "@render/api/electron";
 import { SidebarData } from "@common/types";
 import { Badge } from "../ui/badge";
-import { AppConfig } from "@common/interface";
 import { useConfig } from "../ConfigProvider";
 
 interface SidebarProps {
@@ -71,18 +70,19 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
               label={"Downloads"}
               path={"/download"}
               count={downloading.length}
-            />
-            <SidebarNavigateItem
-              handleNavigate={handleNavigate}
-              icon={<Activity />}
-              label={"Activiy"}
-              path={"/activity"}
+              hideWhenZero
             />
             <SidebarNavigateItem
               handleNavigate={handleNavigate}
               icon={<Medal />}
               label={"Rankings"}
               path={"/ranking"}
+            />
+            <SidebarNavigateItem
+              handleNavigate={handleNavigate}
+              icon={<Gift />}
+              label={"Wishlist"}
+              path={"/wishlist"}
             />
             <SidebarNavigateItem
               handleNavigate={handleNavigate}
@@ -143,9 +143,10 @@ interface SidebarNavigateItemProps {
   path: string;
   handleNavigate: (path: string) => void;
   count?: number;
+  hideWhenZero?: boolean;
 }
 
-const SidebarNavigateItem = ({ icon, label, path, handleNavigate, count }: SidebarNavigateItemProps) => {
+const SidebarNavigateItem = ({ icon, label, path, handleNavigate, count, hideWhenZero }: SidebarNavigateItemProps) => {
   const { config } = useConfig();
 
   return (
@@ -158,7 +159,7 @@ const SidebarNavigateItem = ({ icon, label, path, handleNavigate, count }: Sideb
         <span>{label}</span>
       </div>
 
-      {!_.isNil(count) && config.sidebar.display.showGameCount && (
+      {!_.isNil(count) && !hideWhenZero && config.sidebar.display.showGameCount && (
         <div>
           <Badge>{count}</Badge>
         </div>

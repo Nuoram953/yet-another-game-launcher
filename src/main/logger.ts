@@ -9,6 +9,8 @@ export enum LogTag {
   TRACKING = "TRACKING",
   USER_INPUT = "USER_INPUT",
   STORE = "STORE",
+  ACHIEVEMENT = "ACHIEVEMENT",
+  MIDDLEWARE = "MIDDLEWARE",
 }
 
 export enum LogLevel {

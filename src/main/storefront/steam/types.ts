@@ -122,3 +122,12 @@ export interface SteamAccountInfo {
 }
 
 export type SteamAccountsArray = [string, SteamAccountInfo][];
+
+export interface GetGlobalAchievementPercentagesForAppResponse {
+  achievementpercentages: {
+    achievements: {
+      name: string;
+      percent: number;
+    }[];
+  };
+}

@@ -12,25 +12,23 @@ import {
   AlertDialogTitle,
 } from "@render//components/ui/alert-dialog";
 import { Button } from "./Button";
+import useGameStore from "@render/feature/detail/store/GameStore";
 
 export const ButtonPlay = () => {
-  const { running, selectedGame } = useGames();
+  const game = useGameStore((state) => state.game);
+  const { running } = useGames();
   const [open, setOpen] = useState<boolean>(false);
 
-  if (!selectedGame) {
-    return;
-  }
-
   const handleOnPlay = async () => {
-    await window.game.launch(selectedGame.id);
+    await window.game.launch(game.id);
   };
 
   const handleOnInstall = async () => {
-    await window.game.install(selectedGame.id);
+    await window.game.install(game.id);
   };
 
   const handleOnAlertDialogPositif = async () => {
-    window.game.kill(selectedGame.id);
+    window.game.kill(game.id);
     setOpen(false);
   };
 
@@ -42,7 +40,7 @@ export const ButtonPlay = () => {
     setOpen(true);
   };
 
-  if (running.map((item) => item.id).includes(selectedGame.id)) {
+  if (running.map((item) => item.id).includes(game.id)) {
     return (
       <>
         <Button size="large" intent="primary" state="running" onClick={handleOnStop} text="Stop" icon={CircleX} />
@@ -65,7 +63,7 @@ export const ButtonPlay = () => {
     );
   }
 
-  if (!selectedGame?.isInstalled) {
+  if (!game?.isInstalled) {
     return (
       <Button
         size="large"
@@ -78,5 +76,5 @@ export const ButtonPlay = () => {
     );
   }
 
-  return <Button size="large" intent="primary" state="play" onClick={handleOnPlay} text="Play Now" icon={Play} />;
+  return <Button size="large" intent="primary" state="play" onClick={handleOnPlay} text="Play" icon={Play} />;
 };

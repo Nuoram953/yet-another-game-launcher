@@ -18,6 +18,7 @@ import * as MediaType from "./mediaType";
 import * as FilterPreset from "./filtersPreset";
 import * as ExternalReview from "./externalReview";
 import * as GameExternalReviewMap from "./gameExternalReviewMap";
+import * as Wishlist from "./wishlist";
 
 export default {
   Game,
@@ -40,4 +41,5 @@ export default {
   FilterPreset,
   ExternalReview,
   GameExternalReviewMap,
+  Wishlist,
 };

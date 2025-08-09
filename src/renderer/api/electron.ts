@@ -8,6 +8,7 @@ import type {
   LibraryAPI,
   GameAPI,
   DataAPI,
+  WishlistAPI,
 } from "@preload/electron-api-types";
 
 export const getConfig = (): ConfigAPI => window.config;
@@ -19,6 +20,7 @@ export const getRanking = (): RankingAPI => window.ranking;
 export const getLibrary = (): LibraryAPI => window.library;
 export const getGame = (): GameAPI => window.game;
 export const getData = (): DataAPI => window.data;
+export const getWishlist = (): WishlistAPI => window.wishlist;
 
 export const verifyAPIsAvailable = (): boolean => {
   const apis = [
@@ -31,6 +33,7 @@ export const verifyAPIsAvailable = (): boolean => {
     { name: "library", api: window.library },
     { name: "game", api: window.game },
     { name: "data", api: window.data },
+    { name: "wishlist", api: window.wishlist },
   ];
 
   const missingApis = apis.filter(({ api }) => !api).map(({ name }) => name);

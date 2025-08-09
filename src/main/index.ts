@@ -16,6 +16,7 @@ import "@main/ranking/ranking.handler";
 import "@main/library/library.handler";
 import "@main/game/game.handler";
 import "@main/dialog/dialog.handler";
+import "@main/wishlist/wishlist.handler";
 
 import notificationManager from "@main/manager/notificationManager";
 import ConfigManager from "@main/manager/configManager";

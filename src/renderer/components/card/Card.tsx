@@ -35,7 +35,7 @@ export const Card = ({ title, subtitle, children, actions, className }: CardProp
   }, []);
 
   return (
-    <div className={`overflow-hidden rounded-lg border border-design-border bg-design-card shadow-md ${className}`}>
+    <div className={`overflow-hidden border border-design-border bg-design-card shadow-md ${className}`}>
       <div className="p-4">
         <div className="flex flex-row justify-between">
           <div className="flex flex-col gap-2">
