@@ -2,7 +2,7 @@ import React, { MouseEvent, createElement } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import _ from "lodash";
 
-const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w-fit"], {
+const button = cva(["font-semibold", "border", "flex", "flex-row", "w-fit"], {
   variants: {
     intent: {
       primary: [
@@ -21,6 +21,7 @@ const button = cva(["font-semibold", "border", "rounded", "flex", "flex-row", "w
       ],
       destructive: ["bg-design-button-destructive", "text-design-text-inverted", "border-design-border"],
       icon: ["text-design-text-normal", "border-transparent", "hover:opacity-50", "active:opacity-75"],
+      custom: "",
     },
     state: {
       false: null,
@@ -115,9 +116,9 @@ export const Button: React.FC<ButtonProps> = ({
     onClick={onClick}
     {...props}
   >
-    <div className="flew-row flex items-center justify-center gap-2">
+    <div className="flew-row flex items-center justify-center">
       {icon && createElement(icon, { color: iconColor || "white" })}
-      <p>{text}</p>
+      <p className={icon && !_.isNil(text) ? "pl-2" : ""}>{text}</p>
     </div>
   </button>
 );

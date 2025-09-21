@@ -1,4 +1,63 @@
 {
+  "achievements": {
+    "overview": {
+      "title": "Overall Progress",
+      "unlocked": "{{unlocked}} of {{total}} achievements unlocked",
+      "stats": {
+        "unlocked": "Unlocked",
+        "remaining": "Remaining",
+        "rare": "Rare",
+        "hidden": "Hidden"
+      }
+    },
+    "highlights": {
+      "rare": {
+        "title": "Rarest Achievement",
+        "subTitle": "Only {{percentage}}% of players have this"
+      },
+      "common": {
+        "title": "Most Common Achievement",
+        "subTitle": "{{percentage}}% of players have this"
+      },
+      "first": {
+        "title": "First Achievement Unlocked",
+        "subTitle": "Unlocked on {{date}}"
+      },
+      "last": {
+        "title": "Last Achievement Unlocked",
+        "subTitle": "Unlocked on {{date}}"
+      },
+      "daily": "Max Daily Streak",
+      "ultraRare": "Ultra Rare (<5%)",
+      "avg": "Avg. Rarity Score"
+    },
+    "timeline": {
+      "totalPeriod": "Total in Period",
+      "dailyAvg": "Daily Average",
+      "bestDay": "Best Day",
+      "peakDate": "Peak Date"
+    },
+    "all": {
+      "search": {
+        "placeholder": "Search achievements...",
+        "clear": "Clear search"
+      },
+      "sort": {
+        "text": "Sort by ...",
+        "options": {
+          "recent": "Recent",
+          "alphabetical": "Alphabetical",
+          "rarity": "Rarity"
+        }
+      },
+      "filter": {
+        "clear": "Clear all filters",
+        "advanced": "Advanced",
+        "hideHidden": "Hide Hidden",
+        "hideUnlocked": "Hide Unlocked"
+      }
+    }
+  },
   "review": {
     "titleCard": {
       "yourReview": "Your Review",

@@ -9,6 +9,8 @@ export const GET_OWNED_GAMES_URL = BASE_API_URL + "IPlayerService/GetOwnedGames/
 export const GET_PLAYER_ACHIEVEMENTS_URL = BASE_API_URL + "ISteamUserStats/GetPlayerAchievements/v0001";
 export const GET_SCHEMA_FOR_GAME_URL = BASE_API_URL + "ISteamUserStats/GetSchemaForGame/v0002";
 export const GET_PLAYER_SUMMARIES = BASE_API_URL + "ISteamUser/GetPlayerSummaries/v0002";
+export const GET_GLOBAL_ACHIEVEMENT_PERCENTAGES_FOR_APP =
+  BASE_API_URL + "ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002";
 
 export const GET_APP_REVIEWS = BASE_STORE_URL + "appreviews/:appId";
 

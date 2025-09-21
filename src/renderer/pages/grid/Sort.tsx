@@ -1,4 +1,3 @@
-import { Button } from "@render//components/button/Button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -13,6 +12,7 @@ import _ from "lodash";
 import { ArrowDown, ArrowDownUp, ArrowUp, ArrowUpDown, FilterIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { SortConfig } from "src/common/types";
+import Button from "@render/components/new/button";
 
 export const Sort = () => {
   const { sortConfig, updateSort } = useGames();
@@ -68,12 +68,17 @@ export const Sort = () => {
       <DropdownMenuTrigger>
         <Button
           intent={"icon"}
-          icon={ArrowDownUp}
           size={"fit"}
           onClick={() => {
             setIsOpen(!isOpen);
           }}
-        />
+        >
+          <Button.Content>
+            <Button.Item>
+              <ArrowDownUp />
+            </Button.Item>
+          </Button.Content>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" onInteractOutside={() => setIsOpen(false)}>
         <DropdownMenuLabel>Sort</DropdownMenuLabel>

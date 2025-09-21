@@ -1,7 +1,7 @@
 import _ from "lodash";
 import queries from "../dal/dal";
 import { config } from "../index";
-import { refreshGame, updateAchievements } from "../game/game.service";
+import { refreshGame } from "../game/game.service";
 import { FilterConfig, GameWithRelations, SidebarData, SortConfig } from "../../common/types";
 import notificationManager from "../manager/notificationManager";
 import { DataRoute, NotificationType, Storefront } from "../../common/constant";
@@ -10,6 +10,7 @@ import * as SteamCommand from "../storefront/steam/commands";
 import * as SteamService from "@main/storefront/steam/service";
 import * as EpicCommand from "../storefront/epic/commands";
 import * as GameService from "@main/game/game.service";
+import * as AchievementService from "@main/achievement/achievement.service";
 import * as YoutubeEndpoints from "@main/externalApi/youtube/endpoints";
 import * as OpenCriticEndpoints from "@main/externalApi/openCritic/endpoints";
 import dataManager from "../manager/dataChannelManager";
@@ -80,7 +81,7 @@ export const getGame = async (id: string, refreshAchievements: boolean = true) =
   }
 
   if (refreshAchievements) {
-    await GameService.updateAchievements(game);
+    await AchievementService.updateAchievements(game);
   }
 
   await queries.Game.update(id, {
@@ -114,64 +115,6 @@ export const setFilterPreset = async (data: Partial<FilterPreset>) => {
 
 export const deleteFilterPreset = async (name: string) => {
   await queries.FilterPreset.deleteByName(name);
-};
-
-export const preLaunch = async (game: GameWithRelations) => {
-  logger.info(`preLaunch for game`, { id: game.id }, LogTag.TRACKING);
-};
-
-export const launch = async (id: string) => {
-  const game = await queries.Game.getGameById(id);
-  if (_.isNil(game)) {
-    throw new Error("game not found");
-  }
-  await preLaunch(game);
-  logger.info(`Launch game`, { id: game.id }, LogTag.TRACKING);
-
-  switch (game.storefrontId) {
-    case Storefront.STEAM: {
-      await SteamCommand.run(game);
-      break;
-    }
-    case Storefront.EPIC: {
-      await EpicCommand.run(game);
-      break;
-    }
-  }
-
-  dataManager.send(DataRoute.RUNNING_GAME, {
-    isRunning: true,
-    id: game.id,
-  });
-
-  const { startTime, endTime } = await monitorDirectoryProcesses(game?.location!);
-  await postLaunch(game, startTime, endTime);
-};
-
-export const postLaunch = async (game: GameWithRelations, startTime: Date, endTime: Date | null) => {
-  logger.info(`postLaunch for game`, { id: game.id }, LogTag.TRACKING);
-  if (startTime && endTime) {
-    const minutes = await getMinutesBetween(startTime, endTime);
-    if (minutes > 0) {
-      await createGameActiviy(game.id, startTime, endTime);
-      await queries.Game.updateTimePlayed(game.id, minutes + 5);
-    } else {
-      logger.info(`Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`);
-    }
-
-    if (game.gameStatusId === 7) {
-      await queries.Game.update(game.id, { gameStatusId: 6 });
-    }
-
-    await updateAchievements(game);
-  }
-
-  dataManager.send(DataRoute.RUNNING_GAME, {
-    isRunning: false,
-    id: game.id,
-  });
-
-  await refreshGame(game.id);
 };
 
 export const getSidebarData = async (): Promise<SidebarData> => {

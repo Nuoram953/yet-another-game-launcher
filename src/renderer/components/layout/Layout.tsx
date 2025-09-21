@@ -30,11 +30,11 @@ export default function Layout({ children }: LayoutProps) {
   }, [open]);
 
   return (
-    <div className="flex h-full w-screen overflow-hidden">
+    <div className="flex h-full w-full overflow-x-auto">
       <Sidebar open={open} setOpen={setOpen} />
-      <main className="flex min-h-0 flex-1 flex-col bg-gradient-to-br from-gray-900 to-gray-800">
-        <header className="absolute z-50 flex h-16 w-full shrink-0 items-center gap-2 text-design-text-normal">
-          <div className="flex items-center gap-2 px-4">
+      <main className="z-0 flex min-h-0 flex-1 flex-col bg-gradient-to-b from-black/20 via-black/40 to-black/60 backdrop-blur-sm">
+        <header className="absolute flex h-16 w-full shrink-0 items-center gap-2 text-design-text-normal">
+          <div className="z-[1000] flex items-center gap-2 px-4">
             <Button
               icon={SidebarIcon}
               intent="icon"

@@ -303,3 +303,9 @@ model FilterPreset {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  externalId Int      @unique
+  createdAt  DateTime @default(now())
+}

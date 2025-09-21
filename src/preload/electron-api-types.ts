@@ -15,6 +15,7 @@ import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "../main/manager/configManager";
 import { MEDIA_TYPE } from "../common/constant";
 import { Video } from "@main/externalApi/youtube/types";
+import { IGame } from "@main/externalApi/internetGameDatabase/types";
 
 export interface DialogAPI {
   open: () => Promise<string | null>;
@@ -34,6 +35,13 @@ export interface NotificationsAPI {
 
 export interface StoreAPI {
   launch: (storeName: string) => Promise<void>;
+}
+
+export interface WishlistAPI {
+  search: (query: string) => Promise<IGame[]>;
+  add: (externalId: number) => Promise<void>;
+  get: () => Promise<IGame[]>;
+  remove: (externalId: number) => Promise<void>;
 }
 
 export interface AppControlAPI {
@@ -122,7 +130,7 @@ export interface GameAPI {
   setReview: (data: Partial<GameReview>) => Promise<void>;
   setStatus: (data: Partial<Game>) => Promise<void>;
   setGamescope: (data: GameConfigGamescope) => Promise<void>;
-  setFavorite: (data: Partial<Game>) => Promise<void>;
+  setFavorite: (id: string, isFavorite: boolean) => Promise<void>;
   refreshProgressTracker: (id: string) => Promise<void>;
   refreshInfo: (id: string) => Promise<void>;
   resetReview: (gameId: string) => Promise<void>;
@@ -147,4 +155,5 @@ export interface ElectronAPI {
   library: LibraryAPI;
   game: GameAPI;
   data: DataAPI;
+  wishlist: WishlistAPI;
 }

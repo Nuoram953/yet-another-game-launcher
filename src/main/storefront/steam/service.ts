@@ -80,6 +80,7 @@ export const getGameAchievements = async (game: Game) => {
   if (game.hasAchievements) {
     return;
   }
+
   const res = await SteamEndpoints.getSchemaForGame(game.externalId);
 
   const hasAchievements = Object.keys(res.data.game).length > 0;
@@ -156,5 +157,18 @@ export const getAppReviews = async (game: GameWithRelations) => {
       iconUrl: player.avatarmedium,
     });
     await queries.GameExternalReviewMap.create(game.id, externalReview.id);
+  }
+};
+
+export const updateGlobalAchievmentPercentages = async (game: Game) => {
+  if (!game.hasAchievements) {
+    return;
+  }
+
+  const res = await SteamEndpoints.getGlobalAchievementPercentagesForApp(game.externalId);
+
+  const achievements = res.data.achievementpercentages.achievements;
+  for (const achievement of achievements) {
+    await queries.GameAchievements.updateRarity(game.id, achievement.name, Math.floor(achievement.percent));
   }
 };

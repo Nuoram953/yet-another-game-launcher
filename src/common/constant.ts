@@ -89,6 +89,17 @@ export enum RouteRanking {
   REMOVE_GAME_FROM_RANKING = "ranking:removeGameFromRanking",
 }
 
+export enum RouteThirdParty {
+  IGDB_GET_GAMES_BY_SEARCH = "thirdparty:getGamesBySearchIGDB",
+}
+
+export enum RouteWishlist {
+  SEARCH = "wishlist:search",
+  ADD = "wishlist:add",
+  GET = "wishlist:get",
+  REMOVE = "wishlist:remove",
+}
+
 export enum RouteGame {
   LAUNCH = "game:launch",
   INSTALL = "game:install",
