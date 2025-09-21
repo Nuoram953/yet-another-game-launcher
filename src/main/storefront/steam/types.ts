@@ -49,6 +49,67 @@ export interface GetPlayerAchievementsResponse {
   };
 }
 
+export interface GetPlayerSummariesResponse {
+  response: {
+    players: {
+      steamid: string;
+      communityvisibilitystate: number;
+      profilestate: number;
+      personaname: string;
+      commentpermission: number;
+      profileurl: string;
+      avatar: string;
+      avatarmedium: string;
+      avatarfull: string;
+      avatarhash: string;
+      personastate: number;
+      realname?: string;
+      primaryclanid: string;
+      timecreated: number;
+      personastateflags: number;
+      loccountrycode?: string;
+      locstatecode?: string;
+    }[];
+  };
+}
+
+export interface GetAppReviewsResponse {
+  success: number;
+  query_summary: {
+    num_reviews: number;
+    review_score: number;
+    review_score_desc: string;
+    total_positive: number;
+    total_negative: number;
+    total_reviews: number;
+  };
+  reviews: {
+    recommendationid: string;
+    author: {
+      steamid: string;
+      num_games_owned: number;
+      num_reviews: number;
+      playtime_forever: number;
+      playtime_last_two_weeks: number;
+      playtime_at_review: number;
+      last_played: number;
+    };
+    language: string;
+    review: string;
+    timestamp_created: number;
+    timestamp_updated: number;
+    voted_up: boolean;
+    votes_up: number;
+    votes_funny: number;
+    weighted_vote_score: string;
+    comment_count: number;
+    steam_purchase: boolean;
+    received_for_free: boolean;
+    written_during_early_access: boolean;
+  }[];
+  cursor: string;
+}
+
 export interface SteamAccountInfo {
   AccountName: string;
   PersonaName: string;
@@ -61,3 +122,12 @@ export interface SteamAccountInfo {
 }
 
 export type SteamAccountsArray = [string, SteamAccountInfo][];
+
+export interface GetGlobalAchievementPercentagesForAppResponse {
+  achievementpercentages: {
+    achievements: {
+      name: string;
+      percent: number;
+    }[];
+  };
+}

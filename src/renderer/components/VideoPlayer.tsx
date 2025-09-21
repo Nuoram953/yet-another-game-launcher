@@ -41,13 +41,7 @@ export const VideoPlayer = ({ path }: { path: string }) => {
 
   return (
     <div>
-      <video
-        ref={videoRef}
-        controls
-        autoPlay
-        loop
-        className="w-full rounded-xl"
-      >
+      <video ref={videoRef} autoPlay loop className="w-full">
         <source src={path} type="video/mp4" />
         Your browser does not support the video tag.
       </video>

@@ -78,12 +78,12 @@ export const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimiti
             {label && (
               <label
                 htmlFor={props.id}
-                className="text-sm font-medium leading-none text-[#eee] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium leading-none text-design-text-normal peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 {label}
               </label>
             )}
-            {description && <p className="text-xs text-[#999]">{description}</p>}
+            {description && <p className="text-xs text-design-text-subtle">{description}</p>}
           </div>
         )}
       </div>

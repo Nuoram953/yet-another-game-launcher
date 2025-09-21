@@ -1,0 +1,145 @@
+{
+  "achievements": {
+    "overview": {
+      "title": "Overall Progress",
+      "unlocked": "{{unlocked}} of {{total}} achievements unlocked",
+      "stats": {
+        "unlocked": "Unlocked",
+        "remaining": "Remaining",
+        "rare": "Rare",
+        "hidden": "Hidden"
+      }
+    },
+    "highlights": {
+      "rare": {
+        "title": "Rarest Achievement",
+        "subTitle": "Only {{percentage}}% of players have this"
+      },
+      "common": {
+        "title": "Most Common Achievement",
+        "subTitle": "{{percentage}}% of players have this"
+      },
+      "first": {
+        "title": "First Achievement Unlocked",
+        "subTitle": "Unlocked on {{date}}"
+      },
+      "last": {
+        "title": "Last Achievement Unlocked",
+        "subTitle": "Unlocked on {{date}}"
+      },
+      "daily": "Max Daily Streak",
+      "ultraRare": "Ultra Rare (<5%)",
+      "avg": "Avg. Rarity Score"
+    },
+    "timeline": {
+      "totalPeriod": "Total in Period",
+      "dailyAvg": "Daily Average",
+      "bestDay": "Best Day",
+      "peakDate": "Peak Date"
+    },
+    "all": {
+      "search": {
+        "placeholder": "Search achievements...",
+        "clear": "Clear search"
+      },
+      "sort": {
+        "text": "Sort by ...",
+        "options": {
+          "recent": "Recent",
+          "alphabetical": "Alphabetical",
+          "rarity": "Rarity"
+        }
+      },
+      "filter": {
+        "clear": "Clear all filters",
+        "advanced": "Advanced",
+        "hideHidden": "Hide Hidden",
+        "hideUnlocked": "Hide Unlocked"
+      }
+    }
+  },
+  "review": {
+    "titleCard": {
+      "yourReview": "Your Review",
+      "overview": "Overview",
+      "userReview": "User Reviews",
+      "criticReview": "Critic Reviews"
+    },
+    "overview": {
+      "critics": {
+        "label": "Critics",
+        "subLabel": "Professional reviews from gaming critics"
+      },
+      "community": {
+        "label": "Community",
+        "subLabel": "Average rating from the gaming community"
+      },
+      "user": {
+        "label": "User",
+        "subLabel": "Your personal rating"
+      }
+    },
+    "yourReview": {
+      "actions": {
+        "reset": "Reset review"
+      },
+      "category": {
+        "graphics": "Graphics",
+        "gameplay": "Gameplay",
+        "story": "Story",
+        "sound": "Sound",
+        "content": "Content"
+      },
+      "yourThoughts": {
+        "placeholder": "What did you think about the game? What did you like or dislike? How does it compare to other games you've played?",
+        "label": "Your thoughts"
+      },
+      "startReview": "Start your review"
+    },
+    "reveal": {
+      "title": "Please click to reveal",
+      "subTitle": "Click anywhere to view reviews",
+      "subTitle2": "Can be disable in the option menu"
+    },
+    "category": {
+      "poor": "Poor",
+      "fair": "Fair",
+      "good": "Good",
+      "great": "Great",
+      "excellent": "Excellent"
+    },
+    "critic": {
+      "description": "Aggregated professional critic reviews"
+    },
+    "community": {
+      "description": "Average rating from the gaming community"
+    },
+    "user": {
+      "description": "Your personal rating"
+    },
+    "score": {
+      "masterpiece": {
+        "name": "Universal Acclaim",
+        "shortName": "Masterpiece",
+        "description": "Exceptional quality that defines the medium"
+      },
+      "positive": {
+        "name": "Generally Positive",
+        "shortName": "Great",
+        "description": "High quality with broad appeal"
+      },
+      "mixed": {
+        "name": "Mixed Reviews",
+        "shortName": "Okay",
+        "description": "Some interesting ideas but notable flaws"
+      },
+      "disappointing": {
+        "name": "Poor Reception",
+        "shortName": "Disappointing",
+        "description": "Significant issues that impact enjoyment"
+      }
+    },
+    "ratingBased_one": "Overall rating based on {{count}} source",
+    "ratingBased_other": "Overall rating based on {{count}} sources"
+  }
+}

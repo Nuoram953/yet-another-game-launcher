@@ -29,20 +29,50 @@ export const getInvolvedCompany = async (id: number) => {
 };
 
 export const search = async (name: string) => {
-  const res = await axiosInstance.post<IGame[]>(GAME_URL, `fields *; search "${name}"; where version_parent = null;`);
+  const res = await axiosInstance.post<IGame[]>(
+    GAME_URL,
+    `fields *, cover.*; search "${name}"; where version_parent = null & parent_game=null; limit 50;`,
+  );
 
   if (_.isEmpty(res.data)) {
     return null;
   }
 
-  return res.data[0].id;
+  return res.data;
+};
+
+export const getById = async (id: number) => {
+  const res = await axiosInstance.post<IGame[]>(
+    GAME_URL,
+    `fields *; where version_parent = null & parent_game=null & id=${id};`,
+  );
+
+  if (_.isEmpty(res.data)) {
+    return null;
+  }
+
+  return res.data;
+};
+
+export const getByIds = async (ids: number[]) => {
+  const res = await axiosInstance.post<IGame[]>(
+    GAME_URL,
+    `fields *, platforms.*, screenshots.*, cover.*; where version_parent = null & parent_game=null & id=(${ids.join(",")});`,
+  );
+
+  if (_.isEmpty(res.data)) {
+    return null;
+  }
+
+  return res.data;
 };
 
 export const getGame = async (game: GameWithRelations | Game) => {
   let id = await getExternalGameId(game.externalId!, game.storefrontId!);
 
   if (_.isNil(id)) {
-    id = await search(game.name);
+    const searchQuery = await search(game.name);
+    id = searchQuery?.[0]?.id;
   }
 
   if (_.isNil(id)) {

@@ -14,7 +14,9 @@ import notificationManager from "../manager/notificationManager";
 import * as SteamService from "@main/storefront/steam/service";
 import * as YoutubeService from "../externalApi/youtube/service";
 import * as MetadataService from "@main/metadata/index";
+import * as OpenCriticService from "../externalApi/openCritic/service";
 import * as ConfigService from "@main/config/config.service";
+import * as AchievementService from "../achievement/achievement.service";
 
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
@@ -23,25 +25,6 @@ import * as howLongToBeatApi from "../externalApi/howLongToBeat";
 import * as internetGameDatabaseApi from "../externalApi/internetGameDatabase";
 import * as SteamGridDbService from "../externalApi/steamGridDb/service";
 import * as openCriticApi from "../externalApi/openCritic";
-
-export const install = async (id: string) => {
-  const game = await queries.Game.getGameById(id);
-  if (_.isNil(game)) {
-    throw new Error("game not found");
-  }
-
-  switch (game.storefrontId) {
-    case Storefront.STEAM: {
-      SteamCommand.install(game.externalId!);
-      await delay(10000);
-      createDownloadTracker(game);
-    }
-
-    case Storefront.EPIC: {
-      EpicCommand.install(game);
-    }
-  }
-};
 
 export const uninstall = async (id: string) => {
   const game = await queries.Game.getGameById(id);
@@ -73,16 +56,10 @@ export const kill = async (id: string) => {
   });
 };
 
-export const updateAchievements = async (game: GameWithRelations) => {
+export const updateExternalUserReviews = async (game: GameWithRelations) => {
   switch (game.storefrontId) {
     case Storefront.STEAM: {
-      await SteamService.getGameAchievements(game);
-      await SteamService.getPlayerAchievements(game);
-    }
-    case Storefront.EPIC: {
-      // const storeEpic = new Steam();
-      // await storeEpic.getAchievementsForGame(game);
-      // await storeEpic.getUserAchievementsForGame(game);
+      await SteamService.getAppReviews(game);
     }
   }
 };
@@ -211,13 +188,19 @@ export const createOrUpdateGame = async (
     });
   }
 
+  notificationManager.updateProgress(
+    notificationId,
+    getKeyPercentage(notificationsObject, "stepOpenCritcicData"),
+    i18n.t("newGame.stepOpenCritcicData", { ns: "notification" }),
+  );
+  await updateExternalUserReviews(game);
+
   if (await ConfigService.get("extension.openCritic.enable")) {
-    notificationManager.updateProgress(
-      notificationId,
-      getKeyPercentage(notificationsObject, "stepOpenCritcicData"),
-      i18n.t("newGame.stepOpenCritcicData", { ns: "notification" }),
-    );
     const openCriticData = await openCriticApi.getGame(game.name);
+    await OpenCriticService.setGameReviewLanding(game, openCriticData.id);
+    await queries.Game.update(game.id, {
+      scoreCritic: openCriticData?.topCriticScore,
+    });
   }
 
   notificationManager.updateProgress(
@@ -226,7 +209,7 @@ export const createOrUpdateGame = async (
     i18n.t("newGame.stepDownloadingAchievements", { ns: "notification" }),
   );
 
-  await updateAchievements(game);
+  await AchievementService.updateAchievements(game);
 
   dataManager.send(DataRoute.REQUEST_GAMES, {});
 
@@ -234,8 +217,6 @@ export const createOrUpdateGame = async (
 
   await delay(3000);
 };
-
-export const downloadAchievements = () => {};
 
 export const refreshGame = async (gameId: string) => {
   dataManager.send(DataRoute.REQUEST_GAME, {
@@ -286,14 +267,15 @@ export const setGamescope = async (data: GameConfigGamescope) => {
   await refreshGame(game.id);
 };
 
-export const setFavorite = async (data: Partial<Game>) => {
-  const game = await queries.Game.getGameById(data.id!);
+export const setFavorite = async (id: string, isFavorite: boolean) => {
+  const game = await queries.Game.getGameById(id);
 
   if (_.isNil(game)) {
     throw new Error("Invalid game");
   }
 
-  await queries.Game.update(data.id!, { isFavorite: data.isFavorite });
+  await queries.Game.update(id, { isFavorite });
+  await refreshGame(game.id);
 };
 
 export const refreshProgressTracker = async (id: string) => {
@@ -319,6 +301,17 @@ export const refreshInfo = async (id: string) => {
   }
 
   await createOrUpdateGame(game, game.storefrontId, true);
+
+  await refreshGame(game.id);
+};
+
+export const resetReview = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  await queries.GameReview.deleteByGameId(game.id);
 
   await refreshGame(game.id);
 };

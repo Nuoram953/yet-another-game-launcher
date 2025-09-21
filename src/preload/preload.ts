@@ -7,6 +7,8 @@ import {
   RouteMedia,
   RouteRanking,
   RouteStore,
+  RouteThirdParty,
+  RouteWishlist,
 } from "../common/constant";
 import { FilterConfig, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
@@ -50,12 +52,14 @@ contextBridge.exposeInMainWorld("media", {
 contextBridge.exposeInMainWorld("library", {
   refresh: () => ipcRenderer.invoke(RouteLibrary.REFRESH),
   getSidebar: () => ipcRenderer.invoke(RouteLibrary.GET_SIDEBAR),
-  getGame: (id: string) => ipcRenderer.invoke(RouteLibrary.GET_GAME, id),
+  getGame: (id: string, refreshAchievements: boolean = true) =>
+    ipcRenderer.invoke(RouteLibrary.GET_GAME, id, refreshAchievements),
   getGames: (filters?: FilterConfig, sort?: SortConfig) => ipcRenderer.invoke(RouteLibrary.GET_GAMES, filters, sort),
   getLastPlayed: (max: number) => ipcRenderer.invoke(RouteLibrary.GET_LAST_PLAYED, max),
   getCountForAllStatus: () => ipcRenderer.invoke(RouteLibrary.GET_COUNT_STATUS),
   getStatus: () => ipcRenderer.invoke(RouteLibrary.GET_STATUS),
   getDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.GET_DOWNLOAD_HISTORY),
+  clearDownloadHistory: () => ipcRenderer.invoke(RouteLibrary.CLEAR_DOWNLOAD_HISTORY),
   getStorefronts: () => ipcRenderer.invoke(RouteLibrary.GET_STOREFRONTS),
   getFilters: () => ipcRenderer.invoke(RouteLibrary.GET_FILTERS),
   setFilterPreset: (data: Partial<FilterPreset>) => ipcRenderer.invoke(RouteLibrary.SET_FILTER_PRESET, data),
@@ -79,10 +83,18 @@ contextBridge.exposeInMainWorld("game", {
   uninstall: (id: string) => ipcRenderer.invoke(RouteGame.UNINSTALL, id),
   setReview: (data: Partial<GameReview>) => ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
   setStatus: (data: Partial<Game>) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
-  setFavorite: (data: Partial<Game>) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, data),
+  setFavorite: (id: string, isFavorite: boolean) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, id, isFavorite),
   setGamescope: (data: GameConfigGamescope) => ipcRenderer.invoke(RouteGame.SET_SETTING_GAMESCOPE, data),
   refreshProgressTracker: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_PROGRESS_TRACKER, id),
   refreshInfo: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_INFO, id),
+  resetReview: (id: string) => ipcRenderer.invoke(RouteGame.RESET_REVIEW, id),
+});
+
+contextBridge.exposeInMainWorld("wishlist", {
+  search: (query: string) => ipcRenderer.invoke(RouteWishlist.SEARCH, query),
+  add: (externalId: number) => ipcRenderer.invoke(RouteWishlist.ADD, externalId),
+  get: () => ipcRenderer.invoke(RouteWishlist.GET),
+  remove: (externalId: number) => ipcRenderer.invoke(RouteWishlist.REMOVE, externalId),
 });
 
 contextBridge.exposeInMainWorld("data", {

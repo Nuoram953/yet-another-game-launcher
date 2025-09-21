@@ -8,12 +8,12 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { RecentlyPlayedCarousel } from "./RecentlyPlayedCarousel";
 import useGridScrollPersist from "@render//hooks/usePersistentScroll";
 import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
-import { Button } from "@render//components/button/Button";
-import { EllipsisVertical, Plus } from "lucide-react";
 import { Sort } from "./Sort";
-import { Input } from "@render//components/input/Input";
 import { Header } from "@render//components/layout/Header";
 import { FilterSheet } from "./FilterSheet";
+import Button from "@render/components/new/button";
+import Input from "@render/components/new/input/TextInput";
+import { Cross, Plus } from "lucide-react";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -91,20 +91,12 @@ export const Grid = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex min-h-[200px] items-center justify-center">
-        <div className="text-red-500">Error: {error}</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="flex h-screen flex-col overflow-hidden">
       <RecentlyPlayedCarousel />
       <div className="flex-none">
         <Header>
-          <div className="flex w-1/3 flex-row items-center p-4 align-middle">
+          <div className="flex w-full flex-row items-center justify-between p-4">
             <Input
               color={"dark"}
               type="search"
@@ -113,30 +105,23 @@ export const Grid = () => {
               onChange={handleSearch}
             />
             <div className="ml-2 flex flex-row">
+              <Button intent={"icon"} size={"fit"}>
+                <Button.Content>
+                  <Button.Item>
+                    <Plus />
+                  </Button.Item>
+                </Button.Content>
+              </Button>
               <FilterSheet />
               <Sort />
               {filters.hasActiveFilters && (
-                <Button
-                  intent="secondary"
-                  size="small"
-                  text="Clear filters"
-                  onClick={() => clearFilters()}
-                  className="whitespace-nowrap"
-                />
+                <Button intent="secondary" size="small" onClick={() => clearFilters()} className="whitespace-nowrap">
+                  <Button.Content>
+                    <Button.Item>Clear filters</Button.Item>
+                  </Button.Content>
+                </Button>
               )}
             </div>
-          </div>
-          <div className="flew-row flex gap-2">
-            <Button
-              intent={"primary"}
-              iconColor="black"
-              text="Add game"
-              icon={Plus}
-              size={"small"}
-              className="w-fit"
-              onClick={() => {}}
-            />
-            <Button intent={"icon"} icon={EllipsisVertical} size={"fit"} onClick={() => {}} />
           </div>
         </Header>
       </div>

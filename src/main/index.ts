@@ -16,6 +16,7 @@ import "@main/ranking/ranking.handler";
 import "@main/library/library.handler";
 import "@main/game/game.handler";
 import "@main/dialog/dialog.handler";
+import "@main/wishlist/wishlist.handler";
 
 import notificationManager from "@main/manager/notificationManager";
 import ConfigManager from "@main/manager/configManager";
@@ -119,6 +120,13 @@ async function electronAppInit() {
       store: {
         steam: { enable: true, apiKey: "", accountName: "", isntallationPath: null },
         epic: { enable: true },
+      },
+      page: {
+        detail: {
+          review: {
+            blurExternalReviews: true,
+          },
+        },
       },
       extension: {
         youtube: { enable: true, ytDlpPath: "", cookie: "" },

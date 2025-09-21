@@ -21,5 +21,6 @@ axiosInstance.interceptors.request.use(async (request) => {
   request.headers.Authorization = `Bearer ${token}`;
   request.headers.Accept = `application/json`;
   request.headers["Client-ID"] = (await configService.get("extension.igdb.clientId")) || process.env.IGDB_CLIENT_ID;
+
   return request;
 });

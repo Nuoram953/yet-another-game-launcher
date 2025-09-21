@@ -59,14 +59,14 @@ export const RecentlyPlayedCarousel = () => {
 
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
+          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-design-text-normal transition-colors hover:bg-black/70"
           aria-label="Previous slide"
         >
           <ChevronLeft size={24} />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
+          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-design-text-normal transition-colors hover:bg-black/70"
           aria-label="Next slide"
         >
           <ChevronRight size={24} />

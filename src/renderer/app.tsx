@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import { GamesProvider } from "./context/DatabaseContext";
-import GameDetail from "./pages/detail/Index";
 import { BreadcrumbContext } from "./context/BreadcrumbsContext";
 import { Breadcrumb } from "./types";
 import "./i18n";
@@ -21,108 +20,128 @@ import NotFound from "./pages/error/notFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
-import { SettingPage } from "./pages/setting/Index";
 import { ConfigProvider } from "./components/ConfigProvider";
+import { ColorProvider } from "./context/ColorContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DetailPage } from "./feature/detail";
+import { WishlistPage } from "./feature/wishlist";
+import { SettingPage } from "./feature/settings";
+
+const queryClient = new QueryClient();
 
 const App = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <ConfigProvider>
-        <I18nextProvider i18n={i18n}>
-          <NotificationProvider>
-            <NotificationSystem />
-            <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
-              <GamesProvider>
-                <HashRouter>
-                  <Routes>
-                    <Route
-                      index
-                      path="/"
-                      element={
-                        <Layout>
-                          <Grid />
-                        </Layout>
-                      }
-                    />
-                    <Route
-                      index
-                      path="/game/:id"
-                      element={
-                        <Layout>
-                          <GameDetail />
-                        </Layout>
-                      }
-                    />
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <ConfigProvider>
+          <ColorProvider>
+            <I18nextProvider i18n={i18n}>
+              <NotificationProvider>
+                <NotificationSystem />
+                <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs }}>
+                  <GamesProvider>
+                    <HashRouter>
+                      <Routes>
+                        <Route
+                          index
+                          path="/"
+                          element={
+                            <Layout>
+                              <Grid />
+                            </Layout>
+                          }
+                        />
+                        <Route
+                          index
+                          path="/game/:id"
+                          element={
+                            <Layout>
+                              <DetailPage />
+                            </Layout>
+                          }
+                        />
 
-                    <Route
-                      index
-                      path="/ranking"
-                      element={
-                        <Layout>
-                          <RankingPage />
-                        </Layout>
-                      }
-                    />
+                        <Route
+                          index
+                          path="/ranking"
+                          element={
+                            <Layout>
+                              <RankingPage />
+                            </Layout>
+                          }
+                        />
 
-                    <Route
-                      index
-                      path="/ranking/:id"
-                      element={
-                        <Layout>
-                          <RankingEditPage />
-                        </Layout>
-                      }
-                    />
+                        <Route
+                          index
+                          path="/ranking/:id"
+                          element={
+                            <Layout>
+                              <RankingEditPage />
+                            </Layout>
+                          }
+                        />
 
-                    <Route
-                      index
-                      path="/download"
-                      element={
-                        <Layout>
-                          <DownloadViewer />
-                        </Layout>
-                      }
-                    />
+                        <Route
+                          index
+                          path="/download"
+                          element={
+                            <Layout>
+                              <DownloadViewer />
+                            </Layout>
+                          }
+                        />
 
-                    <Route
-                      index
-                      path="/web"
-                      element={
-                        <Layout>
-                          <WebsiteViewer />
-                        </Layout>
-                      }
-                    />
+                        <Route
+                          index
+                          path="/web"
+                          element={
+                            <Layout>
+                              <WebsiteViewer />
+                            </Layout>
+                          }
+                        />
 
-                    <Route
-                      index
-                      path="/setting"
-                      element={
-                        <Layout>
-                          <SettingPage />
-                        </Layout>
-                      }
-                    />
+                        <Route
+                          index
+                          path="/setting"
+                          element={
+                            <Layout>
+                              <SettingPage />
+                            </Layout>
+                          }
+                        />
 
-                    <Route
-                      path="*"
-                      element={
-                        <Layout>
-                          <NotFound />
-                        </Layout>
-                      }
-                    />
-                  </Routes>
-                </HashRouter>
-                <Toaster />
-              </GamesProvider>
-            </BreadcrumbContext.Provider>
-          </NotificationProvider>
-        </I18nextProvider>
-      </ConfigProvider>
-    </ThemeProvider>
+                        <Route
+                          index
+                          path="/wishlist"
+                          element={
+                            <Layout>
+                              <WishlistPage />
+                            </Layout>
+                          }
+                        />
+
+                        <Route
+                          path="*"
+                          element={
+                            <Layout>
+                              <NotFound />
+                            </Layout>
+                          }
+                        />
+                      </Routes>
+                    </HashRouter>
+                    <Toaster />
+                  </GamesProvider>
+                </BreadcrumbContext.Provider>
+              </NotificationProvider>
+            </I18nextProvider>
+          </ColorProvider>
+        </ConfigProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 

@@ -15,6 +15,13 @@ export interface AppConfig {
       enable: boolean;
     };
   };
+  page: {
+    detail: {
+      review: {
+        blurExternalReviews: boolean;
+      };
+    };
+  };
   extension: {
     youtube: {
       enable: boolean;

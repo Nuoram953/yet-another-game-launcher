@@ -36,6 +36,6 @@ jobs:
       #   run: npm run lint
 
       - name: Build application
-        run: npm run electron:pack
+        run: npm run build:dir
         env:
           USE_HARD_LINKS: false

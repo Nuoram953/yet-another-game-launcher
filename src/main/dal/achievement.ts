@@ -1,10 +1,7 @@
 import { GameAchievement } from "@prisma/client";
 import { prisma } from "..";
 
-export async function findOrCreate(
-  gameId: string,
-  achievement: Partial<GameAchievement>,
-) {
+export async function findOrCreate(gameId: string, achievement: Partial<GameAchievement>) {
   await prisma.gameAchievement.upsert({
     where: {
       gameId_externalId: {
@@ -23,10 +20,7 @@ export async function findOrCreate(
   });
 }
 
-export async function setAchievementUnlocked(
-  gameId: string,
-  achievement: Partial<GameAchievement>,
-) {
+export async function setAchievementUnlocked(gameId: string, achievement: Partial<GameAchievement>) {
   await prisma.gameAchievement.update({
     data: {
       isUnlocked: achievement.isUnlocked,
@@ -37,6 +31,18 @@ export async function setAchievementUnlocked(
         gameId: gameId,
         externalId: achievement.externalId!,
       },
+    },
+  });
+}
+
+export async function updateRarity(gameId: string, achievementName: string, rarity: number) {
+  await prisma.gameAchievement.updateMany({
+    data: {
+      rarity,
+    },
+    where: {
+      gameId,
+      externalId: achievementName,
     },
   });
 }

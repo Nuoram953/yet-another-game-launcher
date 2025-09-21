@@ -12,31 +12,31 @@ datasource db {
 }
 
 model Game {
-  id                     String               @id @default(uuid())
+  id                     String                  @id @default(uuid())
   externalId             String?
   name                   String
   lastTimePlayed         BigInt?
-  isInstalled            Boolean              @default(false)
-  isFavorite             Boolean              @default(false)
-  gameStatus             GameStatus           @relation(fields: [gameStatusId], references: [id])
+  isInstalled            Boolean                 @default(false)
+  isFavorite             Boolean                 @default(false)
+  gameStatus             GameStatus              @relation(fields: [gameStatusId], references: [id])
   gameStatusId           Int
-  storefront             Storefront?          @relation(fields: [storefrontId], references: [id])
+  storefront             Storefront?             @relation(fields: [storefrontId], references: [id])
   storefrontId           Int?
-  timePlayed             Int                  @default(0)
-  timePlayedWindows      Int                  @default(0)
-  timePlayedLinux        Int                  @default(0)
-  timePlayedMac          Int                  @default(0)
-  timePlayedSteamdeck    Int                  @default(0)
-  timePlayedDisconnected Int                  @default(0)
-  size                   BigInt?              @default(0)
+  timePlayed             Int                     @default(0)
+  timePlayedWindows      Int                     @default(0)
+  timePlayedLinux        Int                     @default(0)
+  timePlayedMac          Int                     @default(0)
+  timePlayedSteamdeck    Int                     @default(0)
+  timePlayedDisconnected Int                     @default(0)
+  size                   BigInt?                 @default(0)
   location               String?
-  hasAchievements        Boolean              @default(false)
+  hasAchievements        Boolean                 @default(false)
   scoreCritic            Int?
   scoreCommunity         Int?
   scoreUser              Int?
   summary                String?
-  createdAt              DateTime             @default(now())
-  updatedAt              DateTime             @updatedAt
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
   releasedAt             DateTime?
   openedAt               DateTime?
   mainStory              Int?
@@ -54,6 +54,7 @@ model Game {
   gamescope              GameConfigGamescope?
   rankings               RankingGame[]
   mediaDefault           MediaDefault[]
+  externalReviewMap      GameExternalReviewMap[]
 
   @@unique([externalId, storefrontId])
 }
@@ -86,9 +87,10 @@ model GameActivity {
 }
 
 model DownloadHistory {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   gameId    String
-  game      Game   @relation(fields: [gameId], references: [id])
+  game      Game    @relation(fields: [gameId], references: [id])
+  isHidden  Boolean @default(false)
   createdAt BigInt
 
   @@index([gameId])
@@ -194,6 +196,32 @@ model GameReview {
   @@index([gameId])
 }
 
+model ExternalReview {
+  id                    Int                     @id @default(autoincrement())
+  review                String
+  isPositive            Boolean
+  isCritic              Boolean                 @default(false)
+  author                String?
+  source                String?
+  sourceUrl             String?
+  score                 Int?
+  iconUrl               String?
+  timePlayed            Int?                    @default(0)
+  createdAt             DateTime                @default(now())
+  reviewedAt            DateTime?
+  GameExternalReviewMap GameExternalReviewMap[]
+}
+
+model GameExternalReviewMap {
+  id               Int            @id @default(autoincrement())
+  gameId           String
+  game             Game           @relation(fields: [gameId], references: [id])
+  externalReviewId Int
+  externalReview   ExternalReview @relation(fields: [externalReviewId], references: [id])
+
+  @@unique([gameId, externalReviewId])
+}
+
 model Storefront {
   id          Int     @id @default(autoincrement())
   name        String  @unique
@@ -274,4 +302,10 @@ model FilterPreset {
   config    Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  externalId Int      @unique
+  createdAt  DateTime @default(now())
 }

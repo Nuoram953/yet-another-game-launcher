@@ -38,9 +38,20 @@ ipcMain.handle(RouteLibrary.GET_DOWNLOAD_HISTORY, async (_event) => {
   }
 });
 
-ipcMain.handle(RouteLibrary.GET_GAME, async (_event, id) => {
+ipcMain.handle(RouteLibrary.CLEAR_DOWNLOAD_HISTORY, async (_event) => {
   try {
-    return await LibraryService.getGame(id);
+    return await LibraryService.clearDownloadHistory();
+  } catch (e) {
+    log.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteLibrary.CLEAR_DOWNLOAD_HISTORY,
+      error: e,
+    });
+  }
+});
+
+ipcMain.handle(RouteLibrary.GET_GAME, async (_event, id, refreshAchievements) => {
+  try {
+    return await LibraryService.getGame(id, refreshAchievements);
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteLibrary.GET_GAME,

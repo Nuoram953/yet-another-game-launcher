@@ -12,7 +12,7 @@ export interface IGame {
   alternative_names: number[];
   artworks: number[];
   category: number;
-  cover: number;
+  cover: { url: string };
   created_at: number;
   external_games: number[];
   first_release_date: number;

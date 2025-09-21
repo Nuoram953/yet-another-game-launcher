@@ -1,10 +1,11 @@
-import { Game, Prisma } from "@prisma/client";
+import { Game } from "@prisma/client";
 import _ from "lodash";
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { DownloadStats, FilterConfig, GameWithRelations, SortConfig } from "../../common/types";
 import { DataRoute, RouteDownload } from "@common/constant";
 import { CookieType, deleteCookie } from "@render/utils/cookieUtil";
 import { LOCAL_STORAGE_KEYS } from "@render/constants";
+import useGameStore from "@render/feature/detail/store/GameStore";
 
 interface GamesContextValue {
   games: Game[];

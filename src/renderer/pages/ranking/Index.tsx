@@ -102,10 +102,10 @@ export const RankingPage = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col text-white">
+    <div className="flex h-screen flex-col text-design-text-normal">
       <Header>
         <div className="m-4 flex w-full items-center justify-between">
-          <h1 className="text-2xl font-semibold text-white"></h1>
+          <h1 className="text-2xl font-semibold text-design-text-normal"></h1>
           <Button
             intent={"primary"}
             onClick={handleNewRanking}

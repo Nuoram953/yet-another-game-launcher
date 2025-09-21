@@ -12,7 +12,7 @@ Managing games is always a pain, especially when you have multiple platforms and
 
 YAGL provides a comprehensive overview of your games, including playtime, last played date, and more. This information helps you keep track of your gaming habits and preferences.
 
-![filters](assets/detail.png)
+![home](assets/overview.png)
 
 ### Filters
 
@@ -33,11 +33,17 @@ Visualize your achievements
 
 ![achievements](assets/achievements.png)
 
-### Rankings
+### Activities
 
-Create custom rankings based on your preferences. Best game of the year, worst RPG etc...
+Visualize your gaming sessions
 
-![achievements](assets/rankings.png)
+![activities](assets/activities.png)
+
+### Wishlist
+
+Keep track of games you want to play in the future by adding them to your wishlist. YAGL allows you to easily manage and organize your wishlist, making it simple to find and prioritize games you want to play next.
+
+![wishlist](assets/wishlist.png)
 
 ## Supported Platforms
 

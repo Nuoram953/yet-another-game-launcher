@@ -35,7 +35,7 @@ export interface ImageProps
 
 export const Image: React.FC<ImageProps> = ({ className, intent, src, size, alt, ...props }) => {
   if (_.isNil(src)) {
-    return <div className={`${image({ intent, size, className })} bg-gray-800`} aria-label={alt} />;
+    return <div className={`${image({ intent, size, className })} bg-design-foreground`} aria-label={alt} />;
   }
 
   return <img src={src} alt={alt} className={image({ intent, size, className })} {...props} />;

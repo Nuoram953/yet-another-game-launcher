@@ -1,6 +1,6 @@
 import axios from "axios";
-import { DEFAULT_HEADERS, GAME_URL, SEARCH_URL } from "./config";
-import { GameResponse, SearchResponse } from "./types";
+import { DEFAULT_HEADERS, GAME_URL, LANDING_URL, SEARCH_URL } from "./config";
+import { GameResponse, GameReviewsApiResponse, SearchResponse } from "./types";
 import _ from "lodash";
 
 export const search = async (name: string) => {
@@ -21,6 +21,14 @@ export const getGame = async (name: string) => {
   }
 
   const res = await axios.get<GameResponse>(`${GAME_URL}/${searchResults[0].id}`, {
+    headers: DEFAULT_HEADERS,
+  });
+
+  return res.data;
+};
+
+export const getGameReviewLanding = async (gameId: number) => {
+  const res = await axios.get<GameReviewsApiResponse>(LANDING_URL.replace(":gameId", String(gameId)), {
     headers: DEFAULT_HEADERS,
   });
 

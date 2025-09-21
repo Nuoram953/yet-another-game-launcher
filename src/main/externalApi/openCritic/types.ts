@@ -107,3 +107,77 @@ export interface GameResponse {
   tags: string[];
   url: string;
 }
+
+interface Platform {
+  id: number;
+  name: string;
+  shortName: string;
+  _id: string;
+}
+
+interface ImageSrc {
+  og: string;
+  sm: string;
+  lg: string;
+}
+
+interface Outlet {
+  id: number;
+  name: string;
+  isContributor: boolean;
+  imageSrc: ImageSrc;
+}
+
+interface ScoreFormat {
+  id: number;
+  name: string;
+  isNumeric: boolean;
+  shortName: string;
+  scoreDisplay: string;
+  isSelect: boolean;
+  base: number;
+  isStars: boolean;
+  numDecimals: number;
+  options: any;
+}
+
+interface Author {
+  id: number;
+  name: string;
+  image: boolean;
+  imageSrc?: ImageSrc;
+  _id: string;
+}
+
+interface Game {
+  id: number;
+  name: string;
+}
+
+interface GameReview {
+  _id: string;
+  title: string;
+  publishedDate: string;
+  externalUrl: string;
+  snippet: string;
+  language: string;
+  score: number;
+  npScore: number;
+  magic: number;
+  alias: string;
+  isQuoteManual: boolean;
+  isChosen: boolean;
+  overrideRecommendation: boolean;
+  medianAtTimeOfReview: number;
+  Platforms: Platform[];
+  Outlet: Outlet;
+  ScoreFormat: ScoreFormat;
+  Authors: Author[];
+  game: Game;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  magicSortField: number;
+}
+
+export type GameReviewsApiResponse = GameReview[];

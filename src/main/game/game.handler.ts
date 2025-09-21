@@ -3,33 +3,24 @@ import log from "electron-log/main";
 import { RouteGame } from "../../common/constant";
 import { ErrorMessage } from "../../common/error";
 import * as GameService from "../game/game.service";
-import * as LibraryService from "../library/library.service";
 
-ipcMain.handle(RouteGame.LAUNCH, async (_event, id) => {
-  try {
-    await LibraryService.launch(id);
-  } catch (e) {
-    log.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteGame.LAUNCH,
-      error: e,
-    });
-  }
+import { launch } from "@main/library/command/launch";
+import { install } from "@main/library/command/install";
+import { uninstall } from "@main/library/command/uninstall";
+import { withEntity } from "@main/middleware/withEntity";
+import { GameWithRelations } from "@common/types";
+
+withEntity<GameWithRelations>(RouteGame.LAUNCH, async (game, _event) => {
+  await launch(game);
 });
 
-ipcMain.handle(RouteGame.INSTALL, async (_event, id) => {
-  try {
-    await GameService.install(id);
-  } catch (e) {
-    log.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteGame.INSTALL,
-      error: e,
-    });
-  }
+withEntity<GameWithRelations>(RouteGame.INSTALL, async (game, _event) => {
+  await install(game);
 });
 
 ipcMain.handle(RouteGame.UNINSTALL, async (_event, id) => {
   try {
-    await GameService.uninstall(id);
+    await uninstall(id);
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteGame.UNINSTALL,
@@ -95,9 +86,9 @@ ipcMain.handle(RouteGame.REFRESH_PROGRESS_TRACKER, async (_event, id) => {
   }
 });
 
-ipcMain.handle(RouteGame.SET_FAVORITE, async (_event, data) => {
+ipcMain.handle(RouteGame.SET_FAVORITE, async (_event, id, isFavorite) => {
   try {
-    await GameService.setFavorite(data);
+    await GameService.setFavorite(id, isFavorite);
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteGame.SET_FAVORITE,
@@ -112,6 +103,17 @@ ipcMain.handle(RouteGame.REFRESH_INFO, async (_event, id) => {
   } catch (e) {
     log.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteGame.REFRESH_PROGRESS_TRACKER,
+      error: e,
+    });
+  }
+});
+
+ipcMain.handle(RouteGame.RESET_REVIEW, async (_event, id) => {
+  try {
+    await GameService.resetReview(id);
+  } catch (e) {
+    log.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteGame.RESET_REVIEW,
       error: e,
     });
   }

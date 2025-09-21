@@ -1,4 +1,4 @@
-import { Input } from "@render/components/input/Input";
+import Input from "@render/components/new/input/TextInput";
 import { Label } from "@render/components/ui/label";
 import { Switch } from "@render/components/ui/switch";
 import React from "react";
@@ -25,7 +25,7 @@ export const InputSwitch = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor="borderless" className="flex flex-col">
+        <Label htmlFor="borderless" className="flex flex-col gap-1">
           <span>{title}</span>
           <span className="text-sm text-gray-500">{description}</span>
         </Label>
@@ -60,7 +60,7 @@ export const InputText = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor="borderless" className="flex flex-col">
+        <Label htmlFor="borderless" className="flex flex-col gap-1">
           <span>{title}</span>
           <span className="text-sm text-gray-500">{description}</span>
         </Label>
@@ -71,7 +71,7 @@ export const InputText = ({
         placeholder={inputPlaceholder}
         value={inputValue}
         onChange={inputOnChange}
-        actionRight={actionRight}
+        right={actionRight}
       />
     </div>
   );

@@ -14,6 +14,7 @@ import acfParser from "steam-acf2json";
 import { app } from "electron";
 import _ from "lodash";
 import logger, { LogTag } from "@main/logger";
+import { GameWithRelations } from "@common/types";
 
 export const refresh = async () => {
   const res = await SteamEndpoints.getOwnedGames();
@@ -79,6 +80,7 @@ export const getGameAchievements = async (game: Game) => {
   if (game.hasAchievements) {
     return;
   }
+
   const res = await SteamEndpoints.getSchemaForGame(game.externalId);
 
   const hasAchievements = Object.keys(res.data.game).length > 0;
@@ -119,5 +121,54 @@ export const getPlayerAchievements = async (game: Game) => {
       };
       await queries.GameAchievements.setAchievementUnlocked(game.id, data);
     }
+  }
+};
+
+export const getAppReviews = async (game: GameWithRelations) => {
+  if (!game.storefrontId || game.storefrontId !== Storefront.STEAM) {
+    return;
+  }
+
+  const hasReviews = game.externalReviewMap.map(
+    (review) => review.gameId === game.id && !review.externalReview.isCritic,
+  ).length;
+  if (hasReviews) return;
+
+  const res = await SteamEndpoints.getAppReviews(game.externalId);
+  if (!res.data.success) {
+    logger.warn(LogTag.STORE, { store: "Steam" }, "Failed to get app reviews");
+    return;
+  }
+
+  const steamIds = res.data.reviews.map((review) => review.author.steamid);
+  const playerSummaries = await SteamEndpoints.getPlayerSummaries(steamIds);
+
+  await queries.GameExternalReviewMap.deleteByGameId(game.id);
+  for (const review of res.data.reviews) {
+    const player = playerSummaries.data.response.players.find((summary) => summary.steamid === review.author.steamid);
+    const externalReview = await queries.ExternalReview.create({
+      review: review.review,
+      isPositive: review.voted_up,
+      author: player.personaname ?? "Unknown",
+      reviewedAt: new Date(review.timestamp_created.valueOf()),
+      isCritic: false,
+      source: game.storefront.name,
+      timePlayed: review.author.playtime_at_review,
+      iconUrl: player.avatarmedium,
+    });
+    await queries.GameExternalReviewMap.create(game.id, externalReview.id);
+  }
+};
+
+export const updateGlobalAchievmentPercentages = async (game: Game) => {
+  if (!game.hasAchievements) {
+    return;
+  }
+
+  const res = await SteamEndpoints.getGlobalAchievementPercentagesForApp(game.externalId);
+
+  const achievements = res.data.achievementpercentages.achievements;
+  for (const achievement of achievements) {
+    await queries.GameAchievements.updateRarity(game.id, achievement.name, Math.floor(achievement.percent));
   }
 };

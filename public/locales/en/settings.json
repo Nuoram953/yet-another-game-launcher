@@ -12,6 +12,18 @@
       }
     }
   },
+  "page": {
+    "sectionTitles": {
+      "reviews": "Review Section Settings"
+    },
+    "reviews": {
+      "blurExternalReviews": {
+        "title": "Blur external reviews",
+        "description": "Blur reviews from external sources until game is completed or dropped"
+      }
+    }
+  },
+
   "storefront": {
     "steam": {
       "sectionTitles": {
