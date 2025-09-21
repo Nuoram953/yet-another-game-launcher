@@ -1,3 +1,11 @@
+# [1.2.0-beta.1](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.1.0...v1.2.0-beta.1) (2025-09-21)
+
+
+### Features
+
+* add download page for games ([53970a6](https://github.com/Nuoram953/yet-another-game-launcher/commit/53970a687d436957f7b217f0b63a8e4c524bad20))
+* fetch user review ([e31de64](https://github.com/Nuoram953/yet-another-game-launcher/commit/e31de64e0faa8a8bc2a0dfc8fe92b9beda1f3224))
+
 # [1.1.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.0.0...v1.1.0) (2025-07-04)
 
 
