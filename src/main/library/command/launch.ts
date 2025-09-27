@@ -1,10 +1,11 @@
-import { GameWithRelations } from "@common/types";
+import { GameWithRelations, LaunchType } from "@common/types";
 import logger, { LogTag } from "@main/logger";
 import queries from "@main/dal/dal";
 import _ from "lodash";
 import { DataRoute, Storefront } from "@common/constant";
 import dataManager from "@main/manager/dataChannelManager";
-
+import { spawn } from "child_process";
+import path from "path";
 import * as SteamCommand from "@main/storefront/steam/commands";
 import * as EpicCommand from "@main/storefront/epic/commands";
 
@@ -19,19 +20,46 @@ export const preLaunch = async (game: GameWithRelations) => {
   logger.info(`preLaunch for game`, { id: game.id }, LogTag.TRACKING);
 };
 
-export const launch = async (game: GameWithRelations) => {
+export const launch = async (
+  game: GameWithRelations,
+  launchType: LaunchType = LaunchType.STOREFRONT,
+  lauchId: number,
+) => {
   await preLaunch(game);
   logger.info(`Launch game`, { id: game.id }, LogTag.TRACKING);
 
-  switch (game.storefrontId) {
-    case Storefront.STEAM: {
-      await SteamCommand.run(game);
+  let location: string;
+
+  switch (launchType) {
+    case LaunchType.APP:
+      {
+        const launch = await queries.GameLaunchApp.getById(lauchId);
+        location = launch.path!;
+        runApp(launch.path!, []);
+      }
       break;
-    }
-    case Storefront.EPIC: {
-      await EpicCommand.run(game);
+    case LaunchType.STOREFRONT:
+      {
+        location = game.location!;
+        switch (game.storefrontId) {
+          case Storefront.STEAM: {
+            await SteamCommand.run(game);
+            break;
+          }
+          case Storefront.EPIC: {
+            await EpicCommand.run(game);
+            break;
+          }
+        }
+      }
       break;
-    }
+    case LaunchType.EMULATOR:
+      {
+        const launch = await queries.GameLaunchEmulator.getById(lauchId);
+        location = launch.path!;
+        runAppEmulatorTest(launch.path!, []);
+      }
+      break;
   }
 
   dataManager.send(DataRoute.RUNNING_GAME, {
@@ -39,7 +67,7 @@ export const launch = async (game: GameWithRelations) => {
     id: game.id,
   });
 
-  const { startTime, endTime } = await monitorDirectoryProcesses(game?.location!);
+  const { startTime, endTime } = await monitorDirectoryProcesses(location);
   await postLaunch(game, startTime, endTime);
 };
 
@@ -68,3 +96,21 @@ export const postLaunch = async (game: GameWithRelations, startTime: Date, endTi
 
   await refreshGame(game.id);
 };
+
+function runApp(appPath: string, args: string[] = []) {
+  const normalizedPath = path.normalize(appPath);
+
+  spawn(normalizedPath, args, {
+    detached: true, // run independently from parent
+    stdio: "ignore", // don't tie to parent stdio
+  });
+}
+
+function runAppEmulatorTest(appPath: string, args: string[] = []) {
+  const normalizedPath = path.normalize(appPath);
+
+  spawn("ryujinx", [appPath], {
+    detached: true, // run independently from parent
+    stdio: "ignore", // don't tie to parent stdio
+  });
+}

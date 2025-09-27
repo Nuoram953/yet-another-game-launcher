@@ -50,6 +50,9 @@ export enum RouteLibrary {
   GET_FILTERS = "library:getFilters",
   SET_FILTER_PRESET = "library:setFilterPreset",
   DELETE_FILTER_PRESET = "library:deleteFilterPreset",
+  SEARCH = "library:search",
+  ADD_GAME = "library:addGame",
+  GET_EMULATORS = "library:getEmulators",
 }
 
 export enum ConfigRoute {
@@ -112,6 +115,9 @@ export enum RouteGame {
   REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
   REFRESH_INFO = "game:refreshInfo",
   RESET_REVIEW = "game:resetReview",
+  ADD_LAUNCH_APP = "game:addLaunchApp",
+  ADD_LAUNCH_EMULATOR = "game:addLaunchEmulator",
+  DELETE_LAUNCH = "game:deleteLaunch",
 }
 
 export enum RouteDialog {
@@ -131,4 +137,10 @@ export enum GameStatus {
 export enum Storefront {
   STEAM = 1,
   EPIC = 2,
+}
+
+export enum Emulator {
+  DOLPHIN = 1,
+  CITRON = 2,
+  RYUJINX = 3,
 }

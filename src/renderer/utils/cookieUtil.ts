@@ -2,6 +2,8 @@ export enum CookieType {
   IS_SIDEBAR_OPEN = "is_sidebar_open",
   SIDEBAR_COLLAPSED = "sidebar_collapsed",
   ACTIVE_SECTION = "active_section",
+  DETAILS_SETTINGS_ACTIVE_CATEGORY = "details_settings_active_category",
+  DETAILS_SETTINGS_ACTIVE_SUBCATEGORY = "details_settings_active_subcategory",
 }
 
 /**

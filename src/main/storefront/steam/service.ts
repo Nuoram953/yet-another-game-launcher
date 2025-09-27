@@ -1,4 +1,4 @@
-import { createOrUpdateGame } from "@main/game/game.service";
+import * as GameService from "@main/game/game.service";
 import { Game, GameAchievement } from "@prisma/client";
 import { GameStatus, MEDIA_TYPE, Storefront } from "@common/constant";
 import { getDefaultSteamPath } from "./utils";
@@ -48,7 +48,13 @@ export const refresh = async () => {
       isInstalled,
     };
 
-    await createOrUpdateGame(data, Storefront.STEAM);
+    const game = await queries.Game.getGameByExtenalIdAndStorefront(data.externalId, Storefront.STEAM);
+    if (_.isNil(game)) {
+      await GameService.create(data, Storefront.STEAM);
+    } else {
+      delete data.gameStatusId;
+      await GameService.update({ id: game.id, ...data });
+    }
   }
 };
 

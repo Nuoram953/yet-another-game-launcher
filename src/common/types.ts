@@ -1,5 +1,11 @@
 import { Game, Prisma } from "@prisma/client";
 
+export enum LaunchType {
+  STOREFRONT = "storefront",
+  APP = "app",
+  EMULATOR = "emulator",
+}
+
 export type GameWithRelations = Prisma.GameGetPayload<{
   include: {
     gameStatus: true;
@@ -14,6 +20,10 @@ export type GameWithRelations = Prisma.GameGetPayload<{
     downloadHistory: true;
     statusHistory: { include: { gameStatus: true } };
     externalReviewMap: { include: { externalReview: true } };
+    platform: { include: { platform: true } };
+    launchApp: true;
+    launchStorefront: { include: { storefront: true } };
+    launchEmulation: { include: { emulator: true } };
   };
 }>;
 
@@ -58,4 +68,5 @@ export interface DownloadStats {
 export interface SidebarData {
   storefronts?: { id: number; name: string; count?: number; web?: string; hasExecutable: boolean }[];
   status?: { id: number; name: string; count?: number }[];
+  platforms?: { id: number; name: string; count?: number }[];
 }

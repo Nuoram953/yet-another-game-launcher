@@ -6,6 +6,7 @@ import { LOCALE_NAMESPACE } from "@common/constant";
 import { useTranslation } from "react-i18next";
 import { StatsCard } from "./StatsCard";
 import useGameStore from "@render/feature/detail/store/GameStore";
+import _ from "lodash";
 
 export const StatsPanel = () => {
   const game = useGameStore((state) => state.game);
@@ -113,7 +114,6 @@ export const StatsPanel = () => {
         value={`${convertToHoursAndMinutes(game?.timePlayed || 0)}`}
         detail={lastPlayedDetail}
       />
-
       <StatsCard
         icon={Trophy}
         label="Achievements"
@@ -121,21 +121,21 @@ export const StatsPanel = () => {
         detail={`${percentage}% Complete`}
         hide={totalCount === 0}
       />
-
       <StatsCard
         icon={Calendar}
         label="Activity"
         value={`${game.activities?.length || 0} Sessions`}
         detail={`${last7DaysSessions.length} sessions in the last 7 days`}
       />
-
-      <StatsCard
-        icon={TrendingUp}
-        label="Playtime Rank"
-        value={`#${storefrontRank} in ${t(`storefront.${game.storefront?.name}`, { ns: LOCALE_NAMESPACE.COMMON }) || "Store"}`}
-        detail={`#${libraryRank} in entire library`}
-        hide={libraryTotal <= 1 || (game.timePlayed || 0) === 0}
-      />
+      {game.storefront && (
+        <StatsCard
+          icon={TrendingUp}
+          label="Playtime Rank"
+          value={`#${storefrontRank} in ${t(`storefront.${game.storefront?.name}`, { ns: LOCALE_NAMESPACE.COMMON }) || "Store"}`}
+          detail={`#${libraryRank} in entire library`}
+          hide={libraryTotal <= 1 || (game.timePlayed || 0) === 0}
+        />
+      )}
     </div>
   );
 };

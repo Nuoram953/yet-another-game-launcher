@@ -28,24 +28,24 @@ export const getInvolvedCompany = async (id: number) => {
   return res.data;
 };
 
-export const search = async (name: string) => {
+export const search = async (name: string, onlyParentGame: boolean = true) => {
+  let query = `where version_parent = null & parent_game=null & game_type=0;`;
   const res = await axiosInstance.post<IGame[]>(
     GAME_URL,
-    `fields *, cover.*; search "${name}"; where version_parent = null & parent_game=null; limit 50;`,
+    `fields *, cover.*; search "${name}"; ${onlyParentGame ? query : ""} limit 50;`,
   );
 
   if (_.isEmpty(res.data)) {
     return null;
   }
 
+  console.log(res.data);
+
   return res.data;
 };
 
 export const getById = async (id: number) => {
-  const res = await axiosInstance.post<IGame[]>(
-    GAME_URL,
-    `fields *; where version_parent = null & parent_game=null & id=${id};`,
-  );
+  const res = await axiosInstance.post<IGame[]>(GAME_URL, `fields *; where id=${id};`);
 
   if (_.isEmpty(res.data)) {
     return null;
@@ -57,7 +57,7 @@ export const getById = async (id: number) => {
 export const getByIds = async (ids: number[]) => {
   const res = await axiosInstance.post<IGame[]>(
     GAME_URL,
-    `fields *, platforms.*, screenshots.*, cover.*; where version_parent = null & parent_game=null & id=(${ids.join(",")});`,
+    `fields *, platforms.*, screenshots.*, cover.*; where id=(${ids.join(",")}); limit ${ids.length};`,
   );
 
   if (_.isEmpty(res.data)) {
@@ -68,10 +68,14 @@ export const getByIds = async (ids: number[]) => {
 };
 
 export const getGame = async (game: GameWithRelations | Game) => {
-  let id = await getExternalGameId(game.externalId!, game.storefrontId!);
+  let id;
+  if (!_.isNil(game.externalId)) {
+    id = await getExternalGameId(game.externalId!, game.storefrontId!);
+  }
 
   if (_.isNil(id)) {
     const searchQuery = await search(game.name);
+    console.log(searchQuery);
     id = searchQuery?.[0]?.id;
   }
 
@@ -83,6 +87,8 @@ export const getGame = async (game: GameWithRelations | Game) => {
     GAME_URL,
     `fields *, platforms.*, genres.*, themes.*, game_engines.*, game_modes.*, player_perspectives.*, screenshots.*;  where id=${id};`,
   );
+
+  console.log(res.data);
 
   const companies = await getInvolvedCompany(id);
   const publishers = companies
@@ -111,6 +117,7 @@ export const getGame = async (game: GameWithRelations | Game) => {
   const gameModes = data.game_modes?.map((item: any) => item.name) || [];
   const engine = data.game_engines?.map((item: any) => item.name) || [];
   const playerPerspective = data.player_perspectives?.map((item: any) => item.name) || [];
+  const platforms = data.platforms?.map((item: any) => item.name) || [];
 
   const partialGameData: Partial<Game> = {
     summary: data.storyline ?? data.summary,
@@ -129,5 +136,6 @@ export const getGame = async (game: GameWithRelations | Game) => {
     engine,
     playerPerspective,
     screenshots: data.screenshots.map((item: { url: string }) => item.url),
+    platforms,
   };
 };

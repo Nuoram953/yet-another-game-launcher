@@ -19,6 +19,12 @@ import * as FilterPreset from "./filtersPreset";
 import * as ExternalReview from "./externalReview";
 import * as GameExternalReviewMap from "./gameExternalReviewMap";
 import * as Wishlist from "./wishlist";
+import * as Platform from "./platform";
+import * as GamePlatform from "./gamePlatform";
+import * as GameLaunchApp from "./gameLaunchApp";
+import * as GameLaunchEmulator from "./gameLaunchEmulator";
+import * as GameLaunchStorefront from "./gameLaunchStorefront";
+import * as Emulator from "./emulator";
 
 export default {
   Game,
@@ -42,4 +48,10 @@ export default {
   ExternalReview,
   GameExternalReviewMap,
   Wishlist,
+  Platform,
+  GamePlatform,
+  GameLaunchApp,
+  GameLaunchStorefront,
+  GameLaunchEmulator,
+  Emulator,
 };

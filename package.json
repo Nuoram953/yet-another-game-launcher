@@ -224,7 +224,7 @@
     "uuid": "11.0.5",
     "vdf": "0.0.2",
     "vdf-parser": "1.2.1",
-    "youtube-dl-exec": "3.0.20",
+    "youtube-dl-exec": "^3.0.20",
     "youtube-sr": "4.3.11",
     "zustand": "^5.0.7"
   }

@@ -25,6 +25,10 @@ const include = {
   downloadHistory: true,
   statusHistory: { include: { gameStatus: true } },
   externalReviewMap: { include: { externalReview: true } },
+  platform: { include: { platform: true } },
+  launchApp: true,
+  launchStorefront: { include: { storefront: true } },
+  launchEmulation: { include: { emulator: true } },
 };
 
 export async function update(id: string, newData: Partial<Game>) {
@@ -239,6 +243,28 @@ export async function createOrUpdateExternal(
   return await getGameById(createdOrUpdatedGame.id);
 }
 
+export async function create(data: Partial<Game>): Promise<GameWithRelations | null> {
+  const game = await prisma.game.create({
+    data: {
+      name: sanitizeGameName(data.name!),
+      lastTimePlayed: data?.lastTimePlayed,
+      isInstalled: data.isInstalled ?? false,
+      gameStatusId: data.gameStatusId ?? GameStatus.UNPLAYED,
+      storefrontId: data.storefrontId!,
+      externalId: data.externalId!,
+      timePlayed: data.timePlayed ?? 0,
+      timePlayedLinux: data.timePlayedLinux ?? 0,
+      timePlayedWindows: data.timePlayedWindows ?? 0,
+      timePlayedMac: data.timePlayedMac ?? 0,
+      timePlayedSteamdeck: data.timePlayedSteamdeck ?? 0,
+      size: data.size ?? 0,
+      location: data.location ?? "",
+    },
+  });
+
+  return await getGameById(game.id);
+}
+
 export async function getCountByStatus() {
   return await prisma.game.groupBy({
     by: ["gameStatusId"],
@@ -249,6 +275,12 @@ export async function getCountByStatus() {
 }
 
 export async function getCountByStatusId(statusId: number) {
+  return await prisma.game.count({
+    where: { gameStatusId: statusId },
+  });
+}
+
+export async function getCountByPlatformId(statusId: number) {
   return await prisma.game.count({
     where: { gameStatusId: statusId },
   });

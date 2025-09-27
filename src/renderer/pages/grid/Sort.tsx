@@ -12,7 +12,7 @@ import _ from "lodash";
 import { ArrowDown, ArrowDownUp, ArrowUp, ArrowUpDown, FilterIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { SortConfig } from "src/common/types";
-import Button from "@render/components/new/button";
+import Button from "@render/components/new/button/Button";
 
 export const Sort = () => {
   const { sortConfig, updateSort } = useGames();
@@ -69,16 +69,11 @@ export const Sort = () => {
         <Button
           intent={"icon"}
           size={"fit"}
+          leadingIcon={<ArrowDownUp />}
           onClick={() => {
             setIsOpen(!isOpen);
           }}
-        >
-          <Button.Content>
-            <Button.Item>
-              <ArrowDownUp />
-            </Button.Item>
-          </Button.Content>
-        </Button>
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" onInteractOutside={() => setIsOpen(false)}>
         <DropdownMenuLabel>Sort</DropdownMenuLabel>

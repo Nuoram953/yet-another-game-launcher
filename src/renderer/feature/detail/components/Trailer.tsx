@@ -2,7 +2,7 @@ import VideoPlayer from "@render//components/VideoPlayer";
 import useGameStore from "@render/feature/detail/store/GameStore";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { getGameCover, getGameTrailers } from "../api/DetailApi";
+import { getGameBackground, getGameCover, getGameTrailers } from "../api/DetailApi";
 import { IconAndText } from "@render/components/layout/Container";
 import { Building } from "lucide-react";
 import { Logo } from "./Logo";
@@ -25,13 +25,23 @@ export const Trailer = () => {
     enabled: !!id,
   });
 
+  const backgroundQuery = useQuery({
+    queryKey: ["background", id],
+    queryFn: () => getGameBackground(id),
+    enabled: !!id,
+  });
+
   return (
     <>
       {isPending ? (
         <div>Loading...</div>
       ) : (
         <div className="relative w-full shadow-lg">
-          <VideoPlayer path={data[0]} />
+          {data.length > 0 ? (
+            <VideoPlayer path={data[0]} />
+          ) : (
+            <img src={backgroundQuery.data[0]} className="h-[700px] w-full object-cover" />
+          )}
           <div className="absolute right-4 top-4 z-10 drop-shadow-lg sm:w-32 lg:w-64">
             <Logo />
           </div>

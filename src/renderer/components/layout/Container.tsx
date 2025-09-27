@@ -7,7 +7,7 @@ interface Props {
 export const Container = ({ children }: Props) => {
   return (
     <div
-      className={`relative z-20 mx-auto flex max-w-[1920px] flex-1 flex-col items-center justify-center overflow-y-auto overflow-x-hidden`}
+      className={`relative z-20 mx-auto flex min-h-[400px] max-w-[1920px] flex-1 flex-col items-center justify-center overflow-y-auto overflow-x-hidden`}
     >
       {children}
     </div>
