@@ -25,6 +25,8 @@ export const launch = async (
   launchType: LaunchType = LaunchType.STOREFRONT,
   lauchId: number,
 ) => {
+  let hasPostBeenDone = false;
+
   await preLaunch(game);
   logger.info(`Launch game`, { id: game.id }, LogTag.TRACKING);
 
@@ -68,7 +70,10 @@ export const launch = async (
   });
 
   const { startTime, endTime } = await monitorDirectoryProcesses(location);
-  await postLaunch(game, startTime, endTime);
+  if (!hasPostBeenDone) {
+    hasPostBeenDone = true;
+    await postLaunch(game, startTime, endTime);
+  }
 };
 
 export const postLaunch = async (game: GameWithRelations, startTime: Date, endTime: Date | null) => {
@@ -109,7 +114,7 @@ function runApp(appPath: string, args: string[] = []) {
 function runAppEmulatorTest(appPath: string, args: string[] = []) {
   const normalizedPath = path.normalize(appPath);
 
-  spawn("ryujinx", [appPath], {
+  spawn("shadps4", [appPath], {
     detached: true, // run independently from parent
     stdio: "ignore", // don't tie to parent stdio
   });
