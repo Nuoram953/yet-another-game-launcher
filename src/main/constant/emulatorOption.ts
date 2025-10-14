@@ -3,9 +3,10 @@ import { prisma } from "..";
 import { dolphinOptions } from "./emulator/dophin";
 import { citronOptions } from "./emulator/citron";
 import { ryujinxOptions } from "./emulator/ryujinx";
+import { shadps4Options } from "./emulator/shadps4";
 
 export async function upsertEmulatorOption() {
-  const options = [...dolphinOptions, ...citronOptions, ...ryujinxOptions];
+  const options = [...dolphinOptions, ...citronOptions, ...ryujinxOptions, ...shadps4Options];
 
   for (const option of options) {
     await prisma.emulatorOption.upsert({
@@ -47,6 +48,10 @@ export async function upsertEmulatorOption() {
         {
           emulatorId: Emulator.RYUJINX,
           name: { notIn: ryujinxOptions.map((option) => option.name) },
+        },
+        {
+          emulatorId: Emulator.SHADPS4,
+          name: { notIn: shadps4Options.map((option) => option.name) },
         },
       ],
     },

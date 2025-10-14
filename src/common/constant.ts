@@ -143,4 +143,5 @@ export enum Emulator {
   DOLPHIN = 1,
   CITRON = 2,
   RYUJINX = 3,
+  SHADPS4 = 4,
 }
