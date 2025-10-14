@@ -2,7 +2,7 @@ import * as InternetGameDatabase from "@main/externalApi/internetGameDatabase/se
 import queries from "../dal/dal";
 
 export const search = async (query: string) => {
-  return await InternetGameDatabase.searchByName(query);
+  return await InternetGameDatabase.searchByName(query, false);
 };
 
 export const add = async (externalId: number) => {

@@ -1,11 +1,11 @@
-import { Game, GameConfigGamescope, GameReview } from "@prisma/client";
+import { Game, GameConfigGamescope, GameLaunchApp, GameLaunchEmulation, GameReview } from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../../common/constant";
 import { i18n } from "..";
 import { killDirectoyProcess } from "../utils/tracking";
 import { delay, getKeyPercentage } from "../utils/utils";
 import _ from "lodash";
-import { GameWithRelations } from "../../common/types";
+import { GameWithRelations, LaunchType } from "../../common/types";
 import dataManager from "../manager/dataChannelManager";
 import { DataRoute, MEDIA_TYPE, NotificationType } from "../../common/constant";
 import { createDownloadTracker } from "../storefront/steam/monitor";
@@ -42,13 +42,32 @@ export const uninstall = async (id: string) => {
   await refreshGame(game.id);
 };
 
-export const kill = async (id: string) => {
+export const kill = async (id: string, launchId: number, type: LaunchType) => {
   const game = await queries.Game.getGameById(id);
-  if (_.isNil(game)) {
-    throw new Error("game not found");
+  let location: string | null = null;
+
+  switch (type) {
+    case LaunchType.APP:
+      {
+        const launch = await queries.GameLaunchApp.getById(launchId);
+        location = launch.path!;
+      }
+      break;
+    case LaunchType.EMULATOR:
+      {
+        const launch = await queries.GameLaunchEmulator.getById(launchId);
+        location = launch.path!;
+      }
+      break;
+    case LaunchType.STOREFRONT:
+      {
+        location = game.location!;
+      }
+      break;
   }
 
-  await killDirectoyProcess(game.location!);
+  console.log("Killing game at location:", location);
+  await killDirectoyProcess(location);
 
   dataManager.send(DataRoute.RUNNING_GAME, {
     isRunning: false,
@@ -64,24 +83,35 @@ export const updateExternalUserReviews = async (game: GameWithRelations) => {
   }
 };
 
-export const createOrUpdateGame = async (
-  data: Partial<Game>,
-  store: Storefront,
-  forceDownloadMetadata: boolean = false,
-) => {
+export const create = async (data: Partial<Game>, store: Storefront) => {
   const game = await queries.Game.createOrUpdateExternal(data, store);
-  if (!game) {
-    throw new Error("invalid game");
-  }
 
-  if (game.updatedAt.getTime() !== game.createdAt.getTime() && !forceDownloadMetadata) {
-    return;
-  }
+  await updateInfo(game.id);
+
+  await queries.GameLaunchStorefront.createOrUpdate({
+    name: game.storefront.name,
+    gameId: game.id,
+    externalId: game.externalId!,
+    storefrontId: game.storefrontId,
+    isEnabled: true,
+  });
+
+  return game;
+};
+
+export const update = async (data: Partial<Game>) => {
+  const game = await queries.Game.getGameById(data.id);
+
+  await queries.Game.update(game.id, data);
+};
+
+export const updateInfo = async (id: string) => {
+  const game = await queries.Game.getGameById(id);
 
   const notificationId = NotificationType.NEW_GAME + game.id;
   notificationManager.show({
     id: notificationId,
-    title: forceDownloadMetadata ? `Adding Metadata to ${game.name}` : `Adding ${game.name} to library`,
+    title: game.name,
     message: "Downloading assets and metadata",
     type: "progress",
     current: 0,
@@ -161,6 +191,10 @@ export const createOrUpdateGame = async (
           gameId: game.id,
           isGenre: true,
         });
+      }
+
+      for (const platform of igdbData.platforms) {
+        await queries.GamePlatform.findOrCreate(game.id, platform);
       }
     }
   }
@@ -300,7 +334,7 @@ export const refreshInfo = async (id: string) => {
     throw new Error("Invalid game");
   }
 
-  await createOrUpdateGame(game, game.storefrontId, true);
+  await updateInfo(game.id);
 
   await refreshGame(game.id);
 };
@@ -314,4 +348,27 @@ export const resetReview = async (id: string) => {
   await queries.GameReview.deleteByGameId(game.id);
 
   await refreshGame(game.id);
+};
+
+export const createOrUpdateLaunchApp = async (data: Partial<GameLaunchApp>) => {
+  return await queries.GameLaunchApp.createOrUpdate(data);
+};
+
+export const createOrUpdateLaunchEmulator = async (data: Partial<GameLaunchEmulation>) => {
+  return await queries.GameLaunchEmulator.createOrUpdate(data);
+};
+
+export const deleteLaunch = async (type: LaunchType, id: number) => {
+  switch (type) {
+    case LaunchType.APP:
+      {
+        await queries.GameLaunchApp.deleteById(id);
+      }
+      break;
+    case LaunchType.EMULATOR:
+      {
+        await queries.GameLaunchEmulator.deleteById(id);
+      }
+      break;
+  }
 };

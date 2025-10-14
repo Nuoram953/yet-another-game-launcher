@@ -22,6 +22,7 @@ import notificationManager from "@main/manager/notificationManager";
 import ConfigManager from "@main/manager/configManager";
 import dataChannelManager from "@main/manager/dataChannelManager";
 import logger, { LogTag } from "./logger";
+import { upsertConstants } from "./constant/index";
 
 export let prisma: PrismaClient;
 export let dbPath: string;
@@ -153,6 +154,7 @@ async function electronAppInit() {
       execSync(`npx prisma migrate deploy --schema=${schemaPath}`);
 
       prisma = new PrismaClient();
+      await upsertConstants();
     } catch (error) {
       console.error("Error running Prisma migrations:", error);
       prisma = new PrismaClient();

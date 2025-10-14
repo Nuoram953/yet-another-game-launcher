@@ -21,7 +21,7 @@ import { useNotifications } from "@render/components/NotificationSystem";
 import Divider from "@render/components/Divider";
 import { LOCALE_NAMESPACE } from "@common/constant";
 import { MultiValue } from "react-select";
-import Button from "@render/components/new/button";
+import Button from "@render/components/new/button/Button";
 
 export function FilterSheet() {
   const { addNotification } = useNotifications();
@@ -126,13 +126,7 @@ export function FilterSheet() {
     <>
       <Sheet key={"button"}>
         <SheetTrigger asChild>
-          <Button intent={"icon"} size={"fit"}>
-            <Button.Content>
-              <Button.Item>
-                <Filter />
-              </Button.Item>
-            </Button.Content>
-          </Button>
+          <Button leadingIcon={<Filter />} intent={"icon"} size={"fit"} />
         </SheetTrigger>
         <SheetContent side={"right"} color="#1e293b">
           <SheetHeader>
@@ -177,21 +171,9 @@ export function FilterSheet() {
                 values={[placeholderFilters.selectedPreset]}
               />
               <div className="flex flex-row items-center justify-center gap-2">
-                <Button intent="icon" size="fit" onClick={handleSavePreset}>
-                  <Button.Content>
-                    <Button.Item>
-                      <Save />
-                    </Button.Item>
-                  </Button.Content>
-                </Button>
+                <Button leadingIcon={<Save />} intent="icon" size="fit" onClick={handleSavePreset} />
                 {placeholderFilters.selectedPreset && (
-                  <Button intent="icon" size="fit" onClick={handleDeletePreset}>
-                    <Button.Content>
-                      <Button.Item>
-                        <Trash />
-                      </Button.Item>
-                    </Button.Content>
-                  </Button>
+                  <Button leadingIcon={<Trash />} intent="icon" size="fit" onClick={handleDeletePreset} />
                 )}
               </div>
             </div>
@@ -431,9 +413,7 @@ export function FilterSheet() {
           <SheetFooter className="mt-4">
             <SheetClose asChild>
               <Button intent="primary" type="submit" onClick={handleSave} className="whitespace-nowrap">
-                <Button.Content>
-                  <Button.Item>{t("apply", { ns: LOCALE_NAMESPACE.FILTER })}</Button.Item>
-                </Button.Content>
+                {t("apply", { ns: LOCALE_NAMESPACE.FILTER })}
               </Button>
             </SheetClose>
           </SheetFooter>

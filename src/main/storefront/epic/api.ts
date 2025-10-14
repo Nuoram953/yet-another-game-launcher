@@ -1,7 +1,10 @@
 import { Game } from "@prisma/client";
 import { spawn } from "child_process";
 import { Storefront } from "../../../common/constant";
-import { createOrUpdateGame } from "../../../main/game/game.service";
+import { create } from "../../../main/game/game.service";
+import * as GameService from "@main/game/game.service";
+import queries from "@main/dal/dal";
+import _ from "lodash";
 
 export class Epic {
   async initialize(): Promise<void> {
@@ -43,7 +46,13 @@ export class Epic {
               location: "",
             };
 
-            createOrUpdateGame(data, Storefront.EPIC);
+            queries.Game.getGameByExtenalIdAndStorefront(data.externalId, Storefront.EPIC).then((game) => {
+              if (_.isNil(game)) {
+                GameService.create(data, Storefront.EPIC);
+              } else {
+                GameService.update({ id: game.id, ...data });
+              }
+            });
           }
           resolve(jsonOutput);
         } catch (e) {

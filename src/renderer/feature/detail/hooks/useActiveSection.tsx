@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type Section = "overview" | "achievements" | "reviews" | "activities" | "metadata";
+export type Section = "overview" | "achievements" | "reviews" | "activities" | "metadata" | "settings";
 
 export const useActiveSection = (initialSection: Section = "overview") => {
   const [activeSection, setActiveSection] = useState<Section>(initialSection);

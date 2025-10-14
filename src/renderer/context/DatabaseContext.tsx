@@ -8,7 +8,7 @@ import { LOCAL_STORAGE_KEYS } from "@render/constants";
 import useGameStore from "@render/feature/detail/store/GameStore";
 
 interface GamesContextValue {
-  games: Game[];
+  games: GameWithRelations[];
   downloading: DownloadStats[];
   running: { id: string; time: number }[];
   loading: boolean;
@@ -38,7 +38,7 @@ export const useGames = (): GamesContextValue => {
 };
 
 export const GamesProvider: React.FC<GamesProviderProps> = ({ children }) => {
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<GameWithRelations[]>([]);
   const [downloading, setDownloading] = useState<DownloadStats[]>([]);
   const [running, setRunning] = useState<{ id: string; time: number }[]>([]);
   const [loading, setLoading] = useState(false);

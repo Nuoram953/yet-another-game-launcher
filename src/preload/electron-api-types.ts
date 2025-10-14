@@ -1,16 +1,26 @@
 import type {
   Company,
   DownloadHistory,
+  Emulator,
   FilterPreset,
   Game,
   GameConfigGamescope,
+  GameLaunchApp,
+  GameLaunchEmulation,
   GameReview,
   GameStatus,
   RankingGame,
   Storefront,
   Tag,
 } from "@prisma/client";
-import type { FilterConfig, GameWithRelations, RankingWithRelation, SidebarData, SortConfig } from "../common/types";
+import type {
+  FilterConfig,
+  GameWithRelations,
+  LaunchType,
+  RankingWithRelation,
+  SidebarData,
+  SortConfig,
+} from "../common/types";
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "../main/manager/configManager";
 import { MEDIA_TYPE } from "../common/constant";
@@ -120,13 +130,16 @@ export interface LibraryAPI {
   }>;
   setFilterPreset: (data: Partial<FilterPreset>) => Promise<void>;
   deleteFilterPreset: (name: string) => Promise<void>;
+  search: (query: string) => Promise<IGame[]>;
+  addGame: (data: Partial<Game>) => Promise<GameWithRelations>;
+  getEmulators: () => Promise<Emulator[]>;
 }
 
 export interface GameAPI {
-  launch: (id: string) => Promise<void>;
+  launch: (id: string, launchType: LaunchType, launchId: number) => Promise<void>;
   install: (id: string) => Promise<void>;
   uninstall: (id: string) => Promise<void>;
-  kill: (id: string) => Promise<void>;
+  kill: (id: string, launchId: number, type: LaunchType) => Promise<void>;
   setReview: (data: Partial<GameReview>) => Promise<void>;
   setStatus: (data: Partial<Game>) => Promise<void>;
   setGamescope: (data: GameConfigGamescope) => Promise<void>;
@@ -134,6 +147,9 @@ export interface GameAPI {
   refreshProgressTracker: (id: string) => Promise<void>;
   refreshInfo: (id: string) => Promise<void>;
   resetReview: (gameId: string) => Promise<void>;
+  addLaunchApp: (data: Partial<GameLaunchApp>) => Promise<GameLaunchApp>;
+  addLaunchEmulator: (data: Partial<GameLaunchEmulation>) => Promise<GameLaunchEmulation>;
+  deleteLaunch: (type: LaunchType, id: number) => Promise<void>;
 }
 
 export interface DataAPI {

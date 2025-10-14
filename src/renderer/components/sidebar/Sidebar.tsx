@@ -47,6 +47,10 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
     });
   };
 
+  const handlePlatform = (id: number) => {
+    setOpen(false);
+  };
+
   const handleStatus = (id: number) => {
     setOpen(false);
     updateFilters({
@@ -61,7 +65,7 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
   return (
     <>
       <Sheet key={renderKey} open={open} onOpenChange={setOpen}>
-        <SheetContent side={"left"} color="#1e293b">
+        <SheetContent side={"left"} color="#1e293b" className="overflow-y-auto">
           <div className="flex flex-col gap-2">
             <SidebarNavigateItem handleNavigate={handleNavigate} icon={<Home />} label={"Home"} path={"/"} />
             <SidebarNavigateItem
@@ -108,7 +112,7 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col">
+            <div className="my-4 flex flex-col">
               <div className="flex flex-row gap-3 rounded p-2">
                 <ChartNoAxesColumn />
                 <h2 className="text-lg">Status</h2>
@@ -122,6 +126,24 @@ export const Sidebar = ({ open, setOpen }: SidebarProps) => {
                     label={t(status.name, { ns: LOCALE_NAMESPACE.GAME_STATUS })}
                     path={`/storefront/${status.id}`}
                     count={status.count}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="my-4 flex flex-col">
+              <div className="flex flex-row gap-3 rounded p-2">
+                <ChartNoAxesColumn />
+                <h2 className="text-lg">Platform</h2>
+              </div>
+              <Divider />
+              <div className="ml-3">
+                {sidebarData.platforms.map((platform) => (
+                  <SidebarNavigateItem
+                    key={platform.id}
+                    handleNavigate={() => handlePlatform(platform.id)}
+                    label={t(platform.name, { ns: LOCALE_NAMESPACE.GAME_STATUS })}
+                    path={`/storefront/${platform.id}`}
+                    count={platform.count}
                   />
                 ))}
               </div>

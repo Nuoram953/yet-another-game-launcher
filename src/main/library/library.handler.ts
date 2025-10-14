@@ -3,7 +3,10 @@ import log from "electron-log/main";
 import { RouteLibrary } from "../../common/constant";
 import { ErrorMessage } from "../../common/error";
 import * as LibraryService from "./library.service";
+import * as LibraryController from "./library.controller";
 import logger from "@main/logger";
+import { withHandler } from "@main/middleware/withHandler";
+import { Game } from "@prisma/client";
 
 ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {
   try {
@@ -157,4 +160,16 @@ ipcMain.handle(RouteLibrary.GET_SIDEBAR, async (_event) => {
       error: e,
     });
   }
+});
+
+withHandler(RouteLibrary.SEARCH, async (_event, query: string) => {
+  return await LibraryController.search(query);
+});
+
+withHandler(RouteLibrary.ADD_GAME, async (_event, data: Partial<Game>) => {
+  return await LibraryController.addGame(data);
+});
+
+withHandler(RouteLibrary.GET_EMULATORS, async (_event) => {
+  return await LibraryController.getEmulators();
 });

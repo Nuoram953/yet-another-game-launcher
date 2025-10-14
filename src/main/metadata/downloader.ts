@@ -1,4 +1,3 @@
-import axios from "axios";
 import fs from "fs";
 import _ from "lodash";
 import { Game } from "@prisma/client";
@@ -6,6 +5,7 @@ import { MEDIA_TYPE } from "../../common/constant";
 import { getNumberOfFiles } from "./service";
 import { getOrCreateImageDirectory } from "./paths";
 import logger from "@main/logger";
+import axios from "@common/axiosConfig";
 
 export const downloadImage = async (
   type: MEDIA_TYPE,

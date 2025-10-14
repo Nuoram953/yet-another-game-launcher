@@ -18,6 +18,9 @@ model Game {
   lastTimePlayed         BigInt?
   isInstalled            Boolean                 @default(false)
   isFavorite             Boolean                 @default(false)
+  isEmulation            Boolean                 @default(false)
+  isStorefront           Boolean                 @default(false)
+  isManual               Boolean                 @default(false)
   gameStatus             GameStatus              @relation(fields: [gameStatusId], references: [id])
   gameStatusId           Int
   storefront             Storefront?             @relation(fields: [storefrontId], references: [id])
@@ -55,6 +58,10 @@ model Game {
   rankings               RankingGame[]
   mediaDefault           MediaDefault[]
   externalReviewMap      GameExternalReviewMap[]
+  platform               GamePlatform[]
+  launchStorefront       GameLaunchStorefront[]
+  launchApp              GameLaunchApp[]
+  launchEmulation        GameLaunchEmulation[]
 
   @@unique([externalId, storefrontId])
 }
@@ -223,11 +230,12 @@ model GameExternalReviewMap {
 }
 
 model Storefront {
-  id          Int     @id @default(autoincrement())
-  name        String  @unique
-  url         String?
-  hasLauncher Boolean @default(false)
-  Game        Game[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @unique
+  url                  String?
+  hasLauncher          Boolean                @default(false)
+  Game                 Game[]
+  GameLaunchStorefront GameLaunchStorefront[]
 }
 
 model GameConfigGamescope {
@@ -308,4 +316,105 @@ model Wishlist {
   id         Int      @id @default(autoincrement())
   externalId Int      @unique
   createdAt  DateTime @default(now())
+}
+
+model Platform {
+  id               Int             @id @default(autoincrement())
+  name             String          @unique
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  emulator         Emulator?       @relation(fields: [emulatorId], references: [id])
+  emulatorId       Int?
+  gamePlatform     GamePlatform[]
+  emulatorOption   EmulatorOption? @relation(fields: [emulatorOptionId], references: [id])
+  emulatorOptionId Int?
+}
+
+model Emulator {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @unique
+  path                String?
+  cmdPath             String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  Platform            Platform[]
+  GameLaunchEmulation GameLaunchEmulation[]
+  EmulatorOption      EmulatorOption[]
+}
+
+model EmulatorOption {
+  id                         Int                          @id @default(autoincrement())
+  Emulator                   Emulator?                    @relation(fields: [emulatorId], references: [id])
+  emulatorId                 Int?
+  name                       String
+  short                      String?
+  long                       String?
+  description                String?
+  defautlValue               String?
+  showInGameSettings         Boolean                      @default(false)
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  Platform                   Platform[]
+  GameLaunchEmulation        GameLaunchEmulation[]
+  GameLaunchEmulationOptions GameLaunchEmulationOptions[]
+
+  @@unique([emulatorId, name])
+}
+
+model GamePlatform {
+  id         Int      @id @default(autoincrement())
+  gameId     String
+  game       Game     @relation(fields: [gameId], references: [id])
+  platformId Int
+  platform   Platform @relation(fields: [platformId], references: [id])
+  isEnabled  Boolean  @default(false)
+  path       String?
+
+  @@unique([gameId, platformId])
+}
+
+model GameLaunchStorefront {
+  id           Int        @id @default(autoincrement())
+  gameId       String
+  game         Game       @relation(fields: [gameId], references: [id])
+  name         String
+  externalId   String?
+  isEnabled    Boolean    @default(true)
+  storefrontId Int
+  storefront   Storefront @relation(fields: [storefrontId], references: [id])
+
+  @@unique([gameId, storefrontId])
+}
+
+model GameLaunchApp {
+  id        Int     @id @default(autoincrement())
+  gameId    String
+  game      Game    @relation(fields: [gameId], references: [id])
+  name      String
+  isEnabled Boolean @default(true)
+  path      String
+}
+
+model GameLaunchEmulation {
+  id                         Int                          @id @default(autoincrement())
+  name                       String
+  gameId                     String
+  game                       Game                         @relation(fields: [gameId], references: [id])
+  emulator                   Emulator?                    @relation(fields: [emulatorId], references: [id])
+  emulatorId                 Int?
+  isEnabled                  Boolean                      @default(true)
+  retroAchievementsId        String?
+  path                       String?
+  GameLaunchEmulationOptions GameLaunchEmulationOptions[]
+  EmulatorOption             EmulatorOption?              @relation(fields: [emulatorOptionId], references: [id])
+  emulatorOptionId           Int?
+}
+
+model GameLaunchEmulationOptions {
+  id                    Int                  @id @default(autoincrement())
+  gameLaunchEmulation   GameLaunchEmulation? @relation(fields: [gameLaunchEmulationId], references: [id])
+  gameLaunchEmulationId Int?
+  emulatorOption        EmulatorOption?      @relation(fields: [emulatorOptionId], references: [id])
+  emulatorOptionId      Int?
+  value                 String
 }

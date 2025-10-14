@@ -40,7 +40,7 @@ export const InputSwitch = ({
 
 interface InputTextProps {
   title: string;
-  description: string;
+  description?: string;
   inputOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   inputPlaceholder: string;
   inputValue: string;

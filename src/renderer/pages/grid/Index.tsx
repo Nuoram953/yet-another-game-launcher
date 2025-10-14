@@ -11,9 +11,11 @@ import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import { Sort } from "./Sort";
 import { Header } from "@render//components/layout/Header";
 import { FilterSheet } from "./FilterSheet";
-import Button from "@render/components/new/button";
 import Input from "@render/components/new/input/TextInput";
 import { Cross, Plus } from "lucide-react";
+import { Dialog } from "@render/components/new/popup";
+import Button from "@render/components/new/button/Button";
+import { Search } from "@render/feature/home/components/Search";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -96,7 +98,7 @@ export const Grid = () => {
       <RecentlyPlayedCarousel />
       <div className="flex-none">
         <Header>
-          <div className="flex w-full flex-row items-center justify-between p-4">
+          <div className="flex w-full flex-row items-center justify-start p-4">
             <Input
               color={"dark"}
               type="search"
@@ -105,20 +107,22 @@ export const Grid = () => {
               onChange={handleSearch}
             />
             <div className="ml-2 flex flex-row">
-              <Button intent={"icon"} size={"fit"}>
-                <Button.Content>
-                  <Button.Item>
-                    <Plus />
-                  </Button.Item>
-                </Button.Content>
-              </Button>
+              <Dialog>
+                <Dialog.Trigger asChild>
+                  <Button leadingIcon={<Plus />} intent={"icon"} size={"fit"} />
+                </Dialog.Trigger>
+                <Dialog.Content>
+                  <Dialog.Title>Add a game</Dialog.Title>
+                  <Dialog.Description>
+                    <Search />
+                  </Dialog.Description>
+                </Dialog.Content>
+              </Dialog>
               <FilterSheet />
               <Sort />
               {filters.hasActiveFilters && (
                 <Button intent="secondary" size="small" onClick={() => clearFilters()} className="whitespace-nowrap">
-                  <Button.Content>
-                    <Button.Item>Clear filters</Button.Item>
-                  </Button.Content>
+                  Clear filters
                 </Button>
               )}
             </div>

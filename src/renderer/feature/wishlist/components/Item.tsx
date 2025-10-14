@@ -20,8 +20,12 @@ export const Item = ({ item }: ItemProps) => {
   });
 
   return (
-    <div className="grid grid-cols-[auto,1fr,auto] items-start gap-4 border border-design-border p-4 transition-transform hover:border-design-text-subtle">
-      <img src={item.cover?.url.replace("t_thumb", "t_1080p")} className="h-full w-52 object-cover" alt={item.name} />
+    <div className="grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-md border border-design-border p-4 transition-transform hover:border-design-text-subtle">
+      <img
+        src={item.cover?.url.replace("t_thumb", "t_1080p")}
+        className="h-full w-52 rounded-md object-cover"
+        alt={item.name}
+      />
 
       <div className="flex flex-col gap-2">
         <h2 className="font-bold">{item.name}</h2>
@@ -34,7 +38,12 @@ export const Item = ({ item }: ItemProps) => {
 
         <div className="grid gap-2 pt-2 sm:grid-cols-3 lg:grid-cols-5">
           {item.screenshots.slice(0, 5).map((screenshot, index) => (
-            <img key={index} src={screenshot.url.replace("t_thumb", "t_1080p")} className="w-fit" alt={item.name} />
+            <img
+              key={index}
+              src={screenshot.url.replace("t_thumb", "t_1080p")}
+              className="w-fit rounded-md"
+              alt={item.name}
+            />
           ))}
         </div>
       </div>

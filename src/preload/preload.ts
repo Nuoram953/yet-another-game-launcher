@@ -1,4 +1,11 @@
-import { FilterPreset, Game, GameConfigGamescope, GameReview } from "@prisma/client";
+import {
+  FilterPreset,
+  Game,
+  GameConfigGamescope,
+  GameLaunchApp,
+  GameLaunchEmulation,
+  GameReview,
+} from "@prisma/client";
 import {
   ConfigRoute,
   RouteDialog,
@@ -10,7 +17,7 @@ import {
   RouteThirdParty,
   RouteWishlist,
 } from "../common/constant";
-import { FilterConfig, SortConfig } from "../common/types";
+import { FilterConfig, LaunchType, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "@main/manager/configManager";
 
@@ -64,6 +71,9 @@ contextBridge.exposeInMainWorld("library", {
   getFilters: () => ipcRenderer.invoke(RouteLibrary.GET_FILTERS),
   setFilterPreset: (data: Partial<FilterPreset>) => ipcRenderer.invoke(RouteLibrary.SET_FILTER_PRESET, data),
   deleteFilterPreset: (name: string) => ipcRenderer.invoke(RouteLibrary.DELETE_FILTER_PRESET, name),
+  search: (query: string) => ipcRenderer.invoke(RouteLibrary.SEARCH, query),
+  addGame: (data: Partial<Game>) => ipcRenderer.invoke(RouteLibrary.ADD_GAME, data),
+  getEmulators: () => ipcRenderer.invoke(RouteLibrary.GET_EMULATORS),
 });
 
 contextBridge.exposeInMainWorld("ranking", {
@@ -77,9 +87,10 @@ contextBridge.exposeInMainWorld("ranking", {
 });
 
 contextBridge.exposeInMainWorld("game", {
-  launch: (id: string) => ipcRenderer.invoke(RouteGame.LAUNCH, id),
+  launch: (id: string, launchType: LaunchType, launchId: number) =>
+    ipcRenderer.invoke(RouteGame.LAUNCH, id, launchType, launchId),
   install: (id: string) => ipcRenderer.invoke(RouteGame.INSTALL, id),
-  kill: (id: string) => ipcRenderer.invoke(RouteGame.KILL, id),
+  kill: (id: string, launchId: number, type: LaunchType) => ipcRenderer.invoke(RouteGame.KILL, id, launchId, type),
   uninstall: (id: string) => ipcRenderer.invoke(RouteGame.UNINSTALL, id),
   setReview: (data: Partial<GameReview>) => ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
   setStatus: (data: Partial<Game>) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
@@ -88,6 +99,9 @@ contextBridge.exposeInMainWorld("game", {
   refreshProgressTracker: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_PROGRESS_TRACKER, id),
   refreshInfo: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_INFO, id),
   resetReview: (id: string) => ipcRenderer.invoke(RouteGame.RESET_REVIEW, id),
+  addLaunchApp: (data: Partial<GameLaunchApp>) => ipcRenderer.invoke(RouteGame.ADD_LAUNCH_APP, data),
+  addLaunchEmulator: (data: Partial<GameLaunchEmulation>) => ipcRenderer.invoke(RouteGame.ADD_LAUNCH_EMULATOR, data),
+  deleteLaunch: (type: LaunchType, id: number) => ipcRenderer.invoke(RouteGame.DELETE_LAUNCH, type, id),
 });
 
 contextBridge.exposeInMainWorld("wishlist", {

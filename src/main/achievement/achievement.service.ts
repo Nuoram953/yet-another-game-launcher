@@ -4,6 +4,10 @@ import * as SteamService from "@main/storefront/steam/service";
 import logger, { LogTag } from "@main/logger";
 
 export const updateAchievements = async (game: GameWithRelations) => {
+  if (!game.storefrontId) {
+    return;
+  }
+
   switch (game.storefrontId) {
     case Storefront.STEAM: {
       await SteamService.getGameAchievements(game);

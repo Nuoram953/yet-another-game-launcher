@@ -141,5 +141,49 @@
     },
     "ratingBased_one": "Overall rating based on {{count}} source",
     "ratingBased_other": "Overall rating based on {{count}} sources"
+  },
+  "settings": {
+    "launch": {
+      "app": {
+        "add": "Add App",
+        "enable": {
+          "title": "Enable {{appName}}",
+          "description": "Adds {{appName}} as an option in the launch menu"
+        },
+        "path": {
+          "title": "Path to {{appName}} executable",
+          "description": "The path to the {{appName}} executable file",
+          "placeholder": "Path to executable"
+        }
+      },
+      "storefront": {
+        "enable": {
+          "title": "Enable this storefront",
+          "description": "Adds this storefront as an option in the launch menu"
+        }
+      },
+      "emulator": {
+        "add": "Add Emulator",
+        "enable": {
+          "title": "Enable this configmuration",
+          "description": "Adds this configuration as an option in the launch menu"
+        },
+        "path": {
+          "title": "Path to rom",
+          "description": "The path to the rom file",
+          "placeholder": "Path to rom file"
+        },
+        "retroAchievement": {
+          "title": "RetroAchievements ID",
+          "description": "Your RetroAchievements ID to unlock achievements when launching via this configuration",
+          "placeholder": "RetroAchievements ID"
+        },
+        "name": {
+          "title": "Configuration name",
+          "description": "The name of this configuration",
+          "placeholder": "Configuration name"
+        }
+      }
+    }
   }
 }

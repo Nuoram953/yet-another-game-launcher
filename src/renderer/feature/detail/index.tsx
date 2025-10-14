@@ -9,16 +9,7 @@ import { useDominantColor } from "@render/hooks/useDominantColor";
 import { useActiveSection } from "./hooks/useActiveSection";
 import { DetailsAchievements } from "../detail-achievements";
 import { Container } from "@render/components/layout/Container";
-import {
-  ChartNoAxesGantt,
-  Clock,
-  EllipsisVertical,
-  Image,
-  Pencil,
-  PictureInPicture,
-  Settings,
-  Trophy,
-} from "lucide-react";
+import { ChartNoAxesGantt, Clock, EllipsisVertical, Image, Pencil, Settings, Trophy } from "lucide-react";
 import { DetailsOverview } from "../detail-overview";
 import { DetailsActivities } from "../detail-activities";
 import { DetailsReviews } from "../detail-reviews";
@@ -30,8 +21,8 @@ import { getGame } from "@render/api/electron";
 import _ from "lodash";
 import { useBreadcrumbsContext } from "@render/context/BreadcrumbsContext";
 import { useTranslation } from "react-i18next";
-import { LOCALE_NAMESPACE } from "@common/constant";
 import { DetailsMetadata } from "../detail-metadata";
+import { DetailsSettings } from "../detail-settings";
 
 export const DetailPage = () => {
   const { t } = useTranslation();
@@ -55,11 +46,7 @@ export const DetailPage = () => {
       setGame(game);
       setBreadcrumbs([
         { path: "/", label: "Library" },
-        {
-          path: `/library/${game.storefront.name}`,
-          label: t(`storefront.${game.storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON }),
-        },
-        { path: `/library/${game.storefront.name}/game/${game.id}`, label: game.name },
+        { path: `/library/game/${game.id}`, label: game.name },
       ]);
 
       return game;
@@ -95,6 +82,8 @@ export const DetailPage = () => {
     );
   }
 
+  console.log(gameQuery.data);
+
   return (
     <Container>
       <Trailer />
@@ -103,28 +92,30 @@ export const DetailPage = () => {
           <ButtonPlay />
         </Navbar.Section>
         <Navbar.Section>
-          <Navbar.Item onClick={() => setActiveSection("overview")}>
-            <ChartNoAxesGantt />
+          <Navbar.Item onClick={() => setActiveSection("overview")} icon={<ChartNoAxesGantt />}>
             <span className="ml-1 hidden lg:inline">Overview</span>
           </Navbar.Item>
-          <Navbar.Item onClick={() => setActiveSection("achievements")} disabled={game.achievements.length === 0}>
-            <Trophy />
+          <Navbar.Item
+            icon={<Trophy />}
+            onClick={() => setActiveSection("achievements")}
+            disabled={game.achievements.length === 0}
+          >
             <span className="ml-1 hidden lg:inline">Achievements</span>
           </Navbar.Item>
-          <Navbar.Item onClick={() => setActiveSection("activities")} disabled={game.activities.length === 0}>
-            <Clock />
+          <Navbar.Item
+            icon={<Clock />}
+            onClick={() => setActiveSection("activities")}
+            disabled={game.activities.length === 0}
+          >
             <span className="ml-1 hidden lg:inline">Activities</span>
           </Navbar.Item>
-          <Navbar.Item onClick={() => setActiveSection("reviews")}>
-            <Pencil />
+          <Navbar.Item icon={<Pencil />} onClick={() => setActiveSection("reviews")}>
             <span className="ml-1 hidden lg:inline">Reviews</span>
           </Navbar.Item>
-          <Navbar.Item onClick={() => setActiveSection("metadata")}>
-            <Image />
+          <Navbar.Item icon={<Image />} onClick={() => setActiveSection("metadata")}>
             <span className="ml-1 hidden lg:inline">Metadata</span>
           </Navbar.Item>
-          <Navbar.Item>
-            <Settings />
+          <Navbar.Item icon={<Settings />} onClick={() => setActiveSection("settings")}>
             <span className="ml-1 hidden lg:inline">Settings</span>
           </Navbar.Item>
           <Navbar.Item>
@@ -168,6 +159,7 @@ export const DetailPage = () => {
           {activeSection === "activities" && <DetailsActivities />}
           {activeSection === "reviews" && <DetailsReviews />}
           {activeSection === "metadata" && <DetailsMetadata />}
+          {activeSection === "settings" && <DetailsSettings />}
         </div>
       </div>
     </Container>

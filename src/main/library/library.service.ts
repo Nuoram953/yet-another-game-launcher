@@ -1,24 +1,16 @@
 import _ from "lodash";
 import queries from "../dal/dal";
 import { config } from "../index";
-import { refreshGame } from "../game/game.service";
-import { FilterConfig, GameWithRelations, SidebarData, SortConfig } from "../../common/types";
+import * as InternetGameDatabase from "@main/externalApi/internetGameDatabase/service";
+import { FilterConfig, SidebarData, SortConfig } from "../../common/types";
 import notificationManager from "../manager/notificationManager";
-import { DataRoute, NotificationType, Storefront } from "../../common/constant";
+import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
-import * as SteamCommand from "../storefront/steam/commands";
 import * as SteamService from "@main/storefront/steam/service";
-import * as EpicCommand from "../storefront/epic/commands";
-import * as GameService from "@main/game/game.service";
 import * as AchievementService from "@main/achievement/achievement.service";
-import * as YoutubeEndpoints from "@main/externalApi/youtube/endpoints";
-import * as OpenCriticEndpoints from "@main/externalApi/openCritic/endpoints";
-import dataManager from "../manager/dataChannelManager";
-import { createGameActiviy } from "../dal/gameActiviy";
-import { getMinutesBetween } from "../utils/utils";
-import { monitorDirectoryProcesses } from "../utils/tracking";
-import logger, { LogTag } from "@main/logger";
-import { FilterPreset } from "@prisma/client";
+import * as GameService from "@main/game/game.service";
+import { FilterPreset, Game } from "@prisma/client";
+import { platform } from "node:process";
 
 export const getStorefronts = async () => {
   return await queries.Storefront.findAll();
@@ -80,9 +72,7 @@ export const getGame = async (id: string, refreshAchievements: boolean = true) =
     throw new Error("Invalid game id ${id}");
   }
 
-  if (refreshAchievements) {
-    await AchievementService.updateAchievements(game);
-  }
+  // await GameService.updateInfo(game.id)
 
   await queries.Game.update(id, {
     openedAt: new Date(),
@@ -128,6 +118,11 @@ export const getSidebarData = async (): Promise<SidebarData> => {
     throw new Error("No status found");
   }
 
+  const platforms = await queries.Platform.findAll();
+  if (_.isNil(platforms)) {
+    throw new Error("No status found");
+  }
+
   return {
     storefronts: await Promise.all(
       storefronts.map(async (storefront) => ({
@@ -145,5 +140,24 @@ export const getSidebarData = async (): Promise<SidebarData> => {
         count: await queries.Game.getCountByStatusId(s.id),
       })),
     ),
+    platforms: await Promise.all(
+      platforms.map(async (s) => ({
+        id: s.id,
+        name: s.name,
+        count: await queries.GamePlatform.getCountByPlatformId(s.id),
+      })),
+    ),
   };
+};
+
+export const search = async (query: string) => {
+  return await InternetGameDatabase.searchByName(query);
+};
+
+export const addGame = async (data: Partial<Game>) => {
+  return await queries.Game.create(data);
+};
+
+export const getEmulators = async () => {
+  return await queries.Emulator.findAll();
 };
