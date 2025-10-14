@@ -20,7 +20,7 @@ export const Item = ({ item }: ItemProps) => {
   });
 
   return (
-    <div className="grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-md border border-design-border p-4 transition-transform hover:border-design-text-subtle">
+    <div className="grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-md border border-transparent p-4 transition-transform hover:border-design-border hover:border-design-text-subtle">
       <img
         src={item.cover?.url.replace("t_thumb", "t_1080p")}
         className="h-full w-52 rounded-md object-cover"

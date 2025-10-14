@@ -75,12 +75,6 @@ export const DetailsReviews = () => {
     const saveTimeout = setTimeout(() => {
       window.game.setReview(data);
       lastSentData.current = data;
-      addNotification({
-        title: "Saved",
-        message: "Your review has been saved.",
-        type: "success",
-        duration: 2000,
-      });
     }, 1500);
 
     return () => clearTimeout(saveTimeout);
