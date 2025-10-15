@@ -5,8 +5,11 @@ import { LaunchStorefrontSettings } from "../components/LaunchStorefrontSettings
 import { CookieType, getCookie, setCookie } from "@render/utils/cookieUtil";
 import { LaunchEmulatorSettings } from "../components/emulation/Settings";
 import { LaunchAppSettings } from "../components/app/Settings";
+import useGameStore from "@render/feature/detail/store/GameStore";
 
 export const useActiveSection = () => {
+  const game = useGameStore((state) => state.game);
+
   const [activeCategory, setActiveCategory] = useState(
     (getCookie(CookieType.DETAILS_SETTINGS_ACTIVE_CATEGORY) as String) ?? "global",
   );
@@ -28,10 +31,14 @@ export const useActiveSection = () => {
       subcategories: {
         app: { title: "App", component: LaunchAppSettings },
         emulation: { title: "Emulation", component: LaunchEmulatorSettings },
-        storefront: { title: "Storefront", component: LaunchStorefrontSettings },
       },
     },
   };
+
+  //User can't add/remove storefront configuration
+  if (game.launchStorefront.length) {
+    categories.launch.subcategories["storefront"] = { title: "Storefront", component: LaunchStorefrontSettings };
+  }
 
   const handleCategoryChange = (categoryKey: string) => {
     setActiveCategory(categoryKey);
