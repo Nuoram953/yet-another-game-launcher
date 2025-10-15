@@ -87,7 +87,7 @@ const Cover = ({ game }: CoverProps) => {
         <BadgeDropdown game={game} />
       </div>
 
-      {!game.isInstalled && <InstallBadge handleOnClick={handleOnInstall} />}
+      {!game.isInstalled && game.launchStorefront.length > 0 && <InstallBadge handleOnClick={handleOnInstall} />}
 
       {game.isFavorite && <FavoriteBadge />}
       <div className="w-wull flex flex-col truncate text-left">
