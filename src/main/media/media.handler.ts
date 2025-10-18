@@ -18,7 +18,11 @@ ipcMain.handle(RouteMedia.GET_ALL_MEDIA, async (_event, gameId) => {
 
 ipcMain.handle(RouteMedia.GET_BACKGROUNDS, async (_event, gameId, count) => {
   try {
-    return await MediaService.getMediaByType(MEDIA_TYPE.BACKGROUND, gameId, count);
+    const backgrounds = await MediaService.getMediaByType(MEDIA_TYPE.BACKGROUND, gameId, count);
+    if (!backgrounds.length) {
+      return await MediaService.getMediaByType(MEDIA_TYPE.SCREENSHOT, gameId, count);
+    }
+    return backgrounds;
   } catch (e) {
     logger.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteMedia.GET_BACKGROUNDS,
