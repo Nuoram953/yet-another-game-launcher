@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Badge } from "@render//components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { Game, GameStatus } from "@prisma/client";
 import { GameWithRelations } from "../../../common/types";
+import { Badge } from "../new/badge/Badge";
 
 interface Props {
   className?: string;
@@ -43,11 +43,11 @@ const BadgeDropdown = ({ className, game }: Props) => {
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      playing: "bg-design-status-playing",
-      played: "bg-design-status-played",
-      plan: "bg-design-status-planned",
-      dropped: "bg-design-status-dropped",
-      completed: "bg-design-status-completed",
+      playing: "bg-[#2b7fff]/75 border-[#2b7fff] hover:bg-[#2b7fff]",
+      played: "bg-[#efb100]/75 border-[#efb100] hover:bg-[#efb100]",
+      plan: "bg-[#ad46ff]/75 border-[#ad46ff] hover:bg-[#ad46ff]",
+      dropped: "bg-[#fb2c36]/75 border-[#fb2c36] hover:bg-[#fb2c36]",
+      completed: "bg-[#00c951]/75 border-[#00c951] hover:bg-[#00c951]",
     };
     return colors[status] || "bg-design-status-none";
   };
@@ -66,12 +66,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={className}>
-        <Badge
-          className={`cursor-pointer hover:bg-primary/80 ${getStatusColor(selectedOption)} ` + className}
-          variant="default"
-        >
-          {t(selectedOption)}
-        </Badge>
+        <Badge text={t(selectedOption)} className={`cursor-pointer ${getStatusColor(selectedOption)} ` + className} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className={className}>
         {status.map((item) => (
