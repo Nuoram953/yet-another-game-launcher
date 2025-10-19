@@ -47,7 +47,7 @@ export const RecentlyPlayedCarousel = () => {
 
   return (
     <div className="relative mx-auto w-full">
-      <div className="relative h-[24rem] overflow-hidden">
+      <div className="relative h-[30rem] overflow-hidden">
         <div
           className="absolute h-full w-full transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}

@@ -53,7 +53,7 @@ export const Image: React.FC<ImageProps> = ({
   }
 
   return (
-    <div className="relative inline-block h-full w-full">
+    <div className="relative inline-block">
       <img src={src} alt={alt} className={image({ intent, size, className })} {...props} />
 
       {getConfigValueSync("grid.display.fadeGamesNotInstalled") && !installed && allowFade && (
