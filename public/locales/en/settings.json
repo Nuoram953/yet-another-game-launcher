@@ -12,6 +12,19 @@
       }
     }
   },
+  "grid": {
+    "sectionTitles": {
+      "layout": "Appearance & Layout",
+      "display": "Visiblity & Display",
+      "content": "Content & Navigation"
+    },
+    "display": {
+      "fadeGamesNotInstalled": {
+        "title": "Fade uninstalled games",
+        "description": "Dim or fade out games in the sidebar that are not currently installed."
+      }
+    }
+  },
   "page": {
     "sectionTitles": {
       "reviews": "Review Section Settings"

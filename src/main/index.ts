@@ -118,6 +118,11 @@ async function electronAppInit() {
           showGameCount: true,
         },
       },
+      grid: {
+        display: {
+          fadeGamesNotInstalled: false,
+        },
+      },
       store: {
         steam: { enable: true, apiKey: "", accountName: "", isntallationPath: null },
         epic: { enable: true },

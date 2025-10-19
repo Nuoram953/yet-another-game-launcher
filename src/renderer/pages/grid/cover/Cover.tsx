@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { convertToHoursAndMinutes } from "@render//utils/util";
 import { Clock } from "lucide-react";
 import { SkeletonCover } from "./skeleton";
-import { InstallBadge } from "./installBadge";
 import BadgeDropdown from "../../../components/dropdown/StatusSelection";
 import { FavoriteBadge } from "./favoriteBadge";
 import { GameWithRelations } from "src/common/types";
 import { Image } from "../../../components/image/Image";
+import _ from "lodash";
 
 interface CoverProps {
   game: GameWithRelations;
@@ -32,17 +32,11 @@ const Cover = ({ game }: CoverProps) => {
     fetchPicturePath();
   }, [game]);
 
-  const handleOnInstall = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.game.install(game.id);
-  };
-
   const handleMouseMove = (e: React.MouseEvent, cardElement: HTMLElement) => {
     const rect = cardElement.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Calculate rotation based on mouse position
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
     const rotateX = ((y - centerY) / centerY) * -10;
@@ -66,6 +60,12 @@ const Cover = ({ game }: CoverProps) => {
     } catch (err) {}
   };
 
+  const launchEnabled = [
+    ...game.launchApp.filter((app) => app.isEnabled),
+    ...game.launchStorefront.filter((app) => app.isEnabled && game.isInstalled),
+    ...game.launchEmulation.filter((app) => app.isEnabled && !_.isNil(app.path) && !_.isEmpty(app.path)),
+  ];
+
   if (loading) {
     return <SkeletonCover />;
   }
@@ -81,13 +81,11 @@ const Cover = ({ game }: CoverProps) => {
         transformStyle: "preserve-3d",
       }}
     >
-      <Image src={coverPicture} alt={""} intent={"cover"} />
+      <Image src={coverPicture} alt={""} intent={"cover"} installed={launchEnabled.length > 0} allowFade={true} />
 
       <div className="absolute left-2 top-2">
         <BadgeDropdown game={game} />
       </div>
-
-      {!game.isInstalled && game.launchStorefront.length > 0 && <InstallBadge handleOnClick={handleOnInstall} />}
 
       {game.isFavorite && <FavoriteBadge />}
       <div className="w-wull flex flex-col truncate text-left">

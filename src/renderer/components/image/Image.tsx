@@ -1,6 +1,7 @@
 import React from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import _ from "lodash";
+import { useConfig } from "../ConfigProvider";
 
 const image = cva(["object-cover"], {
   variants: {
@@ -31,12 +32,33 @@ export interface ImageProps
   className?: string;
   height?: number;
   width?: number;
+  installed?: boolean;
+  allowFade?: boolean;
 }
 
-export const Image: React.FC<ImageProps> = ({ className, intent, src, size, alt, ...props }) => {
+export const Image: React.FC<ImageProps> = ({
+  className,
+  intent,
+  src,
+  size,
+  alt,
+  installed,
+  allowFade = false,
+  ...props
+}) => {
+  const { getConfigValueSync } = useConfig();
+
   if (_.isNil(src)) {
     return <div className={`${image({ intent, size, className })} bg-design-foreground`} aria-label={alt} />;
   }
 
-  return <img src={src} alt={alt} className={image({ intent, size, className })} {...props} />;
+  return (
+    <div className="relative inline-block h-full w-full">
+      <img src={src} alt={alt} className={image({ intent, size, className })} {...props} />
+
+      {getConfigValueSync("grid.display.fadeGamesNotInstalled") && !installed && allowFade && (
+        <div className="absolute inset-0 bg-black/50"></div>
+      )}
+    </div>
+  );
 };

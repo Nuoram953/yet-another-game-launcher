@@ -4,6 +4,11 @@ export interface AppConfig {
       showGameCount: boolean;
     };
   };
+  grid: {
+    display: {
+      fadeGamesNotInstalled: boolean;
+    };
+  };
   store: {
     steam: {
       enable: boolean;

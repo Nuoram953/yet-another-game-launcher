@@ -7,9 +7,10 @@ import { SettingExtensionSteamGridDb } from "../components/extension/SteamGridDb
 import { SettingExtensionIGDB } from "../components/extension/IGDB";
 import { SettingExtensionHowLongToBeat } from "../components/extension/HowLongToBeat";
 import { SettingExtensionOpenCritic } from "../components/extension/openCritic";
-import { SettingSidebar as SettingComponents } from "../components/components/SettingSidebar";
+import { SettingSidebar } from "../components/components/SettingSidebar";
 import { SettingApperanceColors } from "../components/apperance/Colors";
 import { SettingPageGameDetails } from "../components/page/SettingPageDetail";
+import { SettingsGrid } from "../components/components/SettingsGrid";
 
 export const useActiveSection = () => {
   const [activeCategory, setActiveCategory] = useState("storefront");
@@ -38,9 +39,9 @@ export const useActiveSection = () => {
     sidebar: {
       title: "Components",
       icon: Settings,
-      component: SettingComponents,
       subcategories: {
-        sidebar: { title: "Sidebar", component: SettingComponents },
+        grid: { title: "Grid", component: SettingsGrid },
+        sidebar: { title: "Sidebar", component: SettingSidebar },
       },
     },
     appearance: {
