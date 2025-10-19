@@ -17,19 +17,10 @@ export async function upsertEmulatorOption() {
         },
       },
       update: {
-        name: option.name,
-        short: option.short,
-        long: option.long,
-        description: option.description,
-        defautlValue: option.defaultValue,
+        ...option,
       },
       create: {
-        name: option.name,
-        emulatorId: option.emulatorId,
-        short: option.short,
-        long: option.long,
-        description: option.description,
-        defautlValue: option.defaultValue,
+        ...option,
       },
     });
   }

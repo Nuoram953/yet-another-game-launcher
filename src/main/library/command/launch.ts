@@ -45,11 +45,11 @@ export const launch = async (
         location = game.location!;
         switch (game.storefrontId) {
           case Storefront.STEAM: {
-            await SteamCommand.run(game);
+            SteamCommand.run(game);
             break;
           }
           case Storefront.EPIC: {
-            await EpicCommand.run(game);
+            EpicCommand.run(game);
             break;
           }
         }
@@ -57,9 +57,9 @@ export const launch = async (
       break;
     case LaunchType.EMULATOR:
       {
-        const launch = await queries.GameLaunchEmulator.getById(lauchId);
-        location = launch.path!;
-        runAppEmulatorTest(launch.path!, []);
+        const gamePath = await queries.GameLaunchEmulator.getById(lauchId);
+        location = gamePath.path!;
+        runEmulator(gamePath.emulator.cmd, gamePath.emulator.path, gamePath.path!, []);
       }
       break;
   }
@@ -106,16 +106,16 @@ function runApp(appPath: string, args: string[] = []) {
   const normalizedPath = path.normalize(appPath);
 
   spawn(normalizedPath, args, {
-    detached: true, // run independently from parent
-    stdio: "ignore", // don't tie to parent stdio
+    detached: true,
+    stdio: "ignore",
   });
 }
 
-function runAppEmulatorTest(appPath: string, args: string[] = []) {
-  const normalizedPath = path.normalize(appPath);
+function runEmulator(emulatorCmd: string, emulatorPath: string | null, appPath: string, args: string[] = []) {
+  const normalizedPath = emulatorPath ? path.normalize(emulatorPath ?? "" + emulatorCmd) : emulatorCmd;
 
-  spawn("shadps4", [appPath], {
-    detached: true, // run independently from parent
-    stdio: "ignore", // don't tie to parent stdio
+  spawn(normalizedPath, [appPath], {
+    detached: true,
+    stdio: "ignore",
   });
 }

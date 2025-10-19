@@ -36,8 +36,8 @@ export const createOrUpdate = async (data: Partial<GameLaunchEmulation>): Promis
   }
 };
 
-export const getById = async (id: number): Promise<GameLaunchApp> => {
-  return await prisma.gameLaunchEmulation.findFirst({ where: { id } });
+export const getById = async (id: number) => {
+  return await prisma.gameLaunchEmulation.findFirst({ where: { id }, include: { emulator: true } });
 };
 
 export const deleteById = async (id: number): Promise<void> => {

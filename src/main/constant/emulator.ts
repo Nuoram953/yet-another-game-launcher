@@ -10,7 +10,7 @@ export async function upsertEmulator() {
   for (const emulator of emulators) {
     await prisma.emulator.upsert({
       where: { id: emulator.id },
-      update: { name: emulator.name },
+      update: { ...emulator },
       create: emulator,
     });
   }
