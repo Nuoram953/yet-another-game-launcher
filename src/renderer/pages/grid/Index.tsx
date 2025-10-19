@@ -98,26 +98,16 @@ export const Grid = () => {
       <RecentlyPlayedCarousel />
       <div className="flex-none">
         <Header>
-          <div className="flex w-full flex-row items-center justify-start p-4">
-            <Input
-              color={"dark"}
-              type="search"
-              placeholder="Search library..."
-              value={search}
-              onChange={handleSearch}
-            />
-            <div className="ml-2 flex flex-row">
-              <Dialog>
-                <Dialog.Trigger asChild>
-                  <Button leadingIcon={<Plus />} intent={"icon"} size={"fit"} />
-                </Dialog.Trigger>
-                <Dialog.Content>
-                  <Dialog.Title>Add a game</Dialog.Title>
-                  <Dialog.Description>
-                    <Search />
-                  </Dialog.Description>
-                </Dialog.Content>
-              </Dialog>
+          <div className="flex w-full flex-row items-center justify-between p-4">
+            <div className="flex gap-2">
+              <Input
+                color={"dark"}
+                type="search"
+                placeholder="Search library..."
+                value={search}
+                onChange={handleSearch}
+              />
+
               <FilterSheet />
               <Sort />
               {filters.hasActiveFilters && (
@@ -126,6 +116,19 @@ export const Grid = () => {
                 </Button>
               )}
             </div>
+            <Dialog>
+              <Dialog.Trigger asChild>
+                <Button leadingIcon={<Plus />} intent={"secondary"} size={"small"}>
+                  Add
+                </Button>
+              </Dialog.Trigger>
+              <Dialog.Content>
+                <Dialog.Title>Add a game</Dialog.Title>
+                <Dialog.Description>
+                  <Search />
+                </Dialog.Description>
+              </Dialog.Content>
+            </Dialog>
           </div>
         </Header>
       </div>

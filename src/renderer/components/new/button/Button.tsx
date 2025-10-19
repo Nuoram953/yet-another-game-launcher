@@ -23,7 +23,7 @@ const Button = ({
   return (
     <button
       className={cn(
-        "items-center justify-center gap-2 rounded-md", // ensures icons + text align nicely
+        "items-center justify-center gap-2 rounded-md",
         buttonVariants({ intent, state, size, disabled, background }),
         className,
       )}
@@ -31,7 +31,7 @@ const Button = ({
       {...props}
     >
       {leadingIcon && <span className="flex-shrink-0">{leadingIcon}</span>}
-      <span>{children}</span>
+      {children && <span>{children}</span>}
       {trailingIcon && <span className="flex-shrink-0">{trailingIcon}</span>}
     </button>
   );

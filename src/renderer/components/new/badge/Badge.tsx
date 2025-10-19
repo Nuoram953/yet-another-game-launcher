@@ -1,6 +1,6 @@
 import { VariantProps, cva } from "class-variance-authority";
 
-const badge = cva(["w-fit border border-2 rounded-md py-1 px-2 text-design-white"], {
+const badge = cva(["w-fit border border-2 rounded-md px-2 py-[2px] text-design-white"], {
   variants: {},
   compoundVariants: [],
   defaultVariants: {},
