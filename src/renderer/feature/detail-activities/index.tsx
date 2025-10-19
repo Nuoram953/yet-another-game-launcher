@@ -8,7 +8,6 @@ import { useSessionStats } from "./hooks/useSessionStats";
 import { Table } from "@render/components/new/table/Table";
 import useGameStore from "../detail/store/GameStore";
 import Section from "@render/components/new/section";
-import { ChartActivityOs } from "./components/chartActivityOs";
 
 export const DetailsActivities = () => {
   const game = useGameStore((state) => state.game);
@@ -19,8 +18,7 @@ export const DetailsActivities = () => {
       <div className="flex sm:flex-col sm:justify-around lg:flex-row lg:justify-around">
         <div className="flex flex-col justify-around sm:gap-16 lg:w-4/5 lg:gap-32">
           <ChartSessionTimeline />
-          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-3">
-            <ChartActivityOs />
+          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
             <ChartAMPMPlaytimeDistribution />
             <ChartSessionDurationDistribution />
           </div>

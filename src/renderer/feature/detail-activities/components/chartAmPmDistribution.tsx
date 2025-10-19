@@ -96,7 +96,7 @@ const ChartAMPMPlaytimeDistribution = () => {
             detail={playtimeByTimeOfDay[1] > 0 ? `${(playtimeByTimeOfDay[1] / 60).toFixed(1)} hours` : "0 min"}
           />
         </div>
-        <div className="max-h-96">
+        <div className="flex max-h-96 sm:items-center sm:justify-center">
           <Pie data={data} options={options} />
         </div>
       </Section.Content>

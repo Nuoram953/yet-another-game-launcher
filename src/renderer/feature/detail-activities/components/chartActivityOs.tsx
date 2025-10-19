@@ -119,7 +119,7 @@ export const ChartActivityOs = () => {
             />
           )}
         </div>
-        <div className="max-h-96">
+        <div className="max-h-96 flex-1 sm:items-center sm:justify-center">
           <Pie data={chartOsData} options={options} />
         </div>
       </Section.Content>

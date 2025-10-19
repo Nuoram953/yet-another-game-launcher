@@ -80,7 +80,7 @@ const ChartSessionDurationDistribution = () => {
           <StatsCard value={formatPercent(around1h)} label="Around 1h" detail={`${around1hCount} sessions`} />
           <StatsCard value={formatPercent(over2h)} label="Over 2h" detail={`${over2hCount} sessions`} />
         </div>
-        <div className="max-h-96">
+        <div className="max-h-96 flex-1 sm:items-center sm:justify-center">
           <Pie
             data={data}
             options={{
