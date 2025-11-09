@@ -7,7 +7,7 @@ const image = cva(["object-cover"], {
   variants: {
     intent: {
       cover: ["w-full", "rounded-xl"],
-      background: ["!w-[600px]", "h-[220px]", "object-cover"],
+      background: ["object-object h-full"],
       icon: ["w-16", "h-16", "object-cover", "rounded-full"],
     },
     size: {
@@ -53,12 +53,18 @@ export const Image: React.FC<ImageProps> = ({
   }
 
   return (
-    <div className="relative inline-block">
-      <img src={src} alt={alt} className={image({ intent, size, className })} {...props} />
+    <>
+      {allowFade && (
+        <div className="relative inline-block">
+          <img src={src} alt={alt} className={image({ intent, size, className })} {...props} />
 
-      {getConfigValueSync("grid.display.fadeGamesNotInstalled") && !installed && allowFade && (
-        <div className="absolute inset-0 bg-black/50"></div>
+          {getConfigValueSync("grid.display.fadeGamesNotInstalled") && !installed && allowFade && (
+            <div className="absolute inset-0 bg-black/50"></div>
+          )}
+        </div>
       )}
-    </div>
+
+      {!allowFade && <img src={src} alt={alt} className={image({ intent, size, className })} {...props} />}
+    </>
   );
 };
