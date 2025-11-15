@@ -208,6 +208,15 @@ export const updateInfo = async (id: string) => {
     await YoutubeService.downloadVideoForGame(game);
   }
 
+  if (await ConfigService.get("extension.youtube.enable")) {
+    notificationManager.updateProgress(
+      notificationId,
+      getKeyPercentage(notificationsObject, "stepDownloadingMusic"),
+      i18n.t("newGame.stepDownloadingOst", { ns: "notification" }),
+    );
+    await YoutubeService.downloadMusicForGame(game);
+  }
+
   if (await ConfigService.get("extension.howLongToBeat.enable")) {
     notificationManager.updateProgress(
       notificationId,

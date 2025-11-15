@@ -12,8 +12,22 @@ export const downloadVideoForGame = async (game: Game) => {
     return;
   }
 
-  const searchResults = await YoutubeEndpoints.search(game, 1);
+  const searchResults = await YoutubeEndpoints.search(game, MEDIA_TYPE.TRAILER, 1);
   for (const result of searchResults) {
-    await YoutubeEndpoints.download(game, result.id);
+    await YoutubeEndpoints.download(game, MEDIA_TYPE.TRAILER, result.id);
+  }
+};
+
+export const downloadMusicForGame = async (game: Game) => {
+  const outputDir = MetadataService.getOrCreateImageDirectory(MEDIA_TYPE.MUSIC, game.id);
+
+  if (MetadataService.getNumberOfFiles(outputDir) >= 1) {
+    logger.info(`${game.id} has 1 ost. Skipping`);
+    return;
+  }
+
+  const searchResults = await YoutubeEndpoints.search(game, MEDIA_TYPE.MUSIC, 1);
+  for (const result of searchResults) {
+    await YoutubeEndpoints.download(game, MEDIA_TYPE.MUSIC, result.id);
   }
 };

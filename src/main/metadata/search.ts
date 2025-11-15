@@ -26,7 +26,8 @@ export const searchMedia = async (
       res = await SteamGridDbApi.searchIcon(game, page);
       break;
     case MEDIA_TYPE.TRAILER:
-      return await YoutubeApi.search(game);
+    case MEDIA_TYPE.MUSIC:
+      return await YoutubeApi.search(game, mediaType);
     default:
       throw new Error("Invalid media type");
   }

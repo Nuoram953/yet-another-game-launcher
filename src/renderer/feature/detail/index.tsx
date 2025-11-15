@@ -82,8 +82,6 @@ export const DetailPage = () => {
     );
   }
 
-  console.log(gameQuery.data);
-
   return (
     <Container>
       <Trailer />
@@ -152,8 +150,8 @@ export const DetailPage = () => {
           </Navbar.Item>
         </Navbar.Section>
       </Navbar>
-      <div className="relative w-full">
-        <div className="relative z-10 m-4">
+      <div className="w-full">
+        <div className="z-10 m-4">
           {activeSection === "overview" && <DetailsOverview />}
           {activeSection === "achievements" && <DetailsAchievements />}
           {activeSection === "activities" && <DetailsActivities />}

@@ -1,8 +1,8 @@
 import VideoPlayer from "@render//components/VideoPlayer";
 import useGameStore from "@render/feature/detail/store/GameStore";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { getGameBackground, getGameCover, getGameTrailers } from "../api/DetailApi";
+import React, { useEffect } from "react";
+import { getGameBackground, getGameCover, getGameMusics, getGameTrailers } from "../api/DetailApi";
 import { IconAndText } from "@render/components/layout/Container";
 import { Building } from "lucide-react";
 import { Logo } from "./Logo";
@@ -11,6 +11,7 @@ import { Image } from "@render/components/image/Image";
 import { ButtonPlay } from "@render/components/button/Play";
 
 export const Trailer = () => {
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const game = useGameStore((state) => state.game);
   const id = game?.id;
   const { data, isPending } = useQuery({
@@ -31,6 +32,20 @@ export const Trailer = () => {
     enabled: !!id,
   });
 
+  const musicQuery = useQuery({
+    queryKey: ["music", id],
+    queryFn: () => getGameMusics(id),
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+    }
+  }, []);
+
+  const hasMusic = musicQuery.data?.length > 0;
+
   return (
     <>
       {isPending ? (
@@ -38,7 +53,10 @@ export const Trailer = () => {
       ) : (
         <div className="relative w-full shadow-lg">
           {data.length > 0 ? (
-            <VideoPlayer path={data[0]} />
+            <>
+              <VideoPlayer path={data[0]} muted={hasMusic} />
+              {hasMusic && <audio ref={audioRef} src={musicQuery.data[0]} autoPlay loop />}
+            </>
           ) : (
             <img src={backgroundQuery.data[0]} className="h-[700px] w-full object-cover" />
           )}

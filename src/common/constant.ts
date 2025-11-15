@@ -14,6 +14,7 @@ export enum MEDIA_TYPE {
   TRAILER = "trailer",
   ACHIEVEMENT = "achievement",
   SCREENSHOT = "screenshot",
+  MUSIC = "music",
 }
 
 export enum NotificationType {
@@ -75,6 +76,7 @@ export enum RouteMedia {
   GET_TRAILERS = "media:getTrailer",
   GET_ACHIEVEMENTS = "media:getAchievements",
   GET_SCREENSHOTS = "media:getScreenshots",
+  GET_MUSIC = "media:getMusic",
   DELETE = "media:delete",
   SEARCH = "media:search",
   DOWNLOAD_BY_URL = "media:downloadByUrl",

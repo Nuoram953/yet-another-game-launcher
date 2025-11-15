@@ -85,6 +85,10 @@ export interface MediaAPI {
       default: string | null;
       all: string[];
     };
+    musics: {
+      default: string | null;
+      all: string[];
+    };
   }>;
   getBackgrounds: (gameId: string, count?: number) => Promise<string[]>;
   getRecentlyPlayedBackgrounds: (count: number) => Promise<string[]>;
@@ -94,6 +98,7 @@ export interface MediaAPI {
   getTrailers: (gameId: string, count?: number) => Promise<string[]>;
   getAchievements: (gameId: string, count?: number) => Promise<string[]>;
   getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
+  getMusics: (gameId: string, count?: number) => Promise<string[]>;
   delete: (gameId: string, mediaType: string, mediaId: string) => Promise<void>;
   search: (gameId: string, mediaType: MEDIA_TYPE, page: number) => Promise<string[] | Video[]>;
   downloadByUrl: (gameId: string, mediaType: MEDIA_TYPE, url: string) => Promise<void>;

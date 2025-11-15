@@ -15,6 +15,7 @@ export interface MediaGroup {
 export interface MediaState {
   background: MediaGroup;
   icon: MediaGroup;
+  music: MediaGroup;
   logo: MediaGroup;
   cover: MediaGroup;
   screenshot: MediaGroup;

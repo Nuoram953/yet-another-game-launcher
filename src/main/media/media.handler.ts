@@ -75,6 +75,17 @@ ipcMain.handle(RouteMedia.GET_TRAILERS, async (_event, gameId, count) => {
   }
 });
 
+ipcMain.handle(RouteMedia.GET_MUSIC, async (_event, gameId, count) => {
+  try {
+    return await MediaService.getMediaByType(MEDIA_TYPE.MUSIC, gameId, count);
+  } catch (e) {
+    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteMedia.GET_TRAILERS,
+      error: e,
+    });
+  }
+});
+
 ipcMain.handle(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, async (_event, count) => {
   try {
     return await MediaService.getRecentlyPlayedBackgrounds(count);

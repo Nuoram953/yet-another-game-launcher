@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Star, Trash, Video } from "lucide-react";
+import { Plus, Star, Trash, Video } from "lucide-react";
 import { Image } from "@render//components/image/Image";
 import { Button } from "@render//components/button/Button";
 import { useNotifications } from "@render//components/NotificationSystem";
@@ -52,6 +52,10 @@ export function DetailsMetadata() {
         trailer: {
           all: formatMediaItems(mediaData.trailers.all, MEDIA_TYPE.TRAILER),
           default: mediaData.trailers.default,
+        },
+        music: {
+          all: formatMediaItems(mediaData.musics.all, MEDIA_TYPE.MUSIC),
+          default: mediaData.musics.default,
         },
       };
 
@@ -172,6 +176,7 @@ export function DetailsMetadata() {
     <>
       {Object.entries(media).map(([mediaKey, group]) => (
         <Section>
+          <Plus onClick={() => openAddDialog(MEDIA_TYPE.MUSIC)} />
           <Section.Title title={mediaKey.charAt(0).toUpperCase() + mediaKey.slice(1)} />
           <Section.Content>
             {group.all.length === 0 ? (

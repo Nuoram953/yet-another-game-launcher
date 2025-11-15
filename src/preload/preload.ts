@@ -43,6 +43,7 @@ contextBridge.exposeInMainWorld("media", {
   getCovers: (gameId: string, count?: number) => ipcRenderer.invoke(RouteMedia.GET_COVERS, gameId, count),
   getAchievements: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
   getScreenshots: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_SCREENSHOTS, gameId, count),
+  getMusics: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_MUSIC, gameId, count),
   getIcons: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_ICONS, gameId, count),
   delete: (gameId: string, mediaType: string, mediaId: string) =>
     ipcRenderer.invoke(RouteMedia.DELETE, gameId, mediaType, mediaId),

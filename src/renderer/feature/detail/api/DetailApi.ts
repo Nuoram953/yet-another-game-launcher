@@ -16,6 +16,10 @@ export const getGameTrailers = async (id: string) => {
   return await getMedia().getTrailers(id);
 };
 
+export const getGameMusics = async (id: string) => {
+  return await getMedia().getMusics(id);
+};
+
 export const getGameCover = async (id: string) => {
   return await getMedia().getCovers(id, 1);
 };

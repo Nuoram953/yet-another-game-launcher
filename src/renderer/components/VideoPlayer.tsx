@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 
-export const VideoPlayer = ({ path }: { path: string }) => {
+interface VideoPlayerProps {
+  path: string;
+  muted?: boolean;
+}
+
+export const VideoPlayer = ({ path, muted = false }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [volume, setVolume] = useState(0.1);
+  const [volume, setVolume] = useState(muted ? 0.0 : 0.1);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -41,7 +46,7 @@ export const VideoPlayer = ({ path }: { path: string }) => {
 
   return (
     <div>
-      <video ref={videoRef} autoPlay loop className="w-full">
+      <video ref={videoRef} autoPlay loop className="w-full" muted={muted}>
         <source src={path} type="video/mp4" />
         Your browser does not support the video tag.
       </video>

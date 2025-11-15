@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight, Check, Upload, Eye, Timer } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Check, Upload, Eye, Timer, Plus } from "lucide-react";
 import { Button } from "@render//components/button/Button";
 import { Image } from "@render//components/image/Image";
 import { MEDIA_TYPE } from "@common/constant";
 import { useGames } from "@render//context/DatabaseContext";
 import { MediaItem } from "./types";
 import { Video } from "@main/externalApi/youtube/types";
+import useGameStore from "../detail/store/GameStore";
+import { Dialog } from "@render/components/new/popup";
 
 interface ImageSelectionDialogProps {
   isOpen: boolean;
@@ -16,7 +18,7 @@ interface ImageSelectionDialogProps {
 }
 
 export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, refresh }: ImageSelectionDialogProps) {
-  const { selectedGame } = useGames();
+  const game = useGameStore((state) => state.game);
   const [availableImages, setAvailableImages] = useState<string[]>([]);
   const [availableVideos, setAvailableVideos] = useState<Video[]>([]);
   const [selectedImages, setSelectedImages] = useState<(string | MediaItem)[]>([]);
@@ -37,12 +39,13 @@ export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, r
   }, [isOpen, currentPage, gameId, mediaType]);
 
   const fetchAvailableImages = async () => {
-    if (!gameId || !selectedGame?.id) return;
+    if (!gameId || !game?.id) return;
 
     setIsLoading(true);
     try {
-      const response = await window.media.search(selectedGame.id, mediaType, 0);
-      if (mediaType === MEDIA_TYPE.TRAILER) {
+      const response = await window.media.search(game.id, mediaType, 0);
+      console.log(response);
+      if (mediaType === MEDIA_TYPE.TRAILER || mediaType === MEDIA_TYPE.MUSIC) {
         setAvailableVideos(response as Video[]);
         setAvailableImages([]);
       } else {
@@ -86,14 +89,14 @@ export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, r
   };
 
   const handleSubmit = async () => {
-    if (!selectedGame?.id) return;
+    if (!game?.id) return;
 
     for (const image of selectedImages) {
-      await window.media.downloadByUrl(selectedGame.id, mediaType, image as string);
+      await window.media.downloadByUrl(game.id, mediaType, image as string);
     }
 
     for (const video of selectedVideos) {
-      await window.media.downloadByUrl(selectedGame.id, mediaType, String(video.id));
+      await window.media.downloadByUrl(game.id, mediaType, String(video.id));
     }
     refresh();
     onClose();
@@ -102,8 +105,8 @@ export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, r
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="flex max-h-screen w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-gray-800 p-6 shadow-lg">
+    <Dialog open={true}>
+      <Dialog.Content>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">{`Select ${mediaType}`}</h2>
           <div className="flex items-center gap-2">
@@ -174,8 +177,8 @@ export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, r
             </div>
           </>
         )}
-      </div>
-    </div>
+      </Dialog.Content>
+    </Dialog>
   );
 }
 

@@ -21,6 +21,7 @@ export const getAllMedia = async (gameId: string) => {
   const covers = await getMediaByType(MEDIA_TYPE.COVER, gameId);
   const trailers = await getMediaByType(MEDIA_TYPE.TRAILER, gameId);
   const screenshots = await getMediaByType(MEDIA_TYPE.SCREENSHOT, gameId);
+  const musics = await getMediaByType(MEDIA_TYPE.MUSIC, gameId);
 
   return {
     backgrounds: {
@@ -46,6 +47,10 @@ export const getAllMedia = async (gameId: string) => {
     screenshots: {
       default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.SCREENSHOT))?.mediaName,
       all: screenshots,
+    },
+    musics: {
+      default: (await queries.MediaDefault.findByGameIdAndMediaType(gameId, MEDIA_TYPE.MUSIC))?.mediaName,
+      all: musics,
     },
   };
 };
@@ -116,8 +121,8 @@ export const downloadByUrl = async (gameId: string, mediaType: MEDIA_TYPE, url: 
     throw new Error(ErrorMessage.INVALID_GAME);
   }
 
-  if (mediaType === MEDIA_TYPE.TRAILER) {
-    return await YoutubeApi.download(game, url);
+  if (mediaType === MEDIA_TYPE.TRAILER || mediaType === MEDIA_TYPE.MUSIC) {
+    return await YoutubeApi.download(game, mediaType, url);
   } else {
     return await MetadataService.downloadImage(mediaType, game, url);
   }
