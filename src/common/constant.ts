@@ -111,6 +111,10 @@ export enum RouteGame {
   KILL = "game:kill",
   UNINSTALL = "game:uninstall",
   SET_REVIEW = "game:setReview",
+  GET_REVIEW = "game:getReview",
+  CREATE_REVIEW_THOUGHT = "game:createReviewThought",
+  UPDATE_REVIEW_THOUGHT = "game:updateReviewThought",
+  DELETE_REVIEW_THOUGHT = "game:deleteReviewThought",
   SET_STATUS = "game:setStatus",
   SET_FAVORITE = "game:setFavorite",
   SET_SETTING_GAMESCOPE = "game:setGamescope",
@@ -146,4 +150,5 @@ export enum Emulator {
   CITRON = 2,
   RYUJINX = 3,
   SHADPS4 = 4,
+  EDEN = 5,
 }

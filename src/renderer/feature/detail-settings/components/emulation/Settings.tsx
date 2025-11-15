@@ -6,12 +6,12 @@ import { t } from "i18next";
 import _ from "lodash";
 import React from "react";
 import { GameLaunchEmulation } from "@prisma/client";
-import Input from "@render/components/new/input/TextInput";
 import { Divider } from "@render/components/new/divider/Divider";
 import { LaunchType } from "@common/types";
 import { AddPopup } from "./AddPopup";
 import { useLaunchEmulator } from "../../api/post-launch-emulator";
 import { DeletePopup } from "../DeletePopup";
+import { Input } from "@render/components/new/input";
 
 export const LaunchEmulatorSettings = () => {
   const game = useGameStore((state) => state.game);
@@ -55,58 +55,75 @@ export const LaunchEmulatorSettings = () => {
                 }}
               />
 
-              <Input
-                label={t("settings.launch.emulator.name.title", {
-                  ns: LOCALE_NAMESPACE.DETAIL,
-                })}
-                value={emulation.name}
-                placeholder={t("settings.launch.emulator.name.placeholder", { ns: LOCALE_NAMESPACE.DETAIL })}
-                helperText={t("settings.launch.emulator.name.description", {
-                  ns: LOCALE_NAMESPACE.DETAIL,
-                })}
-                onChange={(e) => {
-                  handleUpdate({ ...emulation, name: e.target.value });
-                }}
-              />
+              <Input>
+                <Input.Label>
+                  {t("settings.launch.emulator.name.title", {
+                    ns: LOCALE_NAMESPACE.DETAIL,
+                  })}
+                </Input.Label>
+                <Input.Text
+                  value={emulation.name}
+                  placeholder={t("settings.launch.emulator.name.placeholder", { ns: LOCALE_NAMESPACE.DETAIL })}
+                  onChange={(e) => {
+                    handleUpdate({ ...emulation, name: e.target.value });
+                  }}
+                />
+                <Input.Help>
+                  {t("settings.launch.emulator.name.description", {
+                    ns: LOCALE_NAMESPACE.DETAIL,
+                  })}
+                </Input.Help>
+              </Input>
 
-              <Input
-                label={t("settings.launch.emulator.path.title", {
-                  ns: LOCALE_NAMESPACE.DETAIL,
-                  appName: emulation.name,
-                })}
-                helperText={t("settings.launch.emulator.path.description", {
-                  ns: LOCALE_NAMESPACE.DETAIL,
-                  emulatorName: emulation.name,
-                })}
-                type={_.isNil(emulation.path) ? "file" : "text"}
-                onChange={(e) => {
-                  handleUpdate({ ...emulation, path: e.target.value });
-                }}
-                placeholder={t("settings.launch.emulator.path.placeholder", { ns: LOCALE_NAMESPACE.DETAIL })}
-                value={emulation.path}
-              />
+              <Input>
+                <Input.Label>
+                  {t("settings.launch.emulator.path.title", {
+                    ns: LOCALE_NAMESPACE.DETAIL,
+                    appName: emulation.name,
+                  })}
+                </Input.Label>
+                <Input.Text
+                  placeholder={t("settings.launch.emulator.path.placeholder", { ns: LOCALE_NAMESPACE.DETAIL })}
+                  value={emulation.path}
+                  onChange={(e) => {
+                    handleUpdate({ ...emulation, path: e.target.value });
+                  }}
+                />
+                <Input.Help>
+                  {t("settings.launch.emulator.path.description", {
+                    ns: LOCALE_NAMESPACE.DETAIL,
+                    emulatorName: emulation.name,
+                  })}
+                </Input.Help>
+              </Input>
 
-              <Input
-                label={t("settings.launch.emulator.retroAchievement.title", {
-                  ns: LOCALE_NAMESPACE.DETAIL,
-                })}
-                helperText={t("settings.launch.emulator.retroAchievement.description", {
-                  ns: LOCALE_NAMESPACE.DETAIL,
-                })}
-                onChange={(e) => {
-                  handleUpdate({ ...emulation, retroAchievementsId: e.target.value });
-                }}
-                placeholder={t("settings.launch.emulator.retroAchievement.placeholder", {
-                  ns: LOCALE_NAMESPACE.DETAIL,
-                })}
-                value={emulation.retroAchievementsId}
-              />
-            </div>
+              <Input>
+                <Input.Label>
+                  {t("settings.launch.emulator.retroAchievement.title", {
+                    ns: LOCALE_NAMESPACE.DETAIL,
+                  })}
+                </Input.Label>
+                <Input.Text
+                  onChange={(e) => {
+                    handleUpdate({ ...emulation, retroAchievementsId: e.target.value });
+                  }}
+                  placeholder={t("settings.launch.emulator.retroAchievement.placeholder", {
+                    ns: LOCALE_NAMESPACE.DETAIL,
+                  })}
+                  value={emulation.retroAchievementsId}
+                />
+                <Input.Help>
+                  {t("settings.launch.emulator.retroAchievement.description", {
+                    ns: LOCALE_NAMESPACE.DETAIL,
+                  })}
+                </Input.Help>
+              </Input>
 
-            <div className="mt-8">
-              <Divider color="gray" />
-              <div className="flex justify-start"></div>
-              <DeletePopup type={LaunchType.EMULATOR} launchId={emulation.id} />
+              <div className="my-4">
+                <Divider color="gray" />
+                <div className="flex justify-start"></div>
+                <DeletePopup type={LaunchType.EMULATOR} launchId={emulation.id} />
+              </div>
             </div>
           </Section.Content>
         </Section>

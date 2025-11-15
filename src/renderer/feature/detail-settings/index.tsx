@@ -13,7 +13,7 @@ export const DetailsSettings = () => {
   } = useActiveSection();
 
   return (
-    <div className="flex flex-col text-design-text-normal">
+    <div className="text-design-text-normal flex flex-col">
       <div className="flex h-full">
         <div className="flex h-full w-72 flex-col border-r border-slate-600/50">
           <div className="scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent flex-1 overflow-y-auto">
@@ -33,7 +33,7 @@ export const DetailsSettings = () => {
                       className={`group flex w-full items-center space-x-3 px-4 py-3 text-left transition-all duration-200`}
                     >
                       <div className={`p-2 transition-all duration-200`}>
-                        <IconComponent className="h-4 w-4 text-design-text-normal" />
+                        <IconComponent className="text-design-text-normal h-4 w-4" />
                       </div>
                       <span
                         className={`font-medium transition-all duration-200 ${
@@ -52,8 +52,8 @@ export const DetailsSettings = () => {
                             onClick={() => setActiveSubcategory(subKey)}
                             className={`group w-full px-4 py-2.5 text-left text-sm transition-all duration-200 ${
                               activeSubcategory === subKey
-                                ? "animate-pulse border-2 border-design-border font-medium [animation-duration:3s]"
-                                : "border border-transparent text-slate-300 hover:bg-slate-700/30 hover:text-design-text-normal"
+                                ? "border-design-border animate-pulse rounded-md border-2 font-medium [animation-duration:3s]"
+                                : "hover:text-design-text-normal rounded-md border border-transparent text-slate-300 hover:bg-slate-700/30"
                             }`}
                           >
                             <div className="flex items-center space-x-2">
@@ -72,7 +72,7 @@ export const DetailsSettings = () => {
 
         <Container>
           <div className="scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent m-4 h-full w-[95%] overflow-y-auto">
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col">
               <ActiveComponent platformId={getActivePlatform()} />
             </div>
           </div>

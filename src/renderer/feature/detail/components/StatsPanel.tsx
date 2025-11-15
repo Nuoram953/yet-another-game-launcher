@@ -5,29 +5,19 @@ import { convertToHoursAndMinutes } from "@render//utils/util";
 import { LOCALE_NAMESPACE } from "@common/constant";
 import { useTranslation } from "react-i18next";
 import { StatsCard } from "@render/components/card/StatsCard";
-import useGameStore from "../store/GameStore";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
+import { useGameFromParams } from "@render/hooks/useGameParam";
 
 export const StatsPanel = () => {
   // Use a selector to get both game and loading state if available
-  const game = useGameStore((state) => state.game);
-
   const { games } = useGames();
   const { t } = useTranslation();
 
-  // Early return if game is not loaded yet
-  if (!game) {
-    return (
-      <div className="flex justify-around gap-4">
-        {/* Loading skeleton or placeholder */}
-        <div className="h-20 animate-pulse rounded bg-gray-200"></div>
-        <div className="h-20 animate-pulse rounded bg-gray-200"></div>
-        <div className="h-20 animate-pulse rounded bg-gray-200"></div>
-        <div className="h-20 animate-pulse rounded bg-gray-200"></div>
-      </div>
-    );
-  }
+  const { game, isLoading } = useGameFromParams();
 
-  console.log(game, games);
+  if (isLoading) {
+    return <LoadingCenter />;
+  }
 
   const calculateRankings = () => {
     if (!games || games.length === 0 || !game) {

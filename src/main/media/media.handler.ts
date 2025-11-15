@@ -130,9 +130,9 @@ ipcMain.handle(RouteMedia.DELETE, async (_event, gameId, mediaType, mediaName) =
   }
 });
 
-ipcMain.handle(RouteMedia.SEARCH, async (_event, gameId, mediaType, page) => {
+ipcMain.handle(RouteMedia.SEARCH, async (_event, gameId, mediaType, search, page) => {
   try {
-    return MediaService.search(gameId, mediaType, page);
+    return MediaService.search(gameId, mediaType, search, page);
   } catch (e) {
     logger.error(ErrorMessage.ERROR_IN_ROUTE, {
       route: RouteMedia.SEARCH,

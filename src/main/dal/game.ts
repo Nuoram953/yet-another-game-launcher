@@ -21,6 +21,7 @@ const include = {
   publishers: { include: { company: true } },
   tags: { include: { tag: true } },
   review: true,
+  reviewToughts: true,
   gamescope: true,
   downloadHistory: true,
   statusHistory: { include: { gameStatus: true } },
@@ -103,20 +104,20 @@ export async function getGames(limit?: number | null, filters?: FilterConfig, so
       }
     : undefined;
 
-  if (!_.isNil(filters.timePlayed)) {
-    where.OR = [...(where?.OR || []), ...buildTimePlayedWhereClause(filters.timePlayed)];
+  if (!_.isNil(filters?.timePlayed)) {
+    where.OR = [...(where?.OR || []), ...buildTimePlayedWhereClause(filters?.timePlayed)];
   }
 
-  if (!_.isNil(filters.mainStory)) {
-    where.OR = [...(where?.OR || []), ...buildMainStoryWhereClause(filters.mainStory)];
+  if (!_.isNil(filters?.mainStory)) {
+    where.OR = [...(where?.OR || []), ...buildMainStoryWhereClause(filters?.mainStory)];
   }
 
-  if (!_.isNil(filters.dateAdded)) {
-    where.OR = [...(where?.OR || []), ...buildDateAddedWhereClause(filters.dateAdded)];
+  if (!_.isNil(filters?.dateAdded)) {
+    where.OR = [...(where?.OR || []), ...buildDateAddedWhereClause(filters?.dateAdded)];
   }
 
-  if (!_.isNil(filters.lastTimePlayed)) {
-    where.OR = [...(where?.OR || []), ...buildLastTimePlayedWhereClause(filters.lastTimePlayed)];
+  if (!_.isNil(filters?.lastTimePlayed)) {
+    where.OR = [...(where?.OR || []), ...buildLastTimePlayedWhereClause(filters?.lastTimePlayed)];
   }
 
   const games = await prisma.game.findMany({

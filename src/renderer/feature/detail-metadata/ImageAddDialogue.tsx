@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight, Check, Upload, Eye, Timer, Plus } from "lucide-react";
-import { Button } from "@render//components/button/Button";
+import { ChevronLeft, ChevronRight, Check, Upload, Eye, Timer, Plus } from "lucide-react";
 import { Image } from "@render//components/image/Image";
 import { MEDIA_TYPE } from "@common/constant";
-import { useGames } from "@render//context/DatabaseContext";
 import { MediaItem } from "./types";
 import { Video } from "@main/externalApi/youtube/types";
 import useGameStore from "../detail/store/GameStore";
 import { Dialog } from "@render/components/new/popup";
+import Button from "@render/components/new/button/Button";
+import { useDebounce } from "@render/hooks/useDebounce";
+import { Input } from "@render/components/new/input";
 
 interface ImageSelectionDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
   mediaType: MEDIA_TYPE;
-  gameId?: string;
-  refresh: () => void;
 }
 
-export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, refresh }: ImageSelectionDialogProps) {
+export default function ImageAddDialogue({ mediaType }: ImageSelectionDialogProps) {
   const game = useGameStore((state) => state.game);
   const [availableImages, setAvailableImages] = useState<string[]>([]);
   const [availableVideos, setAvailableVideos] = useState<Video[]>([]);
@@ -27,24 +24,25 @@ export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, r
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadMode, setIsUploadMode] = useState(false);
+  const [search, setSearch] = useState("");
+  const debouncedInput = useDebounce(search, 500);
 
   useEffect(() => {
-    if (isOpen && gameId) {
+    if (game) {
       fetchAvailableImages();
     } else {
       setSelectedImages([]);
       setCurrentPage(1);
       setIsUploadMode(false);
     }
-  }, [isOpen, currentPage, gameId, mediaType]);
+  }, [currentPage, game, debouncedInput, mediaType]);
 
   const fetchAvailableImages = async () => {
-    if (!gameId || !game?.id) return;
+    if (!game || !game?.id) return;
 
     setIsLoading(true);
     try {
-      const response = await window.media.search(game.id, mediaType, 0);
-      console.log(response);
+      const response = await window.media.search(game.id, mediaType, search, 0);
       if (mediaType === MEDIA_TYPE.TRAILER || mediaType === MEDIA_TYPE.MUSIC) {
         setAvailableVideos(response as Video[]);
         setAvailableImages([]);
@@ -98,29 +96,32 @@ export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, r
     for (const video of selectedVideos) {
       await window.media.downloadByUrl(game.id, mediaType, String(video.id));
     }
-    refresh();
-    onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <Dialog open={true}>
+    <Dialog>
+      <Dialog.Trigger>
+        <Button intent={"primary"} leadingIcon={<Plus />} />
+      </Dialog.Trigger>
       <Dialog.Content>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">{`Select ${mediaType}`}</h2>
-          <div className="flex items-center gap-2">
-            <Button intent="icon" icon={X} size="fit" onClick={onClose} className="hover:bg-gray-700" />
-          </div>
+        <Dialog.Title>{`Select ${mediaType}`}</Dialog.Title>
+        <Dialog.Description>Add one or more music for this game</Dialog.Description>
+        <div className="py-2">
+          <Input.Text
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
         </div>
-
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
             <p>Loading images...</p>
           </div>
         ) : (
           <>
-            <div className="mb-4 flex-1 overflow-auto">
+            <div className="mb-4 max-h-[500px] flex-1 overflow-y-auto">
               {availableImages.length > 0 ? (
                 <ImageView
                   availableImages={availableImages}
@@ -166,8 +167,9 @@ export default function ImageAddDialogue({ isOpen, onClose, mediaType, gameId, r
                 )}
               </div>
               <div className="flex space-x-2">
-                <Button intent="secondary" onClick={onClose} text="Cancel" />
+                <Button intent="secondary" text="Cancel" size="md" />
                 <Button
+                  size="md"
                   intent="primary"
                   onClick={handleSubmit}
                   disabled={selectedImages.length === 0 && selectedVideos.length === 0}

@@ -3,9 +3,10 @@ import { citron } from "./emulator/citron";
 import { dolphin } from "./emulator/dophin";
 import { ryujinx } from "./emulator/ryujinx";
 import { shadps4 } from "./emulator/shadps4";
+import { eden } from "./emulator/eden";
 
 export async function upsertEmulator() {
-  const emulators = [dolphin, citron, ryujinx, shadps4];
+  const emulators = [dolphin, citron, ryujinx, shadps4, eden];
 
   for (const emulator of emulators) {
     await prisma.emulator.upsert({

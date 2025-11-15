@@ -13,14 +13,12 @@ export const Item = ({ item }: ItemProps) => {
   const deleteWishlistItem = useDeleteWishlistItem({
     externalId: 0,
     mutationConfig: {
-      onSuccess: () => {
-        // Optionally handle success (e.g., show a notification)
-      },
+      onSuccess: () => {},
     },
   });
 
   return (
-    <div className="grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-md border border-transparent p-4 transition-transform hover:border-design-border hover:border-design-text-subtle">
+    <div className="hover:border-design-border hover:border-design-text-subtle grid grid-cols-[auto,1fr,auto] items-start gap-4 rounded-md border border-transparent bg-foreground p-4 shadow-lg transition-transform">
       <img
         src={item.cover?.url.replace("t_thumb", "t_1080p")}
         className="h-full w-52 rounded-md object-cover"
@@ -30,7 +28,7 @@ export const Item = ({ item }: ItemProps) => {
       <div className="flex flex-col gap-2">
         <h2 className="font-bold">{item.name}</h2>
 
-        <div className="!mt-[-0.5rem] flex gap-4 text-sm text-design-text-subtle">
+        <div className="text-design-text-subtle !mt-[-0.5rem] flex gap-4 text-sm">
           <IconAndText icon={<Clock className="h-4 w-4" />} text={formatDateWithOrdinalYear(item.first_release_date)} />
         </div>
 

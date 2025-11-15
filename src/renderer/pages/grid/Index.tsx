@@ -7,15 +7,17 @@ import { FixedSizeGrid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { RecentlyPlayedCarousel } from "./RecentlyPlayedCarousel";
 import useGridScrollPersist from "@render//hooks/usePersistentScroll";
-import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import { Sort } from "./Sort";
 import { Header } from "@render//components/layout/Header";
 import { FilterSheet } from "./FilterSheet";
-import Input from "@render/components/new/input/TextInput";
-import { Cross, Plus } from "lucide-react";
+import { Cross, Plus, Search } from "lucide-react";
 import { Dialog } from "@render/components/new/popup";
 import Button from "@render/components/new/button/Button";
-import { Search } from "@render/feature/home/components/Search";
+import { SearchNewGame } from "@render/feature/home/components/Search";
+import { Input } from "@render/components/new/input";
+import ButtonIcon from "@render/components/new/button/ButtonIcon";
+import { HomeRecentCarousel } from "@render/feature/home-recent-carousel";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
 
 const COLUMN_WIDTH = 275;
 const ROW_HEIGHT = 520;
@@ -24,12 +26,12 @@ const GAP = 16;
 export const Grid = () => {
   const { games, loading, error, refreshGames, filters, clearFilters } = useGames();
   const [search, setSearch] = React.useState("");
+  const [showSearch, setShowSerarch] = React.useState(false);
+  const [isFocused, setIsFocused] = React.useState(false);
   const { updateSelectedGame } = useGames();
-  const { setBreadcrumbs } = useBreadcrumbsContext();
   const gridRef = useRef(null);
 
   useEffect(() => {
-    setBreadcrumbs([]);
     refreshGames();
   }, []);
 
@@ -46,6 +48,8 @@ export const Grid = () => {
     },
     [search],
   );
+
+  const showInput = isFocused || search.trim() !== "";
 
   const filteredGames = useMemo(() => {
     const uniqueGames = Array.from(new Map(games.map((game) => [game.id, game])).values());
@@ -86,46 +90,49 @@ export const Grid = () => {
   );
 
   if (loading) {
-    return (
-      <div className="flex min-h-[200px] items-center justify-center">
-        <div className="text-lg">Loading games...</div>
-      </div>
-    );
+    return <LoadingCenter />;
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      <RecentlyPlayedCarousel />
+    <div className="flex h-screen flex-col">
+      <HomeRecentCarousel />
       <div className="flex-none">
         <Header>
           <div className="flex w-full flex-row items-center justify-between p-4">
-            <div className="flex gap-2">
-              <Input
-                color={"dark"}
-                type="search"
-                placeholder="Search library..."
-                value={search}
-                onChange={handleSearch}
-              />
+            <div className="flex gap-1">
+              {showInput ? (
+                <Input.Text
+                  color="dark"
+                  type="search"
+                  placeholder="Search library..."
+                  value={search}
+                  onChange={handleSearch}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                />
+              ) : (
+                <ButtonIcon text="Search" icon={<Search />} intent="tertiary" onClick={() => setIsFocused(true)} />
+              )}
 
               <FilterSheet />
               <Sort />
               {filters.hasActiveFilters && (
-                <Button intent="secondary" size="small" onClick={() => clearFilters()} className="whitespace-nowrap">
-                  Clear filters
-                </Button>
+                <Button
+                  intent="secondary"
+                  text="Clean filters"
+                  onClick={() => clearFilters()}
+                  className="whitespace-nowrap"
+                />
               )}
             </div>
             <Dialog>
               <Dialog.Trigger asChild>
-                <Button leadingIcon={<Plus />} intent={"secondary"} size={"small"}>
-                  Add
-                </Button>
+                <Button leadingIcon={<Plus />} intent={"secondary"} text="Add game" />
               </Dialog.Trigger>
               <Dialog.Content>
                 <Dialog.Title>Add a game</Dialog.Title>
                 <Dialog.Description>
-                  <Search />
+                  <SearchNewGame />
                 </Dialog.Description>
               </Dialog.Content>
             </Dialog>
@@ -147,7 +154,6 @@ export const Grid = () => {
             return (
               <FixedSizeGrid
                 ref={gridRef}
-                className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent"
                 columnCount={columnCount}
                 rowCount={rowCount}
                 columnWidth={adjustedColumnWidth + GAP}

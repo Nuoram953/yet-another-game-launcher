@@ -43,3 +43,7 @@ export interface SearchApiResponse {
   userData: [];
   displayModifier: null;
 }
+
+export interface SearchInitApiResponse {
+  token: string;
+}

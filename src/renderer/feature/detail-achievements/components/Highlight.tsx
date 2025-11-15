@@ -6,21 +6,30 @@ import { useQuery } from "@tanstack/react-query";
 import { Award, Clock, Target, Trophy } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getGameAchievements } from "../api/DetailAchievementsApi";
+import { useParams } from "react-router-dom";
+import { useGame } from "@render/api/get-game";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
 
 export const Highlight = () => {
   const { t } = useTranslation();
-  const { game } = useGameStore();
 
-  if (!game?.achievements) return null;
+  const { id } = useParams<{ id: string }>();
+  const gameQuery = useGame({ gameId: id });
 
   const { data, isPending } = useQuery({
-    queryKey: ["game", game?.id, "achievements"],
-    queryFn: () => getGameAchievements(game!.id),
+    queryKey: ["game", id, "achievements"],
+    queryFn: () => getGameAchievements(id),
   });
 
   if (isPending) {
     return null;
   }
+
+  if (gameQuery.isPending) {
+    return <LoadingCenter />;
+  }
+
+  const game = gameQuery.data;
 
   const unlockedAchievements = game?.achievements?.filter((a) => a.isUnlocked);
 
@@ -58,7 +67,7 @@ export const Highlight = () => {
   maxStreak = Math.max(maxStreak, currentStreak);
 
   const AchievementCard = ({ achievement, title, subtitle, icon, iconColor }: any) => (
-    <div className="rounded-lg border border-design-border p-4 transition-colors hover:border-primary/50">
+    <div className="border-design-border hover:border-primary/50 rounded-lg border p-4 transition-colors">
       <div className="flex items-center gap-3">
         <div className="flex-shrink-0">
           <img
@@ -70,10 +79,10 @@ export const Highlight = () => {
         <div className="min-w-0 flex-grow">
           <div className="mb-1 flex items-center gap-2">
             <div className={`rounded-full p-1 ${iconColor}`}>{icon}</div>
-            <span className="text-xs font-medium uppercase tracking-wide text-design-text-subtle">{title}</span>
+            <span className="text-design-text-subtle text-xs font-medium uppercase tracking-wide">{title}</span>
           </div>
-          <h4 className="truncate font-semibold text-design-text-normal">{achievement.name}</h4>
-          <p className="text-sm text-design-text-subtle">{subtitle}</p>
+          <h4 className="text-design-text-normal truncate font-semibold">{achievement.name}</h4>
+          <p className="text-design-text-subtle text-sm">{subtitle}</p>
         </div>
       </div>
     </div>

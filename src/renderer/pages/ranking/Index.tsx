@@ -1,6 +1,5 @@
 import { Card } from "@render//components/card/Card";
 import { Trophy, Clock, Edit, Trash2, Pencil, Plus } from "lucide-react";
-import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
@@ -13,12 +12,12 @@ import {
 import { Input } from "@render//components/ui/input";
 import { Label } from "@render//components/ui/label";
 import { RankingWithRelation } from "../../../common/types";
-import { useNavigate } from "react-router-dom";
 import { Image } from "@render//components/image/Image";
 import { unixToDate } from "@render//utils/util";
 import { Button } from "@render//components/button/Button";
 import { Header } from "@render//components/layout/Header";
 import { RankingGame } from "@prisma/client";
+import { useNavigate } from "@tanstack/react-router";
 
 interface CoverImageProps {
   game: RankingGame;
@@ -54,20 +53,12 @@ const CoverImage = ({ game, isFirst = false }: CoverImageProps) => {
 
 export const RankingPage = () => {
   const navigate = useNavigate();
-  const { setBreadcrumbs } = useBreadcrumbsContext();
   const [rankings, setRankings] = useState<RankingWithRelation[]>([]);
   const [openNewDialog, setOpenNewDialog] = useState(false);
 
   const [name, setName] = useState("");
   const [maxItems, setMaxItems] = useState(3);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setBreadcrumbs([
-      { path: "/", label: "Home" },
-      { path: "/ranking", label: "Ranking" },
-    ]);
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,7 +84,10 @@ export const RankingPage = () => {
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/ranking/${id}`);
+    navigate({
+      to: "/ranking/$id",
+      params: { id: String(id) },
+    });
   };
 
   const handleSubmit = async () => {
@@ -102,10 +96,10 @@ export const RankingPage = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col text-design-text-normal">
+    <div className="text-design-text-normal flex h-screen flex-col">
       <Header>
         <div className="m-4 flex w-full items-center justify-between">
-          <h1 className="text-2xl font-semibold text-design-text-normal"></h1>
+          <h1 className="text-design-text-normal text-2xl font-semibold"></h1>
           <Button
             intent={"primary"}
             onClick={handleNewRanking}

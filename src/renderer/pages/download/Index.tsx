@@ -7,13 +7,11 @@ import { getLibrary } from "@render/api/electron";
 import { DownloadRow } from "./DownloadRow";
 import { DataRoute, RouteDownload } from "@common/constant";
 import { TriangleAlert, X } from "lucide-react";
-import { useBreadcrumbsContext } from "@render/context/BreadcrumbsContext";
 
 const DownloadView = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [downloadHistory, setDownloadHistory] = useState([]);
   const { downloading } = useGames();
-  const { setBreadcrumbs } = useBreadcrumbsContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,8 +19,6 @@ const DownloadView = () => {
     };
     fetchData();
     setLoading(false);
-
-    setBreadcrumbs([{ path: "/download", label: "Downloads" }]);
 
     window.data.on(RouteDownload.ON_DOWNLOAD_STOP, fetchData);
 
@@ -45,7 +41,7 @@ const DownloadView = () => {
                 {downloading.length > 0 ? (
                   downloading.map((download) => <DownloadRow key={download.id} title={download.id} data={download} />)
                 ) : (
-                  <div className="flex h-[25vh] flex-col items-center justify-center text-design-text-subtle">
+                  <div className="text-design-text-subtle flex h-[25vh] flex-col items-center justify-center">
                     <TriangleAlert height={128} width={128} strokeWidth={1.5} />
                     <p>No downloads in progress</p>
                   </div>

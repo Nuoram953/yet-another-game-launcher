@@ -5,6 +5,7 @@ import {
   GameLaunchApp,
   GameLaunchEmulation,
   GameReview,
+  GameReviewThoughts,
 } from "@prisma/client";
 import {
   ConfigRoute,
@@ -47,8 +48,8 @@ contextBridge.exposeInMainWorld("media", {
   getIcons: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_ICONS, gameId, count),
   delete: (gameId: string, mediaType: string, mediaId: string) =>
     ipcRenderer.invoke(RouteMedia.DELETE, gameId, mediaType, mediaId),
-  search: (gameId: string, mediaType: string, page: number) =>
-    ipcRenderer.invoke(RouteMedia.SEARCH, gameId, mediaType, page),
+  search: (gameId: string, mediaType: string, search: string, page: number) =>
+    ipcRenderer.invoke(RouteMedia.SEARCH, gameId, mediaType, search, page),
   downloadByUrl: (gameId: string, mediaType: string, url: string) =>
     ipcRenderer.invoke(RouteMedia.DOWNLOAD_BY_URL, gameId, mediaType, url),
   setDefault: (gameId: string, mediaType: string, name: string) =>
@@ -93,7 +94,13 @@ contextBridge.exposeInMainWorld("game", {
   install: (id: string) => ipcRenderer.invoke(RouteGame.INSTALL, id),
   kill: (id: string, launchId: number, type: LaunchType) => ipcRenderer.invoke(RouteGame.KILL, id, launchId, type),
   uninstall: (id: string) => ipcRenderer.invoke(RouteGame.UNINSTALL, id),
+
   setReview: (data: Partial<GameReview>) => ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
+  getReview: (id: string) => ipcRenderer.invoke(RouteGame.GET_REVIEW, id),
+  createReviewThought: (gameId: string) => ipcRenderer.invoke(RouteGame.CREATE_REVIEW_THOUGHT, gameId),
+  updateReviewThought: (data: Partial<GameReviewThoughts>) => ipcRenderer.invoke(RouteGame.UPDATE_REVIEW_THOUGHT, data),
+  deleteReviewThought: (id: string) => ipcRenderer.invoke(RouteGame.DELETE_REVIEW_THOUGHT, id),
+
   setStatus: (data: Partial<Game>) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
   setFavorite: (id: string, isFavorite: boolean) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, id, isFavorite),
   setGamescope: (data: GameConfigGamescope) => ipcRenderer.invoke(RouteGame.SET_SETTING_GAMESCOPE, data),

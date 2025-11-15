@@ -22,6 +22,7 @@ import Divider from "@render/components/Divider";
 import { LOCALE_NAMESPACE } from "@common/constant";
 import { MultiValue } from "react-select";
 import Button from "@render/components/new/button/Button";
+import ButtonIcon from "@render/components/new/button/ButtonIcon";
 
 export function FilterSheet() {
   const { addNotification } = useNotifications();
@@ -126,7 +127,7 @@ export function FilterSheet() {
     <>
       <Sheet key={"button"}>
         <SheetTrigger asChild>
-          <Button leadingIcon={<Filter />} intent={"icon"} size={"fit"} />
+          <ButtonIcon text={"Filters"} icon={<Filter />} intent="tertiary" />
         </SheetTrigger>
         <SheetContent side={"right"} color="#1e293b">
           <SheetHeader>

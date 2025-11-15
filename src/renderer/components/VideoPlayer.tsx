@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface VideoPlayerProps {
   path: string;
@@ -7,11 +7,10 @@ interface VideoPlayerProps {
 
 export const VideoPlayer = ({ path, muted = false }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [volume, setVolume] = useState(muted ? 0.0 : 0.1);
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.volume = volume;
+      videoRef.current.volume = muted ? 0.0 : 0.1;
     }
     const handleBlur = () => {
       if (videoRef.current) {
@@ -35,14 +34,6 @@ export const VideoPlayer = ({ path, muted = false }: VideoPlayerProps) => {
       window.appControl.onAppFocus(() => {});
     };
   }, []);
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = e.target.value;
-    setVolume(Number(newVolume));
-    if (videoRef.current) {
-      videoRef.current.volume = Number(newVolume);
-    }
-  };
 
   return (
     <div>

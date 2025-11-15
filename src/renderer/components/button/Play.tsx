@@ -16,14 +16,25 @@ import { LaunchType } from "@common/types";
 import { Dialog } from "../new/popup";
 import Button from "../new/button/Button";
 import _ from "lodash";
+import { useParams } from "@tanstack/react-router";
+import { useGame } from "@render/api/get-game";
+import { LoadingCenter } from "../new/loading/Loading";
 
 export const ButtonPlay = () => {
-  const game = useGameStore((state) => state.game);
+  const { id } = useParams({ from: "/game/$id" });
+
+  const gameQuery = useGame({ gameId: id });
   const { running } = useGames();
   const [open, setOpen] = useState<boolean>(false);
 
   const [selectedLaunchId, setSelectedLaunchId] = useState<number | null>(null);
   const [selectedLaunchType, setSelectedLaunchType] = useState<LaunchType | null>(null);
+
+  if (gameQuery.isPending) {
+    return <LoadingCenter />;
+  }
+
+  const game = gameQuery.data;
 
   console.log(game);
 
@@ -53,9 +64,7 @@ export const ButtonPlay = () => {
   if (running.map((item) => item.id).includes(game.id)) {
     return (
       <>
-        <Button size="large" intent="primary" state="running" onClick={handleOnStop} leadingIcon={<CircleX />}>
-          Stop
-        </Button>
+        <Button text={"Stop"} size="md" intent="primary" onClick={handleOnStop} leadingIcon={<CircleX />} />
         <AlertDialog open={open}>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -77,9 +86,7 @@ export const ButtonPlay = () => {
 
   if (!game?.isInstalled && game.launchStorefront.length > 0) {
     return (
-      <Button size="large" intent="primary" state="install" onClick={handleOnInstall} leadingIcon={<ArrowDownToLine />}>
-        Install
-      </Button>
+      <Button text={"Install"} size="md" intent="primary" onClick={handleOnInstall} leadingIcon={<ArrowDownToLine />} />
     );
   }
 
@@ -90,11 +97,7 @@ export const ButtonPlay = () => {
   ];
 
   if (launchEnabled.length === 0) {
-    return (
-      <Button size="large" intent="primary" state="play" disabled leadingIcon={<Play />}>
-        No launch method
-      </Button>
-    );
+    return <Button text={"No launch methods"} size="md" intent="primary" disabled leadingIcon={<Play />} />;
   }
 
   if (launchEnabled.length === 1) {
@@ -102,51 +105,43 @@ export const ButtonPlay = () => {
       const app = game.launchApp.find((app) => app.isEnabled);
       return (
         <Button
-          size="large"
+          text="Play"
+          size="md"
           intent="primary"
-          state="play"
           onClick={() => handleOnPlay(LaunchType.APP, app.id)}
           leadingIcon={<Play />}
-        >
-          Play
-        </Button>
+        />
       );
     }
     if (game.launchStorefront.some((app) => app.isEnabled)) {
       const app = game.launchStorefront.find((app) => app.isEnabled);
       return (
         <Button
-          size="large"
+          text="Play"
+          size="md"
           intent="primary"
-          state="play"
           onClick={() => handleOnPlay(LaunchType.STOREFRONT, app.id)}
           leadingIcon={<Play />}
-        >
-          Play
-        </Button>
+        />
       );
     }
     if (game.launchEmulation.some((app) => app.isEnabled)) {
       const app = game.launchEmulation.find((app) => app.isEnabled);
       return (
         <Button
-          size="large"
+          text="Play"
+          size="md"
           intent="primary"
-          state="play"
           onClick={() => handleOnPlay(LaunchType.EMULATOR, app.id)}
           leadingIcon={<Play />}
-        >
-          Play
-        </Button>
+        />
       );
     }
   } else {
     return (
       <Dialog>
         <Dialog.Trigger asChild>
-          <Button size="large" intent="primary" state="play">
-            Play
-          </Button>
+          <Button text="play" size="md" intent="primary" />
         </Dialog.Trigger>
         <Dialog.Content>
           <Dialog.Title>Launch game</Dialog.Title>
@@ -155,16 +150,13 @@ export const ButtonPlay = () => {
               (launch) =>
                 launch.isEnabled && (
                   <Button
+                    text={launch.name}
                     intent="primary"
-                    size="large"
-                    className="text-white"
-                    background={false}
+                    size="md"
                     onClick={() => {
                       handleOnPlay(LaunchType.STOREFRONT, launch.id);
                     }}
-                  >
-                    {launch.name}
-                  </Button>
+                  />
                 ),
             )}
 
@@ -173,15 +165,12 @@ export const ButtonPlay = () => {
                 launch.isEnabled && (
                   <Button
                     intent="primary"
-                    className="text-white"
-                    size="large"
-                    background={false}
+                    size="md"
+                    text={launch.name}
                     onClick={() => {
                       handleOnPlay(LaunchType.APP, launch.id);
                     }}
-                  >
-                    {launch.name}
-                  </Button>
+                  />
                 ),
             )}
 
@@ -190,15 +179,11 @@ export const ButtonPlay = () => {
                 launch.isEnabled && (
                   <Button
                     intent="primary"
-                    className="text-white"
-                    size="large"
-                    background={false}
+                    text={launch.name}
                     onClick={() => {
                       handleOnPlay(LaunchType.EMULATOR, launch.id);
                     }}
-                  >
-                    {launch.name}
-                  </Button>
+                  />
                 ),
             )}
           </div>

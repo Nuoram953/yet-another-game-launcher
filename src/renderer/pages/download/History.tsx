@@ -8,8 +8,8 @@ import { ArrowDownToLine, Store } from "lucide-react";
 import { formatDateWithOrdinalYear } from "@render/utils/util";
 import { useTranslation } from "react-i18next";
 import { LOCALE_NAMESPACE } from "@common/constant";
-import { useNavigate } from "react-router-dom";
 import { useGames } from "@render/context/DatabaseContext";
+import { useNavigate } from "@tanstack/react-router";
 
 interface DownloadHistoryRowProps {
   id: string;
@@ -51,11 +51,11 @@ export const DownloadHistoryRow = ({ id, dateInstalled }: DownloadHistoryRowProp
       <div className="flex flex-1 flex-col gap-2">
         <h1 className="text-lg font-bold">{game.name}</h1>
         <div className="flex flex-row gap-8">
-          <div className="flex flex-row items-center justify-center gap-1 text-design-text-subtle">
+          <div className="text-design-text-subtle flex flex-row items-center justify-center gap-1">
             <ArrowDownToLine className="mr-1" size={16} />
             <p>{formatDateWithOrdinalYear(Number(dateInstalled))}</p>
           </div>
-          <div className="flex flex-row items-center justify-center gap-1 text-design-text-subtle">
+          <div className="text-design-text-subtle flex flex-row items-center justify-center gap-1">
             <Store className="mr-1" size={16} />
             <p>{t(`storefront.${game.storefront.name}`, { ns: LOCALE_NAMESPACE.COMMON })}</p>
           </div>
@@ -67,7 +67,11 @@ export const DownloadHistoryRow = ({ id, dateInstalled }: DownloadHistoryRowProp
             text="Go to page"
             size="small"
             onClick={() => {
-              navigate(`/game/${game.id}`, { replace: true });
+              navigate({
+                to: "/game/$id",
+                params: { id: game.id },
+                replace: true,
+              });
             }}
           />
         </div>

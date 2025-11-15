@@ -4,7 +4,7 @@ import { getGames } from "../api/get-game-by-search";
 import { useDebounce } from "@render/hooks/useDebounce";
 import { useAddGame } from "../api/post-game";
 
-export const Search = () => {
+export const SearchNewGame = () => {
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

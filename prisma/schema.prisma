@@ -53,6 +53,7 @@ model Game {
   engines                GameEngine[]
   statusHistory          GameStatusHistory[]
   review                 GameReview?
+  reviewToughts          GameReviewThoughts[]
   downloadHistory        DownloadHistory[]
   gamescope              GameConfigGamescope?
   rankings               RankingGame[]
@@ -191,16 +192,22 @@ model GameReview {
   gameId          String
   game            Game    @relation(fields: [gameId], references: [id])
   isAdvanceReview Boolean @default(false)
-  score           Int
-  scoreGraphic    Int?
-  scoreGameplay   Int?
-  scoreStory      Int?
-  scoreSound      Int?
-  scoreContent    Int?
+  score           Int?
   review          String?
 
   @@unique([gameId])
   @@index([gameId])
+}
+
+model GameReviewThoughts {
+  id         String   @id @default(uuid())
+  gameId     String
+  game       Game     @relation(fields: [gameId], references: [id])
+  text       String
+  isPositive Boolean  @default(false)
+  isNegative Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model ExternalReview {

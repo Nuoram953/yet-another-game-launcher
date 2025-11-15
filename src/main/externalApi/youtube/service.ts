@@ -12,7 +12,7 @@ export const downloadVideoForGame = async (game: Game) => {
     return;
   }
 
-  const searchResults = await YoutubeEndpoints.search(game, MEDIA_TYPE.TRAILER, 1);
+  const searchResults = await YoutubeEndpoints.search(game, MEDIA_TYPE.TRAILER, "", 1);
   for (const result of searchResults) {
     await YoutubeEndpoints.download(game, MEDIA_TYPE.TRAILER, result.id);
   }
@@ -26,8 +26,8 @@ export const downloadMusicForGame = async (game: Game) => {
     return;
   }
 
-  const searchResults = await YoutubeEndpoints.search(game, MEDIA_TYPE.MUSIC, 1);
+  const searchResults = await YoutubeEndpoints.search(game, MEDIA_TYPE.MUSIC, "", 1);
   for (const result of searchResults) {
-    await YoutubeEndpoints.download(game, MEDIA_TYPE.MUSIC, result.id);
+    await YoutubeEndpoints.download(game, MEDIA_TYPE.MUSIC, result.id, true);
   }
 };
