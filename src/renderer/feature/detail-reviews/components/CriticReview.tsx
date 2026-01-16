@@ -1,155 +1,110 @@
-import { Button } from "@render/components/button/Button";
-import { Card } from "@render/components/card/Card";
+import Button from "@render/components/new/button/Button";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
 import Section from "@render/components/new/section";
-import { Badge } from "@render/components/ui/badge";
-import { useGames } from "@render/context/DatabaseContext";
-import useGameStore from "@render/feature/detail/store/GameStore";
+import { useGameFromParams } from "@render/hooks/useGameParam";
 import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Globe } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 
-interface ModernUserReviewsProps {
-  currentPage: number;
-  onPageChange: (page: number) => void;
-}
+export function CriticReviews() {
+  const INITIAL_COUNT = 3;
+  const [expanded, setExpanded] = React.useState(false);
+  const { game, isLoading } = useGameFromParams();
 
-export function CriticReviews({ currentPage, onPageChange }: ModernUserReviewsProps) {
-  const { game } = useGameStore();
-  const [expandedReviews, setExpandedReviews] = useState<Set<number>>(new Set());
+  if (isLoading) {
+    return <LoadingCenter />;
+  }
 
-  const reviewsPerPage = 3;
-  const totalReviews = game.externalReviewMap.filter(
-    (review) => review.externalReview.isCritic && review.gameId === game.id,
-  ).length;
-  const totalPages = Math.ceil(totalReviews / reviewsPerPage);
-
-  const startIndex = currentPage * reviewsPerPage;
-  const endIndex = Math.min(startIndex + reviewsPerPage, totalReviews);
-  const currentReviews = game.externalReviewMap
-    .filter((review) => review.externalReview.isCritic && review.gameId === game.id)
-    .slice(startIndex, endIndex);
-
-  const handlePrevious = () => {
-    if (currentPage > 0) {
-      onPageChange(currentPage - 1);
-      setExpandedReviews(new Set());
+  const criticReviews = useMemo(() => {
+    const reviews = game.externalReviewMap.filter((r) => r.externalReview.isCritic && r.gameId === game.id);
+    for (let i = reviews.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [reviews[i], reviews[j]] = [reviews[j], reviews[i]];
     }
+    return reviews;
+  }, [game]);
+
+  const visibleReviews = expanded ? criticReviews : criticReviews.slice(0, INITIAL_COUNT);
+
+  const scoreBadge = (score: number | null, isPositive: boolean) => {
+    if (score === null) return null;
+
+    return (
+      <span
+        className={`rounded-md px-2 py-0.5 text-xs font-semibold ${
+          isPositive ? "text-design-score-positive bg-green-500/20" : "text-design-score-disappointing bg-red-500/20"
+        }`}
+      >
+        {score}/100
+      </span>
+    );
   };
 
-  const handleNext = () => {
-    if (currentPage < totalPages - 1) {
-      onPageChange(currentPage + 1);
-      setExpandedReviews(new Set());
-    }
-  };
-
-  const handleFirst = () => {
-    onPageChange(0);
-    setExpandedReviews(new Set());
-  };
-
-  const handleLast = () => {
-    onPageChange(totalPages - 1);
-    setExpandedReviews(new Set());
-  };
-
-  const toggleExpanded = (reviewIndex: number) => {
-    const globalIndex = startIndex + reviewIndex;
-    const newExpanded = new Set(expandedReviews);
-    if (newExpanded.has(globalIndex)) {
-      newExpanded.delete(globalIndex);
-    } else {
-      newExpanded.add(globalIndex);
-    }
-    setExpandedReviews(newExpanded);
-  };
-
-  const truncateText = (text: string, maxLength: number = 200) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
-  };
-
-  const getScoreColor = (score: number | null) => {
-    if (!score) return "bg-design-score-none";
-    if (score >= 80) return "bg-design-score-masterpiece";
-    if (score >= 60) return "bg-design-score-positive";
-    if (score >= 40) return "bg-design-score-mixed";
-    return "bg-design-score-disappointing";
-  };
+  if (!visibleReviews.length) return;
 
   return (
     <Section>
-      <Section.Title title="Critic Reviews" />
-      <Section.Content>
-        <div className="space-y-6">
-          {currentReviews.map((reviewData, index) => {
-            const globalIndex = startIndex + index;
-            const isExpanded = expandedReviews.has(globalIndex);
+      <Section.Title title="Critic reviews" />
 
-            return (
-              <div key={globalIndex} className="flex gap-6 rounded-lg border border-design-border p-6">
-                <div className="w-48 flex-shrink-0">
-                  <div className="flex flex-col items-center text-center">
+      <Section.Content>
+        <div className="flex flex-col gap-4 space-y-4">
+          {visibleReviews.map(({ externalReview }, index) => (
+            <div
+              key={index}
+              className={`pb-3 pl-4 pr-2 ${
+                externalReview.isPositive ? "border-design-score-positive" : "border-design-score-disappointing"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {externalReview.iconUrl && (
                     <img
-                      src={reviewData.externalReview.iconUrl}
-                      alt={reviewData.externalReview.author}
-                      className="mb-3 h-16 w-16"
+                      src={externalReview.iconUrl}
+                      alt={externalReview.source ?? "critic"}
+                      className="size-8 rounded-md"
                     />
-                    <h4 className="mb-1 font-semibold">{reviewData.externalReview.author}</h4>
-                    <Badge className="mb-2">{reviewData.externalReview.source}</Badge>
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <div className="col-span-3 flex flex-col">
-                    <p className="text-lg leading-relaxed">
-                      {isExpanded ? reviewData.externalReview.review : truncateText(reviewData.externalReview.review)}
-                    </p>
-                    {reviewData.externalReview.review.length > 200 && (
-                      <button
-                        onClick={() => toggleExpanded(index)}
-                        className="mt-3 self-start text-sm font-medium text-design-text-link transition-colors"
-                      >
-                        {isExpanded ? "Show less" : "Continue reading →"}
-                      </button>
+                  )}
+
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-design-text-normal font-medium">{externalReview.source}</span>
+                      {scoreBadge(externalReview.score, externalReview.isPositive)}
+                    </div>
+
+                    {externalReview.author && (
+                      <p className="text-design-text-subtle text-xs">{externalReview.author}</p>
                     )}
-                    <div className="mt-4 flex gap-2">
-                      <Globe />
-                      <a href={reviewData.externalReview.sourceUrl} className="text-design-text-link">
-                        Full review
-                      </a>
-                    </div>
-                  </div>
-                  <div className="col-span-1 flex justify-center">
-                    <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-full ${getScoreColor(reviewData.externalReview.score)} transform shadow-lg transition-all duration-300`}
-                    >
-                      <span className="text-lg font-bold text-design-text-normal">
-                        {reviewData.externalReview.score || "--"}
-                      </span>
-                    </div>
                   </div>
                 </div>
+
+                {externalReview.reviewedAt && (
+                  <span className="text-design-text-subtle text-xs">
+                    {new Date(externalReview.reviewedAt).toLocaleDateString()}
+                  </span>
+                )}
               </div>
-            );
-          })}
+
+              <p className="text-design-text-muted mt-2 text-sm leading-relaxed">“{externalReview.review}”</p>
+
+              {externalReview.sourceUrl && (
+                <div className="mt-2 flex items-center gap-2 text-xs">
+                  <Globe className="text-design-text-subtle h-3 w-3" />
+                  <a href={externalReview.sourceUrl} target="_blank" className="text-design-text-link hover:underline">
+                    Read full review
+                  </a>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </Section.Content>
+
       <Section.Footer>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-row">
-            <Button intent="icon" onClick={handleFirst} disabled={currentPage === 0} icon={ChevronFirst} />
-            <Button intent="icon" onClick={handlePrevious} disabled={currentPage === 0} icon={ChevronLeft} />
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-design-text-subtle">
-              Page {currentPage + 1} of {totalPages}
-            </span>
-          </div>
-
-          <div className="flex flex-row">
-            <Button intent="icon" onClick={handleNext} disabled={currentPage === totalPages - 1} icon={ChevronRight} />
-            <Button intent="icon" onClick={handleLast} disabled={currentPage === totalPages - 1} icon={ChevronLast} />
-          </div>
+        <div className="flex justify-center">
+          <Button
+            intent="secondary"
+            onClick={() => setExpanded((v) => !v)}
+            text={expanded ? "Collapse" : `Expand (${criticReviews.length - 3} more)`}
+          />
         </div>
       </Section.Footer>
     </Section>

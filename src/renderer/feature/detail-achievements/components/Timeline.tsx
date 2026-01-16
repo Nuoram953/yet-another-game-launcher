@@ -14,18 +14,21 @@ import {
 import { Line, Bar } from "react-chartjs-2";
 import { BarChart3, TrendingUp, Clock, Calendar } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { LOCALE_NAMESPACE } from "@common/constant";
-import useGameStore from "@render/feature/detail/store/GameStore";
-import { Card } from "@render/components/card/Card";
 import { StatsCard } from "@render/feature/detail-overview/components/StatsCard";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
+import { useGameFromParams } from "@render/hooks/useGameParam";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler);
 
 const Timeline = () => {
   const { t } = useTranslation();
-  const { game } = useGameStore();
+  const { game, isLoading } = useGameFromParams();
   const [viewMode, setViewMode] = useState<"daily" | "weekly" | "monthly">("daily");
   const [chartType, setChartType] = useState<"line" | "bar">("line");
+
+  if (isLoading) {
+    return <LoadingCenter />;
+  }
 
   const processedData = useMemo(() => {
     if (!game) return null;
@@ -70,7 +73,7 @@ const Timeline = () => {
 
   if (!game || !processedData) {
     return (
-      <div className="flex h-64 items-center justify-center text-design-text-subtle">
+      <div className="text-design-text-subtle flex h-64 items-center justify-center">
         <div className="text-center">
           <Clock className="mx-auto mb-2 h-8 w-8" />
           <p>No achievement data available</p>

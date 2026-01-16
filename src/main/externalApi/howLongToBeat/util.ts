@@ -16,7 +16,7 @@ export const fetchSearchId = async () => {
     response = await fetch(jsUrl, { headers: DEFAULT_HEADERS });
     const jsContent = await response.text();
 
-    const tokenMatch = jsContent.match(/"\/api\/locate\/"\.concat\("(\w*)"\)\.concat\("(\w*)"\)/);
+    const tokenMatch = jsContent.match(/"\/api\/search\/"\.concat\("(\w*)"\)\.concat\("(\w*)"\)/);
     if (!tokenMatch || tokenMatch.length < 3) {
       return null;
     }

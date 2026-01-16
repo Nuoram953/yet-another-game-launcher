@@ -4,14 +4,22 @@ import { useQuery } from "@tanstack/react-query";
 import { getGameAchievements } from "../api/DetailAchievementsApi";
 import { Tooltip } from "@render/components/new/tooltip";
 import { unixToDate } from "@render/utils/util";
+import { useParams } from "react-router-dom";
+import { useGame } from "@render/api/get-game";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
+import { useGameFromParams } from "@render/hooks/useGameParam";
 
 export const Listv2 = () => {
-  const game = useGameStore((state) => state.game);
+  const { game, isLoading, id } = useGameFromParams();
 
   const { data, isPending } = useQuery({
-    queryKey: ["game", game?.id, "achievements"],
-    queryFn: () => getGameAchievements(game!.id),
+    queryKey: ["game", id, "achievements"],
+    queryFn: () => getGameAchievements(id),
   });
+
+  if (isLoading || isPending) {
+    return <LoadingCenter />;
+  }
 
   const unlockedAchievements = game?.achievements?.filter((a) => a.isUnlocked) ?? [];
 
@@ -71,12 +79,12 @@ export const Listv2 = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex h-24 w-24 items-center justify-center rounded-md bg-design-foreground hover:border hover:border-white">
-                <Lock className="h-6 w-6 text-design-text-subtle" />
+              <div className="bg-design-foreground flex h-24 w-24 items-center justify-center rounded-md hover:border hover:border-white">
+                <Lock className="text-design-text-subtle h-6 w-6" />
               </div>
             )}
           </Tooltip.Trigger>
-          <Tooltip.Content className="border border-design-border">
+          <Tooltip.Content className="border-design-border border">
             <div className="flex flex-col gap-2">
               <span>{achievement.name}</span>
               {achievement.isUnlocked && (

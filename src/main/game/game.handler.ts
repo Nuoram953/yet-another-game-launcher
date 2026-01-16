@@ -43,6 +43,17 @@ ipcMain.handle(RouteGame.KILL, async (_event, id, launchId, type) => {
   }
 });
 
+ipcMain.handle(RouteGame.GET_REVIEW, async (_event, id) => {
+  try {
+    return await GameService.getReview(id);
+  } catch (e) {
+    log.error(ErrorMessage.ERROR_IN_ROUTE, {
+      route: RouteGame.SET_REVIEW,
+      error: e,
+    });
+  }
+});
+
 ipcMain.handle(RouteGame.SET_REVIEW, async (_event, data) => {
   try {
     await GameService.setReview(data);
@@ -53,6 +64,18 @@ ipcMain.handle(RouteGame.SET_REVIEW, async (_event, data) => {
       error: e,
     });
   }
+});
+
+withHandler(RouteGame.CREATE_REVIEW_THOUGHT, async (_event, gameId) => {
+  return await GameService.createReviewThought(gameId);
+});
+
+withHandler(RouteGame.UPDATE_REVIEW_THOUGHT, async (_event, data) => {
+  return await GameService.updateReviewThought(data);
+});
+
+withHandler(RouteGame.DELETE_REVIEW_THOUGHT, async (_event, id) => {
+  return await GameService.deleteReviewThought(id);
 });
 
 ipcMain.handle(RouteGame.SET_STATUS, async (_event, data) => {

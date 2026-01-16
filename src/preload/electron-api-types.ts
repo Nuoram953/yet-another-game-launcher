@@ -8,6 +8,7 @@ import type {
   GameLaunchApp,
   GameLaunchEmulation,
   GameReview,
+  GameReviewThoughts,
   GameStatus,
   RankingGame,
   Storefront,
@@ -100,7 +101,7 @@ export interface MediaAPI {
   getScreenshots: (gameId: string, count?: number) => Promise<string[]>;
   getMusics: (gameId: string, count?: number) => Promise<string[]>;
   delete: (gameId: string, mediaType: string, mediaId: string) => Promise<void>;
-  search: (gameId: string, mediaType: MEDIA_TYPE, page: number) => Promise<string[] | Video[]>;
+  search: (gameId: string, mediaType: MEDIA_TYPE, search: string, page: number) => Promise<string[] | Video[]>;
   downloadByUrl: (gameId: string, mediaType: MEDIA_TYPE, url: string) => Promise<void>;
   setDefault: (gameId: string, mediaType: MEDIA_TYPE, name: string) => Promise<void>;
   removeDefault: (gameId: string, mediaType: MEDIA_TYPE) => Promise<void>;
@@ -145,8 +146,14 @@ export interface GameAPI {
   install: (id: string) => Promise<void>;
   uninstall: (id: string) => Promise<void>;
   kill: (id: string, launchId: number, type: LaunchType) => Promise<void>;
+
+  getReview: (id: string) => Promise<{ review: GameReview; thoughts: GameReviewThoughts[] }>;
   setReview: (data: Partial<GameReview>) => Promise<void>;
   setStatus: (data: Partial<Game>) => Promise<void>;
+  createReviewThought: (gameId: string) => Promise<GameReviewThoughts>;
+  updateReviewThought: (data: Partial<GameReviewThoughts>) => Promise<GameReviewThoughts>;
+  deleteReviewThought: (id: string) => Promise<void>;
+
   setGamescope: (data: GameConfigGamescope) => Promise<void>;
   setFavorite: (id: string, isFavorite: boolean) => Promise<void>;
   refreshProgressTracker: (id: string) => Promise<void>;

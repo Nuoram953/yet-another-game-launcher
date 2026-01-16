@@ -140,14 +140,7 @@ export function DetailsMetadata() {
     }
   };
 
-  const openAddDialog = (mediaType: MEDIA_TYPE) => {
-    setCurrentMediaType(mediaType);
-    setIsDialogOpen(true);
-  };
-
-  const closeDialog = () => {
-    setIsDialogOpen(false);
-  };
+  console.log(media);
 
   const getImageDimensions = (type: string): string => {
     switch (type.toLowerCase()) {
@@ -176,8 +169,9 @@ export function DetailsMetadata() {
     <>
       {Object.entries(media).map(([mediaKey, group]) => (
         <Section>
-          <Plus onClick={() => openAddDialog(MEDIA_TYPE.MUSIC)} />
-          <Section.Title title={mediaKey.charAt(0).toUpperCase() + mediaKey.slice(1)} />
+          <ImageAddDialogue mediaType={mediaKey as MEDIA_TYPE} />
+          <Trash onClick={() => getMedia().removeDefault(game.id, MEDIA_TYPE.MUSIC)} />
+          <Section.Title title={mediaKey.charAt(0).toUpperCase() + mediaKey.slice(1) + ` (${group.all.length})`} />
           <Section.Content>
             {group.all.length === 0 ? (
               <div className="flex h-32 items-center justify-center">
@@ -239,14 +233,6 @@ export function DetailsMetadata() {
           </Section.Content>
         </Section>
       ))}
-
-      <ImageAddDialogue
-        isOpen={isDialogOpen}
-        onClose={closeDialog}
-        mediaType={currentMediaType}
-        gameId={game?.id}
-        refresh={refreshPage}
-      />
     </>
   );
 }

@@ -19,7 +19,7 @@ const dividerVariants = cva("", {
       xl: "",
     },
     color: {
-      gray: "border-design-border",
+      gray: "border-white/40",
       slate: "border-slate-300",
       blue: "border-blue-500",
       red: "border-red-500",

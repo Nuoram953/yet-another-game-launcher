@@ -1,4 +1,4 @@
-import Input from "@render/components/new/input/TextInput";
+import { Input } from "@render/components/new/input";
 import { Label } from "@render/components/ui/label";
 import { Switch } from "@render/components/ui/switch";
 import React from "react";
@@ -32,7 +32,7 @@ export const InputSwitch = ({
         <Switch checked={value} onCheckedChange={handleCheckedChange} />
       </div>
       {value && inputPlaceholder && inputOnChange && (
-        <Input color={"dark"} placeholder={inputPlaceholder} value={inputValue} onChange={inputOnChange} />
+        <Input.Text color={"dark"} placeholder={inputPlaceholder} value={inputValue} onChange={inputOnChange} />
       )}
     </div>
   );
@@ -65,7 +65,7 @@ export const InputText = ({
           <span className="text-sm text-gray-500">{description}</span>
         </Label>
       </div>
-      <Input
+      <Input.Text
         className={customClass}
         color={"dark"}
         placeholder={inputPlaceholder}
@@ -113,7 +113,7 @@ export const InputFile = ({
         </div>
       )}
 
-      <Input
+      <Input.Text
         id="file-input"
         type="file"
         color="dark"

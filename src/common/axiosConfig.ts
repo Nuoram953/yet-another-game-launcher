@@ -4,6 +4,7 @@ import logger, { LogTag } from "@main/logger";
 axios.interceptors.request.use(
   (config) => {
     logger.info("Request Input:", { url: config.url }, LogTag.NETWORK);
+    logger.debug("Request Input:", config, LogTag.NETWORK);
     return config;
   },
   (error) => {
@@ -25,6 +26,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
+    logger.debug(`Response Error:`, error, LogTag.NETWORK);
     if (error.response) {
       logger.error(
         `Response Error from ${error.response.config.url}:`,

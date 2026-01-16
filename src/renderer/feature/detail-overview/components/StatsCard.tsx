@@ -1,7 +1,6 @@
 import React from "react";
 import { cn } from "@render//lib/utils";
 import { Skeleton } from "@render//components/ui/skeleton";
-import useColorStore from "@render/feature/detail/store/ColorStore";
 
 interface StatsCardProps {
   label: string;
@@ -24,8 +23,6 @@ export const StatsCard = ({
   className,
   onClick,
 }: StatsCardProps) => {
-  const theme = useColorStore((state) => state.theme);
-
   if (hide) return null;
 
   const content = (
@@ -34,7 +31,7 @@ export const StatsCard = ({
         "group flex min-w-0 flex-1 flex-col gap-3 p-6",
         "transition-all duration-200 ease-out",
         "hover:bg-design-foreground/50",
-        "border-l-2 border-transparent hover:border-l-design-border-hover",
+        "hover:border-l-design-border-hover border-l-2 border-transparent",
         onClick && [
           "cursor-pointer",
           "focus-visible:bg-design-foreground/50 focus-visible:outline-none",
@@ -68,18 +65,15 @@ export const StatsCard = ({
       ) : (
         <>
           {/* Header */}
-          <div className="flex items-center gap-3 text-design-text-subtle">
-            <Icon
-              className="h-6 w-6 transition-colors duration-200 group-hover:text-design-text-normal"
-              aria-hidden="true"
-            />
+          <div className="flex items-center gap-3 text-subtle">
+            <Icon className="h-6 w-6 transition-colors duration-200 group-hover:text-normal" aria-hidden="true" />
             <span className="text-sm font-medium uppercase tracking-wide">{label}</span>
           </div>
 
           {/* Content */}
           <div className="space-y-1">
-            <div className="text-2xl font-bold tabular-nums text-design-text-normal">{value}</div>
-            {detail && <div className="text-sm leading-relaxed text-design-text-subtle">{detail}</div>}
+            <div className="text-2xl font-bold tabular-nums text-normal">{value}</div>
+            {detail && <div className="text-sm leading-relaxed text-subtle">{detail}</div>}
           </div>
         </>
       )}

@@ -1,91 +1,41 @@
 import VideoPlayer from "@render//components/VideoPlayer";
-import useGameStore from "@render/feature/detail/store/GameStore";
-import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
-import { getGameBackground, getGameCover, getGameMusics, getGameTrailers } from "../api/DetailApi";
-import { IconAndText } from "@render/components/layout/Container";
-import { Building } from "lucide-react";
-import { Logo } from "./Logo";
-import Cover from "@render/pages/grid/cover/Cover";
-import { Image } from "@render/components/image/Image";
-import { ButtonPlay } from "@render/components/button/Play";
+import React, { useRef } from "react";
+import { Logo } from "@render/components/image/Logo";
+import { useParams } from "@tanstack/react-router";
+import { useGameTrailer } from "@render/api/get-game-trailer";
+import { useGameBackground } from "@render/api/get-game-background";
+import { useGameMusic } from "@render/api/get-game-music";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
+import { useAudioPlayer } from "@render/hooks/useAudioPlayer";
 
 export const Trailer = () => {
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
-  const game = useGameStore((state) => state.game);
-  const id = game?.id;
-  const { data, isPending } = useQuery({
-    queryKey: ["trailer", id],
-    queryFn: () => getGameTrailers(id),
-    enabled: !!id,
-  });
+  const { id } = useParams({ from: "/game/$id" });
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  const coverQuery = useQuery({
-    queryKey: ["cover", id],
-    queryFn: () => getGameCover(id),
-    enabled: !!id,
-  });
+  const trailerQuery = useGameTrailer({ gameId: id });
+  const backgroundQuery = useGameBackground({ gameId: id });
+  const musicQuery = useGameMusic({ gameId: id });
 
-  const backgroundQuery = useQuery({
-    queryKey: ["background", id],
-    queryFn: () => getGameBackground(id),
-    enabled: !!id,
-  });
+  useAudioPlayer({ audioRef, src: musicQuery.data?.[0], enabled: true, volume: 0.2 });
 
-  const musicQuery = useQuery({
-    queryKey: ["music", id],
-    queryFn: () => getGameMusics(id),
-    enabled: !!id,
-  });
+  if (trailerQuery.isPending || backgroundQuery.isPending || musicQuery.isPending) {
+    return <LoadingCenter />;
+  }
 
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.3;
-    }
-  }, []);
-
-  const hasMusic = musicQuery.data?.length > 0;
+  const trailer = trailerQuery.data?.[0];
+  const background = backgroundQuery.data?.[0];
+  const music = musicQuery.data?.[0];
 
   return (
-    <>
-      {isPending ? (
-        <div>Loading...</div>
-      ) : (
-        <div className="relative w-full shadow-lg">
-          {data.length > 0 ? (
-            <>
-              <VideoPlayer path={data[0]} muted={hasMusic} />
-              {hasMusic && <audio ref={audioRef} src={musicQuery.data[0]} autoPlay loop />}
-            </>
-          ) : (
-            <img src={backgroundQuery.data[0]} className="h-[700px] w-full object-cover" />
-          )}
-          <div className="absolute right-4 top-4 z-10 drop-shadow-lg sm:w-32 lg:w-64">
-            <Logo />
-          </div>
-          <div className="absolute bottom-4 left-4 z-10 w-full drop-shadow-lg">
-            <div className="flex flex-row gap-4">
-              <Image src={coverQuery.data[0]} alt={""} className="h-52 rounded-md" />
-              <div className="mt-2 flex flex-col gap-2">
-                <h1 className="text-2xl font-bold text-design-white">{game.name}</h1>
+    <div className="relative w-full shadow-lg">
+      {trailer && <VideoPlayer path={trailer} muted={!!music} />}
+      {music && <audio ref={audioRef} src={music} autoPlay loop />}
 
-                <div className="flex flex-wrap gap-4">
-                  {game.developers?.[0]?.company?.name && (
-                    <IconAndText icon={<Building className="h-4 w-4" />} text={game.developers[0].company.name} />
-                  )}
-                  {game.publishers?.[0]?.company?.name && (
-                    <IconAndText icon={<Building className="h-4 w-4" />} text={game.publishers[0].company.name} />
-                  )}
-                </div>
+      {!trailer && background && <img src={background} className="h-[700px] w-full object-cover" />}
 
-                <div className="max-w-[45vh] rounded-xl py-4">
-                  <p className="line-clamp-3 leading-relaxed text-gray-200">{game.summary}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      <div className="absolute right-4 top-4 z-10 drop-shadow-lg sm:w-32 lg:w-64">
+        <Logo gameId={id} />
+      </div>
+    </div>
   );
 };

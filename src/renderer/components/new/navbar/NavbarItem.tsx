@@ -4,20 +4,19 @@ import Button from "../button/Button";
 interface NavbarItemProps {
   onClick?: () => void;
   disabled?: boolean;
-  children: React.ReactNode;
-  textColor?: string;
+  text: string;
   icon?: React.ReactNode;
+  active?: boolean;
+  className?: string;
 }
 
-export const NavbarItem = ({ onClick, disabled, children, textColor, icon }: NavbarItemProps) => (
+export const NavbarItem = ({ onClick, disabled, text, active, icon, className }: NavbarItemProps) => (
   <Button
     onClick={!disabled && onClick}
     disabled={disabled}
-    intent="secondary"
-    background={false}
-    className={`text-[${textColor}] hover:bg flex gap-1 border-0 backdrop-blur-sm hover:!bg-black/20`}
+    intent={active ? "secondary" : "tertiary"}
     leadingIcon={icon}
-  >
-    {children}
-  </Button>
+    text={text}
+    className={className}
+  />
 );

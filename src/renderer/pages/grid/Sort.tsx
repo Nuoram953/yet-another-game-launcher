@@ -9,10 +9,10 @@ import {
 import { useGames } from "@render//context/DatabaseContext";
 import { Game } from "@prisma/client";
 import _ from "lodash";
-import { ArrowDown, ArrowDownUp, ArrowUp, ArrowUpDown, FilterIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { ArrowDown, ArrowDownUp, ArrowUp } from "lucide-react";
+import React, { useState } from "react";
 import { SortConfig } from "src/common/types";
-import Button from "@render/components/new/button/Button";
+import ButtonIcon from "@render/components/new/button/ButtonIcon";
 
 export const Sort = () => {
   const { sortConfig, updateSort } = useGames();
@@ -66,10 +66,10 @@ export const Sort = () => {
   return (
     <DropdownMenu open={isOpen}>
       <DropdownMenuTrigger>
-        <Button
-          intent={"icon"}
-          size={"fit"}
-          leadingIcon={<ArrowDownUp />}
+        <ButtonIcon
+          text="Sort"
+          icon={<ArrowDownUp />}
+          intent="tertiary"
           onClick={() => {
             setIsOpen(!isOpen);
           }}

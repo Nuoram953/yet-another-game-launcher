@@ -57,37 +57,43 @@ export const getAllMedia = async (gameId: string) => {
 
 export const getMediaByType = async (type: MEDIA_TYPE, gameId: string, count?: number) => {
   const game = await queries.Game.getGameById(gameId);
-
-  if (_.isNil(game)) {
-    throw new Error(ErrorMessage.INVALID_GAME);
-  }
+  if (_.isNil(game)) throw new Error(ErrorMessage.INVALID_GAME);
 
   try {
-    const paths = [];
-    const directory = path.join(app.getPath("userData"), game.id, type);
+    const dir = path.join(app.getPath("userData"), game.id, type);
+    const allFiles = fs.readdirSync(dir);
 
-    const files = fs.readdirSync(directory);
+    const originalFiles = allFiles.filter((f) => !f.toLowerCase().includes("normalized"));
+
+    const getPreferred = (file: string) => {
+      if (type !== MEDIA_TYPE.MUSIC) return file;
+
+      const ext = path.extname(file);
+      const base = path.basename(file, ext);
+      const normalized = `${base}_normalized${ext}`;
+
+      return allFiles.includes(normalized) ? normalized : file;
+    };
 
     if (_.isUndefined(count)) {
-      for (const file of files) {
-        paths.push(`file://${path.join(directory, file)}`);
-      }
-      return paths;
+      return originalFiles.map((file) => `file://${path.join(dir, getPreferred(file))}`);
     }
 
+    const paths: string[] = [];
     const defaultMedia = await queries.MediaDefault.findByGameIdAndMediaType(game.id, type);
 
     if (defaultMedia) {
-      paths.push(`file://${path.join(directory, defaultMedia.mediaName)}`);
+      paths.push(`file://${path.join(dir, getPreferred(defaultMedia.mediaName))}`);
     }
 
-    const randomFiles = files.sort(() => 0.5 - Math.random()).slice(0, count);
+    const randomFiles = originalFiles.sort(() => 0.5 - Math.random()).slice(0, count);
+
     for (const file of randomFiles) {
-      paths.push(`file://${path.join(directory, file)}`);
+      paths.push(`file://${path.join(dir, getPreferred(file))}`);
     }
 
     return paths;
-  } catch (e) {
+  } catch {
     return [];
   }
 };
@@ -106,13 +112,13 @@ export const deleteMediaByGameIdAndMediaId = async (gameId: string, mediaType: M
   await MetadataService.deleteMedia(gameId, mediaType, mediaId);
 };
 
-export const search = async (gameId: string, mediaType: MEDIA_TYPE, page: number) => {
+export const search = async (gameId: string, mediaType: MEDIA_TYPE, search: string, page: number) => {
   const game = await queries.Game.getGameById(gameId);
   if (_.isNil(game)) {
     throw new Error(ErrorMessage.INVALID_GAME);
   }
 
-  return await MetadataService.searchMedia(game, mediaType, page);
+  return await MetadataService.searchMedia(game, mediaType, search, page);
 };
 
 export const downloadByUrl = async (gameId: string, mediaType: MEDIA_TYPE, url: string) => {
@@ -122,7 +128,7 @@ export const downloadByUrl = async (gameId: string, mediaType: MEDIA_TYPE, url: 
   }
 
   if (mediaType === MEDIA_TYPE.TRAILER || mediaType === MEDIA_TYPE.MUSIC) {
-    return await YoutubeApi.download(game, mediaType, url);
+    return await YoutubeApi.download(game, mediaType, url, true);
   } else {
     return await MetadataService.downloadImage(mediaType, game, url);
   }

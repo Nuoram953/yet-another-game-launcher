@@ -13,6 +13,9 @@ import useGameStore from "@render/feature/detail/store/GameStore";
 import { Card } from "@render/components/card/Card";
 import { useQuery } from "@tanstack/react-query";
 import { getGameAchievements } from "../api/DetailAchievementsApi";
+import { useParams } from "react-router-dom";
+import { useGame } from "@render/api/get-game";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
 
 export const List = () => {
   const { t } = useTranslation();
@@ -23,12 +26,19 @@ export const List = () => {
   const [viewMode, setViewMode] = useState<"all" | "unlocked" | "locked">("all");
   const [sortBy, setSortBy] = useState("date");
 
-  const { game } = useGameStore();
+  const { id } = useParams<{ id: string }>();
+  const gameQuery = useGame({ gameId: id });
 
   const { data, isPending } = useQuery({
-    queryKey: ["game", game?.id, "achievements"],
-    queryFn: () => getGameAchievements(game!.id),
+    queryKey: ["game", id, "achievements"],
+    queryFn: () => getGameAchievements(id),
   });
+
+  if (gameQuery.isPending) {
+    return <LoadingCenter />;
+  }
+
+  const game = gameQuery.data;
 
   const unlockedAchievements = game?.achievements?.filter((a) => a.isUnlocked);
 
@@ -95,7 +105,7 @@ export const List = () => {
       <div className="space-y-6">
         <div className="flex flex-wrap items-center gap-4">
           <div className="relative max-w-md flex-grow">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-design-text-subtle" />
+            <Search className="text-design-text-subtle absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
             <Input
               color="dark"
               placeholder={t("achievements.all.search.placeholder", { ns: LOCALE_NAMESPACE.DETAIL })}
@@ -133,16 +143,16 @@ export const List = () => {
 
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 rounded-md border border-design-border px-3 py-2 text-sm hover:bg-design-background"
+            className="border-design-border hover:bg-design-background flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
           >
             <Filter className="h-4 w-4" />
             {t("achievements.all.filter.advanced", { ns: LOCALE_NAMESPACE.DETAIL })}
-            {activeFiltersCount > 0 && <Badge className="ml-1 bg-primary text-xs">{activeFiltersCount}</Badge>}
+            {activeFiltersCount > 0 && <Badge className="bg-primary ml-1 text-xs">{activeFiltersCount}</Badge>}
           </button>
         </div>
 
         {showFilters && (
-          <div className="rounded-md border border-design-border bg-design-foreground p-4">
+          <div className="border-design-border bg-design-foreground rounded-md border p-4">
             <h4 className="mb-3 text-sm font-medium">Advanced Filters</h4>
             <div className="flex flex-wrap items-center gap-6 text-sm">
               <label className="flex cursor-pointer items-center gap-2">
@@ -163,7 +173,7 @@ export const List = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between text-sm text-design-text-subtle">
+        <div className="text-design-text-subtle flex items-center justify-between text-sm">
           <span>Showing {filteredAchievements.length} achievements</span>
           {searchQuery && (
             <button onClick={() => setSearchQuery("")} className="text-primary hover:underline">
@@ -174,11 +184,11 @@ export const List = () => {
 
         {filteredAchievements.length === 0 && (
           <div className="flex h-40 flex-col items-center justify-center text-center">
-            <div className="mb-4 rounded-full bg-design-foreground p-4">
-              <Search className="h-8 w-8 text-design-text-subtle" />
+            <div className="bg-design-foreground mb-4 rounded-full p-4">
+              <Search className="text-design-text-subtle h-8 w-8" />
             </div>
             <h3 className="mb-2 text-lg font-medium">No achievements found</h3>
-            <p className="mb-4 text-sm text-design-text-subtle">
+            <p className="text-design-text-subtle mb-4 text-sm">
               {searchQuery ? "Try a different search term" : "Try adjusting your filters"}
             </p>
             {(searchQuery || activeFiltersCount > 0) && (
@@ -189,7 +199,7 @@ export const List = () => {
                   setHideUnlocked(false);
                   setHideHidden(false);
                 }}
-                className="text-sm text-primary hover:underline"
+                className="text-primary text-sm hover:underline"
               >
                 {t("achievements.all.search.clear", { ns: LOCALE_NAMESPACE.DETAIL })}
               </button>
@@ -216,18 +226,18 @@ export const List = () => {
                       className="h-12 w-12 rounded-md object-contain"
                     />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-md border border-design-border bg-design-foreground">
-                      <Lock className="h-6 w-6 text-design-text-subtle" />
+                    <div className="border-design-border bg-design-foreground flex h-12 w-12 items-center justify-center rounded-md border">
+                      <Lock className="text-design-text-subtle h-6 w-6" />
                     </div>
                   )}
                 </div>
 
                 <div className="mr-4 min-w-0 flex-grow">
                   <div className="mb-1 flex items-center gap-2">
-                    <h3 className="font-semibold text-design-text-normal transition-colors group-hover:text-primary">
+                    <h3 className="text-design-text-normal group-hover:text-primary font-semibold transition-colors">
                       {achievement.name}
                     </h3>
-                    {achievement.isHidden && <EyeOff className="h-4 w-4 flex-shrink-0 text-design-text-subtle" />}
+                    {achievement.isHidden && <EyeOff className="text-design-text-subtle h-4 w-4 flex-shrink-0" />}
                     {achievement.rarity && achievement.rarity < 10 && (
                       <Award className="text-design-achievement-rarity-rare h-4 w-4 flex-shrink-0" />
                     )}
@@ -244,32 +254,32 @@ export const List = () => {
 
                     {rarest.id === achievement.id && <Award className="h-4 w-4 flex-shrink-0 text-purple-500" />}
                   </div>
-                  <p className="text-sm text-design-text-normal">{achievement.description}</p>
+                  <p className="text-design-text-normal text-sm">{achievement.description}</p>
                 </div>
 
                 <div className="flex flex-shrink-0 flex-col items-end space-y-1 text-right">
                   {achievement.isUnlocked ? (
                     <>
-                      <div className="flex items-center text-sm text-design-achievement-unlocked">
+                      <div className="text-design-achievement-unlocked flex items-center text-sm">
                         <CheckCircle className="mr-1 h-4 w-4" />
                         <span className="font-medium">Unlocked</span>
                       </div>
-                      <div className="text-xs text-design-text-subtle">
+                      <div className="text-design-text-subtle text-xs">
                         {unixToDate(Number(achievement.unlockedAt))}
                       </div>
                     </>
                   ) : (
-                    <div className="text-sm font-medium text-design-text-subtle">Locked</div>
+                    <div className="text-design-text-subtle text-sm font-medium">Locked</div>
                   )}
 
                   {achievement.rarity && (
-                    <div className="text-xs text-design-text-subtle">{achievement.rarity.toFixed(1)}% unlocked</div>
+                    <div className="text-design-text-subtle text-xs">{achievement.rarity.toFixed(1)}% unlocked</div>
                   )}
                 </div>
               </div>
 
               {achievement.isUnlocked && (
-                <div className="absolute inset-x-0 bottom-0 h-1 bg-design-achievement-unlocked-underline" />
+                <div className="bg-design-achievement-unlocked-underline absolute inset-x-0 bottom-0 h-1" />
               )}
             </div>
           ))}

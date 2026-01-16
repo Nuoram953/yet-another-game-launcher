@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Game } from "@prisma/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { Image } from "@render//components/image/Image";
 import { Clock, Trophy } from "lucide-react";
 import { convertToHoursAndMinutes } from "@render//utils/util";
@@ -33,7 +33,11 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
   }, []);
 
   const handleOnClick = () => {
-    navigate(`/game/${game.id}`, { replace: true });
+    navigate({
+      to: "/game/$id",
+      params: { id: game.id },
+      replace: true,
+    });
   };
 
   if (loading) {
@@ -49,7 +53,7 @@ export const RecentlyPlayedCarouselItem = ({ index, game }: Props) => {
     >
       <Image src={backgroundPicture} alt={game.name} className="h-full w-full object-cover" allowFade={false} />
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
-        <h2 className="mb-2 text-4xl font-bold text-design-text-normal">{game.name}</h2>
+        <h2 className="mb-2 text-4xl font-bold text-normal">{game.name}</h2>
         <div className="flex flex-row gap-8">
           <div className="flex flex-row items-center justify-center gap-1 text-gray-300">
             <Clock className="mr-1" size={16} />

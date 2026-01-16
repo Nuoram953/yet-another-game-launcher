@@ -38,3 +38,11 @@ export const deleteByGameId = async (gameId: string) => {
     },
   });
 };
+
+export const getByGameId = async (id: string) => {
+  return await prisma.gameReview.findUnique({
+    where: {
+      gameId: id,
+    },
+  });
+};

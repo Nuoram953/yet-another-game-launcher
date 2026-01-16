@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { convertToHoursAndMinutes } from "@render//utils/util";
 import { Clock } from "lucide-react";
 import { SkeletonCover } from "./skeleton";
@@ -56,7 +56,10 @@ const Cover = ({ game }: CoverProps) => {
 
   const handleRunCommand = async () => {
     try {
-      navigate(`/game/${game.id}`, { replace: true });
+      navigate({
+        to: "/game/$id",
+        params: { id: game.id },
+      });
     } catch (err) {}
   };
 
@@ -72,7 +75,7 @@ const Cover = ({ game }: CoverProps) => {
 
   return (
     <div
-      className="relative w-full text-design-text-normal"
+      className="text-design-text-normal relative w-full"
       onClick={handleRunCommand}
       onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
       onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
@@ -89,7 +92,7 @@ const Cover = ({ game }: CoverProps) => {
 
       {game.isFavorite && <FavoriteBadge />}
       <div className="w-wull flex flex-col truncate text-left">
-        <p className="w-full truncate text-design-text-normal">{game.name}</p>
+        <p className="text-design-text-normal w-full truncate">{game.name}</p>
         <div className="flex flex-row items-center text-gray-300">
           <Clock className="mr-1" size={16} />
           <p>{convertToHoursAndMinutes(game.timePlayed)}</p>

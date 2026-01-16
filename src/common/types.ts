@@ -16,6 +16,7 @@ export type GameWithRelations = Prisma.GameGetPayload<{
     publishers: { include: { company: true } };
     tags: { include: { tag: true } };
     review: true;
+    reviewToughts: true;
     gamescope: true;
     downloadHistory: true;
     statusHistory: { include: { gameStatus: true } };
@@ -66,7 +67,25 @@ export interface DownloadStats {
 }
 
 export interface SidebarData {
-  storefronts?: { id: number; name: string; count?: number; web?: string; hasExecutable: boolean }[];
-  status?: { id: number; name: string; count?: number }[];
-  platforms?: { id: number; name: string; count?: number }[];
+  storefronts?: SidebarStorefrontsData[];
+  status?: SidebarStatusData[];
+  platforms?: SidebarPlatformsData[];
+}
+
+export interface SidebarStorefrontsData {
+  id: number;
+  name: string;
+  count?: number;
+  web?: string;
+  hasExecutable: boolean;
+}
+export interface SidebarStatusData {
+  id: number;
+  name: string;
+  count?: number;
+}
+export interface SidebarPlatformsData {
+  id: number;
+  name: string;
+  count?: number;
 }

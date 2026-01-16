@@ -3,16 +3,20 @@ import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { LOCALE_NAMESPACE } from "@common/constant";
-import useGameStore from "@render/feature/detail/store/GameStore";
-import { Card } from "@render/components/card/Card";
 import { StatsCard } from "@render/feature/detail-overview/components/StatsCard";
-import { Clock, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
+import { useGameFromParams } from "@render/hooks/useGameParam";
 
 ChartJS.register(ArcElement, Tooltip);
 
 export const Overview = () => {
   const { t } = useTranslation();
-  const { game } = useGameStore();
+  const { game, isLoading } = useGameFromParams();
+
+  if (isLoading) {
+    return <LoadingCenter />;
+  }
 
   const stats = useMemo(() => {
     if (!game?.achievements) return null;
@@ -29,7 +33,7 @@ export const Overview = () => {
 
   if (!stats) {
     return (
-      <div className="flex h-64 items-center justify-center text-design-text-subtle">
+      <div className="text-design-text-subtle flex h-64 items-center justify-center">
         <p>{t("achievements.overview.noData", { ns: LOCALE_NAMESPACE.DETAIL })}</p>
       </div>
     );

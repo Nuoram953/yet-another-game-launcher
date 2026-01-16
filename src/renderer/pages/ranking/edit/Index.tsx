@@ -20,7 +20,6 @@ import { GripVertical, X, Gamepad2, ListOrdered, BookmarkPlus, Plus, ArrowRight 
 import { useGames } from "@render//context/DatabaseContext";
 import { useParams } from "react-router-dom";
 import { GameWithRelations, RankingWithRelation } from "src/common/types";
-import { useBreadcrumbsContext } from "@render//context/BreadcrumbsContext";
 
 interface SortableItemProps {
   id: string;
@@ -167,7 +166,6 @@ const EmptyState = ({ icon: Icon, message }: EmptyStateProps) => (
 export function RankingEditPage() {
   const [ranked, setRanked] = useState<GameWithRelations[]>([]);
   const [ranking, setRanking] = useState<RankingWithRelation | null>(null);
-  const { setBreadcrumbs } = useBreadcrumbsContext();
   const [placeholder, setPlaceholder] = useState<GameWithRelations[]>([]);
   const { games, refreshGames } = useGames();
   const { id } = useParams<{ id: string }>();
@@ -200,19 +198,13 @@ export function RankingEditPage() {
 
         setRanked(rankedGames);
         setPlaceholder(placeholderGames);
-
-        setBreadcrumbs([
-          { path: "/", label: "Home" },
-          { path: "/ranking", label: "Ranking" },
-          { path: `/ranking/${rankingId}`, label: data.name },
-        ]);
       } catch (error) {
         console.error("Error fetching picture path:", error);
       }
     };
 
     fetchData();
-  }, [id, games, refreshGames, rankingId, setBreadcrumbs]);
+  }, [id, games, refreshGames, rankingId]);
 
   useEffect(() => {
     console.log("Ranked games:", ranked);
@@ -324,7 +316,7 @@ export function RankingEditPage() {
     <div className="flex h-screen flex-col overflow-hidden bg-slate-100 dark:bg-slate-900">
       <header className="bg-white px-6 py-4 shadow-md dark:bg-slate-800">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-design-text-normal">Top 10 Games Ranking</h1>
+          <h1 className="dark:text-design-text-normal text-2xl font-bold text-slate-800">Top 10 Games Ranking</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Create your definitive ranking of the best video games
           </p>
@@ -338,7 +330,7 @@ export function RankingEditPage() {
             {/* Top 10 Ranking Section */}
             <div className="flex flex-col">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-design-text-normal">
+                <h2 className="dark:text-design-text-normal flex items-center gap-2 text-xl font-semibold text-slate-800">
                   <ListOrdered size={20} />
                   Your Top 10 Games
                 </h2>
@@ -378,7 +370,7 @@ export function RankingEditPage() {
             {/* Placeholder Section */}
             <div className="flex flex-col">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-design-text-normal">
+                <h2 className="dark:text-design-text-normal flex items-center gap-2 text-xl font-semibold text-slate-800">
                   <BookmarkPlus size={20} />
                   Placeholder Games
                 </h2>
@@ -421,7 +413,7 @@ export function RankingEditPage() {
           {/* Right Column - Available Games */}
           <div className="flex flex-col overflow-auto">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-800 dark:text-design-text-normal">
+              <h2 className="dark:text-design-text-normal flex items-center gap-2 text-xl font-semibold text-slate-800">
                 <Gamepad2 size={20} />
                 Available Games
               </h2>

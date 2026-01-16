@@ -7,7 +7,7 @@ export const buttonVariants = cva(["font-semibold", "border", "flex", "flex-row"
         "bg-design-button-primary",
         "text-design-text-inverted",
         "border-transparent",
-        "hover:bg-design-button-primar",
+        "hover:bg-design-button-primary",
         "active:bg-design-button-primary/80",
       ],
       secondary: [

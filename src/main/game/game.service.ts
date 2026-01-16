@@ -1,4 +1,11 @@
-import { Game, GameConfigGamescope, GameLaunchApp, GameLaunchEmulation, GameReview } from "@prisma/client";
+import {
+  Game,
+  GameConfigGamescope,
+  GameLaunchApp,
+  GameLaunchEmulation,
+  GameReview,
+  GameReviewThoughts,
+} from "@prisma/client";
 import queries from "../dal/dal";
 import { Storefront } from "../../common/constant";
 import { i18n } from "..";
@@ -271,6 +278,23 @@ export const refreshLibrary = async () => {
   dataManager.send("request:games", {});
 };
 
+export const getReview = async (id: string) => {
+  if (_.isUndefined(id)) {
+    throw new Error("No game Id found");
+  }
+
+  const game = queries.Game.getGameById(id);
+
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  return {
+    review: await queries.GameReview.getByGameId(id),
+    thoughts: await queries.GameReviewThoughts.getByGameId(id),
+  };
+};
+
 export const setReview = async (data: Partial<GameReview>) => {
   if (_.isUndefined(data.gameId)) {
     throw new Error("No game Id found");
@@ -283,6 +307,36 @@ export const setReview = async (data: Partial<GameReview>) => {
   }
 
   await queries.GameReview.createOrUpdate(data);
+};
+
+export const createReviewThought = async (gameId: string) => {
+  if (_.isUndefined(gameId)) {
+    throw new Error("No game Id found");
+  }
+
+  const game = queries.Game.getGameById(gameId);
+
+  if (_.isNil(game)) {
+    throw new Error("Invalid game");
+  }
+
+  return await queries.GameReviewThoughts.create(gameId);
+};
+
+export const updateReviewThought = async (data: Partial<GameReviewThoughts>) => {
+  if (_.isUndefined(data.id)) {
+    throw new Error("No game review thought Id found");
+  }
+
+  return await queries.GameReviewThoughts.update(data.id, { ...data });
+};
+
+export const deleteReviewThought = async (id: string) => {
+  if (_.isUndefined(id)) {
+    throw new Error("No game review thought Id found");
+  }
+
+  return await queries.GameReviewThoughts.deleteById(id);
 };
 
 export const setStatus = async (data: Partial<Game>) => {

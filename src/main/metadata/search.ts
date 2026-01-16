@@ -8,6 +8,7 @@ import { Video } from "@main/externalApi/youtube/types";
 export const searchMedia = async (
   game: GameWithRelations,
   mediaType: MEDIA_TYPE,
+  search: string,
   page: number,
 ): Promise<string[] | Video[]> => {
   let res: MediaResponse | null = null;
@@ -27,7 +28,7 @@ export const searchMedia = async (
       break;
     case MEDIA_TYPE.TRAILER:
     case MEDIA_TYPE.MUSIC:
-      return await YoutubeApi.search(game, mediaType);
+      return await YoutubeApi.search(game, mediaType, search);
     default:
       throw new Error("Invalid media type");
   }

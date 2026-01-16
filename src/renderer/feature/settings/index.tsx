@@ -1,22 +1,13 @@
 import React, { useEffect } from "react";
-import { useBreadcrumbsContext } from "@render/context/BreadcrumbsContext";
 import { Container } from "@render/components/layout/Container";
 import { useActiveSection } from "./hooks/useActiveSection";
 
 export const SettingPage = () => {
   const { categories, activeCategory, handleCategoryChange, activeSubcategory, ActiveComponent, setActiveSubcategory } =
     useActiveSection();
-  const { setBreadcrumbs } = useBreadcrumbsContext();
-
-  useEffect(() => {
-    setBreadcrumbs([
-      { path: "/", label: "Home" },
-      { path: "/setting", label: "Settings" },
-    ]);
-  }, []);
 
   return (
-    <div className="flex h-screen flex-col pt-16 text-design-text-normal">
+    <div className="text-design-text-normal flex h-screen flex-col pt-16">
       <div className="flex h-full">
         <div className="flex h-full w-72 flex-col border-r border-slate-600/50">
           <div className="scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent flex-1 overflow-y-auto">
@@ -36,7 +27,7 @@ export const SettingPage = () => {
                       className={`group flex w-full items-center space-x-3 px-4 py-3 text-left transition-all duration-200`}
                     >
                       <div className={`p-2 transition-all duration-200`}>
-                        <IconComponent className="h-4 w-4 text-design-text-normal" />
+                        <IconComponent className="text-design-text-normal h-4 w-4" />
                       </div>
                       <span
                         className={`font-medium transition-all duration-200 ${
@@ -55,8 +46,8 @@ export const SettingPage = () => {
                             onClick={() => setActiveSubcategory(subKey)}
                             className={`group w-full px-4 py-2.5 text-left text-sm transition-all duration-200 ${
                               activeSubcategory === subKey
-                                ? "animate-pulse border-2 border-design-border font-medium [animation-duration:3s]"
-                                : "border border-transparent text-slate-300 hover:bg-slate-700/30 hover:text-design-text-normal"
+                                ? "border-design-border animate-pulse border-2 font-medium [animation-duration:3s]"
+                                : "hover:text-design-text-normal border border-transparent text-slate-300 hover:bg-slate-700/30"
                             }`}
                           >
                             <div className="flex items-center space-x-2">

@@ -5,6 +5,7 @@ import { RecentlyPlayedCarouselItem } from "./RecentlyPlayedItem";
 import { Game } from "@prisma/client";
 import { GameWithRelations } from "src/common/types";
 import { Skeleton } from "@render/components/ui/skeleton";
+import Button from "@render/components/new/button/Button";
 
 export const RecentlyPlayedCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -57,32 +58,24 @@ export const RecentlyPlayedCarousel = () => {
           ))}
         </div>
 
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-design-text-normal transition-colors hover:bg-black/70"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft size={24} />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-design-text-normal transition-colors hover:bg-black/70"
-          aria-label="Next slide"
-        >
-          <ChevronRight size={24} />
-        </button>
+        <div className="absolute left-4 top-1/2 -translate-y-1/2">
+          <Button
+            intent="tertiary"
+            leadingIcon={<ChevronLeft />}
+            onClick={prevSlide}
+            aria-label="Prev slide"
+            className="!rounded-full"
+          />
+        </div>
 
-        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-          {recentGames.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                index === currentIndex ? "bg-white" : "bg-white/50"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <Button
+            intent="tertiary"
+            leadingIcon={<ChevronRight />}
+            onClick={nextSlide}
+            aria-label="Next slide"
+            className="!rounded-full"
+          />
         </div>
       </div>
     </div>
