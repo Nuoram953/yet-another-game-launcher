@@ -203,6 +203,10 @@ export const updateInfo = async (id: string) => {
       for (const platform of igdbData.platforms) {
         await queries.GamePlatform.findOrCreate(game.id, platform);
       }
+
+      for (const collection of igdbData.collections) {
+        await queries.GameFranchise.findOrCreate(game.id, collection);
+      }
     }
   }
 

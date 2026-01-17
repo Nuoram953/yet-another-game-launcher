@@ -50,6 +50,7 @@ model Game {
   developers             GameDeveloper[]
   publishers             GamePublisher[]
   tags                   GameTag[]
+  franchises             GameFranchise[]
   engines                GameEngine[]
   statusHistory          GameStatusHistory[]
   review                 GameReview?
@@ -129,6 +130,22 @@ model GameEngine {
   engine   Engine @relation(fields: [engineId], references: [id])
 
   @@unique([gameId, engineId])
+}
+
+model Franchise {
+  id            String          @id @default(uuid())
+  name          String          @unique
+  GameFranchise GameFranchise[]
+}
+
+model GameFranchise {
+  id          String    @id @default(uuid())
+  gameId      String
+  game        Game      @relation(fields: [gameId], references: [id])
+  franchiseId String
+  franchise   Franchise @relation(fields: [franchiseId], references: [id])
+
+  @@unique([gameId, franchiseId])
 }
 
 model Tag {

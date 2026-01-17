@@ -1,12 +1,13 @@
 import { Image } from "@render/components/image/Image";
 import { IconAndText } from "@render/components/layout/Container";
-import { Building, Heart, Newspaper, RefreshCcw, Star, Trash, Trophy, User } from "lucide-react";
+import { Building, Heart, Layers, Newspaper, RefreshCcw, Star, Trash, Trophy, User } from "lucide-react";
 import { Tags } from "./Tags";
 import { ButtonPlay } from "@render/components/button/Play";
 import ButtonIcon from "@render/components/new/button/ButtonIcon";
 import { LoadingCenter } from "@render/components/new/loading/Loading";
 import { useGameCover } from "@render/api/get-game-cover";
 import { useGameFromParams } from "@render/hooks/useGameParam";
+import { getGame } from "@render/api/electron";
 
 export const Description = () => {
   const { game, isLoading, id } = useGameFromParams();
@@ -41,7 +42,14 @@ export const Description = () => {
           <ButtonPlay />
           <div className="flex gap-2">
             <ButtonIcon intent="secondary" icon={<Heart />} text="Add to favorite" />
-            <ButtonIcon intent="secondary" icon={<RefreshCcw />} text="Refresh" />
+            <ButtonIcon
+              intent="secondary"
+              icon={<RefreshCcw />}
+              text="Refresh"
+              onClick={() => {
+                getGame().refreshInfo(game.id);
+              }}
+            />
             {game?.isInstalled && <ButtonIcon intent="destroy" icon={<Trash />} text="Uninstall" />}
           </div>
         </div>
@@ -59,6 +67,12 @@ export const Description = () => {
               )}
               {game.publishers?.[0]?.company?.name && (
                 <IconAndText icon={<Newspaper className="h-4 w-4" />} text={game.publishers[0].company.name} />
+              )}
+            </div>
+
+            <div className="rounded-xl py-2 text-subtle">
+              {game.franchises?.[0]?.franchise.name && (
+                <IconAndText icon={<Layers className="h-4 w-4" />} text={`${game.franchises[0].franchise.name}`} />
               )}
             </div>
 

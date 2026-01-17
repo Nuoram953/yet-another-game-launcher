@@ -6,6 +6,7 @@ export const BASE_URL = "https://api.igdb.com/v4/";
 
 export const EXTERNAL_GAME_URL = BASE_URL + "external_games";
 export const INVOLED_COMPANY_URL = BASE_URL + "involved_companies";
+export const FRANCHISES_URL = BASE_URL + "franchises";
 export const GAME_URL = BASE_URL + "games";
 
 export const axiosInstance = axios.create();

@@ -3,7 +3,9 @@ import * as Company from "./company";
 import * as GameDeveloper from "./gameDeveloper";
 import * as GamePublisher from "./gamePublisher";
 import * as Tag from "./tag";
+import * as Franchise from "./franchise";
 import * as GameTag from "./gameTag";
+import * as GameFranchise from "./gameFranchise";
 import * as GameAchievements from "./achievement";
 import * as GameStatusHistory from "./gameStatusHistory";
 import * as GameStatus from "./game_status";
@@ -56,4 +58,6 @@ export default {
   GameLaunchStorefront,
   GameLaunchEmulator,
   Emulator,
+  Franchise,
+  GameFranchise,
 };

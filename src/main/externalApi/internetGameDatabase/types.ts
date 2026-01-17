@@ -16,7 +16,8 @@ export interface IGame {
   created_at: number;
   external_games: number[];
   first_release_date: number;
-  franchises: number[];
+  franchise: object;
+  franchises: object[];
   game_engines: object[];
   game_modes: object[];
   genres: object[];
@@ -44,7 +45,17 @@ export interface IGame {
   websites: number[];
   checksum: string;
   language_supports: number[];
-  collections: number[];
+  collections: {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    name: string;
+    slug: string;
+    url: string;
+    checksum: string;
+    type: 1 | 2 | 3;
+    games: number[];
+  }[];
   game_type: number;
 }
 
@@ -63,6 +74,39 @@ export interface IExternalGame {
 }
 
 export interface IInvolvedCompany {
+  id: string;
+  company: {
+    id: number;
+    change_date_category: number;
+    country: number;
+    created_at: number;
+    description: string;
+    developed: any[];
+    logo: number;
+    name: string;
+    parent: number;
+    published: any[];
+    slug: string;
+    start_date: number;
+    start_date_category: number;
+    updated_at: number;
+    url: string;
+    websites: any[];
+    checksum: string;
+    status: number;
+    start_date_format: number;
+  };
+  created_at: number;
+  developer: boolean;
+  game: number;
+  porting: boolean;
+  publisher: boolean;
+  supporting: boolean;
+  updated_at: number;
+  checksum: string;
+}
+
+export interface IFranchise {
   id: string;
   company: {
     id: number;

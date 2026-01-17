@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Storefront } from "../../../common/constant";
-import { EXTERNAL_GAME_URL, GAME_URL, INVOLED_COMPANY_URL, axiosInstance } from "./config";
-import { IExternalGame, IGame, IInvolvedCompany } from "./types";
+import { EXTERNAL_GAME_URL, FRANCHISES_URL, GAME_URL, INVOLED_COMPANY_URL, axiosInstance } from "./config";
+import { IExternalGame, IFranchise, IGame, IInvolvedCompany } from "./types";
 import { getCategory } from "./util";
 import { GameWithRelations } from "../../../common/types";
 import { Game } from "@prisma/client";
@@ -24,6 +24,12 @@ export const getInvolvedCompany = async (id: number) => {
     INVOLED_COMPANY_URL,
     `fields *, company.*;  where game=${id};`,
   );
+
+  return res.data;
+};
+
+export const getFranchise = async (id: number) => {
+  const res = await axiosInstance.post<IFranchise[]>(FRANCHISES_URL, `fields *;  where id=${id};`);
 
   return res.data;
 };
@@ -57,7 +63,7 @@ export const getById = async (id: number) => {
 export const getByIds = async (ids: number[]) => {
   const res = await axiosInstance.post<IGame[]>(
     GAME_URL,
-    `fields *, platforms.*, screenshots.*, cover.*; where id=(${ids.join(",")}); limit ${ids.length};`,
+    `fields *, platforms.*, screenshots.*, cover.*, franchise.*; where id=(${ids.join(",")}); limit ${ids.length};`,
   );
 
   if (_.isEmpty(res.data)) {
@@ -85,7 +91,7 @@ export const getGame = async (game: GameWithRelations | Game) => {
 
   const res = await axiosInstance.post<IGame[]>(
     GAME_URL,
-    `fields *, platforms.*, genres.*, themes.*, game_engines.*, game_modes.*, player_perspectives.*, screenshots.*;  where id=${id};`,
+    `fields *, platforms.*, collections.*, genres.*, themes.*, game_engines.*, game_modes.*, player_perspectives.*, screenshots.*;  where id=${id};`,
   );
 
   console.log(res.data);
@@ -118,6 +124,9 @@ export const getGame = async (game: GameWithRelations | Game) => {
   const engine = data.game_engines?.map((item: any) => item.name) || [];
   const playerPerspective = data.player_perspectives?.map((item: any) => item.name) || [];
   const platforms = data.platforms?.map((item: any) => item.name) || [];
+  const collections = data.collections?.map((item: any) => item.name) || [];
+
+  console.log(collections);
 
   const partialGameData: Partial<Game> = {
     summary: data.storyline ?? data.summary,
@@ -137,5 +146,6 @@ export const getGame = async (game: GameWithRelations | Game) => {
     playerPerspective,
     screenshots: data.screenshots.map((item: { url: string }) => item.url),
     platforms,
+    collections,
   };
 };
