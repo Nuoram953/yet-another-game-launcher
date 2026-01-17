@@ -8,7 +8,7 @@ export function TSRBreadCrumbs({}: TSRBreadCrumbsProps) {
   const { breadcrumb_routes } = useTSRBreadCrumbs();
   if (breadcrumb_routes.length < 2) return null;
   return (
-    <div className="gap-0.1 flex w-full flex-wrap p-1 px-3 text-subtle md:justify-end">
+    <div className="gap-0.1 flex w-full flex-wrap p-1 px-3 text-subtle">
       <Breadcrumb>
         <BreadcrumbList>
           {breadcrumb_routes.map((crumb) => {

@@ -10,10 +10,10 @@ export const Header = () => {
   const { breadcrumb_routes } = useTSRBreadCrumbs();
 
   return (
-    <div className="absolute z-10 p-2">
-      <div className="flex items-center justify-center text-white">
+    <div className="fixed left-0 right-0 top-0 z-50 h-[50px] px-4 backdrop-blur-sm">
+      <div className="flex h-full items-center gap-4 text-white">
         {breadcrumb_routes.length > 1 && (
-          <Button leadingIcon={<ArrowLeft onClick={() => navigate({ to: "/" })} />} intent={"tertiary"} />
+          <Button leadingIcon={<ArrowLeft />} intent="tertiary" onClick={() => navigate({ to: "/" })} />
         )}
         <Sidebar />
         <TSRBreadCrumbs />
