@@ -14,7 +14,7 @@ export const DetailPage = () => {
   const { activeSection, setActiveSection } = useActiveSection();
 
   return (
-    <div className="mx-auto h-screen max-w-[1920px] overflow-x-hidden overflow-y-scroll">
+    <div className="mx-auto h-screen max-w-[1920px] overflow-y-auto overflow-x-hidden">
       <Trailer />
       <Nav activeSection={activeSection} setActiveSection={setActiveSection} />
       <div className="w-full">
