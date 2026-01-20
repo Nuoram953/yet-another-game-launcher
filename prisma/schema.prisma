@@ -281,14 +281,23 @@ model GameConfigGamescope {
 }
 
 model Ranking {
-  id              Int           @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
   name            String
-  maxItems        Int           @default(10)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  rankingStatus   RankingStatus @relation(fields: [rankingStatusId], references: [id])
+  description     String?
+  isPinned        Boolean         @default(false)
+  maxItems        Int             @default(10)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  rankingStatus   RankingStatus   @relation(fields: [rankingStatusId], references: [id])
   rankingStatusId Int
-  rankings        RankingGame[]
+  games           RankingGame[]
+  tags            RankingTagMap[]
+}
+
+model RankingTag {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  RankingTagMap RankingTagMap[]
 }
 
 model RankingStatus {
@@ -302,12 +311,22 @@ model RankingGame {
   rank      Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  ranking   Ranking  @relation(fields: [rankingId], references: [id])
+  ranking   Ranking  @relation(fields: [rankingId], references: [id], onDelete: Cascade)
   rankingId Int
-  game      Game     @relation(fields: [gameId], references: [id])
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   gameId    String
 
   @@unique([rankingId, gameId])
+}
+
+model RankingTagMap {
+  id           Int        @id @default(autoincrement())
+  ranking      Ranking    @relation(fields: [rankingId], references: [id])
+  rankingId    Int
+  rankingTag   RankingTag @relation(fields: [rankingTagId], references: [id])
+  rankingTagId Int
+
+  @@unique([rankingId, rankingTagId])
 }
 
 model MediaDefault {

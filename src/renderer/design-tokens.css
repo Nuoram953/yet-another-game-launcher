@@ -145,4 +145,21 @@
   --typography-primitive-fontWeight-regular: 400;
   --typography-primitive-fontWeight-medium: 500;
   --typography-primitive-fontWeight-bold: 700;
+
+  /* Input/Select component CSS variables mapped to existing design tokens */
+  --foreground: var(--color-semantic-background-foreground);
+  --background: var(--color-semantic-background-background);
+  --border: var(--color-semantic-border-normal);
+  --normal: var(--color-semantic-text-normal);
+  --placeholder: var(--color-semantic-text-subtle);
+  --accent: var(--color-primitive-blue-500);
+  --muted: var(--color-semantic-text-subtle);
+  --design-border-hover: var(--color-semantic-border-hover);
+  --primary: var(--component-button-primary);
+  --secondary: var(--color-primitive-gray-700);
+  --secondary-foreground: var(--color-semantic-text-normal);
+  --destructive: var(--component-button-destructive);
+  --success: var(--color-primitive-green-500);
+  --warning: var(--color-primitive-yellow-500);
+  --error: var(--color-semantic-text-error);
 }

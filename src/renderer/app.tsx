@@ -9,7 +9,6 @@ import { NotificationProvider } from "./components/NotificationSystem";
 import NotificationSystem from "./components/NotificationProvider";
 import { ThemeProvider } from "./components/theme-provider";
 import { ConfigProvider } from "./components/ConfigProvider";
-import { ColorProvider } from "./context/ColorContext";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import { Toaster } from "./components/ui/toaster";
@@ -26,17 +25,15 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <ConfigProvider>
-          <ColorProvider>
-            <NotificationProvider>
-              <NotificationSystem />
-              <GamesProvider>
-                <I18nextProvider i18n={i18n}>
-                  <RouterProvider router={router} />
-                </I18nextProvider>
-                <Toaster />
-              </GamesProvider>
-            </NotificationProvider>
-          </ColorProvider>
+          <NotificationProvider>
+            <NotificationSystem />
+            <GamesProvider>
+              <I18nextProvider i18n={i18n}>
+                <RouterProvider router={router} />
+              </I18nextProvider>
+              <Toaster />
+            </GamesProvider>
+          </NotificationProvider>
         </ConfigProvider>
       </ThemeProvider>
     </QueryClientProvider>

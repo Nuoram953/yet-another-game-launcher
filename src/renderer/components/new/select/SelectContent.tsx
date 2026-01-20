@@ -6,7 +6,11 @@ export const SelectContent = React.forwardRef<
   React.ComponentProps<typeof RadixSelect.Content>
 >(({ children, ...props }, ref) => (
   <RadixSelect.Portal>
-    <RadixSelect.Content ref={ref} className="mt-1 w-48 rounded-md border bg-design-background shadow-md" {...props}>
+    <RadixSelect.Content
+      ref={ref}
+      className="mt-1 w-48 rounded-md border bg-foreground text-normal shadow-md"
+      {...props}
+    >
       <RadixSelect.ScrollUpButton className="text-center">↑</RadixSelect.ScrollUpButton>
       <RadixSelect.Viewport>{children}</RadixSelect.Viewport>
       <RadixSelect.ScrollDownButton className="text-center">↓</RadixSelect.ScrollDownButton>

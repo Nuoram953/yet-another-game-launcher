@@ -169,6 +169,7 @@
     "@radix-ui/react-tooltip": "1.2.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/vite": "4.1.6",
+    "@tanstack/react-form": "^1.27.7",
     "@tanstack/react-query": "^5.84.2",
     "@tanstack/react-router": "^1.145.7",
     "@tanstack/react-table": "^8.21.3",
@@ -183,6 +184,7 @@
     "clsx": "2.1.1",
     "cmdk": "1.0.0",
     "date-fns": "3.6.0",
+    "dayjs": "^1.11.19",
     "debounce-promise": "^3.1.2",
     "dotenv": "16.4.7",
     "einf": "1.5.3",
@@ -231,6 +233,7 @@
     "vdf-parser": "1.2.1",
     "youtube-dl-exec": "^3.0.20",
     "youtube-sr": "4.3.11",
+    "zod": "^4.3.6",
     "zustand": "^5.0.7"
   }
 }
