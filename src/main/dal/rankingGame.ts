@@ -1,7 +1,7 @@
 import { RankingGame } from "@prisma/client";
 import { prisma } from "..";
 
-export async function edit(data: Partial<RankingGame>) {
+export async function upsert(data: Partial<RankingGame>) {
   return await prisma.rankingGame.upsert({
     where: {
       rankingId_gameId: {

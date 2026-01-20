@@ -6,11 +6,17 @@ interface TSRBreadCrumbsProps {}
 
 export function TSRBreadCrumbs({}: TSRBreadCrumbsProps) {
   const { breadcrumb_routes } = useTSRBreadCrumbs();
-  if (breadcrumb_routes.length < 2) return null;
+  if (breadcrumb_routes.length < 1) return null;
   return (
     <div className="gap-0.1 flex w-full flex-wrap p-1 px-3 text-subtle">
       <Breadcrumb>
         <BreadcrumbList>
+          <BreadcrumbItem key={"home"}>
+            <Link to={"/"} className="line-clamp-1 cursor-pointer text-xs">
+              <BreadcrumbPage className="line-clamp-1 cursor-pointer text-xs">Home</BreadcrumbPage>
+            </Link>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className="hidden md:block" />
           {breadcrumb_routes.map((crumb) => {
             if (breadcrumb_routes.length - 1 === breadcrumb_routes?.indexOf(crumb)) {
               return (

@@ -31,7 +31,8 @@ export type GameWithRelations = Prisma.GameGetPayload<{
 
 export type RankingWithRelation = Prisma.RankingGetPayload<{
   include: {
-    rankings: true;
+    games: { include: { game: true } };
+    tags: { include: { rankingTag: true } };
   };
 }>;
 

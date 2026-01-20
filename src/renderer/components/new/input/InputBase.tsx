@@ -2,8 +2,8 @@ import { VariantProps, cva } from "class-variance-authority";
 
 export const InuptVariants = cva(
   [
-    "flex items-center justify-center gap-2 rounded-md font-medium transition bg-gray-700",
-    "focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2",
+    "flex items-center justify-center gap-2 rounded-md font-medium transition bg-foreground border border-normal",
+    "focus:outline-none focus-visible:ring-1 focus-visible:ring-white focus-visible:ring-offset-2",
     "disabled:opacity-50 disabled:cursor-not-allowed",
     "placeholder:text-placeholder",
   ],

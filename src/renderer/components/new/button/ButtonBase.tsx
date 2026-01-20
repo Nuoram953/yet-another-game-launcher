@@ -14,6 +14,7 @@ export const buttonVariants = cva(
         secondary: "bg-transparent border border-1 border-white text-white hover:bg-white/20 active:bg-gray-400",
         tertiary: "bg-transparent text-white hover:bg-white/20 active:bg-gray-100",
         destroy: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
+        link: "text-white hover:underline",
         custom: "",
       },
       size: {

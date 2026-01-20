@@ -3,17 +3,21 @@ import { Sidebar } from "../sidebar";
 import { useTSRBreadCrumbs } from "@render/hooks/useTSRBreadCrumbs";
 import { ArrowLeft } from "lucide-react";
 import Button from "@render/components/new/button/Button";
-import { useNavigate } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 
 export const Header = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { breadcrumb_routes } = useTSRBreadCrumbs();
+
+  const handleBackClick = () => {
+    router.history.back();
+  };
 
   return (
     <div className="fixed left-0 right-0 top-0 z-50 h-[50px] bg-slate-800 px-2 shadow-md backdrop-blur-sm">
       <div className="flex h-full items-center text-white">
         {breadcrumb_routes.length > 1 && (
-          <Button leadingIcon={<ArrowLeft />} intent="tertiary" onClick={() => navigate({ to: "/" })} />
+          <Button leadingIcon={<ArrowLeft />} intent="tertiary" onClick={handleBackClick} />
         )}
         <Sidebar />
         <TSRBreadCrumbs />

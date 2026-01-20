@@ -21,6 +21,7 @@ import {
 import { FilterConfig, LaunchType, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "@main/manager/configManager";
+import { RankingAPI } from "@common/ipc";
 
 const { contextBridge, ipcRenderer } = require("electron");
 
@@ -76,16 +77,6 @@ contextBridge.exposeInMainWorld("library", {
   search: (query: string) => ipcRenderer.invoke(RouteLibrary.SEARCH, query),
   addGame: (data: Partial<Game>) => ipcRenderer.invoke(RouteLibrary.ADD_GAME, data),
   getEmulators: () => ipcRenderer.invoke(RouteLibrary.GET_EMULATORS),
-});
-
-contextBridge.exposeInMainWorld("ranking", {
-  getRanking: (id: number) => ipcRenderer.invoke(RouteRanking.GET_RANKING, id),
-  getAll: () => ipcRenderer.invoke(RouteRanking.GET_RANKINGS),
-  create: (name: string, maxItems: number) => ipcRenderer.invoke(RouteRanking.CREATE, name, maxItems),
-  delete: (id: number) => ipcRenderer.invoke(RouteRanking.DELETE, id),
-  edit: (data: Partial<Game>) => ipcRenderer.invoke(RouteRanking.EDIT, data),
-  removeGameFromRanking: (rankingId: number, gameId: string) =>
-    ipcRenderer.invoke(RouteRanking.REMOVE_GAME_FROM_RANKING, rankingId, gameId),
 });
 
 contextBridge.exposeInMainWorld("game", {
@@ -172,3 +163,17 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.removeAllListeners(channel);
   },
 });
+
+//****************************************************************************************************
+
+const ranking: RankingAPI = {
+  getRanking: (id) => ipcRenderer.invoke(RouteRanking.GET_RANKING, id),
+  getRankings: () => ipcRenderer.invoke(RouteRanking.GET_RANKINGS),
+  createRanking: (data) => ipcRenderer.invoke(RouteRanking.CREATE, data),
+  deleteRanking: (id) => ipcRenderer.invoke(RouteRanking.DELETE, id),
+  addGameRanking: (data) => ipcRenderer.invoke(RouteRanking.ADD_GAME_FROM_RANKING, data),
+  removeGameRanking: (data) => ipcRenderer.invoke(RouteRanking.REMOVE_GAME_FROM_RANKING, data),
+  updateGameOrder: (data) => ipcRenderer.invoke(RouteRanking.UPDATE_GAME_ORDER, data),
+};
+
+contextBridge.exposeInMainWorld("ranking", ranking);

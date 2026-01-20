@@ -5,13 +5,13 @@ import { GlobalEventHandler } from "./components/GloabEventHandler";
 
 import { Grid } from "./pages/grid/Index";
 import { DetailPage } from "./feature/detail";
-import { RankingPage } from "./pages/ranking/Index";
-import { RankingEditPage } from "./pages/ranking/edit/Index";
 import DownloadViewer from "./pages/download/Index";
 import WebsiteViewer from "./pages/web/Index";
 import { WishlistPage } from "./feature/wishlist";
 import { SettingPage } from "./feature/settings";
 import NotFound from "./pages/error/notFound";
+import { RankingsPage } from "./feature/ranking/Index";
+import { RankingView } from "./feature/ranking/components/ranking-view";
 
 /* ---------------- Root Route ---------------- */
 
@@ -47,13 +47,16 @@ const gameRoute = createRoute({
 const rankingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/ranking",
-  component: RankingPage,
+  component: RankingsPage,
+  loader: () => ({
+    crumb: "Rankings",
+  }),
 });
 
-const rankingEditRoute = createRoute({
+const rankingIdRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/ranking/$id",
-  component: RankingEditPage,
+  component: RankingView,
 });
 
 const downloadRoute = createRoute({
@@ -92,7 +95,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   gameRoute,
   rankingRoute,
-  rankingEditRoute,
+  rankingIdRoute,
   downloadRoute,
   webRoute,
   settingsRoute,

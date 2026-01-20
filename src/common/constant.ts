@@ -91,7 +91,9 @@ export enum RouteRanking {
   CREATE = "ranking:create",
   DELETE = "ranking:delete",
   EDIT = "ranking:edit",
+  ADD_GAME_FROM_RANKING = "ranking:addGameFromRanking",
   REMOVE_GAME_FROM_RANKING = "ranking:removeGameFromRanking",
+  UPDATE_GAME_ORDER = "ranking:updateGameOrder",
 }
 
 export enum RouteThirdParty {

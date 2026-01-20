@@ -8,7 +8,6 @@ import { SettingExtensionIGDB } from "../components/extension/IGDB";
 import { SettingExtensionHowLongToBeat } from "../components/extension/HowLongToBeat";
 import { SettingExtensionOpenCritic } from "../components/extension/openCritic";
 import { SettingSidebar } from "../components/components/SettingSidebar";
-import { SettingApperanceColors } from "../components/apperance/Colors";
 import { SettingPageGameDetails } from "../components/page/SettingPageDetail";
 import { SettingsGrid } from "../components/components/SettingsGrid";
 
@@ -42,13 +41,6 @@ export const useActiveSection = () => {
       subcategories: {
         grid: { title: "Grid", component: SettingsGrid },
         sidebar: { title: "Sidebar", component: SettingSidebar },
-      },
-    },
-    appearance: {
-      title: "Look & Feel",
-      icon: Settings,
-      subcategories: {
-        colors: { title: "Colors", component: SettingApperanceColors },
       },
     },
     page: {

@@ -8,7 +8,7 @@ export const SelectTrigger = React.forwardRef<
 >(({ children, ...props }, ref) => (
   <RadixSelect.Trigger
     ref={ref}
-    className="inline-flex w-fit items-center justify-between rounded-md border bg-design-background px-3 py-2"
+    className="inline-flex w-fit items-center justify-between rounded-md border bg-foreground px-3 py-2"
     {...props}
   >
     {children}
