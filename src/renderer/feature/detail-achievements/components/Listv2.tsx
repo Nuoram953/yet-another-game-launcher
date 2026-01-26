@@ -8,18 +8,19 @@ import { useParams } from "react-router-dom";
 import { useGame } from "@render/api/get-game";
 import { LoadingCenter } from "@render/components/new/loading/Loading";
 import { useGameFromParams } from "@render/hooks/useGameParam";
+import { useMedia } from "@render/api/get-media-by-type";
+import { MEDIA_TYPE } from "@common/constant";
 
 export const Listv2 = () => {
-  const { game, isLoading, id } = useGameFromParams();
+  const { game, id } = useGameFromParams();
 
-  const { data, isPending } = useQuery({
-    queryKey: ["game", id, "achievements"],
-    queryFn: () => getGameAchievements(id),
-  });
+  const mediaQuery = useMedia({ data: { gameId: id, type: MEDIA_TYPE.ACHIEVEMENT } });
 
-  if (isLoading || isPending) {
+  if (mediaQuery.isPending) {
     return <LoadingCenter />;
   }
+
+  const achivements = mediaQuery.data ?? [];
 
   const unlockedAchievements = game?.achievements?.filter((a) => a.isUnlocked) ?? [];
 
@@ -58,7 +59,7 @@ export const Listv2 = () => {
             {achievement.isUnlocked ? (
               <div className="relative inline-block">
                 <img
-                  src={data?.find((logo) => logo.includes(`achievement/${achievement.externalId}.`))}
+                  src={achivements?.find((logo) => logo.includes(`achievement/${achievement.externalId}.`))}
                   alt={achievement.name}
                   className="h-24 w-24 rounded-md object-contain hover:border hover:border-white"
                 />

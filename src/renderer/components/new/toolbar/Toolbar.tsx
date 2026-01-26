@@ -5,5 +5,5 @@ interface ToolbarProps {
 }
 
 export const Toolbar = ({ children }: ToolbarProps) => {
-  return <div className="flex items-center gap-2 border-b p-2">{children}</div>;
+  return <div className="flex items-center justify-between gap-2 p-6">{children}</div>;
 };

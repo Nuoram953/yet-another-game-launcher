@@ -10,3 +10,16 @@ export interface RankingAPI {
   removeGameRanking(data: RankingSchema.RemoveGameRankingSchema): Promise<void>;
   updateGameOrder(data: RankingSchema.UpdateGameOrderSchema): Promise<void>;
 }
+
+import * as MediaResponse from "../main/media/media.response";
+import * as MediaSchema from "../main/media/media.schema";
+
+export interface MediaApi {
+  getMediaByType(data: MediaSchema.GetMediaByType): Promise<MediaResponse.ResponseGetMediaByType>;
+  getAllMedia(): Promise<MediaResponse.ResponseGetAllMedia>;
+  deleteMedia(data: MediaSchema.DeleteMediaSchema): Promise<MediaResponse.ResponseDeleteMedia>;
+  searchMedia(data: MediaSchema.SearchMediaSchema): Promise<MediaResponse.ResponseSearchMedia>;
+  downloadByUrl(data: MediaSchema.DownloadMediaSchema): Promise<MediaResponse.ResponseDownloadMedia>;
+  setDefault(data: MediaSchema.SetDefaultMediaSchema): Promise<MediaResponse.ResponseSetDefault>;
+  removeDefault(data: MediaSchema.RemoveDefaultMediaSchema): Promise<MediaResponse.ResponseRemoveDefault>;
+}

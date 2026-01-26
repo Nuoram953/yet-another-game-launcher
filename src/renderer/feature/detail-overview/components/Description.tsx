@@ -5,13 +5,14 @@ import { Tags } from "./Tags";
 import { ButtonPlay } from "@render/components/button/Play";
 import ButtonIcon from "@render/components/new/button/ButtonIcon";
 import { LoadingCenter } from "@render/components/new/loading/Loading";
-import { useGameCover } from "@render/api/get-game-cover";
 import { useGameFromParams } from "@render/hooks/useGameParam";
 import { getGame } from "@render/api/electron";
+import { MEDIA_TYPE } from "@common/constant";
+import { useMedia } from "@render/api/get-media-by-type";
 
 export const Description = () => {
   const { game, isLoading, id } = useGameFromParams();
-  const coverQuery = useGameCover({ gameId: id, queryConfig: { enabled: !!game } });
+  const coverQuery = useMedia({ data: { gameId: id, type: MEDIA_TYPE.COVER }, queryConfig: { enabled: !!game } });
 
   if (isLoading || coverQuery.isPending) {
     return <LoadingCenter />;

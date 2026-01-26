@@ -1,5 +1,10 @@
 import React from "react";
+import { Input } from "../input";
 
 export const ToolbarSearch = () => {
-  return <input type="text" placeholder="Search..." className="rounded border px-2 py-1" />;
+  return (
+    <Input>
+      <Input.Text />
+    </Input>
+  );
 };

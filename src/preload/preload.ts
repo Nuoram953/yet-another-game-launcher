@@ -21,7 +21,7 @@ import {
 import { FilterConfig, LaunchType, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "@main/manager/configManager";
-import { RankingAPI } from "@common/ipc";
+import { MediaApi, RankingAPI } from "@common/ipc";
 
 const { contextBridge, ipcRenderer } = require("electron");
 
@@ -33,30 +33,6 @@ contextBridge.exposeInMainWorld("config", {
   get: (key: PathsToProperties<AppConfig>) => ipcRenderer.invoke(ConfigRoute.GET, key),
   getAll: () => ipcRenderer.invoke(ConfigRoute.GET_ALL),
   set: (key: PathsToProperties<AppConfig>, value: any) => ipcRenderer.invoke(ConfigRoute.SET, key, value),
-});
-
-contextBridge.exposeInMainWorld("media", {
-  getAllMedia: (gameId: string) => ipcRenderer.invoke(RouteMedia.GET_ALL_MEDIA, gameId),
-  getBackgrounds: (gameId: string, count?: number) => ipcRenderer.invoke(RouteMedia.GET_BACKGROUNDS, gameId, count),
-  getRecentlyPlayedBackgrounds: (count: number) =>
-    ipcRenderer.invoke(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, count),
-  getLogos: (gameId: string, count?: number) => ipcRenderer.invoke(RouteMedia.GET_LOGOS, gameId, count),
-  getTrailers: (gameId: string, count?: number) => ipcRenderer.invoke(RouteMedia.GET_TRAILERS, gameId, count),
-  getCovers: (gameId: string, count?: number) => ipcRenderer.invoke(RouteMedia.GET_COVERS, gameId, count),
-  getAchievements: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_ACHIEVEMENTS, gameId, count),
-  getScreenshots: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_SCREENSHOTS, gameId, count),
-  getMusics: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_MUSIC, gameId, count),
-  getIcons: (gameId: number, count?: number) => ipcRenderer.invoke(RouteMedia.GET_ICONS, gameId, count),
-  delete: (gameId: string, mediaType: string, mediaId: string) =>
-    ipcRenderer.invoke(RouteMedia.DELETE, gameId, mediaType, mediaId),
-  search: (gameId: string, mediaType: string, search: string, page: number) =>
-    ipcRenderer.invoke(RouteMedia.SEARCH, gameId, mediaType, search, page),
-  downloadByUrl: (gameId: string, mediaType: string, url: string) =>
-    ipcRenderer.invoke(RouteMedia.DOWNLOAD_BY_URL, gameId, mediaType, url),
-  setDefault: (gameId: string, mediaType: string, name: string) =>
-    ipcRenderer.invoke(RouteMedia.SET_DEFAULT, gameId, mediaType, name),
-  removeDefault: (gameId: string, mediaType: string) =>
-    ipcRenderer.invoke(RouteMedia.REMOVE_DEFAULT, gameId, mediaType),
 });
 
 contextBridge.exposeInMainWorld("library", {
@@ -175,5 +151,15 @@ const ranking: RankingAPI = {
   removeGameRanking: (data) => ipcRenderer.invoke(RouteRanking.REMOVE_GAME_FROM_RANKING, data),
   updateGameOrder: (data) => ipcRenderer.invoke(RouteRanking.UPDATE_GAME_ORDER, data),
 };
-
 contextBridge.exposeInMainWorld("ranking", ranking);
+
+const media: MediaApi = {
+  getMediaByType: (data) => ipcRenderer.invoke(RouteMedia.GET_MEDIA_BY_TYPE, data),
+  getAllMedia: () => ipcRenderer.invoke(RouteMedia.GET_ALL_MEDIA),
+  deleteMedia: (data) => ipcRenderer.invoke(RouteMedia.DELETE, data),
+  searchMedia: (data) => ipcRenderer.invoke(RouteMedia.SEARCH, data),
+  downloadByUrl: (data) => ipcRenderer.invoke(RouteMedia.DOWNLOAD_BY_URL, data),
+  setDefault: (data) => ipcRenderer.invoke(RouteMedia.SET_DEFAULT, data),
+  removeDefault: (data) => ipcRenderer.invoke(RouteMedia.REMOVE_DEFAULT, data),
+};
+contextBridge.exposeInMainWorld("media", media);

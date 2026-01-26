@@ -17,8 +17,9 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
 import "./design-tokens.css";
 import "./i18n";
+import { queryConfig } from "./lib/react-query";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ defaultOptions: queryConfig });
 
 const App = () => {
   return (

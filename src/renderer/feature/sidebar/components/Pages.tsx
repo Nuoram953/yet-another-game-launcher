@@ -28,7 +28,15 @@ export const SidebarPages = () => {
           setOpen(false);
         }}
       />
-      <SidebarNavigateItem handleNavigate={""} icon={<Gift />} label={"Wishlist"} path={"/wishlist"} />
+      <SidebarNavigateItem
+        icon={<Gift />}
+        label={"Wishlist"}
+        path={"/wishlist"}
+        handleNavigate={() => {
+          navigate({ to: "/wishlist" });
+          setOpen(false);
+        }}
+      />
       <SidebarNavigateItem handleNavigate={""} icon={<Settings />} label={"Settings"} path={"/setting"} />
     </div>
   );

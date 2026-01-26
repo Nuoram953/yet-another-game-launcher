@@ -2,19 +2,18 @@ import VideoPlayer from "@render//components/VideoPlayer";
 import React, { useRef } from "react";
 import { Logo } from "@render/components/image/Logo";
 import { useParams } from "@tanstack/react-router";
-import { useGameTrailer } from "@render/api/get-game-trailer";
-import { useGameBackground } from "@render/api/get-game-background";
-import { useGameMusic } from "@render/api/get-game-music";
 import { LoadingCenter } from "@render/components/new/loading/Loading";
 import { useAudioPlayer } from "@render/hooks/useAudioPlayer";
+import { useMedia } from "@render/api/get-media-by-type";
+import { MEDIA_TYPE } from "@common/constant";
 
 export const Trailer = () => {
   const { id } = useParams({ from: "/game/$id" });
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const trailerQuery = useGameTrailer({ gameId: id });
-  const backgroundQuery = useGameBackground({ gameId: id });
-  const musicQuery = useGameMusic({ gameId: id });
+  const trailerQuery = useMedia({ data: { gameId: id, type: MEDIA_TYPE.TRAILER } });
+  const backgroundQuery = useMedia({ data: { gameId: id, type: MEDIA_TYPE.BACKGROUND } });
+  const musicQuery = useMedia({ data: { gameId: id, type: MEDIA_TYPE.MUSIC } });
 
   useAudioPlayer({ audioRef, src: musicQuery.data?.[0], enabled: true, volume: 0.2 });
 

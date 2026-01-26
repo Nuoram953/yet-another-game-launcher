@@ -8,29 +8,22 @@ import { FavoriteBadge } from "./favoriteBadge";
 import { GameWithRelations } from "src/common/types";
 import { Image } from "../../../components/image/Image";
 import _ from "lodash";
+import { useMedia } from "@render/api/get-media-by-type";
+import { MEDIA_TYPE } from "@common/constant";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
 
 interface CoverProps {
   game: GameWithRelations;
 }
 
 const Cover = ({ game }: CoverProps) => {
-  const [coverPicture, setCoverPicture] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchPicturePath = async () => {
-      try {
-        const cover = await window.media.getCovers(game.id, 1);
-        setCoverPicture(cover[0]);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching picture path:", error);
-      }
-    };
+  const coverQuery = useMedia({ data: { gameId: game.id, type: MEDIA_TYPE.COVER } });
 
-    fetchPicturePath();
-  }, [game]);
+  if (coverQuery.isPending) return <LoadingCenter />;
+
+  const cover = coverQuery.data?.[0] ?? "";
 
   const handleMouseMove = (e: React.MouseEvent, cardElement: HTMLElement) => {
     const rect = cardElement.getBoundingClientRect();
@@ -69,10 +62,6 @@ const Cover = ({ game }: CoverProps) => {
     ...game.launchEmulation.filter((app) => app.isEnabled && !_.isNil(app.path) && !_.isEmpty(app.path)),
   ];
 
-  if (loading) {
-    return <SkeletonCover />;
-  }
-
   return (
     <div
       className="text-design-text-normal relative w-full"
@@ -84,7 +73,7 @@ const Cover = ({ game }: CoverProps) => {
         transformStyle: "preserve-3d",
       }}
     >
-      <Image src={coverPicture} alt={""} intent={"cover"} installed={launchEnabled.length > 0} allowFade={true} />
+      <Image src={cover} alt={""} intent={"cover"} installed={launchEnabled.length > 0} allowFade={true} />
 
       <div className="absolute left-2 top-2">
         <BadgeDropdown game={game} />
