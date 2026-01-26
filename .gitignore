@@ -100,3 +100,5 @@ temp
 dist
 public/yt-dlp
 release/1.0.0
+prisma/test.db
+test.db

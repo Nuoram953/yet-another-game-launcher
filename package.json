@@ -73,6 +73,12 @@
     "prisma:format": "npx prisma format",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:generate": "npx prisma generate",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch",
+    "test:ranking": "vitest run src/main/ranking",
     "license": "npx license-checker --json --production --out thirdPartyNotice.json  --failOn \"CDDL;MS-PL;APSL;JSON;Facebook BSD+Patents;Proprietary;\"",
     "tokens": "ts-node scripts/generate-tokens.ts"
   },

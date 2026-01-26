@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const CreateRankingSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1, "Name cannot be empty"),
   description: z.string(),
 });
 export type CreateRankingSchema = z.infer<typeof CreateRankingSchema>;
