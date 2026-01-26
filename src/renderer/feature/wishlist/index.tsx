@@ -3,9 +3,12 @@ import { useEffect } from "react";
 import { Search } from "./components/Search";
 import { useWishlist } from "./api/get-wishlist";
 import { Item } from "./components/Item";
+import { LoadingCenter } from "@render/components/new/loading/Loading";
 
 export const WishlistPage = () => {
   const wishlistQuery = useWishlist();
+
+  if (wishlistQuery.isPending) return <LoadingCenter />;
 
   return (
     <div className="h-screen overflow-x-hidden overflow-y-scroll">

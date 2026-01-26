@@ -1,175 +1,32 @@
-import { ipcMain } from "electron";
 import _ from "lodash";
-import { MEDIA_TYPE, RouteMedia } from "../../common/constant";
-import * as MediaService from "../media/media.service";
-import { ErrorMessage } from "../../common/error";
-import logger from "@main/logger";
+import { RouteMedia } from "../../common/constant";
+import * as MediaController from "../media/media.controller";
+import { withHandler } from "@main/middleware/withHandler";
 
-ipcMain.handle(RouteMedia.GET_ALL_MEDIA, async (_event, gameId) => {
-  try {
-    return await MediaService.getAllMedia(gameId);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_ALL_MEDIA,
-      error: e,
-    });
-  }
+withHandler(RouteMedia.GET_MEDIA_BY_TYPE, async (_event, data) => {
+  return await MediaController.getMediaByType(data);
 });
 
-ipcMain.handle(RouteMedia.GET_BACKGROUNDS, async (_event, gameId, count) => {
-  try {
-    const backgrounds = await MediaService.getMediaByType(MEDIA_TYPE.BACKGROUND, gameId, count);
-    if (!backgrounds.length) {
-      return await MediaService.getMediaByType(MEDIA_TYPE.SCREENSHOT, gameId, count);
-    }
-    return backgrounds;
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_BACKGROUNDS,
-      error: e,
-    });
-  }
+withHandler(RouteMedia.GET_ALL_MEDIA, async (_event, data) => {
+  return await MediaController.getMediaByType(data);
 });
 
-ipcMain.handle(RouteMedia.GET_LOGOS, async (_event, gameId, count) => {
-  try {
-    return MediaService.getMediaByType(MEDIA_TYPE.LOGO, gameId, count);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_LOGOS,
-      error: e,
-    });
-  }
+withHandler(RouteMedia.DELETE, async (_event, data) => {
+  return await MediaController.deleteMedia(data);
 });
 
-ipcMain.handle(RouteMedia.GET_ICONS, async (_event, gameId, count) => {
-  try {
-    return MediaService.getMediaByType(MEDIA_TYPE.ICON, gameId, count);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_ICONS,
-      error: e,
-    });
-  }
+withHandler(RouteMedia.SEARCH, async (_event, data) => {
+  return MediaController.searchMedia(data);
 });
 
-ipcMain.handle(RouteMedia.GET_COVERS, async (_event, gameId, count) => {
-  try {
-    return await MediaService.getMediaByType(MEDIA_TYPE.COVER, gameId, count);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_COVERS,
-      error: e,
-    });
-  }
+withHandler(RouteMedia.DOWNLOAD_BY_URL, async (_event, data) => {
+  return await MediaController.downloadMedia(data);
 });
 
-ipcMain.handle(RouteMedia.GET_TRAILERS, async (_event, gameId, count) => {
-  try {
-    return await MediaService.getMediaByType(MEDIA_TYPE.TRAILER, gameId, count);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_TRAILERS,
-      error: e,
-    });
-  }
+withHandler(RouteMedia.SET_DEFAULT, async (_event, data) => {
+  return await MediaController.setDefaultMedia(data);
 });
 
-ipcMain.handle(RouteMedia.GET_MUSIC, async (_event, gameId, count) => {
-  try {
-    return await MediaService.getMediaByType(MEDIA_TYPE.MUSIC, gameId, count);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_TRAILERS,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS, async (_event, count) => {
-  try {
-    return await MediaService.getRecentlyPlayedBackgrounds(count);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_RECENTLY_PLAYED_BACKGROUNDS,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.GET_ACHIEVEMENTS, async (_event, gameId) => {
-  try {
-    return await MediaService.getMediaByType(MEDIA_TYPE.ACHIEVEMENT, gameId);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_ACHIEVEMENTS,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.GET_SCREENSHOTS, async (_event, gameId, count) => {
-  try {
-    return MediaService.getMediaByType(MEDIA_TYPE.SCREENSHOT, gameId, count);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.GET_SCREENSHOTS,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.DELETE, async (_event, gameId, mediaType, mediaName) => {
-  try {
-    return MediaService.deleteMediaByGameIdAndMediaId(gameId, mediaType, mediaName);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.DELETE,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.SEARCH, async (_event, gameId, mediaType, search, page) => {
-  try {
-    return MediaService.search(gameId, mediaType, search, page);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.SEARCH,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.DOWNLOAD_BY_URL, async (_event, gameId, mediaType, url) => {
-  try {
-    await MediaService.downloadByUrl(gameId, mediaType, url);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.DOWNLOAD_BY_URL,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.SET_DEFAULT, async (_event, gameId, mediaType, name) => {
-  try {
-    await MediaService.setDefault(gameId, mediaType, name);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.SET_DEFAULT,
-      error: e,
-    });
-  }
-});
-
-ipcMain.handle(RouteMedia.REMOVE_DEFAULT, async (_event, gameId, mediaType) => {
-  try {
-    await MediaService.removeDefault(gameId, mediaType);
-  } catch (e) {
-    logger.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteMedia.REMOVE_DEFAULT,
-      error: e,
-    });
-  }
+withHandler(RouteMedia.REMOVE_DEFAULT, async (_event, data) => {
+  return await MediaController.removeDefaultMedia(data);
 });

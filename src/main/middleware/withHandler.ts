@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import logger from "@main/logger";
+import logger, { LogTag } from "@main/logger";
 import _ from "lodash";
 import { ErrorMessage } from "@common/error";
 
@@ -11,7 +11,7 @@ export function withHandler(
     try {
       return await handler(event, ...args);
     } catch (e) {
-      logger.error(ErrorMessage.ERROR_IN_ROUTE, { route, error: e });
+      logger.error(ErrorMessage.ERROR_IN_ROUTE, { route, error: e }, LogTag.MIDDLEWARE);
       throw e;
     }
   });

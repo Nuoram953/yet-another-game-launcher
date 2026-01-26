@@ -4,6 +4,7 @@ import * as path from "path";
 import * as os from "os";
 
 export enum LogTag {
+  MEDIA = "MEDIA",
   NETWORK = "NETWORK",
   NOTIFICATION = "NOTIFICATION",
   TRACKING = "TRACKING",

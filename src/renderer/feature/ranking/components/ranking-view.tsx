@@ -24,12 +24,13 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useState, useEffect } from "react";
 import { useGame } from "@render/api/get-game";
-import { useGameCover } from "@render/api/get-game-cover";
 import ButtonIcon from "@render/components/new/button/ButtonIcon";
 import { useDeleteGameRanking } from "../api/remove-game-ranking";
 import Button from "@render/components/new/button/Button";
 import { useUpdateRankingGameOrder } from "../api/update-game-ranking-order";
 import Section from "@render/components/new/section";
+import { useMedia } from "@render/api/get-media-by-type";
+import { MEDIA_TYPE } from "@common/constant";
 
 interface SortableGameItemProps {
   item: {
@@ -53,7 +54,7 @@ const SortableGameItem = ({ item, index }: SortableGameItemProps) => {
   });
 
   const gameQuery = useGame({ gameId: item.id });
-  const coverQuery = useGameCover({ gameId: item.id });
+  const coverQuery = useMedia({ data: { gameId: item.id, type: MEDIA_TYPE.COVER } });
 
   if (gameQuery.isPending || coverQuery.isPending) return <LoadingCenter />;
 

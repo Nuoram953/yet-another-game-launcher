@@ -4,6 +4,17 @@ import { MEDIA_TYPE } from "@common/constant";
 import { getImageDirectoryPath } from "./paths";
 import { app } from "electron";
 import logger from "@main/logger";
+import path from "path";
+
+export const getGameFolder = (gameId: string) => {
+  return path.join(app.getPath("userData"), gameId);
+};
+
+export const getGameMediaFiles = (gameId: string, type: MEDIA_TYPE) => {
+  const gameDir = getGameFolder(gameId);
+  const mediaDir = path.join(gameDir, type);
+  return fs.readdirSync(mediaDir);
+};
 
 export const getNumberOfFiles = (path: string): number => {
   if (!fs.existsSync(path)) {

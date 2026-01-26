@@ -2,9 +2,10 @@ import { GameWithRelations } from "@common/types";
 import { Clock, Trophy } from "lucide-react";
 import { Image } from "@component/new/Image/Image";
 import { convertToHoursAndMinutes } from "@render/utils/util";
-import { useBackground } from "../api/get-background";
 import { LoadingCenter } from "@render/components/new/loading/Loading";
 import { useNavigate } from "@tanstack/react-router";
+import { useMedia } from "@render/api/get-media-by-type";
+import { MEDIA_TYPE } from "@common/constant";
 
 interface ItemProps extends React.PropsWithChildren {
   index: number;
@@ -13,7 +14,7 @@ interface ItemProps extends React.PropsWithChildren {
 
 export const Item = ({ game, index }: ItemProps) => {
   const navigate = useNavigate();
-  const backgroundQuery = useBackground({ id: game.id, count: 1 });
+  const backgroundQuery = useMedia({ data: { gameId: game.id, count: 1, type: MEDIA_TYPE.BACKGROUND } });
 
   const handleOnClick = () => {
     navigate({
@@ -27,6 +28,8 @@ export const Item = ({ game, index }: ItemProps) => {
     return <LoadingCenter />;
   }
 
+  const background = backgroundQuery.data?.[0] ?? "";
+
   return (
     <div
       key={game.id}
@@ -34,7 +37,7 @@ export const Item = ({ game, index }: ItemProps) => {
       style={{ left: `${index * 100}%` }}
       onClick={handleOnClick}
     >
-      <Image preset="background" src={backgroundQuery.data[0]} alt={game.name} fade={false} className="!h-full" />
+      <Image preset="background" src={background} alt={game.name} fade={false} className="!h-full" />
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
         <h2 className="mb-2 text-4xl font-bold text-normal">{game.name}</h2>
         <div className="flex flex-row gap-8">
