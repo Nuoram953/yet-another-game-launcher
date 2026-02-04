@@ -19,11 +19,13 @@ import _ from "lodash";
 import { useParams } from "@tanstack/react-router";
 import { useGame } from "@render/api/get-game";
 import { LoadingCenter } from "../new/loading/Loading";
+import { useLaunchGame } from "@render/feature/home/api/post-launch-game";
 
 export const ButtonPlay = () => {
   const { id } = useParams({ from: "/game/$id" });
 
   const gameQuery = useGame({ gameId: id });
+  const launchGame = useLaunchGame({});
   const { running } = useGames();
   const [open, setOpen] = useState<boolean>(false);
 
@@ -36,12 +38,14 @@ export const ButtonPlay = () => {
 
   const game = gameQuery.data;
 
-  console.log(game);
-
   const handleOnPlay = async (type: LaunchType, id: number) => {
     setSelectedLaunchId(id);
     setSelectedLaunchType(type);
-    await window.game.launch(game.id, type, id);
+    launchGame.mutate({
+      gameId: game!.id,
+      launchId: id,
+      launchType: type,
+    });
   };
 
   const handleOnInstall = async () => {

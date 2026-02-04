@@ -23,3 +23,10 @@ export interface MediaApi {
   setDefault(data: MediaSchema.SetDefaultMediaSchema): Promise<MediaResponse.ResponseSetDefault>;
   removeDefault(data: MediaSchema.RemoveDefaultMediaSchema): Promise<MediaResponse.ResponseRemoveDefault>;
 }
+
+// import * as LibraryResponse from "../main/library/library.response";
+import * as LibrarySchema from "../main/library/library.schema";
+
+export interface LibraryApi {
+  launch(data: LibrarySchema.LaunchGame): Promise<void>;
+}

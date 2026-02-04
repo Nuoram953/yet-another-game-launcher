@@ -5,6 +5,7 @@ declare global {
   interface Window {
     ranking: RankingAPI;
     media: MediaApi;
+    library: LibraryApi;
   }
 }
 

@@ -376,8 +376,8 @@ model Platform {
 model Emulator {
   id                  Int                   @id @default(autoincrement())
   name                String                @unique
-  path                String?
-  cmd                 String?
+  path                String
+  cmd                 String
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   Platform            Platform[]
@@ -443,11 +443,11 @@ model GameLaunchEmulation {
   name                       String
   gameId                     String
   game                       Game                         @relation(fields: [gameId], references: [id])
-  emulator                   Emulator?                    @relation(fields: [emulatorId], references: [id])
-  emulatorId                 Int?
+  emulator                   Emulator                     @relation(fields: [emulatorId], references: [id])
+  emulatorId                 Int
   isEnabled                  Boolean                      @default(true)
   retroAchievementsId        String?
-  path                       String?
+  path                       String
   GameLaunchEmulationOptions GameLaunchEmulationOptions[]
   EmulatorOption             EmulatorOption?              @relation(fields: [emulatorOptionId], references: [id])
   emulatorOptionId           Int?

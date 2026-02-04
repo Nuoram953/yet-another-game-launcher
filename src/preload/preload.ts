@@ -36,6 +36,7 @@ contextBridge.exposeInMainWorld("config", {
 });
 
 contextBridge.exposeInMainWorld("library", {
+  launch: (data) => ipcRenderer.invoke(RouteLibrary.LAUNCH, data),
   refresh: () => ipcRenderer.invoke(RouteLibrary.REFRESH),
   getSidebar: () => ipcRenderer.invoke(RouteLibrary.GET_SIDEBAR),
   getGame: (id: string, refreshAchievements: boolean = true) =>

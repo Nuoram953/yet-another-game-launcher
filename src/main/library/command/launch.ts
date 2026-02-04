@@ -1,121 +1,151 @@
-import { GameWithRelations, LaunchType } from "@common/types";
-import logger, { LogTag } from "@main/logger";
+import path from "path";
+import { LaunchType } from "@common/types";
+import logger, { LogMethod, LogTag } from "@main/logger";
 import queries from "@main/dal/dal";
 import _ from "lodash";
 import { DataRoute, Storefront } from "@common/constant";
-import dataManager from "@main/manager/dataChannelManager";
 import { spawn } from "child_process";
-import path from "path";
+import { monitorDirectoryProcesses } from "@main/utils/tracking";
+import { getMinutesBetween } from "@main/utils/utils";
+import { createGameActiviy } from "@main/dal/gameActiviy";
+import { ErrorMessage } from "@common/error";
+import dataManager from "@main/manager/dataChannelManager";
+import { refreshGame } from "@main/game/game.service";
+
 import * as SteamCommand from "@main/storefront/steam/commands";
 import * as EpicCommand from "@main/storefront/epic/commands";
 
 import * as AchievementService from "@main/achievement/achievement.service";
+import { Game } from "@prisma/client";
 
-import { monitorDirectoryProcesses } from "@main/utils/tracking";
-import { getMinutesBetween } from "@main/utils/utils";
-import { createGameActiviy } from "@main/dal/gameActiviy";
-import { refreshGame } from "@main/game/game.service";
+export class LaunchGameCommand {
+  game: Game;
+  launchId: number;
+  launchType: LaunchType;
 
-export const preLaunch = async (game: GameWithRelations) => {
-  logger.info(`preLaunch for game`, { id: game.id }, LogTag.TRACKING);
-};
+  constructor(game: Game, launchId: number, launchType: LaunchType) {
+    this.game = game;
+    this.launchId = launchId;
+    this.launchType = launchType;
 
-export const launch = async (
-  game: GameWithRelations,
-  launchType: LaunchType = LaunchType.STOREFRONT,
-  lauchId: number,
-) => {
-  let hasPostBeenDone = false;
-
-  await preLaunch(game);
-  logger.info(`Launch game`, { id: game.id }, LogTag.TRACKING);
-
-  let location: string;
-
-  switch (launchType) {
-    case LaunchType.APP:
-      {
-        const launch = await queries.GameLaunchApp.getById(lauchId);
-        location = launch.path!;
-        runApp(launch.path!, []);
-      }
-      break;
-    case LaunchType.STOREFRONT:
-      {
-        location = game.location!;
-        switch (game.storefrontId) {
-          case Storefront.STEAM: {
-            SteamCommand.run(game);
-            break;
-          }
-          case Storefront.EPIC: {
-            EpicCommand.run(game);
-            break;
-          }
-        }
-      }
-      break;
-    case LaunchType.EMULATOR:
-      {
-        const gamePath = await queries.GameLaunchEmulator.getById(lauchId);
-        location = gamePath.path!;
-        runEmulator(gamePath.emulator.cmd, gamePath.emulator.path, gamePath.path!, []);
-      }
-      break;
+    this.launch();
   }
 
-  dataManager.send(DataRoute.RUNNING_GAME, {
-    isRunning: true,
-    id: game.id,
-  });
+  @LogMethod(LogTag.TRACKING)
+  async preLaunch() {}
 
-  const { startTime, endTime } = await monitorDirectoryProcesses(location);
-  if (!hasPostBeenDone) {
-    hasPostBeenDone = true;
-    await postLaunch(game, startTime, endTime);
+  @LogMethod(LogTag.TRACKING)
+  async launch() {
+    const location = await this.getGameLaunchLocation();
+    await this.preLaunch();
+
+    switch (this.launchType) {
+      case LaunchType.APP:
+        this.launchApp();
+        break;
+      case LaunchType.STOREFRONT:
+        this.launchStorefront();
+        break;
+      case LaunchType.EMULATOR:
+        this.launchEmulator();
+        break;
+      default:
+        logger.warn("Invalid Launch type", { type: this.launchType }, LogTag.TRACKING);
+    }
+
+    const { startTime, endTime } = await monitorDirectoryProcesses(location);
+
+    await this.postLauch(startTime, endTime);
   }
-};
 
-export const postLaunch = async (game: GameWithRelations, startTime: Date, endTime: Date | null) => {
-  logger.info(`postLaunch for game`, { id: game.id }, LogTag.TRACKING);
-  if (startTime && endTime) {
+  @LogMethod(LogTag.TRACKING)
+  async launchApp() {
+    const launch = await queries.GameLaunchApp.getById(this.launchId);
+    const normalizedPath = path.normalize(launch.path);
+
+    spawn(normalizedPath, [], {
+      detached: true,
+      stdio: "ignore",
+    });
+  }
+
+  @LogMethod(LogTag.TRACKING)
+  async launchEmulator() {
+    const launch = await queries.GameLaunchEmulator.getById(this.launchId);
+
+    if (!launch) throw new Error(ErrorMessage.INVALID_GAME_PATH);
+
+    const emulatorPath = launch.emulator.path;
+    const emulatorCmd = launch.emulator.cmd;
+    const normalizedPath = emulatorPath ? path.normalize(emulatorPath ?? "" + emulatorCmd) : emulatorCmd;
+
+    spawn(normalizedPath, [launch.path], {
+      detached: true,
+      stdio: "ignore",
+    });
+  }
+
+  @LogMethod(LogTag.TRACKING)
+  async launchStorefront() {
+    switch (this.game.storefrontId) {
+      case Storefront.STEAM:
+        SteamCommand.run(this.game);
+        break;
+      case Storefront.EPIC:
+        EpicCommand.run(this.game);
+        break;
+      default:
+        logger.warn("Invalid storefront", { type: this.game.storefrontId }, LogTag.TRACKING);
+    }
+  }
+
+  @LogMethod(LogTag.TRACKING)
+  async postLauch(startTime: Date, endTime: Date | null) {
+    if (!startTime || !endTime) throw new Error("invalid start or end time");
+
     const minutes = await getMinutesBetween(startTime, endTime);
-    if (minutes > 0) {
-      await createGameActiviy(game.id, startTime, endTime);
-      await queries.Game.updateTimePlayed(game.id, minutes + 5);
-    } else {
-      logger.info(`Game session for ${game.id} was ${minutes} minutes. Won't create a game activity`);
+
+    await createGameActiviy(this.game.id, startTime, endTime);
+
+    logger.info(
+      "Session created",
+      {
+        minutes,
+        gameId: this.game.id,
+      },
+      LogTag.TRACKING,
+    );
+
+    if (this.game.gameStatusId === 7) {
+      await queries.Game.update(this.game.id, { gameStatusId: 6 });
     }
 
-    if (game.gameStatusId === 7) {
-      await queries.Game.update(game.id, { gameStatusId: 6 });
-    }
+    await AchievementService.updateAchievements(this.game);
 
-    await AchievementService.updateAchievements(game);
+    dataManager.send(DataRoute.RUNNING_GAME, {
+      isRunning: false,
+      id: this.game.id,
+    });
+
+    await refreshGame(this.game.id);
   }
 
-  dataManager.send(DataRoute.RUNNING_GAME, {
-    isRunning: false,
-    id: game.id,
-  });
+  async getGameLaunchLocation() {
+    switch (this.launchType) {
+      case LaunchType.APP: {
+        const launch = await queries.GameLaunchApp.getById(this.launchId);
+        if (!launch) throw new Error(ErrorMessage.INVALID_GAME_PATH);
+        return launch.path;
+      }
+      case LaunchType.STOREFRONT: {
+        return this.game.location!;
+      }
+      case LaunchType.EMULATOR: {
+        const gamePath = await queries.GameLaunchEmulator.getById(this.launchId);
+        if (!gamePath) throw new Error(ErrorMessage.INVALID_GAME_PATH);
 
-  await refreshGame(game.id);
-};
-
-function runApp(appPath: string, args: string[] = []) {
-  const normalizedPath = path.normalize(appPath);
-
-  spawn(normalizedPath, args, {
-    detached: true,
-    stdio: "ignore",
-  });
-}
-
-function runEmulator(emulatorCmd: string, emulatorPath: string | null, appPath: string, args: string[] = []) {
-  const normalizedPath = emulatorPath ? path.normalize(emulatorPath ?? "" + emulatorCmd) : emulatorCmd;
-
-  spawn(normalizedPath, [appPath], {
-    detached: true,
-    stdio: "ignore",
-  });
+        return gamePath.path;
+      }
+    }
+  }
 }

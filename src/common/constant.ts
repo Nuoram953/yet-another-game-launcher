@@ -36,6 +36,7 @@ export enum DataRoute {
 }
 
 export enum RouteLibrary {
+  LAUNCH = "library:launchGame",
   REFRESH = "library:refresh",
   GET_SIDEBAR = "library:getSidebar",
   GET_GAME = "library:getGame",

@@ -5,17 +5,12 @@ import { ErrorMessage } from "../../common/error";
 import * as GameService from "../game/game.service";
 import * as GameController from "../game/game.controller";
 
-import { launch } from "@main/library/command/launch";
 import { install } from "@main/library/command/install";
 import { uninstall } from "@main/library/command/uninstall";
 import { withEntity } from "@main/middleware/withEntity";
 import { GameWithRelations, LaunchType } from "@common/types";
 import { withHandler } from "@main/middleware/withHandler";
 import { GameLaunchApp, GameLaunchEmulation } from "@prisma/client";
-
-withEntity<GameWithRelations>(RouteGame.LAUNCH, async (game, _event, launchType, launchId) => {
-  await launch(game, launchType, launchId);
-});
 
 withEntity<GameWithRelations>(RouteGame.INSTALL, async (game, _event) => {
   await install(game);

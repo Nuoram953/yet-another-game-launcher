@@ -355,3 +355,19 @@ export function createTaggedLogger(
 const logger = createMainLogger({ minLevel: LogLevel.DEBUG });
 
 export default logger;
+
+export function LogMethod(tag?: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+
+    descriptor.value = async function (...args: any[]) {
+      logger.info(`Calling ${propertyKey}`, { gameId: this.game?.id, args }, tag);
+
+      const result = await originalMethod.apply(this, args);
+
+      return result;
+    };
+
+    return descriptor;
+  };
+}

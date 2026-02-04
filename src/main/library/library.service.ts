@@ -2,15 +2,17 @@ import _ from "lodash";
 import queries from "../dal/dal";
 import { config } from "../index";
 import * as InternetGameDatabase from "@main/externalApi/internetGameDatabase/service";
-import { FilterConfig, SidebarData, SortConfig } from "../../common/types";
+import { FilterConfig, GameWithRelations, LaunchType, SidebarData, SortConfig } from "../../common/types";
 import notificationManager from "../manager/notificationManager";
 import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
 import * as SteamService from "@main/storefront/steam/service";
-import * as AchievementService from "@main/achievement/achievement.service";
-import * as GameService from "@main/game/game.service";
 import { FilterPreset, Game } from "@prisma/client";
-import { platform } from "node:process";
+import { LaunchGameCommand } from "./command/launch";
+
+export const launch = async (game: Game, launchId: number, launchType: LaunchType) => {
+  new LaunchGameCommand(game, launchId, launchType);
+};
 
 export const getStorefronts = async () => {
   return await queries.Storefront.findAll();
