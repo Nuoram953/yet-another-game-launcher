@@ -12,6 +12,7 @@ export enum LogTag {
   STORE = "STORE",
   ACHIEVEMENT = "ACHIEVEMENT",
   MIDDLEWARE = "MIDDLEWARE",
+  LIBRARY = "LIBRARY",
 }
 
 export enum LogLevel {
@@ -352,7 +353,7 @@ export function createTaggedLogger(
   return logger.createTaggedLogger(tag);
 }
 
-const logger = createMainLogger({ minLevel: LogLevel.DEBUG });
+const logger = createMainLogger({ minLevel: LogLevel.INFO });
 
 export default logger;
 

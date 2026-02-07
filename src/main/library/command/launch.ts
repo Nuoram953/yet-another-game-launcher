@@ -1,5 +1,5 @@
 import path from "path";
-import { LaunchType } from "@common/types";
+import { GameWithRelations, LaunchType } from "@common/types";
 import logger, { LogMethod, LogTag } from "@main/logger";
 import queries from "@main/dal/dal";
 import _ from "lodash";
@@ -16,28 +16,28 @@ import * as SteamCommand from "@main/storefront/steam/commands";
 import * as EpicCommand from "@main/storefront/epic/commands";
 
 import * as AchievementService from "@main/achievement/achievement.service";
-import { Game } from "@prisma/client";
 
 export class LaunchGameCommand {
-  game: Game;
+  game: GameWithRelations;
   launchId: number;
   launchType: LaunchType;
 
-  constructor(game: Game, launchId: number, launchType: LaunchType) {
+  constructor(game: GameWithRelations, launchId: number, launchType: LaunchType) {
     this.game = game;
     this.launchId = launchId;
     this.launchType = launchType;
 
+    this.preLaunch();
+  }
+
+  @LogMethod(LogTag.TRACKING)
+  async preLaunch() {
     this.launch();
   }
 
   @LogMethod(LogTag.TRACKING)
-  async preLaunch() {}
-
-  @LogMethod(LogTag.TRACKING)
   async launch() {
     const location = await this.getGameLaunchLocation();
-    await this.preLaunch();
 
     switch (this.launchType) {
       case LaunchType.APP:

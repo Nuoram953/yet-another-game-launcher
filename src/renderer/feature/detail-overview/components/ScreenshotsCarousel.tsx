@@ -9,6 +9,8 @@ import Button from "@render/components/new/button/Button";
 import { LoadingCenter } from "@render/components/new/loading/Loading";
 import { useParams } from "@tanstack/react-router";
 import { useGame } from "@render/api/get-game";
+import { useMedia } from "@render/api/get-media-by-type";
+import { MEDIA_TYPE } from "@common/constant";
 
 /**
  * Hook: true if viewport >= given width
@@ -32,9 +34,6 @@ const useMinWidth = (width: number) => {
 
 export const ScreenshotsCarousel = () => {
   const { id } = useParams({ from: "/game/$id" });
-
-  const gameQuery = useGame({ gameId: id });
-
   const [activeScreenshot, setActiveScreenshot] = useState<string | null>(null);
   const filmstripRef = useRef<HTMLDivElement | null>(null);
   const [, forceUpdate] = useState(0);
@@ -42,26 +41,14 @@ export const ScreenshotsCarousel = () => {
   const isWide = useMinWidth(1000);
   const heroCount = isWide ? 4 : 1;
 
-  const { data = [], isPending } = useQuery({
-    queryKey: ["screenshots", id],
-    queryFn: () => getScreenshots(id),
-    gcTime: 0,
-    onSuccess: (screenshots) => {
-      if (screenshots.length) {
-        setActiveScreenshot((prev) => prev ?? screenshots[0]);
-      }
-    },
-  });
+  const screenshotsQuery = useMedia({ data: { gameId: id, type: MEDIA_TYPE.SCREENSHOT } });
 
-  if (gameQuery.isPending) {
+  if (screenshotsQuery.isPending) {
     return <LoadingCenter />;
   }
 
-  if (isPending || !data.length) {
-    return <div>Loading...</div>;
-  }
+  const data = screenshotsQuery.data ?? [];
 
-  const game = gameQuery.data;
   const activeIndex = data.findIndex((s) => s === (activeScreenshot ?? data[0]));
 
   const heroScreenshots = [data[activeIndex], ...data.filter((_, i) => i !== activeIndex)].slice(0, heroCount);

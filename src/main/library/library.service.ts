@@ -10,7 +10,7 @@ import * as SteamService from "@main/storefront/steam/service";
 import { FilterPreset, Game } from "@prisma/client";
 import { LaunchGameCommand } from "./command/launch";
 
-export const launch = async (game: Game, launchId: number, launchType: LaunchType) => {
+export const launch = async (game: GameWithRelations, launchId: number, launchType: LaunchType) => {
   new LaunchGameCommand(game, launchId, launchType);
 };
 

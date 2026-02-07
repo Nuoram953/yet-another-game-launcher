@@ -32,6 +32,7 @@ import * as howLongToBeatApi from "../externalApi/howLongToBeat";
 import * as internetGameDatabaseApi from "../externalApi/internetGameDatabase";
 import * as SteamGridDbService from "../externalApi/steamGridDb/service";
 import * as openCriticApi from "../externalApi/openCritic";
+import { SyncGameDataCommand } from "@main/library/command/syncGameData";
 
 export const uninstall = async (id: string) => {
   const game = await queries.Game.getGameById(id);
@@ -114,6 +115,10 @@ export const update = async (data: Partial<Game>) => {
 
 export const updateInfo = async (id: string) => {
   const game = await queries.Game.getGameById(id);
+
+  await new SyncGameDataCommand(game!).runAll();
+
+  return;
 
   const notificationId = NotificationType.NEW_GAME + game.id;
   notificationManager.show({
