@@ -1,5 +1,7 @@
 import React from "react";
 import { VariantProps, cva } from "class-variance-authority";
+import { LoadingCenter } from "../loading/Loading";
+import { Loader2 } from "lucide-react";
 
 export const buttonVariants = cva(
   [
@@ -23,6 +25,10 @@ export const buttonVariants = cva(
         md: "px-4 py-2 text-base",
         lg: "px-6 py-3 text-lg",
       },
+      loading: {
+        true: "opacity-50 cursor-not-allowed",
+        false: "",
+      },
     },
     defaultVariants: {
       intent: "primary",
@@ -40,12 +46,21 @@ export type ButtonBaseProps = {
   React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const ButtonBase = React.forwardRef<HTMLButtonElement, ButtonBaseProps>(
-  ({ intent, size, leading, text, trailing, className, ...props }, ref) => {
+  ({ intent, size, leading, text, trailing, className, loading, ...props }, ref) => {
     return (
-      <button ref={ref} className={buttonVariants({ intent, size, className })} {...props}>
-        {leading}
-        {text}
-        {trailing}
+      <button ref={ref} className={buttonVariants({ intent, size, loading, className })} {...props}>
+        {loading ? (
+          <>
+            {leading && <Loader2 className="animate-spin text-normal" />}
+            {text && "Loading..."}
+          </>
+        ) : (
+          <>
+            {leading}
+            {text}
+            {trailing}
+          </>
+        )}
       </button>
     );
   },

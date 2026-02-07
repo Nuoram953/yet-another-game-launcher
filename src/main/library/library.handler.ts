@@ -8,8 +8,12 @@ import logger from "@main/logger";
 import { withHandler } from "@main/middleware/withHandler";
 import { Game } from "@prisma/client";
 
-withHandler(RouteLibrary.LAUNCH, async (_event, data) => {
-  return await LibraryController.launch(data);
+withHandler(RouteLibrary.LAUNCH_GAME, async (_event, data) => {
+  return await LibraryController.launchGame(data);
+});
+
+withHandler(RouteLibrary.REFRESH_GAME, async (_event, data) => {
+  return await LibraryController.refreshGame(data);
 });
 
 ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {

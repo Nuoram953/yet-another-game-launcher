@@ -7,14 +7,24 @@ import * as LibrarySchema from "./library.schema";
 
 import queries from "../dal/dal";
 
-export const launch = async (data: LibrarySchema.LaunchGame) => {
+export const launchGame = async (data: LibrarySchema.LaunchGame) => {
   const result = await LibrarySchema.LaunchGame.safeParseAsync(data);
   if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
   const game = await queries.Game.getGameById(result.data.gameId);
   if (!game) throw new Error(ErrorMessage.INVALID_GAME);
 
-  return await LibraryService.launch(game, result.data.launchId, result.data.launchType);
+  return await LibraryService.launchGame(game, result.data.launchId, result.data.launchType);
+};
+
+export const refreshGame = async (data: LibrarySchema.RefreshGame) => {
+  const result = await LibrarySchema.RefreshGame.safeParseAsync(data);
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  const game = await queries.Game.getGameById(result.data.gameId);
+  if (!game) throw new Error(ErrorMessage.INVALID_GAME);
+
+  return await LibraryService.refreshGame(game);
 };
 
 export const search = async (query: string) => {

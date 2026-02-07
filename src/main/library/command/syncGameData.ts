@@ -1,5 +1,5 @@
 import { NotifyProgress, RequireConfig } from "@main/decorator/decorator";
-import logger, { LogMethod, LogTag } from "../../logger";
+import logger, { LogTag } from "../../logger";
 import { MEDIA_TYPE, NotificationType, Storefront } from "@common/constant";
 import notificationManager from "@main/manager/notificationManager";
 import { GameWithRelations } from "@common/types";

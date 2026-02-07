@@ -29,4 +29,5 @@ import * as LibrarySchema from "../main/library/library.schema";
 
 export interface LibraryApi {
   launch(data: LibrarySchema.LaunchGame): Promise<void>;
+  refreshGame(data: LibrarySchema.RefreshGame): Promise<void>;
 }

@@ -9,9 +9,14 @@ import { Epic } from "../storefront/epic/api";
 import * as SteamService from "@main/storefront/steam/service";
 import { FilterPreset, Game } from "@prisma/client";
 import { LaunchGameCommand } from "./command/launch";
+import { SyncGameDataCommand } from "./command/syncGameData";
 
-export const launch = async (game: GameWithRelations, launchId: number, launchType: LaunchType) => {
+export const launchGame = async (game: GameWithRelations, launchId: number, launchType: LaunchType) => {
   new LaunchGameCommand(game, launchId, launchType);
+};
+
+export const refreshGame = async (game: GameWithRelations) => {
+  return await new SyncGameDataCommand(game).runAll();
 };
 
 export const getStorefronts = async () => {

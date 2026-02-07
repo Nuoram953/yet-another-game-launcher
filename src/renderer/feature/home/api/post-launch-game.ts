@@ -10,7 +10,7 @@ export const launchGame = (data: LibrarySchema.LaunchGame) => {
 
 export const createRankingQueryOptions = (data: LibrarySchema.LaunchGame) => {
   return queryOptions({
-    queryKey: [RouteLibrary.LAUNCH],
+    queryKey: [RouteLibrary.LAUNCH_GAME],
     queryFn: () => launchGame(data),
   });
 };

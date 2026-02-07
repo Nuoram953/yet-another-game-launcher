@@ -9,9 +9,12 @@ import { useGameFromParams } from "@render/hooks/useGameParam";
 import { getGame } from "@render/api/electron";
 import { MEDIA_TYPE } from "@common/constant";
 import { useMedia } from "@render/api/get-media-by-type";
+import { useRefreshGame } from "@render/api/refresh-game";
 
 export const Description = () => {
   const { game, isLoading, id } = useGameFromParams();
+  const refreshGame = useRefreshGame({});
+
   const coverQuery = useMedia({ data: { gameId: id, type: MEDIA_TYPE.COVER }, queryConfig: { enabled: !!game } });
 
   if (isLoading || coverQuery.isPending) {
@@ -47,8 +50,9 @@ export const Description = () => {
               intent="secondary"
               icon={<RefreshCcw />}
               text="Refresh"
+              loading={refreshGame.isPending}
               onClick={() => {
-                getGame().refreshInfo(game.id);
+                refreshGame.mutate({ gameId: game.id });
               }}
             />
             {game?.isInstalled && <ButtonIcon intent="destroy" icon={<Trash />} text="Uninstall" />}
