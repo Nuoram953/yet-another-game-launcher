@@ -12,6 +12,18 @@ import { GameWithRelations, LaunchType } from "@common/types";
 import { withHandler } from "@main/middleware/withHandler";
 import { GameLaunchApp, GameLaunchEmulation } from "@prisma/client";
 
+withHandler(RouteGame.LAUNCH, async (_event, data) => {
+  // return await GameController.launch(data);
+});
+
+withHandler(RouteGame.REFRESH, async (_event, data) => {
+  // return await GameController.launch(data);
+});
+
+// withHandler(RouteGame.INSTALL, async (_event, data) => {
+//   await install(game);
+// });
+
 withEntity<GameWithRelations>(RouteGame.INSTALL, async (game, _event) => {
   await install(game);
 });
