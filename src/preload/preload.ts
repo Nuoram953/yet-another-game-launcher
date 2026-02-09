@@ -21,7 +21,7 @@ import {
 import { FilterConfig, LaunchType, SortConfig } from "../common/types";
 import { AppConfig } from "../common/interface";
 import { PathsToProperties } from "@main/manager/configManager";
-import { MediaApi, RankingAPI } from "@common/ipc";
+import { MediaApi, RankingAPI, GameAPI } from "@common/ipc";
 
 const { contextBridge, ipcRenderer } = require("electron");
 
@@ -165,3 +165,13 @@ const media: MediaApi = {
   removeDefault: (data) => ipcRenderer.invoke(RouteMedia.REMOVE_DEFAULT, data),
 };
 contextBridge.exposeInMainWorld("media", media);
+
+const gameApi: GameAPI = {
+  launchGame: (data) => ipcRenderer.invoke(RouteGame.LAUNCH, data.id, data.launchType, data.launchId),
+  setGameStatus: (data) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
+  setGameFavorite: (data) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, data.id, data.isFavorite),
+  installGame: (data) => ipcRenderer.invoke(RouteGame.INSTALL, data.id),
+  uninstallGame: (data) => ipcRenderer.invoke(RouteGame.UNINSTALL, data.id),
+  killGame: (id, launchId, type) => ipcRenderer.invoke(RouteGame.KILL, id, launchId, type),
+};
+contextBridge.exposeInMainWorld("gameApi", gameApi);

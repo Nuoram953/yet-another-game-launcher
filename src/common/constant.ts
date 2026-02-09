@@ -105,6 +105,7 @@ export enum RouteGame {
   LAUNCH = "game:launch",
   INSTALL = "game:install",
   KILL = "game:kill",
+  REFRESH = "game:refresh",
   UNINSTALL = "game:uninstall",
   SET_REVIEW = "game:setReview",
   GET_REVIEW = "game:getReview",

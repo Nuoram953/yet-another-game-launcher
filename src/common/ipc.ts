@@ -24,6 +24,19 @@ export interface MediaApi {
   removeDefault(data: MediaSchema.RemoveDefaultMediaSchema): Promise<MediaResponse.ResponseRemoveDefault>;
 }
 
+import * as GameResponse from "../main/game/game.response";
+import * as GameSchema from "../main/game/game.schema";
+import { LaunchType } from "../common/types";
+
+export interface GameAPI {
+  launchGame(data: GameSchema.LaunchGameSchema): Promise<GameResponse.ResponseLaunchGame>;
+  setGameStatus(data: GameSchema.SetGameStatusSchema): Promise<GameResponse.ResponseSetGameStatus>;
+  setGameFavorite(data: GameSchema.SetGameFavoriteSchema): Promise<GameResponse.ResponseSetGameFavorite>;
+  installGame(data: GameSchema.GameOperationSchema): Promise<GameResponse.ResponseGameOperation>;
+  uninstallGame(data: GameSchema.GameOperationSchema): Promise<GameResponse.ResponseGameOperation>;
+  killGame(id: string, launchId: number, type: LaunchType): Promise<GameResponse.ResponseGameOperation>;
+}
+
 // import * as LibraryResponse from "../main/library/library.response";
 import * as LibrarySchema from "../main/library/library.schema";
 

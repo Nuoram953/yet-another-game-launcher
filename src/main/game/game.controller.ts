@@ -1,48 +1,121 @@
-import { GameLaunchApp, GameLaunchEmulation } from "@prisma/client";
+import * as GameSchema from "./game.schema";
 import * as GameService from "./game.service";
-import { LaunchType } from "@common/types";
 import queries from "../dal/dal";
 import _ from "lodash";
+import { ErrorMessage } from "@common/error";
 
-export const createOrUpdateLaunchApp = async (data: Partial<GameLaunchApp>): Promise<GameLaunchApp> => {
-  const launch = await GameService.createOrUpdateLaunchApp(data);
+export const launch = async (data: GameSchema.LaunchGameSchema) => {
+  const result = await GameSchema.LaunchGameSchema.safeParseAsync(data);
 
-  await GameService.refreshGame(data.gameId);
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
-  return launch;
+  return await GameService.launch(result.data.id, result.data.launchId, result.data.launchType);
 };
 
-export const createOrUpdateLaunchEmulator = async (
-  data: Partial<GameLaunchEmulation>,
-): Promise<GameLaunchEmulation> => {
-  const launch = await GameService.createOrUpdateLaunchEmulator(data);
+export const refresh = async (data: GameSchema.RefreshGameSchema) => {
+  const result = await GameSchema.RefreshGameSchema.safeParseAsync(data);
 
-  await GameService.refreshGame(data.gameId);
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
-  return launch;
+  return await GameService.refresh(result.data.gameId);
 };
 
-export const deleteLaunch = async (type: LaunchType, id: number): Promise<void> => {
-  let launch: any;
+export const install = async (data: GameSchema.InstallGameSchema) => {
+  const result = await GameSchema.InstallGameSchema.safeParseAsync(data);
 
-  switch (type) {
-    case LaunchType.APP:
-      {
-        launch = await queries.GameLaunchApp.getById(id);
-      }
-      break;
-    case LaunchType.EMULATOR:
-      {
-        launch = await queries.GameLaunchEmulator.getById(id);
-      }
-      break;
-  }
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
-  if (_.isNil(launch)) {
-    throw new Error("Launch not found");
-  }
+  return await GameService.install(result.data.gameId);
+};
 
-  await GameService.deleteLaunch(type, id);
+export const uninstall = async (data: GameSchema.InstallGameSchema) => {
+  const result = await GameSchema.UninstallGameSchema.safeParseAsync(data);
 
-  await GameService.refreshGame(launch.gameId);
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.uninstall(result.data.gameId);
+};
+
+export const kill = async (data: GameSchema.KillGameSchema) => {
+  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.kill(result.data.id, result.data.launchId, result.data.launchType);
+};
+
+export const getReview = async (data: GameSchema.GetReviewSchema) => {
+  const result = await GameSchema.GetReviewSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  const game = await queries.Game.getGameById(result.data.gameId);
+
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  return await GameService.getReview(game.id);
+};
+
+export const setReview = async (data: GameSchema.SetReviewSchema) => {
+  const result = await GameSchema.SetReviewSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.setReview(result.data);
+};
+
+export const createReviewThought = async (data: GameSchema.CreateReviewThoughtSchema) => {
+  const result = await GameSchema.CreateReviewThoughtSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  const game = await queries.Game.getGameById(result.data.gameId);
+
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  return await GameService.createReviewThought(result.data.gameId);
+};
+
+export const updateReviewThought = async (data: GameSchema.UpdateReviewThoughtSchema) => {
+  const result = await GameSchema.UpdateReviewThoughtSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  const game = await queries.Game.getGameById(result.data.gameId);
+
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  return await GameService.updateReviewThought(result.data);
+};
+
+export const deleteReviewThought = async (data: GameSchema.KillGameSchema) => {
+  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.deleteReviewThought(result.data.id);
+};
+
+export const createOrUpdateLaunchApp = async (data: GameSchema.KillGameSchema) => {
+  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.createOrUpdateLaunchApp(result.data.id, result.data.launchId, result.data.launchType);
+};
+
+export const addLaunchEmulator = async (data: GameSchema.KillGameSchema) => {
+  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.kill(result.data.id, result.data.launchId, result.data.launchType);
+};
+
+export const deleteLaunch = async (data: GameSchema.KillGameSchema) => {
+  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.kill(result.data.id, result.data.launchId, result.data.launchType);
 };
