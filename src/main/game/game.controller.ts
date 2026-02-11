@@ -88,34 +88,34 @@ export const updateReviewThought = async (data: GameSchema.UpdateReviewThoughtSc
   return await GameService.updateReviewThought(result.data);
 };
 
-export const deleteReviewThought = async (data: GameSchema.KillGameSchema) => {
-  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+export const deleteReviewThought = async (data: GameSchema.DeleteReviewThoughtSchema) => {
+  const result = await GameSchema.DeleteReviewThoughtSchema.safeParseAsync(data);
 
   if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
   return await GameService.deleteReviewThought(result.data.id);
 };
 
-export const createOrUpdateLaunchApp = async (data: GameSchema.KillGameSchema) => {
-  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+export const createLaunch = async (data: GameSchema.CreateLaunchSchema) => {
+  const result = await GameSchema.CreateLaunchSchema.safeParseAsync(data);
 
   if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
-  return await GameService.createOrUpdateLaunchApp(result.data.id, result.data.launchId, result.data.launchType);
+  return await GameService.createLaunch();
 };
 
-export const addLaunchEmulator = async (data: GameSchema.KillGameSchema) => {
-  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+export const updateLaunch = async (data: GameSchema.UpdateLaunchSchema) => {
+  const result = await GameSchema.UpdateLaunchSchema.safeParseAsync(data);
 
   if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
-  return await GameService.kill(result.data.id, result.data.launchId, result.data.launchType);
+  return await GameService.updateLaunch();
 };
 
-export const deleteLaunch = async (data: GameSchema.KillGameSchema) => {
-  const result = await GameSchema.KillGameSchema.safeParseAsync(data);
+export const deleteLaunch = async (data: GameSchema.DeleteLaunchSchema) => {
+  const result = await GameSchema.DeleteLaunchSchema.safeParseAsync(data);
 
   if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
-  return await GameService.kill(result.data.id, result.data.launchId, result.data.launchType);
+  return await GameService.deleteLaunch(result.data.type, result.data.id);
 };

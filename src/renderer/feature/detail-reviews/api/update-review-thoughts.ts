@@ -6,6 +6,7 @@ import { getGameReviewQueryOptions } from "./get-review";
 import { GameReviewThoughts } from "@prisma/client";
 
 export const updateReviewThought = (data: Partial<GameReviewThoughts>) => {
+  console.log(data);
   return getGame().updateReviewThought(data);
 };
 

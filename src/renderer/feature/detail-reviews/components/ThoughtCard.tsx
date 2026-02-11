@@ -54,7 +54,7 @@ export const ThoughtCard = ({
         <div className="flex gap-2">
           <ButtonIcon
             intent="tertiary"
-            onClick={() => onUpdate({ id: note.id, isPositive: !note.isPositive })}
+            onClick={() => onUpdate({ ...note, isPositive: !note.isPositive })}
             className="p-1 text-gray-400 hover:text-green-500"
             text="Positive"
             icon={<ThumbsUp size={14} className={`${note.isPositive && "text-green-500"}`} />}
@@ -62,7 +62,7 @@ export const ThoughtCard = ({
 
           <ButtonIcon
             intent="tertiary"
-            onClick={() => onUpdate({ id: note.id, isNegative: !note.isNegative })}
+            onClick={() => onUpdate({ ...note, isNegative: !note.isNegative })}
             className="p-1 text-gray-400 hover:text-red-500"
             text="Negative"
             icon={<ThumbsDown size={14} className={`${note.isNegative && "text-red-500"}`} />}

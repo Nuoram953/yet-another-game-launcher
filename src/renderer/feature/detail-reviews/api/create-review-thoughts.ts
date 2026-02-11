@@ -5,7 +5,7 @@ import { RouteGame } from "@common/constant";
 import { getGameReviewQueryOptions } from "./get-review";
 
 export const createReviewThought = (gameId: string) => {
-  return getGame().createReviewThought(gameId);
+  return getGame().createReviewThought({ gameId });
 };
 
 export const createReviewThoughtQueryOptions = (gameId: string) => {

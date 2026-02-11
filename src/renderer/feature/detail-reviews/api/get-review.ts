@@ -4,7 +4,7 @@ import { QueryConfig } from "@render/lib/react-query";
 import { getGame } from "@render/api/electron";
 
 export const getGameReview = ({ gameId }: { gameId: string }) => {
-  return getGame().getReview(gameId);
+  return getGame().getReview({ gameId });
 };
 
 export const getGameReviewQueryOptions = (gameId: string) => {
