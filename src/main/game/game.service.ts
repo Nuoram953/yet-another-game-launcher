@@ -24,6 +24,7 @@ import * as MetadataService from "@main/metadata/index";
 import * as OpenCriticService from "../externalApi/openCritic/service";
 import * as ConfigService from "@main/config/config.service";
 import * as AchievementService from "../achievement/achievement.service";
+import * as LibraryService from "../library/command/install";
 
 import * as SteamCommand from "../storefront/steam/commands";
 import * as EpicCommand from "../storefront/epic/commands";
@@ -35,6 +36,7 @@ import * as openCriticApi from "../externalApi/openCritic";
 import { LaunchGameCommand } from "@main/library/command/launch";
 import { ErrorMessage } from "@common/error";
 import { RefreshGameCommand } from "./commands/refresh";
+import { InstallGameCommand } from "./commands/install";
 
 export const launch = async (gameId: string, launchId: number, launchType: LaunchType) => {
   const game = await queries.Game.getGameById(gameId);
@@ -52,7 +54,16 @@ export const refresh = async (gameId: string) => {
   await new RefreshGameCommand(game).runAll();
 };
 
-export const install = async (gameId: string) => {};
+export const install = async (gameId: string) => {
+  const game = await queries.Game.getGameById(gameId);
+
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  await new InstallGameCommand(game).install();
+};
+
+export const refreshGame = async () => {};
+
 export const uninstall = async () => {};
 export const kill = async () => {};
 export const getReview = async () => {};

@@ -53,7 +53,7 @@ export const refresh = async () => {
       await GameService.create(data, Storefront.STEAM);
     } else {
       delete data.gameStatusId;
-      await GameService.update({ id: game.id, ...data });
+      await queries.Game.update(game.id, { id: game.id, ...data });
     }
   }
 };

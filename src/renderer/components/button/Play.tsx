@@ -49,7 +49,7 @@ export const ButtonPlay = () => {
   };
 
   const handleOnInstall = async () => {
-    await window.game.install(game.id);
+    await window.game.install({ gameId: game.id });
   };
 
   const handleOnAlertDialogPositif = async () => {
