@@ -89,6 +89,11 @@ export const DeleteLaunchSchema = z.object({
   type: z.enum(LaunchType),
 });
 
+export const SetStatusSchema = z.object({
+  gameId: z.string(),
+  statusId: z.number(),
+});
+
 export type LaunchGameSchema = z.infer<typeof LaunchGameSchema>;
 export type RefreshGameSchema = z.infer<typeof RefreshGameSchema>;
 export type InstallGameSchema = z.infer<typeof InstallGameSchema>;
@@ -107,3 +112,5 @@ export type GameOperationSchema = z.infer<typeof GameOperationSchema>;
 export type CreateLaunchSchema = z.infer<typeof CreateLaunchSchema>;
 export type UpdateLaunchSchema = z.infer<typeof UpdateLaunchSchema>;
 export type DeleteLaunchSchema = z.infer<typeof DeleteLaunchSchema>;
+
+export type SetStatusSchema = z.infer<typeof SetStatusSchema>;

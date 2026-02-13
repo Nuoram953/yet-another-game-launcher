@@ -13,6 +13,7 @@ export enum LogTag {
   ACHIEVEMENT = "ACHIEVEMENT",
   MIDDLEWARE = "MIDDLEWARE",
   LIBRARY = "LIBRARY",
+  GAME = "GAME",
 }
 
 export enum LogLevel {

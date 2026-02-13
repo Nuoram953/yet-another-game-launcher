@@ -55,9 +55,9 @@ const BadgeDropdown = ({ className, game }: Props) => {
   const handleOptionSelect = (e: React.MouseEvent, name: string) => {
     e.stopPropagation();
     const newStatus = status.find((item) => item.name == name);
-    const data: Partial<Game> = {
-      id: currentGame.id,
-      gameStatusId: newStatus!.id,
+    const data = {
+      gameId: currentGame.id,
+      statusId: newStatus!.id,
     };
     window.game.setStatus(data);
     setSelectedOption(name);

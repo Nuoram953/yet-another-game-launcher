@@ -33,10 +33,12 @@ import * as howLongToBeatApi from "../externalApi/howLongToBeat";
 import * as internetGameDatabaseApi from "../externalApi/internetGameDatabase";
 import * as SteamGridDbService from "../externalApi/steamGridDb/service";
 import * as openCriticApi from "../externalApi/openCritic";
-import { LaunchGameCommand } from "@main/library/command/launch";
+import { LaunchGameCommand } from "./commands/launch";
 import { ErrorMessage } from "@common/error";
 import { RefreshGameCommand } from "./commands/refresh";
 import { InstallGameCommand } from "./commands/install";
+import { UninstallGameCommand } from "./commands/uninstall";
+import { KillGameCommand } from "./commands/kill";
 
 export const launch = async (gameId: string, launchId: number, launchType: LaunchType) => {
   const game = await queries.Game.getGameById(gameId);
@@ -64,8 +66,22 @@ export const install = async (gameId: string) => {
 
 export const refreshGame = async () => {};
 
-export const uninstall = async () => {};
-export const kill = async () => {};
+export const uninstall = async (gameId: string) => {
+  const game = await queries.Game.getGameById(gameId);
+
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  await new UninstallGameCommand(game).uninstall();
+};
+
+export const kill = async (gameId: string, launchId: number, launchType: LaunchType) => {
+  const game = await queries.Game.getGameById(gameId);
+
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  await new KillGameCommand(game, launchId, launchType).kill();
+};
+
 export const getReview = async () => {};
 export const setReview = async () => {};
 export const createReviewThought = async () => {};
@@ -74,6 +90,16 @@ export const deleteReviewThought = async () => {};
 export const createLaunch = async () => {};
 export const updateLaunch = async () => {};
 export const deleteLaunch = async () => {};
+
+export const setStatus = async (gameId: string, newStatusId: number) => {
+  const game = await queries.Game.getGameById(gameId);
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  const status = await queries.GameStatus.findById(newStatusId);
+  if (!status) throw new Error(ErrorMessage.NOT_FOUND);
+
+  await queries.Game.update(gameId, { gameStatusId: newStatusId });
+};
 
 // export const uninstall = async (id: string) => {
 //   const game = await queries.Game.getGameById(id);

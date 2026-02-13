@@ -119,3 +119,11 @@ export const deleteLaunch = async (data: GameSchema.DeleteLaunchSchema) => {
 
   return await GameService.deleteLaunch(result.data.type, result.data.id);
 };
+
+export const setStatus = async (data: GameSchema.SetStatusSchema) => {
+  const result = await GameSchema.SetStatusSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.setStatus(result.data.gameId, result.data.statusId);
+};

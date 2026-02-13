@@ -15,7 +15,7 @@ export async function getCountForAllStatus() {
     };
   });
 
-  return result
+  return result;
 }
 
 export async function getAll() {
@@ -24,4 +24,8 @@ export async function getAll() {
 
 export async function findAll() {
   return await prisma.gameStatus.findMany();
+}
+
+export async function findById(gameStatusId: number) {
+  return await prisma.gameStatus.findUnique({ where: { id: gameStatusId } });
 }
