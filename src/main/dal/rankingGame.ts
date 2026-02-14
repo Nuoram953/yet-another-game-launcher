@@ -22,6 +22,12 @@ export async function upsert(data: Partial<RankingGame>) {
   });
 }
 
+export async function count(filter: { rankingId: number }) {
+  return await prisma.rankingGame.count({
+    where: filter,
+  });
+}
+
 export async function destroy(rankingId: number, gameId: string) {
   return await prisma.rankingGame.delete({
     where: { rankingId_gameId: { rankingId, gameId } },

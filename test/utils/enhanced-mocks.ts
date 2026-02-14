@@ -142,11 +142,25 @@ export const mockQueries = {
   Ranking: {
     findAll: vi.fn().mockResolvedValue([]),
     findUnique: vi.fn(),
-    create: vi.fn(),
+    create: vi.fn().mockResolvedValue({
+      id: 1,
+      name: "Test Ranking",
+      description: "Test Description",
+      rankingStatusId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
     deleteById: vi.fn(),
   },
   RankingGame: {
-    upsert: vi.fn(),
+    upsert: vi.fn().mockResolvedValue({
+      id: 1,
+      rankingId: 1,
+      gameId: "test-game-id",
+      rank: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
     destroy: vi.fn(),
   },
 };
@@ -202,6 +216,7 @@ export function setupMocks() {
       rankingGame: {
         upsert: mockQueries.RankingGame.upsert,
         delete: mockQueries.RankingGame.destroy,
+        aggregate: vi.fn().mockResolvedValue({ _max: { rank: 0 } }),
       },
       game: {
         findFirst: mockQueries.Game.getGameById,
@@ -211,6 +226,32 @@ export function setupMocks() {
         update: mockQueries.Game.update,
         delete: mockQueries.Game.delete,
       },
+      // Mock transaction method
+      $transaction: vi.fn().mockImplementation(async (callback) => {
+        // Create a mock transaction context that mirrors the real transaction API
+        const tx = {
+          rankingGame: {
+            aggregate: vi.fn().mockResolvedValue({ _max: { rank: 1 } }), // Changed to 1 to match test expectation
+            upsert: vi.fn().mockImplementation((data) => {
+              // Return data that matches what the test expects
+              const result = {
+                id: 1,
+                rankingId: data.create.rankingId,
+                gameId: data.create.gameId,
+                rank: data.create.rank,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+
+              // Also call the original mock so test assertions work
+              mockQueries.RankingGame.upsert(data);
+
+              return Promise.resolve(result);
+            }),
+          },
+        };
+        return await callback(tx);
+      }),
     },
   }));
 

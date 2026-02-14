@@ -64,10 +64,36 @@ export const addGameRanking = async (data: RankingSchema.AddGameRankingSchema) =
   const game = await queries.Game.getGameById(data.gameId);
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
-  return await queries.RankingGame.upsert({
-    rankingId: data.rankingId,
-    gameId: data.gameId,
-    rank: ranking.games.length + 1,
+  // Use prisma transaction to ensure atomic rank calculation
+  const { prisma } = await import("../index");
+
+  return await prisma.$transaction(async (tx) => {
+    // Get the current max rank for this ranking
+    const maxRank = await tx.rankingGame.aggregate({
+      where: { rankingId: data.rankingId },
+      _max: { rank: true },
+    });
+
+    const nextRank = (maxRank._max.rank || 0) + 1;
+
+    return await tx.rankingGame.upsert({
+      where: {
+        rankingId_gameId: {
+          rankingId: data.rankingId,
+          gameId: data.gameId,
+        },
+      },
+      update: {
+        rank: nextRank,
+        updatedAt: new Date(),
+      },
+      create: {
+        rank: nextRank,
+        gameId: data.gameId,
+        rankingId: data.rankingId,
+        createdAt: new Date(),
+      },
+    });
   });
 };
 

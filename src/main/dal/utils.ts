@@ -1,4 +1,60 @@
 import { FilterConfig } from "@common/types";
+import { prisma } from "..";
+
+// Database utility function to handle operations with timeout
+export async function withTimeout<T>(operation: () => Promise<T>, timeoutMs: number = 30000): Promise<T> {
+  return Promise.race([
+    operation(),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs),
+    ),
+  ]);
+}
+
+// Wrapper for database transactions with retry logic
+export async function executeWithRetry<T>(
+  operation: () => Promise<T>,
+  maxRetries: number = 3,
+  timeoutMs: number = 30000,
+): Promise<T> {
+  let lastError: Error | undefined;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await withTimeout(operation, timeoutMs);
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      if (attempt === maxRetries) {
+        throw lastError;
+      }
+
+      // Check if it's a timeout or connection error that might be retryable
+      if (
+        lastError.message.includes("timeout") ||
+        lastError.message.includes("P1008") ||
+        lastError.message.includes("database failed to respond")
+      ) {
+        // Wait before retry with exponential backoff
+        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        // Try to reconnect
+        try {
+          await prisma.$disconnect();
+          await prisma.$connect();
+        } catch (connectError) {
+          console.warn(`Failed to reconnect on attempt ${attempt}:`, connectError);
+        }
+      } else {
+        // Non-retryable error
+        throw lastError;
+      }
+    }
+  }
+
+  throw lastError || new Error("Operation failed after all retry attempts");
+}
 
 export function buildTimePlayedWhereClause(timePlayedFilters: FilterConfig["timePlayed"]) {
   if (!timePlayedFilters || timePlayedFilters.length === 0) {

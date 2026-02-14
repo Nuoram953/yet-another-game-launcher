@@ -237,7 +237,17 @@ describe("Service - Ranking Service", () => {
         gameId: "new-game",
       });
 
-      expect(result).toEqual(mockRankingGame);
+      // Expect the result to contain the key fields (service now returns full DB record)
+      expect(result).toEqual(
+        expect.objectContaining({
+          rankingId: 1,
+          gameId: "new-game",
+          rank: 2,
+        }),
+      );
+      expect(result).toHaveProperty("id");
+      expect(result).toHaveProperty("createdAt");
+      expect(result).toHaveProperty("updatedAt");
       expect(mockQueries.RankingGame.upsert).toHaveBeenCalledWith({
         where: {
           rankingId_gameId: {

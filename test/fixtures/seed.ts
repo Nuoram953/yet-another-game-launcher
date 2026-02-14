@@ -88,45 +88,67 @@ export class TestDataFactory {
 export async function seedTestData(): Promise<void> {
   const prisma = getTestPrismaClient();
 
-  await prisma.gameStatus.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      name: "Installed",
-    },
-  });
+  try {
+    // Use batch operations for faster seeding
+    const operations = [
+      prisma.gameStatus.upsert({
+        where: { id: 1 },
+        update: {},
+        create: { id: 1, name: "Installed" },
+      }),
+      prisma.rankingStatus.upsert({
+        where: { id: 1 },
+        update: {},
+        create: { id: 1, name: "Active" },
+      }),
+      prisma.rankingTag.upsert({
+        where: { id: 1 },
+        update: {},
+        create: { id: 1, name: "Favorites" },
+      }),
+      prisma.rankingTag.upsert({
+        where: { id: 2 },
+        update: {},
+        create: { id: 2, name: "Best of Year" },
+      }),
+    ];
 
-  await prisma.rankingStatus.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      name: "Active",
-    },
-  });
+    // Execute all operations in parallel
+    await Promise.all(operations);
+  } catch (error) {
+    console.warn("Batch seed failed, trying sequential:", error);
 
-  await prisma.rankingTag.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      name: "Favorites",
-    },
-  });
+    // Fallback to sequential with timeout handling
+    await prisma.gameStatus.upsert({
+      where: { id: 1 },
+      update: {},
+      create: { id: 1, name: "Installed" },
+    });
 
-  await prisma.rankingTag.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      id: 2,
-      name: "Best of Year",
-    },
-  });
+    await prisma.rankingStatus.upsert({
+      where: { id: 1 },
+      update: {},
+      create: { id: 1, name: "Active" },
+    });
+
+    await prisma.rankingTag.upsert({
+      where: { id: 1 },
+      update: {},
+      create: { id: 1, name: "Favorites" },
+    });
+
+    await prisma.rankingTag.upsert({
+      where: { id: 2 },
+      update: {},
+      create: { id: 2, name: "Best of Year" },
+    });
+  }
 }
 
 export async function createTestGames(count: number): Promise<Game[]> {
   const prisma = getTestPrismaClient();
+
+  // For SQLite, use sequential inserts to avoid contention
   const games: Game[] = [];
 
   for (let i = 0; i < count; i++) {
@@ -156,9 +178,14 @@ export async function createTestRankingWithGames(
     data: TestDataFactory.createRanking(rankingData),
   });
 
-  for (let i = 0; i < games.length; i++) {
-    await prisma.rankingGame.create({
-      data: TestDataFactory.createRankingGame(ranking.id, games[i].id, i + 1),
+  // Batch create ranking games for better performance
+  if (games.length > 0) {
+    const rankingGamesData = games.map((game, index) =>
+      TestDataFactory.createRankingGame(ranking.id, game.id, index + 1),
+    );
+
+    await prisma.rankingGame.createMany({
+      data: rankingGamesData,
     });
   }
 

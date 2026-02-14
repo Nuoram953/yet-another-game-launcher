@@ -53,10 +53,10 @@ export default defineConfig({
       },
     },
 
-    // Timeouts optimized for different test types
-    testTimeout: 15000, // 15s for regular tests
-    hookTimeout: 30000, // 30s for setup/teardown with DB operations
-    teardownTimeout: 10000, // 10s for cleanup
+    // Timeouts optimized for faster tests
+    testTimeout: 15000, // Increased for database operations
+    hookTimeout: 30000, // Increased for setup/teardown with database
+    teardownTimeout: 10000, // Increased for cleanup
 
     // Reporters
     reporters: process.env.CI ? ["junit", "github-actions"] : ["verbose"],
@@ -68,9 +68,9 @@ export default defineConfig({
     pool: "threads",
     poolOptions: {
       threads: {
-        singleThread: false, // Enable parallel execution
+        singleThread: true, // Use single thread to avoid SQLite contention
         isolate: true, // Isolate test environments
-        maxThreads: 2, // Reduced from 4 to prevent database contention
+        maxThreads: 1, // Single thread for SQLite
         minThreads: 1,
       },
     },

@@ -2,6 +2,7 @@ import { join } from "path";
 import { execSync } from "child_process";
 import { existsSync, unlinkSync } from "fs";
 
+// Use consistent test database
 const TEST_DATABASE_URL = "file:./test.db";
 
 /**
@@ -11,7 +12,7 @@ const TEST_DATABASE_URL = "file:./test.db";
 export async function setup() {
   console.log("Starting global test setup...");
 
-  // Clean up any existing test database
+  // Clean up any existing test databases
   const testDbPath = join(process.cwd(), "test.db");
   if (existsSync(testDbPath)) {
     unlinkSync(testDbPath);
@@ -27,15 +28,17 @@ export async function setup() {
 
     console.log("Running database migrations (this happens only once)...");
 
-    // Run migrations - this is the expensive operation we only want to do once
+    // Run migrations with timeout
     execSync(`npx prisma migrate deploy --schema=${schemaPath}`, {
       stdio: process.env.DEBUG_TESTS ? "inherit" : "pipe",
       env: { ...process.env, DATABASE_URL: TEST_DATABASE_URL },
+      timeout: 45000, // 45 second timeout for migrations
     });
 
-    // Generate client for test database
+    // Generate client for test database with timeout
     execSync(`npx prisma generate --schema=${schemaPath}`, {
       stdio: process.env.DEBUG_TESTS ? "inherit" : "pipe",
+      timeout: 30000, // 30 second timeout
     });
 
     // Restore original URL

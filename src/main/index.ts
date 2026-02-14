@@ -158,11 +158,36 @@ async function electronAppInit() {
       const schemaPath = join(__dirname, "../../prisma/schema.prisma");
       execSync(`npx prisma migrate deploy --schema=${schemaPath}`);
 
-      prisma = new PrismaClient();
+      prisma = new PrismaClient({
+        datasources: {
+          db: {
+            url:
+              process.env.DATABASE_URL || "file:./prisma/test.db?connection_limit=1&pool_timeout=20&socket_timeout=60",
+          },
+        },
+        log: ["warn", "error"],
+      });
+
+      // Test connection
+      await prisma.$connect();
       await upsertConstants();
     } catch (error) {
       console.error("Error running Prisma migrations:", error);
-      prisma = new PrismaClient();
+      prisma = new PrismaClient({
+        datasources: {
+          db: {
+            url:
+              process.env.DATABASE_URL || "file:./prisma/test.db?connection_limit=1&pool_timeout=20&socket_timeout=60",
+          },
+        },
+        log: ["warn", "error"],
+      });
+
+      try {
+        await prisma.$connect();
+      } catch (connectError) {
+        console.error("Failed to connect to database:", connectError);
+      }
     }
   } catch (error) {
     console.error("Failed to initialize application:", error);
@@ -197,3 +222,40 @@ export async function bootstrap(): Promise<BrowserWindow | undefined> {
 }
 
 bootstrap();
+
+// Graceful shutdown handling
+process.on("beforeExit", async () => {
+  try {
+    await prisma?.$disconnect();
+  } catch (error) {
+    console.error("Error disconnecting from database:", error);
+  }
+});
+
+process.on("SIGINT", async () => {
+  try {
+    await prisma?.$disconnect();
+    app.quit();
+  } catch (error) {
+    console.error("Error during shutdown:", error);
+    process.exit(1);
+  }
+});
+
+process.on("SIGTERM", async () => {
+  try {
+    await prisma?.$disconnect();
+    app.quit();
+  } catch (error) {
+    console.error("Error during shutdown:", error);
+    process.exit(1);
+  }
+});
+
+app.on("before-quit", async () => {
+  try {
+    await prisma?.$disconnect();
+  } catch (error) {
+    console.error("Error disconnecting from database on quit:", error);
+  }
+});

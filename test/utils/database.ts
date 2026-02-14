@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { join } from "path";
 
-export const TEST_DATABASE_URL = "file:./test.db";
+// Use consistent test database URL
+export const TEST_DATABASE_URL = process.env.DATABASE_URL || "file:./test.db";
 
 let testPrisma: PrismaClient | undefined;
 let transactionPrisma: any | undefined;
@@ -11,10 +12,13 @@ export function getTestPrismaClient(): PrismaClient {
     testPrisma = new PrismaClient({
       datasources: {
         db: {
-          url: TEST_DATABASE_URL,
+          url:
+            TEST_DATABASE_URL +
+            (TEST_DATABASE_URL.includes("?") ? "&" : "?") +
+            "connection_limit=1&pool_timeout=20&socket_timeout=60",
         },
       },
-      log: process.env.DEBUG_TESTS ? ["info", "warn", "error"] : [],
+      log: process.env.DEBUG_TESTS ? ["info", "warn", "error"] : ["error"],
     });
   }
   return testPrisma;
@@ -82,97 +86,99 @@ export async function cleanupTestDatabase(): Promise<void> {
 
 /**
  * Sets up a transaction-based test environment.
- * Each test runs in a transaction that gets rolled back after completion.
- * This provides perfect test isolation without the overhead of recreating the database.
+ * Simplified version that's faster and more reliable.
  */
 export async function setupTestTransaction(): Promise<void> {
+  // For now, just use regular client - transactions were causing deadlocks
+  // We'll rely on fast cleanup instead
   const prisma = getTestPrismaClient();
-
-  // Start a transaction that will be used for the test
-  return new Promise((resolve, reject) => {
-    prisma
-      .$transaction(
-        async (tx) => {
-          transactionPrisma = tx;
-          resolve();
-
-          // Keep the transaction open until rollback is called
-          return new Promise((_, txReject) => {
-            // Store the reject function to call it during rollback
-            (transactionPrisma as any)._rollback = txReject;
-          });
-        },
-        {
-          maxWait: 10000, // Maximum time to wait for a transaction slot
-          timeout: 30000, // Maximum time the transaction can run
-        },
-      )
-      .catch((error) => {
-        // Expected behavior when transaction is rolled back
-        if (error.message?.includes("Transaction rollback") || error.code === "P2028") {
-          // This is normal - transaction was rolled back
-          return;
-        }
-        console.error("Unexpected transaction error:", error);
-      });
-  });
+  await prisma.$connect();
 }
 
 /**
  * Rolls back the current test transaction.
- * This effectively undoes all database changes made during the test.
+ * Simplified to just clean up test data quickly.
  */
 export async function rollbackTestTransaction(): Promise<void> {
-  if (transactionPrisma && (transactionPrisma as any)._rollback) {
-    // Trigger the transaction rollback
-    (transactionPrisma as any)._rollback(new Error("Transaction rollback"));
-  }
-  transactionPrisma = undefined;
+  // Quick cleanup of test data instead of transaction rollback
+  await resetTestDatabase();
 }
 
 /**
- * Legacy method - use transaction-based testing instead for better performance
- * @deprecated Use setupTestTransaction/rollbackTestTransaction instead
+ * Fast database reset - only deletes test data, keeps essential data
  */
 export async function resetTestDatabase(): Promise<void> {
   const prisma = getTestPrismaClient();
 
-  // Delete in reverse dependency order to avoid foreign key constraints
-  await prisma.rankingTagMap.deleteMany();
-  await prisma.rankingGame.deleteMany();
-  await prisma.ranking.deleteMany();
-  await prisma.gameActivity.deleteMany();
-  await prisma.gameAchievement.deleteMany();
-  await prisma.gameReviewThoughts.deleteMany();
-  await prisma.gameReview.deleteMany();
-  await prisma.gameExternalReviewMap.deleteMany();
-  await prisma.gameTag.deleteMany();
-  await prisma.gameFranchise.deleteMany();
-  await prisma.gameDeveloper.deleteMany();
-  await prisma.gamePublisher.deleteMany();
-  await prisma.gameEngine.deleteMany();
-  await prisma.gameStatusHistory.deleteMany();
-  await prisma.gamePlatform.deleteMany();
-  await prisma.gameLaunchStorefront.deleteMany();
-  await prisma.gameLaunchApp.deleteMany();
-  await prisma.gameLaunchEmulation.deleteMany();
-  await prisma.mediaDefault.deleteMany();
-  await prisma.downloadHistory.deleteMany();
-  await prisma.gameConfigGamescope.deleteMany();
-  await prisma.game.deleteMany();
+  try {
+    // Use raw SQL for faster bulk deletes
+    await prisma.$executeRaw`PRAGMA foreign_keys = OFF;`;
 
-  // Clean up reference tables
-  await prisma.tag.deleteMany();
-  await prisma.franchise.deleteMany();
-  await prisma.company.deleteMany();
-  await prisma.engine.deleteMany();
-  await prisma.externalReview.deleteMany();
+    // Delete test data only (preserve system data)
+    await prisma.$executeRaw`DELETE FROM RankingTagMap;`;
+    await prisma.$executeRaw`DELETE FROM RankingGame;`;
+    await prisma.$executeRaw`DELETE FROM Ranking WHERE id > 0;`;
+    await prisma.$executeRaw`DELETE FROM GameActivity;`;
+    await prisma.$executeRaw`DELETE FROM GameAchievement;`;
+    await prisma.$executeRaw`DELETE FROM GameReviewThoughts;`;
+    await prisma.$executeRaw`DELETE FROM GameReview;`;
+    await prisma.$executeRaw`DELETE FROM GameExternalReviewMap;`;
+    await prisma.$executeRaw`DELETE FROM GameTag;`;
+    await prisma.$executeRaw`DELETE FROM GameFranchise;`;
+    await prisma.$executeRaw`DELETE FROM GameDeveloper;`;
+    await prisma.$executeRaw`DELETE FROM GamePublisher;`;
+    await prisma.$executeRaw`DELETE FROM GameEngine;`;
+    await prisma.$executeRaw`DELETE FROM GameStatusHistory;`;
+    await prisma.$executeRaw`DELETE FROM GamePlatform;`;
+    await prisma.$executeRaw`DELETE FROM GameLaunchStorefront;`;
+    await prisma.$executeRaw`DELETE FROM GameLaunchApp;`;
+    await prisma.$executeRaw`DELETE FROM GameLaunchEmulation;`;
+    await prisma.$executeRaw`DELETE FROM MediaDefault;`;
+    await prisma.$executeRaw`DELETE FROM DownloadHistory;`;
+    await prisma.$executeRaw`DELETE FROM GameConfigGamescope;`;
+    await prisma.$executeRaw`DELETE FROM Game;`;
 
-  // Keep these as they're needed for basic functionality
-  // await prisma.gameStatus.deleteMany();
-  // await prisma.storefront.deleteMany();
-  // await prisma.rankingTag.deleteMany();
-  // await prisma.rankingStatus.deleteMany();
+    // Clean up reference tables but keep system ones
+    await prisma.$executeRaw`DELETE FROM Tag;`;
+    await prisma.$executeRaw`DELETE FROM Franchise;`;
+    await prisma.$executeRaw`DELETE FROM Company;`;
+    await prisma.$executeRaw`DELETE FROM Engine;`;
+    await prisma.$executeRaw`DELETE FROM ExternalReview;`;
+
+    await prisma.$executeRaw`PRAGMA foreign_keys = ON;`;
+  } catch (error) {
+    console.warn("Fast cleanup failed, falling back to slow method:", error);
+
+    // Fallback to individual deletes
+    await prisma.rankingTagMap.deleteMany();
+    await prisma.rankingGame.deleteMany();
+    await prisma.ranking.deleteMany();
+    await prisma.gameActivity.deleteMany();
+    await prisma.gameAchievement.deleteMany();
+    await prisma.gameReviewThoughts.deleteMany();
+    await prisma.gameReview.deleteMany();
+    await prisma.gameExternalReviewMap.deleteMany();
+    await prisma.gameTag.deleteMany();
+    await prisma.gameFranchise.deleteMany();
+    await prisma.gameDeveloper.deleteMany();
+    await prisma.gamePublisher.deleteMany();
+    await prisma.gameEngine.deleteMany();
+    await prisma.gameStatusHistory.deleteMany();
+    await prisma.gamePlatform.deleteMany();
+    await prisma.gameLaunchStorefront.deleteMany();
+    await prisma.gameLaunchApp.deleteMany();
+    await prisma.gameLaunchEmulation.deleteMany();
+    await prisma.mediaDefault.deleteMany();
+    await prisma.downloadHistory.deleteMany();
+    await prisma.gameConfigGamescope.deleteMany();
+    await prisma.game.deleteMany();
+
+    await prisma.tag.deleteMany();
+    await prisma.franchise.deleteMany();
+    await prisma.company.deleteMany();
+    await prisma.engine.deleteMany();
+    await prisma.externalReview.deleteMany();
+  }
 }
 
 /**
