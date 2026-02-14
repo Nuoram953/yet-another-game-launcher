@@ -139,6 +139,27 @@ export const mockQueries = {
     update: vi.fn(),
     delete: vi.fn(),
   },
+  GameStatus: {
+    findById: vi.fn().mockResolvedValue({
+      id: 1,
+      name: "Unplayed",
+    }),
+    getAll: vi.fn().mockResolvedValue([
+      { id: 1, name: "Unplayed" },
+      { id: 2, name: "Played" },
+      { id: 3, name: "Completed" },
+    ]),
+    findAll: vi.fn().mockResolvedValue([
+      { id: 1, name: "Unplayed" },
+      { id: 2, name: "Played" },
+      { id: 3, name: "Completed" },
+    ]),
+    getCountForAllStatus: vi.fn().mockResolvedValue([
+      { id: 1, name: "Unplayed", count: 10 },
+      { id: 2, name: "Played", count: 5 },
+      { id: 3, name: "Completed", count: 2 },
+    ]),
+  },
   Ranking: {
     findAll: vi.fn().mockResolvedValue([]),
     findUnique: vi.fn(),
@@ -162,6 +183,14 @@ export const mockQueries = {
       updatedAt: new Date(),
     }),
     destroy: vi.fn(),
+  },
+  GameStatusHistory: {
+    create: vi.fn().mockResolvedValue({
+      id: 1,
+      gameId: "test-game-id",
+      gameStatusId: 2,
+      createdAt: new Date(),
+    }),
   },
 };
 
@@ -226,6 +255,18 @@ export function setupMocks() {
         update: mockQueries.Game.update,
         delete: mockQueries.Game.delete,
       },
+      gameStatus: {
+        findMany: mockQueries.GameStatus.findAll,
+        findUnique: mockQueries.GameStatus.findById,
+      },
+      gameStatusHistory: {
+        create: vi.fn().mockResolvedValue({
+          id: 1,
+          gameId: "test-game-id",
+          gameStatusId: 2,
+          createdAt: new Date(),
+        }),
+      },
       // Mock transaction method
       $transaction: vi.fn().mockImplementation(async (callback) => {
         // Create a mock transaction context that mirrors the real transaction API
@@ -258,7 +299,7 @@ export function setupMocks() {
   // Mock application services
   vi.mock("@main/media/media.service", () => mockMediaService);
   vi.mock("@main/store/store.service", () => mockStoreService);
-  vi.mock("../dal/dal", () => ({ default: mockQueries }));
+  vi.mock("../../src/main/dal/dal", () => ({ default: mockQueries }));
 
   // Mock external APIs
   vi.mock("@main/externalApi/steamGridDb", () => mockSteamGridDbApi);

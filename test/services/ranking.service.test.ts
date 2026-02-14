@@ -150,36 +150,14 @@ describe("Service - Ranking Service", () => {
         cover: ["civ6-cover.jpg"],
       });
 
-      expect(mockQueries.Ranking.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 },
-        include: {
-          games: {
-            include: { game: true },
-            orderBy: { rank: "asc" },
-          },
-          tags: {
-            include: { rankingTag: true },
-          },
-        },
-      });
+      expect(mockQueries.Ranking.findUnique).toHaveBeenCalledWith(1);
     });
 
     it("should throw error when ranking not found", async () => {
       mockQueries.Ranking.findUnique.mockResolvedValue(null);
 
       await expect(RankingService.getRanking(999)).rejects.toThrow("Entity not found");
-      expect(mockQueries.Ranking.findUnique).toHaveBeenCalledWith({
-        where: { id: 999 },
-        include: {
-          games: {
-            include: { game: true },
-            orderBy: { rank: "asc" },
-          },
-          tags: {
-            include: { rankingTag: true },
-          },
-        },
-      });
+      expect(mockQueries.Ranking.findUnique).toHaveBeenCalledWith(999);
     });
   });
 
@@ -199,13 +177,7 @@ describe("Service - Ranking Service", () => {
       });
 
       expect(result).toEqual(newRanking);
-      expect(mockQueries.Ranking.create).toHaveBeenCalledWith({
-        data: {
-          name: "Horror Games",
-          description: "Scary games for Halloween",
-          rankingStatusId: 1,
-        },
-      });
+      expect(mockQueries.Ranking.create).toHaveBeenCalledWith("Horror Games", "Scary games for Halloween");
     });
   });
 
@@ -215,7 +187,7 @@ describe("Service - Ranking Service", () => {
 
       await RankingService.deleteRanking(1);
 
-      expect(mockQueries.Ranking.deleteById).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(mockQueries.Ranking.deleteById).toHaveBeenCalledWith(1);
     });
   });
 
@@ -309,14 +281,7 @@ describe("Service - Ranking Service", () => {
       });
 
       expect(result).toBe(true);
-      expect(mockQueries.RankingGame.destroy).toHaveBeenCalledWith({
-        where: {
-          rankingId_gameId: {
-            rankingId: 1,
-            gameId: "game-to-remove",
-          },
-        },
-      });
+      expect(mockQueries.RankingGame.destroy).toHaveBeenCalledWith(1, "game-to-remove");
     });
 
     it("should throw error when ranking not found", async () => {
@@ -351,60 +316,21 @@ describe("Service - Ranking Service", () => {
       expect(result).toHaveLength(3);
       expect(mockQueries.RankingGame.upsert).toHaveBeenCalledTimes(3);
 
-      // Verify each call - expecting Prisma upsert structure
+      // Verify each call - expecting DAL-level parameters
       expect(mockQueries.RankingGame.upsert).toHaveBeenCalledWith({
-        where: {
-          rankingId_gameId: {
-            rankingId: 1,
-            gameId: "game-1",
-          },
-        },
-        update: {
-          rank: 2,
-          updatedAt: expect.any(Date),
-        },
-        create: {
-          rankingId: 1,
-          gameId: "game-1",
-          rank: 2,
-          createdAt: expect.any(Date),
-        },
+        rankingId: 1,
+        gameId: "game-1",
+        rank: 2,
       });
       expect(mockQueries.RankingGame.upsert).toHaveBeenCalledWith({
-        where: {
-          rankingId_gameId: {
-            rankingId: 1,
-            gameId: "game-2",
-          },
-        },
-        update: {
-          rank: 1,
-          updatedAt: expect.any(Date),
-        },
-        create: {
-          rankingId: 1,
-          gameId: "game-2",
-          rank: 1,
-          createdAt: expect.any(Date),
-        },
+        rankingId: 1,
+        gameId: "game-2",
+        rank: 1,
       });
       expect(mockQueries.RankingGame.upsert).toHaveBeenCalledWith({
-        where: {
-          rankingId_gameId: {
-            rankingId: 1,
-            gameId: "game-3",
-          },
-        },
-        update: {
-          rank: 3,
-          updatedAt: expect.any(Date),
-        },
-        create: {
-          rankingId: 1,
-          gameId: "game-3",
-          rank: 3,
-          createdAt: expect.any(Date),
-        },
+        rankingId: 1,
+        gameId: "game-3",
+        rank: 3,
       });
     });
 
