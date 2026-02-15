@@ -23,7 +23,7 @@ export function UserReviews() {
       [reviews[i], reviews[j]] = [reviews[j], reviews[i]];
     }
     return reviews;
-  }, [game]);
+  }, [game.id]);
 
   const visibleReviews = expanded ? userReviews : userReviews.slice(0, INITIAL_COUNT);
 

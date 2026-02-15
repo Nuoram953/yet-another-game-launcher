@@ -22,10 +22,6 @@ withHandler(RouteGame.KILL, async (_event, data) => {
   return await GameController.kill(data);
 });
 
-withHandler(RouteGame.GET_REVIEW, async (_event, data) => {
-  return await GameController.getReview(data);
-});
-
 withHandler(RouteGame.SET_REVIEW, async (_event, data) => {
   return await GameController.setReview(data);
 });

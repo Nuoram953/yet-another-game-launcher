@@ -3,6 +3,7 @@ import * as GameService from "./game.service";
 import queries from "../dal/dal";
 import _ from "lodash";
 import { ErrorMessage } from "@common/error";
+import logger from "@main/logger";
 
 export const launch = async (data: GameSchema.LaunchGameSchema) => {
   const result = await GameSchema.LaunchGameSchema.safeParseAsync(data);
@@ -44,18 +45,6 @@ export const kill = async (data: GameSchema.KillGameSchema) => {
   return await GameService.kill(result.data.id, result.data.launchId, result.data.launchType);
 };
 
-export const getReview = async (data: GameSchema.GetReviewSchema) => {
-  const result = await GameSchema.GetReviewSchema.safeParseAsync(data);
-
-  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
-
-  const game = await queries.Game.getGameById(result.data.gameId);
-
-  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
-
-  return await GameService.getReview(game.id);
-};
-
 export const setReview = async (data: GameSchema.SetReviewSchema) => {
   const result = await GameSchema.SetReviewSchema.safeParseAsync(data);
 
@@ -85,7 +74,7 @@ export const updateReviewThought = async (data: GameSchema.UpdateReviewThoughtSc
 
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
-  return await GameService.updateReviewThought(result.data.gameId, result.data.reviewThoughtData);
+  return await GameService.updateReviewThought(result.data);
 };
 
 export const deleteReviewThought = async (data: GameSchema.DeleteReviewThoughtSchema) => {

@@ -100,7 +100,7 @@ class DownloadTracker {
       await queries.DownloadHistory.create(this.game.id);
 
       await SteamService.refresh();
-      await refreshGame(this.game.id);
+      // await refreshGame(this.game.id);
       notificationManager.show({
         id: NotificationType.INSTALLED,
         title: `Download complete`,

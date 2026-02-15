@@ -6,4 +6,5 @@ export enum ErrorMessage {
   ERROR_IN_ROUTE = "An error occured in the route",
   NOT_FOUND = "Entity not found",
   INVALID_GAME_PATH = "Game path not found or invalid",
+  NOT_IMPLEMENTED = "This feature has not been implemented yet",
 }

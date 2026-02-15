@@ -10,19 +10,18 @@ import { GameReviewThoughts } from "@prisma/client";
 import { useDeleteReviewThought } from "../api/delete-review-thoughts";
 import { debounce } from "lodash";
 import { ThoughtCard } from "./ThoughtCard";
+import { useGameFromParams } from "@render/hooks/useGameParam";
 
 export const YourReviewThoughts = () => {
-  const { id } = useParams({ from: "/game/$id" });
+  const { id, game, isLoading } = useGameFromParams();
+
   const [localThoughts, setLocalThoughts] = useState<GameReviewThoughts[]>([]);
-  const reviewQuery = useGameReview({ gameId: id });
 
   const createReviewThought = useCreateReviewThought({
     gameId: id,
   });
 
-  const updateReviewThought = useUpdateReviewThought({
-    data: { id, text: "" },
-  });
+  const updateReviewThought = useUpdateReviewThought({});
 
   const deleteReviewThought = useDeleteReviewThought({
     data: { id },
@@ -31,20 +30,20 @@ export const YourReviewThoughts = () => {
   const debouncedUpdaters = useRef<Record<string, (text: string) => void>>({});
 
   useEffect(() => {
-    if (!reviewQuery.data?.thoughts) return;
+    if (!game) return;
 
-    setLocalThoughts(reviewQuery.data.thoughts);
+    setLocalThoughts(game.reviewToughts);
 
-    reviewQuery.data.thoughts.forEach((note) => {
+    game.reviewToughts.forEach((note) => {
       if (!debouncedUpdaters.current[note.id]) {
         debouncedUpdaters.current[note.id] = debounce((text: string) => {
-          updateReviewThought.mutate({ id: note.id, text });
+          updateReviewThought.mutate({ id: note.id, gameId: id, text });
         }, 1000);
       }
     });
-  }, [reviewQuery.data, updateReviewThought]);
+  }, [game, updateReviewThought]);
 
-  if (reviewQuery.isLoading) return <LoadingCenter />;
+  if (isLoading) return <LoadingCenter />;
 
   const handleCreateThought = () => {
     createReviewThought.mutate(id);
@@ -64,7 +63,15 @@ export const YourReviewThoughts = () => {
               key={note.id}
               note={note}
               onDelete={handleDeleteThought}
-              onUpdate={(data) => updateReviewThought.mutate(data)}
+              onUpdate={(data) =>
+                updateReviewThought.mutate({
+                  id: data.id!,
+                  gameId: id,
+                  text: data.text!,
+                  isPositive: data.isPositive,
+                  isNegative: data.isNegative,
+                })
+              }
             />
           ))}
 
