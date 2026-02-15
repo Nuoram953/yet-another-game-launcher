@@ -10,6 +10,7 @@ import { getGame } from "@render/api/electron";
 import { MEDIA_TYPE } from "@common/constant";
 import { useMedia } from "@render/api/get-media-by-type";
 import { useRefreshGame } from "@render/api/refresh-game";
+import { PlayButton } from "./PlayButton";
 
 export const Description = () => {
   const { game, isLoading, id } = useGameFromParams();
@@ -43,7 +44,7 @@ export const Description = () => {
     <div className="flex flex-col gap-2">
       <div className="rounded-md border border-normal bg-foreground p-4 text-white shadow-lg hover:border-hover">
         <div className="flex flex-wrap justify-between gap-3">
-          <ButtonPlay />
+          <PlayButton />
           <div className="flex gap-2">
             <ButtonIcon intent="secondary" icon={<Heart />} text="Add to favorite" />
             <ButtonIcon

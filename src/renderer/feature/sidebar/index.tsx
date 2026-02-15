@@ -25,8 +25,9 @@ export const Sidebar = () => {
     <Sheet key={renderKey} open={open} onOpenChange={(v) => setOpen(v)}>
       <SheetTrigger className="z-50 text-normal">
         <Button
-          leadingIcon={<SidebarIcon />}
+          leadingIcon={<SidebarIcon className="size-[20px]" />}
           intent="tertiary"
+          size="xs"
           onClick={(e) => {
             setOpen(!open);
           }}

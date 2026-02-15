@@ -7,7 +7,7 @@ export function Container({ children }: { children: React.ReactNode }) {
       <Header />
 
       {/* Scrollable content */}
-      <main className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent absolute bottom-0 left-0 right-0 top-[50px] overflow-y-hidden">
+      <main className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent absolute bottom-0 left-0 right-0 top-[35px] overflow-y-hidden">
         {children}
       </main>
     </div>
