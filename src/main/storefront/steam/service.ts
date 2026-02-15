@@ -50,7 +50,29 @@ export const refresh = async () => {
 
     const game = await queries.Game.getGameByExtenalIdAndStorefront(data.externalId, Storefront.STEAM);
     if (_.isNil(game)) {
-      await GameService.create(data, Storefront.STEAM);
+      await GameService.create({
+        gameData: {
+          externalId: entry.appid.toString(),
+          name: entry.name,
+          storefrontId: Storefront.STEAM,
+          gameStatusId: entry.playtime_forever > 0 ? GameStatus.PLAYED : GameStatus.UNPLAYED,
+          lastTimePlayed: entry.rtime_last_played,
+          timePlayed: entry.playtime_forever,
+          timePlayedWindows: entry.playtime_windows_forever,
+          timePlayedMac: entry.playtime_mac_forever,
+          timePlayedLinux: entry.playtime_linux_forever,
+          timePlayedSteamdeck: entry.playtime_deck_forever,
+          timePlayedDisconnected: entry.playtime_disconnected,
+          size,
+          location,
+          isInstalled: isInstalled ?? false,
+        },
+        storefrontData: {
+          name: "Steam",
+          isEnabled: true,
+          storefrontId: Storefront.STEAM,
+        },
+      });
     } else {
       delete data.gameStatusId;
       await queries.Game.update(game.id, { id: game.id, ...data });

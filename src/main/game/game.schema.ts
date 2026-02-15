@@ -15,8 +15,8 @@ export const CreateGameSchema = z.object({
     timePlayedLinux: z.optional(z.number()),
     timePlayedSteamdeck: z.optional(z.number()),
     timePlayedDisconnected: z.optional(z.number()),
-    size: z.optional(z.bigint()),
-    location: z.optional(z.string()),
+    size: z.optional(z.nullable(z.bigint())),
+    location: z.optional(z.nullable(z.string())),
     isInstalled: z.boolean(),
   }),
   storefrontData: z.optional(
