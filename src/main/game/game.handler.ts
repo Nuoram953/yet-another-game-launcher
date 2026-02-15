@@ -38,8 +38,8 @@ withHandler(RouteGame.UPDATE_REVIEW_THOUGHT, async (_event, data) => {
   return await GameController.updateReviewThought(data);
 });
 
-withHandler(RouteGame.DELETE_REVIEW_THOUGHT, async (_event, id) => {
-  return await GameController.deleteReviewThought(id);
+withHandler(RouteGame.DELETE_REVIEW_THOUGHT, async (_event, data) => {
+  return await GameController.deleteReviewThought(data);
 });
 
 withHandler(RouteGame.ADD_LAUNCH_APP, async (_event, data) => {

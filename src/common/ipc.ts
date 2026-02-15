@@ -35,6 +35,9 @@ export interface GameAPI {
   installGame(data: GameSchema.GameOperationSchema): Promise<GameResponse.ResponseGameOperation>;
   uninstallGame(data: GameSchema.GameOperationSchema): Promise<GameResponse.ResponseGameOperation>;
   killGame(id: string, launchId: number, type: LaunchType): Promise<GameResponse.ResponseGameOperation>;
+  createReviewThought(data: GameSchema.CreateReviewThoughtSchema): Promise<GameResponse.ResponseGameOperation>;
+  updateReviewThought(data: GameSchema.UpdateReviewThoughtSchema): Promise<GameResponse.ResponseGameOperation>;
+  deleteReviewThought(data: GameSchema.DeleteReviewThoughtSchema): Promise<GameResponse.ResponseGameOperation>;
 }
 
 // import * as LibraryResponse from "../main/library/library.response";

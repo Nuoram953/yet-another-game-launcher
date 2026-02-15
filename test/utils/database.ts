@@ -18,7 +18,7 @@ export function getTestPrismaClient(): PrismaClient {
             "connection_limit=1&pool_timeout=20&socket_timeout=60",
         },
       },
-      log: process.env.DEBUG_TESTS ? ["info", "warn", "error"] : ["error"],
+      log: process.env.DEBUG_TESTS ? ["warn", "error"] : ["error"],
     });
   }
   return testPrisma;

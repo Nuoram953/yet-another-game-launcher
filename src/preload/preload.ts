@@ -173,5 +173,8 @@ const gameApi: GameAPI = {
   installGame: (data) => ipcRenderer.invoke(RouteGame.INSTALL, data.id),
   uninstallGame: (data) => ipcRenderer.invoke(RouteGame.UNINSTALL, data.id),
   killGame: (id, launchId, type) => ipcRenderer.invoke(RouteGame.KILL, id, launchId, type),
+  createReviewThought: (data) => ipcRenderer.invoke(RouteGame.CREATE_REVIEW_THOUGHT, data),
+  updateReviewThought: (data) => ipcRenderer.invoke(RouteGame.UPDATE_REVIEW_THOUGHT, data),
+  deleteReviewThought: (data) => ipcRenderer.invoke(RouteGame.DELETE_REVIEW_THOUGHT, data),
 };
 contextBridge.exposeInMainWorld("gameApi", gameApi);

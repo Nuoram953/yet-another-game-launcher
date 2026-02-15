@@ -1,4 +1,4 @@
-import { MediaApi, RankingAPI } from "@common/ipc";
+import { GameAPI, MediaApi, RankingAPI } from "@common/ipc";
 import type { ElectronAPI } from "@preload/electron-api-types";
 
 declare global {
@@ -6,6 +6,7 @@ declare global {
     ranking: RankingAPI;
     media: MediaApi;
     library: LibraryApi;
+    game: GameAPI;
   }
 }
 

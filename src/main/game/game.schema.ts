@@ -41,13 +41,15 @@ export const CreateReviewThoughtSchema = z.object({
 });
 
 export const UpdateReviewThoughtSchema = z.object({
-  id: z.string(),
   gameId: z.string(),
-  text: z.string(),
-  isPositive: z.boolean(),
-  isNegative: z.boolean(),
-  createdAt: z.optional(z.date()),
-  updatedAt: z.optional(z.date()),
+  reviewThoughtData: z.object({
+    id: z.string(),
+    text: z.string(),
+    isPositive: z.boolean(),
+    isNegative: z.boolean(),
+    createdAt: z.optional(z.date()),
+    updatedAt: z.optional(z.date()),
+  }),
 });
 
 export const DeleteReviewThoughtSchema = z.object({

@@ -1,4 +1,4 @@
-import { NotifyProgress, RequireConfig } from "@main/decorator/decorator";
+import { RequireConfig } from "@main/decorator/decorator";
 import logger, { LogTag } from "../../logger";
 import { MEDIA_TYPE, NotificationType, Storefront } from "@common/constant";
 import notificationManager from "@main/manager/notificationManager";
@@ -15,6 +15,7 @@ import * as InternetGameDatabaseApi from "@main/externalApi/internetGameDatabase
 import * as howLongToBeatApi from "@main/externalApi/howLongToBeat";
 import * as openCriticApi from "@main/externalApi/openCritic";
 import * as OpenCriticService from "@main/externalApi/openCritic/service";
+import { NotifyProgress } from "../decorators/NotifyProgressRefresh";
 
 export class RefreshGameCommand {
   game: GameWithRelations;

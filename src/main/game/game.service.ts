@@ -40,9 +40,10 @@ import { InstallGameCommand } from "./commands/install";
 import { UninstallGameCommand } from "./commands/uninstall";
 import { KillGameCommand } from "./commands/kill";
 
+import * as GameSchema from "./game.schema";
+
 export const launch = async (gameId: string, launchId: number, launchType: LaunchType) => {
   const game = await queries.Game.getGameById(gameId);
-
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
   new LaunchGameCommand(game, launchId, launchType);
@@ -50,7 +51,6 @@ export const launch = async (gameId: string, launchId: number, launchType: Launc
 
 export const refresh = async (gameId: string) => {
   const game = await queries.Game.getGameById(gameId);
-
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
   await new RefreshGameCommand(game).runAll();
@@ -58,7 +58,6 @@ export const refresh = async (gameId: string) => {
 
 export const install = async (gameId: string) => {
   const game = await queries.Game.getGameById(gameId);
-
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
   await new InstallGameCommand(game).install();
@@ -68,7 +67,6 @@ export const refreshGame = async () => {};
 
 export const uninstall = async (gameId: string) => {
   const game = await queries.Game.getGameById(gameId);
-
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
   await new UninstallGameCommand(game).uninstall();
@@ -76,17 +74,46 @@ export const uninstall = async (gameId: string) => {
 
 export const kill = async (gameId: string, launchId: number, launchType: LaunchType) => {
   const game = await queries.Game.getGameById(gameId);
-
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
   await new KillGameCommand(game, launchId, launchType).kill();
 };
 
-export const getReview = async () => {};
+export const getReview = async (gameId: string) => {
+  const game = await queries.Game.getGameById(gameId);
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  return {
+    review: await queries.GameReview.getByGameId(gameId),
+    thoughts: await queries.GameReviewThoughts.getByGameId(gameId),
+  };
+};
 export const setReview = async () => {};
-export const createReviewThought = async () => {};
-export const updateReviewThought = async () => {};
-export const deleteReviewThought = async () => {};
+
+export const createReviewThought = async (gameId: string) => {
+  const game = await queries.Game.getGameById(gameId);
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  return await queries.GameReviewThoughts.create(gameId);
+};
+
+export const updateReviewThought = async (
+  gameId: string,
+  data: GameSchema.UpdateReviewThoughtSchema["reviewThoughtData"],
+) => {
+  const game = await queries.Game.getGameById(gameId);
+  if (!game) throw new Error(ErrorMessage.NOT_FOUND);
+
+  return await queries.GameReviewThoughts.update(data.id, { ...data });
+};
+
+export const deleteReviewThought = async (id: string) => {
+  const reviewThought = await queries.GameReviewThoughts.getById(id);
+  if (!reviewThought) throw new Error(ErrorMessage.NOT_FOUND);
+
+  return await queries.GameReviewThoughts.deleteById(id);
+};
+
 export const createLaunch = async () => {};
 export const updateLaunch = async () => {};
 export const deleteLaunch = async () => {};

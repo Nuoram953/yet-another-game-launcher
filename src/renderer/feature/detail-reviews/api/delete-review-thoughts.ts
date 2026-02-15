@@ -5,7 +5,7 @@ import { RouteGame } from "@common/constant";
 import { getGameReviewQueryOptions } from "./get-review";
 
 export const deleteReviewThought = (data: { id: string }) => {
-  return getGame().deleteReviewThought(data.id);
+  return window.game.deleteReviewThought(data);
 };
 
 export const deleteReviewThoughtQueryOptions = (data: { id: string }) => {

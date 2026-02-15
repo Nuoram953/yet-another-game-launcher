@@ -85,7 +85,7 @@ export const updateReviewThought = async (data: GameSchema.UpdateReviewThoughtSc
 
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);
 
-  return await GameService.updateReviewThought(result.data);
+  return await GameService.updateReviewThought(result.data.gameId, result.data.reviewThoughtData);
 };
 
 export const deleteReviewThought = async (data: GameSchema.DeleteReviewThoughtSchema) => {

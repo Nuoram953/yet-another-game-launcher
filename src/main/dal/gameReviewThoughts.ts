@@ -9,6 +9,14 @@ export const getByGameId = async (id: string) => {
   });
 };
 
+export const getById = async (id: string) => {
+  return await prisma.gameReviewThoughts.findUnique({
+    where: {
+      id,
+    },
+  });
+};
+
 export const create = async (gameId: string) => {
   return await prisma.gameReviewThoughts.create({
     data: {
