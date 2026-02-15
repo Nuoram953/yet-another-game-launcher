@@ -3,14 +3,21 @@ import * as GameService from "./game.service";
 import queries from "../dal/dal";
 import _ from "lodash";
 import { ErrorMessage } from "@common/error";
-import logger from "@main/logger";
+
+export const create = async (data: GameSchema.CreateGameSchema) => {
+  const result = await GameSchema.CreateGameSchema.safeParseAsync(data);
+
+  if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
+
+  return await GameService.create(data);
+};
 
 export const launch = async (data: GameSchema.LaunchGameSchema) => {
   const result = await GameSchema.LaunchGameSchema.safeParseAsync(data);
 
   if (!result.success) throw new Error(ErrorMessage.INVALID_BODY);
 
-  return await GameService.launch(result.data.id, result.data.launchId, result.data.launchType);
+  return await GameService.launch(result.data.gameId, result.data.launchId, result.data.launchType);
 };
 
 export const refresh = async (data: GameSchema.RefreshGameSchema) => {

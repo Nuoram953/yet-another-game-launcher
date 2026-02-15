@@ -126,8 +126,6 @@ export class LaunchGameCommand {
       isRunning: false,
       id: this.game.id,
     });
-
-    await refresh(this.game.id);
   }
 
   async getGameLaunchLocation() {

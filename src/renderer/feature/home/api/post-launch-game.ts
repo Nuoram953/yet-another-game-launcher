@@ -1,16 +1,16 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MutationConfig } from "@render/lib/react-query";
-import { RouteLibrary } from "@common/constant";
+import { RouteGame } from "@common/constant";
 
-import * as LibrarySchema from "@main/library/library.schema";
+import { LaunchGameSchema } from "@main/game/game.schema";
 
-export const launchGame = (data: LibrarySchema.LaunchGame) => {
-  return window.library.launch(data);
+export const launchGame = (data: LaunchGameSchema) => {
+  return window.game.launch(data);
 };
 
-export const createRankingQueryOptions = (data: LibrarySchema.LaunchGame) => {
+export const createRankingQueryOptions = (data: LaunchGameSchema) => {
   return queryOptions({
-    queryKey: [RouteLibrary.LAUNCH_GAME],
+    queryKey: [RouteGame.LAUNCH],
     queryFn: () => launchGame(data),
   });
 };

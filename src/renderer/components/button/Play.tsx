@@ -38,6 +38,8 @@ export const ButtonPlay = () => {
 
   const game = gameQuery.data;
 
+  console.log(game);
+
   const handleOnPlay = async (type: LaunchType, id: number) => {
     setSelectedLaunchId(id);
     setSelectedLaunchType(type);

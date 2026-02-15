@@ -2,6 +2,10 @@ import { RouteGame } from "../../common/constant";
 import * as GameController from "../game/game.controller";
 import { withHandler } from "@main/middleware/withHandler";
 
+withHandler(RouteGame.CREATE, async (_event, data) => {
+  return await GameController.create(data);
+});
+
 withHandler(RouteGame.LAUNCH, async (_event, data) => {
   return await GameController.launch(data);
 });
@@ -38,12 +42,12 @@ withHandler(RouteGame.DELETE_REVIEW_THOUGHT, async (_event, data) => {
   return await GameController.deleteReviewThought(data);
 });
 
-withHandler(RouteGame.ADD_LAUNCH_APP, async (_event, data) => {
-  return await GameController.createOrUpdateLaunchApp(data);
+withHandler(RouteGame.CREATE_LAUNCH, async (_event, data) => {
+  return await GameController.createLaunch(data);
 });
 
-withHandler(RouteGame.ADD_LAUNCH_EMULATOR, async (_event, data) => {
-  return await GameController.createOrUpdateLaunchEmulator(data);
+withHandler(RouteGame.UPDATE_LAUNCH, async (_event, data) => {
+  return await GameController.updateLaunch(data);
 });
 
 withHandler(RouteGame.DELETE_LAUNCH, async (_event, data) => {

@@ -167,7 +167,7 @@ const media: MediaApi = {
 contextBridge.exposeInMainWorld("media", media);
 
 const gameApi: GameAPI = {
-  launchGame: (data) => ipcRenderer.invoke(RouteGame.LAUNCH, data.id, data.launchType, data.launchId),
+  launch: (data) => ipcRenderer.invoke(RouteGame.LAUNCH, data.id, data.launchType, data.launchId),
   setGameStatus: (data) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
   setGameFavorite: (data) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, data.id, data.isFavorite),
   installGame: (data) => ipcRenderer.invoke(RouteGame.INSTALL, data.id),

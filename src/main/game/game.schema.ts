@@ -1,8 +1,43 @@
 import { z } from "zod";
 import { LaunchType } from "../../common/types";
+import { Emulator, GameStatus, Storefront } from "@common/constant";
+
+export const CreateGameSchema = z.object({
+  gameData: z.object({
+    name: z.string(),
+    externalId: z.optional(z.string()),
+    storefrontId: z.optional(z.enum(Storefront)),
+    gameStatusId: z.optional(z.enum(GameStatus)),
+    lastTimePlayed: z.optional(z.bigint()),
+    timePlayed: z.optional(z.number()),
+    timePlayedWindows: z.optional(z.number()),
+    timePlayedMac: z.optional(z.number()),
+    timePlayedLinux: z.optional(z.number()),
+    timePlayedSteamdeck: z.optional(z.number()),
+    timePlayedDisconnected: z.optional(z.number()),
+    size: z.optional(z.bigint()),
+    location: z.optional(z.string()),
+    isInstalled: z.boolean(),
+  }),
+  storefrontData: z.optional(
+    z.object({
+      name: z.string(),
+      isEnabled: z.boolean(),
+      storefrontId: z.enum(Storefront),
+    }),
+  ),
+  emulatorData: z.optional(
+    z.object({
+      name: z.string(),
+      emulatorId: z.enum(Emulator),
+      isEnabled: z.boolean(),
+      path: z.string(),
+    }),
+  ),
+});
 
 export const LaunchGameSchema = z.object({
-  id: z.string(),
+  gameId: z.string(),
   launchType: z.enum(LaunchType),
   launchId: z.number(),
 });
@@ -94,6 +129,7 @@ export const SetStatusSchema = z.object({
   statusId: z.number(),
 });
 
+export type CreateGameSchema = z.infer<typeof CreateGameSchema>;
 export type LaunchGameSchema = z.infer<typeof LaunchGameSchema>;
 export type RefreshGameSchema = z.infer<typeof RefreshGameSchema>;
 export type InstallGameSchema = z.infer<typeof InstallGameSchema>;

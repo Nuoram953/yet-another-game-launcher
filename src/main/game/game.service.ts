@@ -10,6 +10,24 @@ import { KillGameCommand } from "./commands/kill";
 
 import * as GameSchema from "./game.schema";
 
+export const create = async (data: GameSchema.CreateGameSchema) => {
+  const game = await queries.Game.create(data.gameData);
+
+  if (!game) throw new Error(ErrorMessage.INVALID_GAME);
+
+  if (data.emulatorData) {
+    await queries.GameLaunchEmulator.createOrUpdate({ gameId: game.id, ...data.emulatorData });
+  }
+
+  if (data.storefrontData) {
+    await queries.GameLaunchStorefront.createOrUpdate({
+      gameId: game.id,
+      externalId: game.externalId,
+      ...data.storefrontData,
+    });
+  }
+};
+
 export const launch = async (gameId: string, launchId: number, launchType: LaunchType) => {
   const game = await queries.Game.getGameById(gameId);
   if (!game) throw new Error(ErrorMessage.NOT_FOUND);

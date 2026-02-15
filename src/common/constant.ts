@@ -102,6 +102,7 @@ export enum RouteWishlist {
 }
 
 export enum RouteGame {
+  CREATE = "game:create",
   LAUNCH = "game:launch",
   INSTALL = "game:install",
   KILL = "game:kill",
@@ -109,17 +110,13 @@ export enum RouteGame {
   UNINSTALL = "game:uninstall",
   SET_REVIEW = "game:setReview",
   GET_REVIEW = "game:getReview",
+  SET_STATUS = "game:setStatus",
+  SET_FAVORITE = "game:setFavorite",
   CREATE_REVIEW_THOUGHT = "game:createReviewThought",
   UPDATE_REVIEW_THOUGHT = "game:updateReviewThought",
   DELETE_REVIEW_THOUGHT = "game:deleteReviewThought",
-  SET_STATUS = "game:setStatus",
-  SET_FAVORITE = "game:setFavorite",
-  SET_SETTING_GAMESCOPE = "game:setGamescope",
-  REFRESH_PROGRESS_TRACKER = "game:refreshprogressTracker",
-  REFRESH_INFO = "game:refreshInfo",
-  RESET_REVIEW = "game:resetReview",
-  ADD_LAUNCH_APP = "game:addLaunchApp",
-  ADD_LAUNCH_EMULATOR = "game:addLaunchEmulator",
+  CREATE_LAUNCH = "game:createLaunch",
+  UPDATE_LAUNCH = "game:updateLaunch",
   DELETE_LAUNCH = "game:deleteLaunch",
 }
 

@@ -461,3 +461,9 @@ model GameLaunchEmulationOptions {
   emulatorOptionId      Int?
   value                 String
 }
+
+enum GameType {
+  STOREFRONT
+  APP
+  EMULATOR
+}
