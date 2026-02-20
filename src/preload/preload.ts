@@ -57,30 +57,6 @@ contextBridge.exposeInMainWorld("library", {
   getEmulators: () => ipcRenderer.invoke(RouteLibrary.GET_EMULATORS),
 });
 
-contextBridge.exposeInMainWorld("game", {
-  launch: (id: string, launchType: LaunchType, launchId: number) =>
-    ipcRenderer.invoke(RouteGame.LAUNCH, id, launchType, launchId),
-  install: (id: string) => ipcRenderer.invoke(RouteGame.INSTALL, id),
-  kill: (id: string, launchId: number, type: LaunchType) => ipcRenderer.invoke(RouteGame.KILL, id, launchId, type),
-  uninstall: (id: string) => ipcRenderer.invoke(RouteGame.UNINSTALL, id),
-
-  setReview: (data: Partial<GameReview>) => ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
-  getReview: (id: string) => ipcRenderer.invoke(RouteGame.GET_REVIEW, id),
-  createReviewThought: (gameId: string) => ipcRenderer.invoke(RouteGame.CREATE_REVIEW_THOUGHT, gameId),
-  updateReviewThought: (data: Partial<GameReviewThoughts>) => ipcRenderer.invoke(RouteGame.UPDATE_REVIEW_THOUGHT, data),
-  deleteReviewThought: (id: string) => ipcRenderer.invoke(RouteGame.DELETE_REVIEW_THOUGHT, id),
-
-  setStatus: (data: Partial<Game>) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
-  setFavorite: (id: string, isFavorite: boolean) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, id, isFavorite),
-  setGamescope: (data: GameConfigGamescope) => ipcRenderer.invoke(RouteGame.SET_SETTING_GAMESCOPE, data),
-  refreshProgressTracker: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_PROGRESS_TRACKER, id),
-  refreshInfo: (id: string) => ipcRenderer.invoke(RouteGame.REFRESH_INFO, id),
-  resetReview: (id: string) => ipcRenderer.invoke(RouteGame.RESET_REVIEW, id),
-  addLaunchApp: (data: Partial<GameLaunchApp>) => ipcRenderer.invoke(RouteGame.ADD_LAUNCH_APP, data),
-  addLaunchEmulator: (data: Partial<GameLaunchEmulation>) => ipcRenderer.invoke(RouteGame.ADD_LAUNCH_EMULATOR, data),
-  deleteLaunch: (type: LaunchType, id: number) => ipcRenderer.invoke(RouteGame.DELETE_LAUNCH, type, id),
-});
-
 contextBridge.exposeInMainWorld("wishlist", {
   search: (query: string) => ipcRenderer.invoke(RouteWishlist.SEARCH, query),
   add: (externalId: number) => ipcRenderer.invoke(RouteWishlist.ADD, externalId),
@@ -167,7 +143,8 @@ const media: MediaApi = {
 contextBridge.exposeInMainWorld("media", media);
 
 const gameApi: GameAPI = {
-  launch: (data) => ipcRenderer.invoke(RouteGame.LAUNCH, data.id, data.launchType, data.launchId),
+  launch: (data) => ipcRenderer.invoke(RouteGame.LAUNCH, data),
+  refresh: (data) => ipcRenderer.invoke(RouteGame.REFRESH, data),
   setGameStatus: (data) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
   setGameFavorite: (data) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, data.id, data.isFavorite),
   installGame: (data) => ipcRenderer.invoke(RouteGame.INSTALL, data.id),
@@ -177,4 +154,4 @@ const gameApi: GameAPI = {
   updateReviewThought: (data) => ipcRenderer.invoke(RouteGame.UPDATE_REVIEW_THOUGHT, data),
   deleteReviewThought: (data) => ipcRenderer.invoke(RouteGame.DELETE_REVIEW_THOUGHT, data),
 };
-contextBridge.exposeInMainWorld("gameApi", gameApi);
+contextBridge.exposeInMainWorld("game", gameApi);

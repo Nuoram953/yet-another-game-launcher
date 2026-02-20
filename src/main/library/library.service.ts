@@ -8,34 +8,14 @@ import { NotificationType } from "../../common/constant";
 import { Epic } from "../storefront/epic/api";
 import * as SteamService from "@main/storefront/steam/service";
 import { FilterPreset, Game } from "@prisma/client";
+import { RefreshLibraryCommand } from "./command/refresh";
+
+export const refresh = async () => {
+  await new RefreshLibraryCommand().runAll();
+};
 
 export const getStorefronts = async () => {
   return await queries.Storefront.findAll();
-};
-
-export const refresh = async () => {
-  notificationManager.show({
-    id: NotificationType.REFRESH,
-    title: "Updating libraries",
-    message: "You can continue to use the app while it's updating",
-    type: "progress",
-    current: 10,
-    total: 100,
-    autoClose: true,
-  });
-
-  if (await config.get("store.steam.enable")) {
-    notificationManager.updateProgress(NotificationType.REFRESH, 25, "Updating Steam library");
-    await SteamService.refresh();
-  }
-
-  if (await config.get("store.epic.enable")) {
-    notificationManager.updateProgress(NotificationType.REFRESH, 35, "Updating Epic library");
-    const epic = new Epic();
-    await epic.initialize();
-  }
-
-  notificationManager.updateProgress(NotificationType.REFRESH, 100);
 };
 
 export const getCountForAllStatus = async () => {

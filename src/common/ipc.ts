@@ -30,6 +30,7 @@ import { LaunchType } from "../common/types";
 
 export interface GameAPI {
   launch(data: GameSchema.LaunchGameSchema): Promise<void>;
+  refresh(data: GameSchema.RefreshGameSchema): Promise<void>;
   setGameStatus(data: GameSchema.SetGameStatusSchema): Promise<GameResponse.ResponseSetGameStatus>;
   setGameFavorite(data: GameSchema.SetGameFavoriteSchema): Promise<GameResponse.ResponseSetGameFavorite>;
   installGame(data: GameSchema.GameOperationSchema): Promise<GameResponse.ResponseGameOperation>;

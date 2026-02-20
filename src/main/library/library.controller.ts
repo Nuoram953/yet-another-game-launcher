@@ -3,9 +3,10 @@ import { Game } from "@prisma/client";
 import _ from "lodash";
 import * as LibraryService from "./library.service";
 import * as GameService from "../game/game.service";
-import * as LibrarySchema from "./library.schema";
 
-import queries from "../dal/dal";
+export const refresh = async () => {
+  return await LibraryService.refresh();
+};
 
 export const search = async (query: string) => {
   if (_.isNil(query)) {

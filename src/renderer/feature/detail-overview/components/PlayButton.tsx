@@ -38,7 +38,8 @@ export const PlayButton = () => {
     <Button
       intent="custom"
       leadingIcon={<Play />}
-      text="Play"
+      text={launch.length ? "Play" : "No Launch available"}
+      disabled={!launch.length}
       size={"md"}
       className="bg-green-500 text-white hover:bg-green-600"
       onClick={() => {

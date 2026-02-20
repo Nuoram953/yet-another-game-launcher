@@ -61,7 +61,3 @@ withHandler(RouteGame.SET_STATUS, async (_event, data) => {
 withHandler(RouteGame.SET_FAVORITE, async (_event, data) => {
   return await GameController.deleteLaunch(data);
 });
-
-withHandler(RouteGame.RESET_REVIEW, async (_event, data) => {
-  return await GameController.deleteLaunch(data);
-});

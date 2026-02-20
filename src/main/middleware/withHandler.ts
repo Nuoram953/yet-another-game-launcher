@@ -9,6 +9,14 @@ export function withHandler(
 ) {
   ipcMain.handle(route, async (event, ...args: any[]) => {
     try {
+      logger.info(
+        "Calling route",
+        {
+          route,
+          args,
+        },
+        LogTag.MIDDLEWARE,
+      );
       return await handler(event, ...args);
     } catch (e) {
       logger.error(ErrorMessage.ERROR_IN_ROUTE, { route, error: e }, LogTag.MIDDLEWARE);

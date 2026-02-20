@@ -1,18 +1,18 @@
 import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MutationConfig } from "@render/lib/react-query";
-import { RouteLibrary } from "@common/constant";
+import { RouteGame } from "@common/constant";
 
-import * as RankingSchema from "@main/library/library.schema";
 import { getGameQueryOptions } from "./get-game";
 import { getGamesQueryOptions } from "./get-games";
+import { RefreshGameSchema } from "@main/game/game.schema";
 
-export const refreshGame = (data: RankingSchema.RefreshGame) => {
-  return window.library.refreshGame(data);
+export const refreshGame = (data: RefreshGameSchema) => {
+  return window.gameApi.refresh(data);
 };
 
-export const refreshGameQueryOptions = (data: RankingSchema.RefreshGame) => {
+export const refreshGameQueryOptions = (data: RefreshGameSchema) => {
   return queryOptions({
-    queryKey: [RouteLibrary.REFRESH_GAME],
+    queryKey: [RouteGame.REFRESH],
     queryFn: () => refreshGame(data),
   });
 };
@@ -26,7 +26,7 @@ export const useRefreshGame = ({ mutationConfig }: UseRefreshGameOptions) => {
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
-    onSuccess: (variables, ...args) => {
+    onSuccess: (data, variables, ...args) => {
       queryClient.invalidateQueries({
         queryKey: getGameQueryOptions(variables.gameId).queryKey,
       });
