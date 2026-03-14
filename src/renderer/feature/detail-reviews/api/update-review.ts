@@ -6,7 +6,7 @@ import { GameReview } from "@prisma/client";
 import { getGameQueryOptions } from "@render/api/get-game";
 
 export const updateReview = (data: Partial<GameReview>) => {
-  return getGame().setReview(data);
+  return window.game.setReview(data);
 };
 
 export const updateReviewQueryOptions = (data: Partial<GameReview>) => {

@@ -7,7 +7,7 @@ import { getGamesQueryOptions } from "./get-games";
 import { RefreshGameSchema } from "@main/game/game.schema";
 
 export const refreshGame = (data: RefreshGameSchema) => {
-  return window.gameApi.refresh(data);
+  return window.game.refresh(data);
 };
 
 export const refreshGameQueryOptions = (data: RefreshGameSchema) => {

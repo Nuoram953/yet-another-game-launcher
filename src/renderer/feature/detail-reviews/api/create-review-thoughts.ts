@@ -3,6 +3,7 @@ import { MutationConfig } from "@render/lib/react-query";
 import { getGame } from "@render/api/electron";
 import { RouteGame } from "@common/constant";
 import { getGameReviewQueryOptions } from "./get-review";
+import { getGameQueryOptions } from "@render/api/get-game";
 
 export const createReviewThought = (gameId: string) => {
   return window.game.createReviewThought({ gameId });
@@ -27,7 +28,7 @@ export const useCreateReviewThought = ({ gameId, mutationConfig }: UseCreateRevi
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
-        queryKey: getGameReviewQueryOptions(gameId).queryKey,
+        queryKey: getGameQueryOptions(gameId).queryKey,
       });
     },
     ...restConfig,

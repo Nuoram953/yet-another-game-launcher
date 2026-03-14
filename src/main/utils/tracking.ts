@@ -119,9 +119,10 @@ export async function killDirectoyProcess(directoryPath: string) {
 }
 
 export async function monitorDirectoryProcesses(directoryPath: string): Promise<ProcessInfo> {
-  await delay(60000 * 5);
+  logger.info(`Monitoring started - waiting for a valid session`, {}, LogTag.TRACKING);
+  await delay(60000);
   const startTime = new Date();
-  logger.debug(`Monitoring started at: ${startTime}`, {}, LogTag.TRACKING);
+  logger.info(`Monitoring started at: ${startTime}`, {}, LogTag.TRACKING);
 
   const checkProcesses = async (): Promise<boolean> => {
     const processes = await psList();
@@ -145,6 +146,7 @@ export async function monitorDirectoryProcesses(directoryPath: string): Promise<
 
   while (true) {
     const hasProcesses = await checkProcesses();
+    logger.debug("Current processes", hasProcesses, LogTag.TRACKING);
     if (!hasProcesses) {
       break;
     }

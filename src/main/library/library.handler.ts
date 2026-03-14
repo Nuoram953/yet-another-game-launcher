@@ -12,17 +12,6 @@ withHandler(RouteLibrary.REFRESH, async (_event) => {
   return await LibraryController.refresh();
 });
 
-ipcMain.handle(RouteLibrary.REFRESH, async (_event) => {
-  try {
-    await LibraryService.refresh();
-  } catch (e) {
-    log.error(ErrorMessage.ERROR_IN_ROUTE, {
-      route: RouteLibrary.REFRESH,
-      error: e,
-    });
-  }
-});
-
 ipcMain.handle(RouteLibrary.GET_DOWNLOAD_HISTORY, async (_event) => {
   try {
     return await LibraryService.getDownloadHistory();

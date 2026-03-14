@@ -3,6 +3,7 @@ import { MutationConfig } from "@render/lib/react-query";
 import { getGame } from "@render/api/electron";
 import { RouteGame } from "@common/constant";
 import { getGameReviewQueryOptions } from "./get-review";
+import { getGameQueryOptions } from "@render/api/get-game";
 
 export const deleteReviewThought = (data: { id: string }) => {
   return window.game.deleteReviewThought(data);
@@ -27,7 +28,7 @@ export const useDeleteReviewThought = ({ data, mutationConfig }: UseDeleteReview
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
-        queryKey: getGameReviewQueryOptions(data.id).queryKey,
+        queryKey: getGameQueryOptions(data.id).queryKey,
       });
     },
     ...restConfig,

@@ -59,7 +59,7 @@ const BadgeDropdown = ({ className, game }: Props) => {
       gameId: currentGame.id,
       statusId: newStatus!.id,
     };
-    window.game.setStatus(data);
+    window.game.setGameStatus(data);
     setSelectedOption(name);
   };
 

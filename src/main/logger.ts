@@ -354,7 +354,7 @@ export function createTaggedLogger(
   return logger.createTaggedLogger(tag);
 }
 
-const logger = createMainLogger({ minLevel: LogLevel.INFO });
+const logger = createMainLogger({ minLevel: LogLevel.DEBUG });
 
 export default logger;
 

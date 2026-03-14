@@ -32,7 +32,7 @@ export class LaunchGameCommand {
 
   @LogMethod(LogTag.TRACKING)
   async preLaunch() {
-    this.launch();
+    await this.launch();
   }
 
   @LogMethod(LogTag.TRACKING)

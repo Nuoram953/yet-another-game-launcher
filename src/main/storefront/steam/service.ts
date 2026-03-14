@@ -48,7 +48,7 @@ export const refresh = async () => {
       isInstalled,
     };
 
-    const game = await queries.Game.getGameByExtenalIdAndStorefront(data.externalId, Storefront.STEAM);
+    const game = await queries.Game.getGameByExtenalIdAndStorefront(data.externalId!, Storefront.STEAM);
     if (_.isNil(game)) {
       await GameService.create({
         gameData: {

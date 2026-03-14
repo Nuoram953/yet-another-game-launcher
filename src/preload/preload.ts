@@ -38,7 +38,6 @@ contextBridge.exposeInMainWorld("config", {
 contextBridge.exposeInMainWorld("library", {
   launch: (data) => ipcRenderer.invoke(RouteLibrary.LAUNCH_GAME, data),
   refresh: () => ipcRenderer.invoke(RouteLibrary.REFRESH),
-  refreshGame: (data) => ipcRenderer.invoke(RouteLibrary.REFRESH_GAME, data),
   getSidebar: () => ipcRenderer.invoke(RouteLibrary.GET_SIDEBAR),
   getGame: (id: string, refreshAchievements: boolean = true) =>
     ipcRenderer.invoke(RouteLibrary.GET_GAME, id, refreshAchievements),
@@ -145,6 +144,7 @@ contextBridge.exposeInMainWorld("media", media);
 const gameApi: GameAPI = {
   launch: (data) => ipcRenderer.invoke(RouteGame.LAUNCH, data),
   refresh: (data) => ipcRenderer.invoke(RouteGame.REFRESH, data),
+  setReview: (data) => ipcRenderer.invoke(RouteGame.SET_REVIEW, data),
   setGameStatus: (data) => ipcRenderer.invoke(RouteGame.SET_STATUS, data),
   setGameFavorite: (data) => ipcRenderer.invoke(RouteGame.SET_FAVORITE, data.id, data.isFavorite),
   installGame: (data) => ipcRenderer.invoke(RouteGame.INSTALL, data.id),

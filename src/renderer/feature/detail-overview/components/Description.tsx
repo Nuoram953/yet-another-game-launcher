@@ -54,7 +54,6 @@ export const Description = () => {
               text="Refresh"
               loading={refreshGame.isPending}
               onClick={() => {
-                console.log("test");
                 refreshGame.mutate({ gameId: game.id });
               }}
             />
@@ -85,7 +84,7 @@ export const Description = () => {
             </div>
 
             <div className="rounded-xl py-4">
-              <p className="leading-relaxed text-gray-200">{game.summary}</p>
+              <p className="line-clamp-[10] leading-relaxed text-gray-200">{game.summary}</p>
             </div>
 
             <Tags />
