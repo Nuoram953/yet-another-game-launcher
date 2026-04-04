@@ -1,0 +1,2 @@
+# This file intentionally left empty.
+# The `cargo test` alias cannot shadow built-in Cargo commands.

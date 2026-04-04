@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO game_status_history (game_id, game_status_id, created_at) VALUES (?, ?, unixepoch())",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "e1610714f88f6145dc9427a4396ba94ff34a7b7eb70998aa806f84f6885b0002"
+}

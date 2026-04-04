@@ -1,108 +1,119 @@
 name: Build
+
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-      - beta
+  release:
+    types: [published]
 
 jobs:
-  build:
+  build-tauri:
+    name: Tauri (${{ matrix.platform }})
+    permissions:
+      contents: write
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Clean npm cache
-        run: npm cache clean --force
-
-      - name: Install dependencies
-        run: npm ci
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Clean build output
-        run: rm -rf dist
-
-      - name: Build Electron app (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: npm run build:linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USE_HARD_LINKS: false
-
-      # - name: Build Electron app (Windows)
-      #   if: matrix.os == 'windows-latest'
-      #   run: npm run build:windows
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #
-      # - name: Build Electron app (macOS)
-      #   if: matrix.os == 'macos-latest'
-      #   run: npm run build:mac
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload artifacts (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-build
-          path: |
-            dist/electron/*.AppImage
-            dist/electron/*.deb
-            dist/electron/*.rpm
-            dist/electron/*.tar.gz
-          retention-days: 30
-
-      # - name: Upload artifacts (Windows)
-      #   if: matrix.os == 'windows-latest'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: windows-build
-      #     path: |
-      #       dist/electron/*.exe
-      #       dist/electron/*.msi
-      #       dist/electron/*.appx
-      #     retention-days: 30
-      #
-      # - name: Upload artifacts (macOS)
-      #   if: matrix.os == 'macos-latest'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: macos-build
-      #     path: |
-      #       dist/electron/*.dmg
-      #       dist/electron/*.zip
-      #       dist/electron/*.pkg
-      #     retention-days: 30
-  release:
-    needs: build
-    runs-on: ubuntu-latest
+        include:
+          - platform: ubuntu-22.04
+            args: --config src-tauri/app/tauri.conf.json
+          - platform: macos-latest
+            args: --config src-tauri/app/tauri.conf.json --target universal-apple-darwin
+            extra-rust-targets: x86_64-apple-darwin
+          - platform: windows-latest
+            args: --config src-tauri/app/tauri.conf.json
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          persist-credentials: false
+          ref: ${{ github.event.release.tag_name }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: "20"
+          version: latest
 
-      - name: Install dependencies
-        run: npm ci
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
 
-      - name: Run semantic release
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.extra-rust-targets }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Linux system dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - run: pnpm install
+
+      - uses: tauri-apps/tauri-action@v0
         env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC }}
-        run: npx semantic-release
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          releaseId: ${{ github.event.release.id }}
+          tauriScript: pnpm exec tauri
+          args: ${{ matrix.args }}
+
+  build-cli:
+    name: CLI (${{ matrix.target }})
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-22.04
+            binary: yagl
+            artifact: yagl-linux-x86_64
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            binary: yagl
+            artifact: yagl-macos-aarch64
+          - target: x86_64-apple-darwin
+            os: macos-13
+            binary: yagl
+            artifact: yagl-macos-x86_64
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            binary: yagl.exe
+            artifact: yagl-windows-x86_64.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Linux system dependencies
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Build CLI
+        run: cargo build --release --target ${{ matrix.target }} --manifest-path src-tauri/Cargo.toml -p cli
+
+      - name: Rename binary
+        shell: bash
+        run: cp src-tauri/target/${{ matrix.target }}/release/${{ matrix.binary }} ${{ matrix.artifact }}
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: ${{ matrix.artifact }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
