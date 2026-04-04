@@ -100,3 +100,7 @@ temp
 dist
 public/yt-dlp
 release/1.0.0
+
+
+src-tauri/target/*
+/src-tauri/dev.db

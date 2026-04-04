@@ -1,0 +1,28 @@
+[package]
+name = "cli"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "yagl"
+path = "src/main.rs"
+
+[lib]
+name = "cli_lib"
+path = "src/lib.rs"
+
+[dependencies]
+yagl-core = { path = "../core" }
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
+colored = "2"
+indicatif = "0.17"
+dialoguer = { version = "0.11", features = ["fuzzy-select"] }
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+dotenvy = "0.15"
+
+[dev-dependencies]
+yagl-core = { path = "../core" }
+tokio = { version = "1", features = ["full"] }
+serial_test = "3"

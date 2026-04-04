@@ -1,78 +1,131 @@
-# YAGL - Yet Another Game Launcher
+# Yet Another Game Launcher (yagl)
 
-**This app is in early development and is not ready for everyday use.**
-
-![home page](assets/home.png)
-
-Managing games is always a pain, especially when you have multiple platforms and launchers. YAGL aims to simplify this process by providing a unified interface for launching games across different platforms but also use external servives to enhance your library experience. Filter games by their how long to beat, download youtube trailers, and much more.
+A desktop game launcher and library manager built with Tauri, React, and Rust. It comes with a companion CLI (`yagl`) for launching, syncing, and searching games from the terminal.
 
 ## Features
 
-### See the important information about your games
+- **Game library** — manage your games in a local SQLite database
+- **Steam integration** — sync your Steam library automatically
+- **Game launching** — launch games with configurable launch options, including Proton support
+- **Session tracking** — track play time per session
+- **Metadata enrichment** — fetch game metadata from IGDB, HowLongToBeat, and YouTube
+- **CLI companion** — full terminal workflow via the `yagl` binary
 
-YAGL provides a comprehensive overview of your games, including playtime, last played date, and more. This information helps you keep track of your gaming habits and preferences.
+## Tech Stack
 
-![filters](assets/detail.png)
+- **Frontend:** React 19, TypeScript, Vite
+- **Backend:** Rust, Tauri 2
+- **Database:** SQLite via SQLx
+- **CLI:** Clap
 
-### Filters
+## Prerequisites
 
-Use filters to quickly find games based on various criteria such as genre, platform, and release date. Create presets to save your favorite filter combinations for easy access.
-More filters will be added in the future.
-
-![filters](assets/filters.png)
-
-### Metadata
-
-YAGL automatically fetches metadata for your games, including titles, descriptions, cover art, and more. This ensures that your game library is always up-to-date and visually appealing.
-
-![metadata](assets/metadata.png)
-
-### Achievements
-
-Visualize your achievements
-
-![achievements](assets/achievements.png)
-
-### Rankings
-
-Create custom rankings based on your preferences. Best game of the year, worst RPG etc...
-
-![achievements](assets/rankings.png)
-
-## Supported Platforms
-
-YAGL currently supports the following platforms:
-
-| Platforms | Achievements | Reviews | Launch | Uninstall | Track download |
-| --------- | :----------: | :-----: | :----: | :-------: | :------------: |
-| Steam     |      ✅      |   ❌    |   ✅   |    ✅     |       ✅       |
-| Epic      |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
-| gog       |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
-| ea        |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
-| Uplay     |      ❌      |   ❌    |   ❌   |    ❌     |       ❌       |
+- [Rust](https://rustup.rs/)
+- [Node.js](https://nodejs.org/) and [pnpm](https://pnpm.io/)
+- [Tauri prerequisites](https://tauri.app/start/prerequisites/) for your OS
 
 ## Development
 
-Clone the repository:
-
 ```bash
-git clone https://github.com/Nuoram953/yet-another-game-launcher.git
+# Install frontend dependencies
+pnpm install
+
+# Run the desktop app in development mode
+pnpm tauri
+
+# Run the CLI
+cargo run -p cli --manifest-path src-tauri/Cargo.toml -- <command>
+
+# Run tests
+pnpm test
 ```
 
-Navigate to the project folder:
+## Database Migrations
 
 ```bash
-cd yet-another-game-launcher
+pnpm migrate
 ```
 
-Install dependencies:
+## CLI Usage
 
-```bash
-npm install
+The `yagl` binary supports the following commands:
+
+```
+yagl [OPTIONS] <COMMAND>
+
+Options:
+  --db <PATH>    Override the database path
+  -v, --verbose  Increase log verbosity
+
+Commands:
+  launch   Launch a game (interactive if no game_id given)
+  sync     Sync games from a storefront into the database
+  search   Search for games in your library
 ```
 
-Start the development server:
+### Examples
 
 ```bash
-npm run dev
+# Interactive game launch
+yagl launch
+
+# Launch a specific game
+yagl launch <game_id>
+
+# Launch with a specific launch configuration
+yagl launch <game_id> --launch-id <launch_id>
+
+# Sync your Steam library
+yagl sync --storefront steam
+
+# Search by name
+yagl search --name "Half-Life"
+
+# Search and show available launch options
+yagl search --launches
+```
+
+## Configuration
+
+The database is resolved in this order:
+
+1. `--db` flag
+2. `DATABASE_URL` environment variable (`sqlite://` prefix is stripped)
+3. Platform default:
+   - **Linux:** `~/.local/share/yet-another-game-launcher/`
+   - **macOS:** `~/Library/Application Support/yet-another-game-launcher/`
+   - **Windows:** `%APPDATA%\yet-another-game-launcher\`
+
+## Recommended IDE Setup
+
+- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+
+## CI / CD
+
+Three GitHub Actions workflows are included:
+
+| Workflow | Trigger | Purpose |
+|---|---|---|
+| `ci.yml` | Push / PR to `main` | Rust fmt, Clippy, tests + TypeScript type check |
+| `release.yml` | Push to `main` | Runs semantic-release, bumps versions, creates GitHub release |
+| `build.yml` | GitHub release published | Builds Tauri app and CLI binaries for Linux, macOS, and Windows |
+
+### Releases
+
+Releases are fully automated using [semantic-release](https://semantic-release.github.io/semantic-release/) and [Conventional Commits](https://www.conventionalcommits.org/). Merging to `main` will:
+
+1. Analyze commits to determine the next version (`fix:` → patch, `feat:` → minor, `feat!:` / `BREAKING CHANGE` → major)
+2. Update the version in `tauri.conf.json` and all `Cargo.toml` files
+3. Generate / update `CHANGELOG.md`
+4. Create a `vX.Y.Z` git tag and GitHub release
+5. Build and attach binaries for all platforms
+
+#### Commit format
+
+```
+<type>(<scope>): <description>
+
+feat: add HowLongToBeat lookup
+fix(cli): handle missing database gracefully
+feat!: redesign launch configuration schema
 ```
