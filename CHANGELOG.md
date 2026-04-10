@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.0.0...v1.1.0) (2026-04-10)
+
+
+### Features
+
+* combining app and cli into single binary ([052d6ea](https://github.com/Nuoram953/yet-another-game-launcher/commit/052d6ea8ec90a29df4ad234415ea2ede0e45f609))
+
 # 1.0.0 (2026-04-10)
 
 
