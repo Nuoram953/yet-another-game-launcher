@@ -177,6 +177,12 @@ pub async fn launch_storefront_and_track(
             duration_secs = duration,
             "session tracked, recording activity"
         );
+
+        if duration == 0 {
+            info!("session tracking was 0 minutes, activity not recorded");
+            return Ok(());
+        }
+
         repository::insert_activity(pool, Some(&launch.id), started_at, ended_at, duration).await?;
     } else {
         warn!("session tracking returned no data, activity not recorded");

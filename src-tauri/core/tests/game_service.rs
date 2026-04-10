@@ -247,6 +247,30 @@ async fn launch_storefront_and_track_skips_activity_when_tracking_fails() {
 }
 
 #[tokio::test]
+async fn launch_storefront_and_track_skips_zero_duration_session() {
+    let pool = test_db().await;
+    insert_game(&pool, "g1", "Test Game", 1).await;
+    let entry = insert_game_library_entry(&pool, "e1", "g1", "111").await;
+    let launch = insert_game_launch(&pool, "l1", &entry.id, None).await;
+
+    let provider = Box::new(MockProvider::with_session(1000, 1000));
+
+    service::launch_storefront_and_track(&pool, &launch, &entry.external_id, provider)
+        .await
+        .unwrap();
+
+    let count: i64 = sqlx::query_scalar!(
+        "SELECT COUNT(*) FROM game_activity WHERE game_launch_id = ?",
+        launch.id
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+
+    assert_eq!(count, 0);
+}
+
+#[tokio::test]
 async fn search_game_no_name_returns_all_games() {
     let pool = test_db().await;
     repository::insert_game(&pool, "game-1", "Portal", None)
