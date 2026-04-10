@@ -4,6 +4,7 @@ use yagl_core::domains::game::{models::SearchGamePayload, repository, service};
 use yagl_core::{config::Config, db::DbPool};
 
 pub async fn handle(pool: &DbPool, name: Option<String>, launches: bool, _: &Config) -> Result<()> {
+    crate::utils::clear_screen();
     let payload = SearchGamePayload { name };
     let games = service::search_game(pool, payload).await?;
 

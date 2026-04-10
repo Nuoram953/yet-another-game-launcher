@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT gl.is_default, gl.executable FROM game_launch gl\n         JOIN game_library_entry gle ON gle.id = gl.game_library_entry_id\n         WHERE gle.external_id = '440'",
+  "describe": {
+    "columns": [
+      {
+        "name": "is_default",
+        "ordinal": 0,
+        "type_info": "Bool"
+      },
+      {
+        "name": "executable",
+        "ordinal": 1,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      true
+    ]
+  },
+  "hash": "4bfebad4c99e2b3a878e9faa56a86f94acdcb34ea6f97005e39841f249c80fe6"
+}

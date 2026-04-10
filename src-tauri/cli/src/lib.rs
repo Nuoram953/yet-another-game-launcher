@@ -2,6 +2,7 @@ pub mod cli;
 pub mod commands;
 pub mod config;
 pub mod interactive;
+pub mod utils;
 
 use anyhow::{Context, Result};
 use clap::Parser;
