@@ -321,7 +321,7 @@ pub async fn find_last_game_launch(pool: &SqlitePool) -> Result<GameLaunch, AppE
     )
     .fetch_one(pool)
     .await
-    .map_err(|_| AppError::NotFound(format!("no game launch")))
+    .map_err(|_| AppError::NotFound("no game launch".to_string()))
 }
 
 pub async fn find_game_library_entry(
@@ -336,6 +336,34 @@ pub async fn find_game_library_entry(
     .fetch_one(pool)
     .await
     .map_err(|_| AppError::NotFound(format!("game_library_entry {id}")))
+}
+
+pub async fn find_game_library_entry_by_game_id(
+    pool: &SqlitePool,
+    id: &str,
+) -> Result<GameLibraryEntry, AppError> {
+    sqlx::query_as!(
+        GameLibraryEntry,
+        "SELECT * FROM game_library_entry WHERE game_id = ?",
+        id
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|_| AppError::NotFound(format!("game_library_entry {id}")))
+}
+
+pub async fn find_game_library_entries_by_game_id(
+    pool: &SqlitePool,
+    id: &str,
+) -> Result<Vec<GameLibraryEntry>, AppError> {
+    sqlx::query_as!(
+        GameLibraryEntry,
+        "SELECT * FROM game_library_entry WHERE game_id = ? ORDER BY storefront_id ASC",
+        id
+    )
+    .fetch_all(pool)
+    .await
+    .map_err(AppError::from)
 }
 
 pub async fn insert_game_launch(
@@ -358,6 +386,40 @@ pub async fn insert_game_launch(
         launch.proton_dir,
     )
     .fetch_one(pool)
+    .await
+    .map_err(AppError::from)
+}
+
+pub async fn find_total_playtime_for_launch(
+    pool: &SqlitePool,
+    game_launch_id: &str,
+) -> Result<i64, AppError> {
+    let row = sqlx::query!(
+        "SELECT COALESCE(SUM(duration), 0) as total FROM game_activity WHERE game_launch_id = ?",
+        game_launch_id
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(AppError::from)?;
+    Ok(row.total)
+}
+
+pub async fn find_recent_activities_for_launch(
+    pool: &SqlitePool,
+    game_launch_id: &str,
+    limit: i64,
+) -> Result<Vec<GameActivity>, AppError> {
+    sqlx::query_as!(
+        GameActivity,
+        "SELECT id as \"id!\", game_launch_id, started_at, ended_at, duration
+         FROM game_activity
+         WHERE game_launch_id = ?
+         ORDER BY started_at DESC
+         LIMIT ?",
+        game_launch_id,
+        limit
+    )
+    .fetch_all(pool)
     .await
     .map_err(AppError::from)
 }

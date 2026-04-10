@@ -23,6 +23,7 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     #[command(
+        about = "Launch game",
         after_help = "Examples:\n  yagl launch                      (interactive)\n  yagl launch abc123\n  yagl launch abc123 --launch-id cfg456\n  yagl --db /tmp/test.db launch abc123"
     )]
     Launch {
@@ -54,4 +55,7 @@ pub enum Commands {
         #[arg(short, long, action = ArgAction::SetTrue, help = "Show available launch options")]
         launches: bool,
     },
+
+    #[command(about = "View details for a game")]
+    View { game_id: Option<String> },
 }
