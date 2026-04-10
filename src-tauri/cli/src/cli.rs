@@ -28,6 +28,9 @@ pub enum Commands {
     Launch {
         game_id: Option<String>,
 
+        #[arg(short, long, action = ArgAction::SetTrue)]
+        launch_last: bool,
+
         #[arg(long)]
         launch_id: Option<String>,
     },

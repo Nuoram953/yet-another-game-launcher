@@ -187,6 +187,23 @@ pub async fn find_by_id(pool: &SqlitePool, id: &str) -> Result<Game, AppError> {
     .map_err(|_| AppError::NotFound(format!("game {id}")))
 }
 
+pub async fn find_game_by_game_launch(
+    pool: &SqlitePool,
+    game_launch_id: &str,
+) -> Result<Game, AppError> {
+    sqlx::query_as!(
+        Game,
+        "SELECT game.id, game.name, game.game_status_id, game.is_favorite, game.igdb_id FROM game
+        join game_library_entry gle on gle.game_id = game.id
+        join game_launch gl on gl.game_library_entry_id = gle.id
+        WHERE gl.id = ?",
+        game_launch_id
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|_| AppError::NotFound(format!("game launch {game_launch_id}")))
+}
+
 pub async fn find_game_by_igdb_id(
     pool: &SqlitePool,
     igdb_id: i64,
@@ -274,8 +291,6 @@ pub async fn find_launches_for_game(
     .map_err(|e| AppError::Database(e.to_string()))
 }
 
-/// Returns the default launch config for a game, falling back to the first
-/// available config if none is marked as default.
 pub async fn find_default_launch_for_game(
     pool: &SqlitePool,
     game_id: &str,
@@ -293,6 +308,20 @@ pub async fn find_default_launch_for_game(
     .fetch_one(pool)
     .await
     .map_err(|_| AppError::NotFound(format!("no launch config for game {game_id}")))
+}
+
+pub async fn find_last_game_launch(pool: &SqlitePool) -> Result<GameLaunch, AppError> {
+    sqlx::query_as!(
+        GameLaunch,
+        "SELECT gl.*
+         FROM game_launch gl
+         JOIN game_activity ga ON ga.game_launch_id = gl.id
+         ORDER BY ga.id DESC
+         LIMIT 1"
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|_| AppError::NotFound(format!("no game launch")))
 }
 
 pub async fn find_game_library_entry(
