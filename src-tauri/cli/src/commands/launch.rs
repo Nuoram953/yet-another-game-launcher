@@ -1,12 +1,9 @@
 use anyhow::{Context, Result};
 use colored::Colorize;
 use yagl_core::db::DbPool;
-use yagl_core::domains::game::{
-    models::{GameFilter, LaunchGamePayload},
-    repository, service,
-};
+use yagl_core::domains::game::{models::LaunchGamePayload, repository, service};
 
-use crate::interactive;
+use crate::utils;
 
 struct LaunchTarget {
     launch_id: String,
@@ -60,33 +57,9 @@ async fn resolve_last_launch(pool: &DbPool) -> Result<LaunchTarget> {
 }
 
 async fn resolve_interactively(pool: &DbPool) -> Result<LaunchTarget> {
-    let games = repository::search_games(pool, &GameFilter { name: None })
-        .await
-        .context("failed to load games")?;
-
-    let game = interactive::fuzzy_select("Select a game", &games, |g| g.name.clone())?;
-
-    let launches = repository::find_launches_for_game(pool, &game.id)
-        .await
-        .with_context(|| format!("failed to load launches for '{}'", game.name))?;
-
-    if launches.is_empty() {
-        anyhow::bail!("no launch configs found for '{}'", game.name);
-    }
-
-    let (launch_id, launch_name) = if launches.len() == 1 {
-        let l = launches.into_iter().next().unwrap();
-        (l.id, l.name)
-    } else {
-        let l = interactive::select("Select a launch config", &launches, |l| l.name.clone())?;
-        (l.id.clone(), l.name.clone())
-    };
-
-    Ok(LaunchTarget {
-        launch_id,
-        game_name: game.name.clone(),
-        launch_name,
-    })
+    let game_id = utils::select_game_id(pool, None).await?;
+    let launch_id = utils::select_launch_id(pool, None, &game_id).await?;
+    resolve_by_launch_id(pool, launch_id).await
 }
 
 pub async fn handle(
@@ -105,6 +78,7 @@ pub async fn handle(
         resolve_interactively(pool).await?
     };
 
+    crate::utils::clear_screen();
     println!(
         "{} {} with launch config '{}'...",
         "▶".cyan().bold(),

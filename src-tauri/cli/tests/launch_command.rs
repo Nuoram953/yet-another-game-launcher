@@ -9,12 +9,12 @@ use yagl_core::{
 };
 
 async fn setup_launch_with_activity(pool: &DbPool) -> String {
-    repository::insert_game(&pool, "game-1", "Half-Life 2", None)
+    repository::insert_game(pool, "game-1", "Half-Life 2", None)
         .await
         .unwrap();
-    let entry = insert_game_library_entry(&pool, "entry-1", "game-1", "220").await;
-    let launch = insert_game_launch(&pool, "launch-1", &entry.id, Some("/nonexistent/bin")).await;
-    repository::insert_activity(&pool, Some(&launch.id), 0, 1, 1)
+    let entry = insert_game_library_entry(pool, "entry-1", "game-1", "220").await;
+    let launch = insert_game_launch(pool, "launch-1", &entry.id, Some("/nonexistent/bin")).await;
+    repository::insert_activity(pool, Some(&launch.id), 0, 1, 1)
         .await
         .unwrap();
     launch.id
