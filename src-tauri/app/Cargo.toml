@@ -22,7 +22,9 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 yagl-core = { path = "../core" }
+cli_lib = { path = "../cli", package = "cli" }
 dotenvy = "0.15"
+tokio = { version = "1", features = ["rt-multi-thread"] }
 tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 tauri-specta = { version = "=2.0.0-rc.24", features = ["derive", "typescript"] }

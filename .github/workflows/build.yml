@@ -69,19 +69,19 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-22.04
-            binary: yagl
+            binary: app
             artifact: yagl-linux-x86_64
           - target: aarch64-apple-darwin
             os: macos-latest
-            binary: yagl
+            binary: app
             artifact: yagl-macos-aarch64
           - target: x86_64-apple-darwin
             os: macos-13
-            binary: yagl
+            binary: app
             artifact: yagl-macos-x86_64
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            binary: yagl.exe
+            binary: app.exe
             artifact: yagl-windows-x86_64.exe
     runs-on: ${{ matrix.os }}
     steps:
@@ -103,8 +103,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
-      - name: Build CLI
-        run: cargo build --release --target ${{ matrix.target }} --manifest-path src-tauri/Cargo.toml -p cli
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }} --manifest-path src-tauri/Cargo.toml -p app --bin app
 
       - name: Rename binary
         shell: bash
