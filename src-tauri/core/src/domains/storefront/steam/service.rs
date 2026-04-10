@@ -115,7 +115,7 @@ fn find_steam_game_process(app_id: &str) -> Option<Pid> {
     #[cfg(target_os = "linux")]
     {
         let needle = format!("SteamAppId={app_id}");
-        std::fs::read_dir("/proc")
+        return std::fs::read_dir("/proc")
             .ok()?
             .filter_map(|entry| {
                 let name = entry.ok()?.file_name();
@@ -128,8 +128,10 @@ fn find_steam_game_process(app_id: &str) -> Option<Pid> {
                     None
                 }
             })
-            .next()
+            .next();
     }
+    #[allow(unreachable_code)]
+    None
 }
 
 pub fn default_base_url() -> &'static str {
