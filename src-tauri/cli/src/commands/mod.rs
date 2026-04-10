@@ -9,7 +9,11 @@ pub mod sync;
 
 pub async fn run(command: Commands, pool: &DbPool, config: &Config) -> Result<()> {
     match command {
-        Commands::Launch { game_id, launch_id } => launch::handle(pool, game_id, launch_id).await,
+        Commands::Launch {
+            game_id,
+            launch_last,
+            launch_id,
+        } => launch::handle(pool, game_id, launch_id, launch_last).await,
         Commands::Sync { storefront } => sync::handle(pool, storefront, config).await,
         Commands::Search { name, launches } => search::handle(pool, name, launches, config).await,
     }

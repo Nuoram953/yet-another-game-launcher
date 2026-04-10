@@ -8,79 +8,118 @@ use yagl_core::domains::game::{
 
 use crate::interactive;
 
+struct LaunchTarget {
+    launch_id: String,
+    game_name: String,
+    launch_name: String,
+}
+
+async fn resolve_by_launch_id(pool: &DbPool, id: String) -> Result<LaunchTarget> {
+    let launch = repository::find_game_launch(pool, &id)
+        .await
+        .with_context(|| format!("launch config '{id}' not found"))?;
+    let entry = repository::find_game_library_entry(pool, &launch.game_library_entry_id)
+        .await
+        .context("failed to load library entry")?;
+    let game = repository::find_by_id(pool, &entry.game_id)
+        .await
+        .context("failed to load game")?;
+    Ok(LaunchTarget {
+        launch_id: id,
+        game_name: game.name,
+        launch_name: launch.name,
+    })
+}
+
+async fn resolve_by_game_id(pool: &DbPool, gid: &str) -> Result<LaunchTarget> {
+    let launch = repository::find_default_launch_for_game(pool, gid)
+        .await
+        .with_context(|| format!("no launch config found for game '{gid}'"))?;
+    let game = repository::find_by_id(pool, gid)
+        .await
+        .with_context(|| format!("game '{gid}' not found"))?;
+    Ok(LaunchTarget {
+        launch_id: launch.id,
+        game_name: game.name,
+        launch_name: launch.name,
+    })
+}
+
+async fn resolve_last_launch(pool: &DbPool) -> Result<LaunchTarget> {
+    let launch = repository::find_last_game_launch(pool)
+        .await
+        .context("no launch found")?;
+    let game = repository::find_game_by_game_launch(pool, &launch.id)
+        .await
+        .context("game not found")?;
+    Ok(LaunchTarget {
+        launch_id: launch.id,
+        game_name: game.name,
+        launch_name: launch.name,
+    })
+}
+
+async fn resolve_interactively(pool: &DbPool) -> Result<LaunchTarget> {
+    let games = repository::search_games(pool, &GameFilter { name: None })
+        .await
+        .context("failed to load games")?;
+
+    let game = interactive::fuzzy_select("Select a game", &games, |g| g.name.clone())?;
+
+    let launches = repository::find_launches_for_game(pool, &game.id)
+        .await
+        .with_context(|| format!("failed to load launches for '{}'", game.name))?;
+
+    if launches.is_empty() {
+        anyhow::bail!("no launch configs found for '{}'", game.name);
+    }
+
+    let (launch_id, launch_name) = if launches.len() == 1 {
+        let l = launches.into_iter().next().unwrap();
+        (l.id, l.name)
+    } else {
+        let l = interactive::select("Select a launch config", &launches, |l| l.name.clone())?;
+        (l.id.clone(), l.name.clone())
+    };
+
+    Ok(LaunchTarget {
+        launch_id,
+        game_name: game.name.clone(),
+        launch_name,
+    })
+}
+
 pub async fn handle(
     pool: &DbPool,
     game_id: Option<String>,
     launch_id: Option<String>,
+    launch_last: bool,
 ) -> Result<()> {
-    let (launch_id, game_name, launch_name) = match launch_id {
-        Some(id) => {
-            let launch = repository::find_game_launch(pool, &id)
-                .await
-                .with_context(|| format!("launch config '{id}' not found"))?;
-            let entry = repository::find_game_library_entry(pool, &launch.game_library_entry_id)
-                .await
-                .context("failed to load library entry")?;
-            let game = repository::find_by_id(pool, &entry.game_id)
-                .await
-                .context("failed to load game")?;
-            (id, game.name, launch.name)
-        }
-        None => match game_id.as_deref() {
-            Some(gid) => {
-                let launch = repository::find_default_launch_for_game(pool, gid)
-                    .await
-                    .with_context(|| format!("no launch config found for game '{gid}'"))?;
-                let game = repository::find_by_id(pool, gid)
-                    .await
-                    .with_context(|| format!("game '{gid}' not found"))?;
-                (launch.id, game.name, launch.name)
-            }
-            None => {
-                let games = repository::search_games(pool, &GameFilter { name: None })
-                    .await
-                    .context("failed to load games")?;
-
-                let game = interactive::fuzzy_select("Select a game", &games, |g| g.name.clone())?;
-
-                let launches = repository::find_launches_for_game(pool, &game.id)
-                    .await
-                    .with_context(|| format!("failed to load launches for '{}'", game.name))?;
-
-                if launches.is_empty() {
-                    anyhow::bail!("no launch configs found for '{}'", game.name);
-                }
-
-                let (selected_id, selected_name) = if launches.len() == 1 {
-                    let l = launches.into_iter().next().unwrap();
-                    (l.id, l.name)
-                } else {
-                    let l = interactive::select("Select a launch config", &launches, |l| {
-                        l.name.clone()
-                    })?;
-                    (l.id.clone(), l.name.clone())
-                };
-
-                (selected_id, game.name.clone(), selected_name)
-            }
-        },
+    let target = if let Some(id) = launch_id {
+        resolve_by_launch_id(pool, id).await?
+    } else if let Some(gid) = game_id.as_deref() {
+        resolve_by_game_id(pool, gid).await?
+    } else if launch_last {
+        resolve_last_launch(pool).await?
+    } else {
+        resolve_interactively(pool).await?
     };
 
     println!(
         "{} {} with launch config '{}'...",
         "▶".cyan().bold(),
-        game_name.bold(),
-        launch_name
+        target.game_name.bold(),
+        target.launch_name
     );
 
     service::launch_and_track(
         pool,
         LaunchGamePayload {
-            game_launch_id: launch_id.clone(),
+            game_launch_id: target.launch_id,
         },
     )
     .await
-    .with_context(|| format!("failed to launch '{game_name}'"))?;
+    .with_context(|| format!("failed to launch '{}'", target.game_name))?;
 
     println!("{} Session recorded.", "✔".green().bold());
 
