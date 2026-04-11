@@ -141,6 +141,12 @@ pub fn install_game(external_id: &str) -> Result<(), AppError> {
 }
 
 #[instrument]
+pub fn uninstall_game(external_id: &str) -> Result<(), AppError> {
+    let url = format!("steam://uninstall/{external_id}");
+    open_steam_url(&url)
+}
+
+#[instrument]
 pub fn install_progress(external_id: &str) -> Result<Option<InstallProgress>, AppError> {
     let app_id: u64 = external_id
         .parse()

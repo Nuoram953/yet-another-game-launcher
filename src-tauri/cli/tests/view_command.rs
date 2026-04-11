@@ -1,9 +1,8 @@
-use std::{
-    fs,
-    path::PathBuf,
-    process::Command,
-    time::{SystemTime, UNIX_EPOCH},
-};
+mod common;
+
+use std::{fs, process::Command};
+
+use common::{strip_ansi, unique_path};
 
 use cli_lib::commands::view;
 use yagl_core::{
@@ -15,36 +14,6 @@ use yagl_core::{
     },
     testing::{db::test_db, fixtures::insert_game_library_entry},
 };
-
-fn temp_db_path() -> PathBuf {
-    let unique = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    std::env::temp_dir().join(format!("yagl-view-command-{unique}.db"))
-}
-
-fn strip_ansi(value: &str) -> String {
-    let mut cleaned = String::new();
-    let mut chars = value.chars().peekable();
-
-    while let Some(ch) = chars.next() {
-        if ch == '\u{1b}' {
-            if chars.next_if_eq(&'[').is_some() {
-                for next in chars.by_ref() {
-                    if ('@'..='~').contains(&next) {
-                        break;
-                    }
-                }
-            }
-            continue;
-        }
-
-        cleaned.push(ch);
-    }
-
-    cleaned
-}
 
 #[tokio::test]
 async fn game_id_not_found_returns_error_with_id() {
@@ -63,7 +32,7 @@ async fn game_id_not_found_returns_error_with_id() {
 
 #[tokio::test]
 async fn view_renders_game_details_to_stdout() {
-    let db_path = temp_db_path();
+    let db_path = unique_path("yagl-view-command.db");
     let pool = connect(db_path.to_str().unwrap()).await.unwrap();
 
     repository::insert_game(&pool, "game-1", "Balatro", None)

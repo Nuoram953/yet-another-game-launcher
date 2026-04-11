@@ -5,7 +5,10 @@ use yagl_core::{config::Config, db::DbPool};
 
 pub async fn handle(pool: &DbPool, name: Option<String>, launches: bool, _: &Config) -> Result<()> {
     crate::utils::clear_screen()?;
-    let payload = SearchGamePayload { name };
+    let payload = SearchGamePayload {
+        name,
+        has_any_installed: None,
+    };
     let games = service::search_game(pool, payload).await?;
 
     if games.is_empty() {

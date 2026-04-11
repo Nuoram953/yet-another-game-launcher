@@ -104,6 +104,15 @@ pub async fn install_library_entry(
 }
 
 #[instrument(skip(config, entry))]
+pub async fn uninstall_library_entry(
+    config: &Config,
+    entry: &GameLibraryEntry,
+) -> Result<(), AppError> {
+    let provider = install_provider(config, entry)?;
+    provider.uninstall_game(&entry.external_id).await
+}
+
+#[instrument(skip(config, entry))]
 pub fn supports_install_tracking(
     config: &Config,
     entry: &GameLibraryEntry,

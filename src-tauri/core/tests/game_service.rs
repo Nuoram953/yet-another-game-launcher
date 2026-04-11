@@ -50,6 +50,10 @@ impl StorefrontProvider for MockProvider {
     async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
         Ok(())
     }
+
+    async fn uninstall_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
+    }
 }
 
 #[tokio::test]
@@ -283,10 +287,18 @@ async fn search_game_no_name_returns_all_games() {
     repository::insert_game(&pool, "game-2", "Half-Life 2", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
+    insert_game_library_entry(&pool, "entry-2", "game-2", "222").await;
 
-    let games = service::search_game(&pool, SearchGamePayload { name: None })
-        .await
-        .unwrap();
+    let games = service::search_game(
+        &pool,
+        SearchGamePayload {
+            name: None,
+            has_any_installed: None,
+        },
+    )
+    .await
+    .unwrap();
 
     assert_eq!(games.len(), 2);
 }
@@ -300,11 +312,14 @@ async fn search_game_with_name_returns_matching_game() {
     repository::insert_game(&pool, "game-2", "Half-Life 2", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
+    insert_game_library_entry(&pool, "entry-2", "game-2", "222").await;
 
     let games = service::search_game(
         &pool,
         SearchGamePayload {
             name: Some("portal".to_string()),
+            has_any_installed: None,
         },
     )
     .await
@@ -321,11 +336,13 @@ async fn search_game_with_non_matching_name_returns_empty() {
     repository::insert_game(&pool, "game-1", "Portal", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
 
     let games = service::search_game(
         &pool,
         SearchGamePayload {
             name: Some("halo".to_string()),
+            has_any_installed: None,
         },
     )
     .await
@@ -346,11 +363,15 @@ async fn search_game_with_partial_name_returns_multiple_matches() {
     repository::insert_game(&pool, "game-3", "Half-Life 2", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
+    insert_game_library_entry(&pool, "entry-2", "game-2", "222").await;
+    insert_game_library_entry(&pool, "entry-3", "game-3", "333").await;
 
     let games = service::search_game(
         &pool,
         SearchGamePayload {
             name: Some("portal".to_string()),
+            has_any_installed: None,
         },
     )
     .await
@@ -366,9 +387,15 @@ async fn search_game_with_partial_name_returns_multiple_matches() {
 async fn search_game_returns_empty_on_empty_db() {
     let pool = test_db().await;
 
-    let games = service::search_game(&pool, SearchGamePayload { name: None })
-        .await
-        .unwrap();
+    let games = service::search_game(
+        &pool,
+        SearchGamePayload {
+            name: None,
+            has_any_installed: None,
+        },
+    )
+    .await
+    .unwrap();
 
     assert!(games.is_empty());
 }

@@ -10,7 +10,8 @@ use sqlx::SqlitePool;
 
 pub async fn search_games(pool: &SqlitePool, filter: &GameFilter) -> Result<Vec<Game>, AppError> {
     let mut builder = sqlx::QueryBuilder::new(
-        "SELECT id, name, game_status_id, is_favorite, igdb_id FROM game WHERE 1=1",
+        "SELECT game.id, game.name, game.game_status_id, game.is_favorite, game.igdb_id FROM game
+        JOIN game_library_entry on game_library_entry.game_id = game.id",
     );
 
     if let Some(ref name) = filter.name {
@@ -18,6 +19,12 @@ pub async fn search_games(pool: &SqlitePool, filter: &GameFilter) -> Result<Vec<
         builder
             .push(" AND normalized_name LIKE ")
             .push_bind(pattern);
+    }
+
+    if filter.has_any_installed.unwrap_or(false) {
+        builder
+            .push(" AND game_library_entry.is_installed = ")
+            .push_bind(true);
     }
 
     builder
