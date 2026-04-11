@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.2.1...v1.2.2) (2026-04-11)
+
+
+### Bug Fixes
+
+* unable to launch game because of python env ([f200c05](https://github.com/Nuoram953/yet-another-game-launcher/commit/f200c0564fb1b9d4a19ad53e7ecff532858733b1))
+
 ## [1.2.1](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.2.0...v1.2.1) (2026-04-11)
 
 

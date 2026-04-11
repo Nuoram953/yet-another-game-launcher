@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "1.2.1"
+version = "1.2.2"
 description = "Yet Another Game Launcher"
 edition = "2021"
 default-run = "app"
