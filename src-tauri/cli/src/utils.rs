@@ -16,9 +16,41 @@ pub async fn select_game_id(pool: &DbPool, game_id: Option<String>) -> Result<St
             Ok(gid)
         }
         None => {
-            let games = repository::search_games(pool, &GameFilter { name: None })
+            let games = repository::search_games(
+                pool,
+                &GameFilter {
+                    name: None,
+                    has_any_installed: None,
+                },
+            )
+            .await
+            .context("failed to load games")?;
+
+            let game = interactive::fuzzy_select("Select a game", &games, |g| g.name.clone())?;
+
+            Ok(game.id.clone())
+        }
+    }
+}
+
+pub async fn select_installed_game_id(pool: &DbPool, game_id: Option<String>) -> Result<String> {
+    match game_id {
+        Some(gid) => {
+            repository::find_by_id(pool, &gid)
                 .await
-                .context("failed to load games")?;
+                .with_context(|| format!("game '{gid}' not found"))?;
+            Ok(gid)
+        }
+        None => {
+            let games = repository::search_games(
+                pool,
+                &GameFilter {
+                    name: None,
+                    has_any_installed: Some(true),
+                },
+            )
+            .await
+            .context("failed to load installed games")?;
 
             let game = interactive::fuzzy_select("Select a game", &games, |g| g.name.clone())?;
 

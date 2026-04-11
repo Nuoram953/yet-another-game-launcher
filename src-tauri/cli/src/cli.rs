@@ -77,4 +77,7 @@ pub enum Commands {
         #[arg(short = 'f', long, action = ArgAction::SetTrue, help = "Follow install progress when supported")]
         follow: bool,
     },
+
+    #[command(about = "Uninstall a game from a storefront")]
+    Uninstall { game_id: Option<String> },
 }

@@ -25,4 +25,5 @@ pub trait StorefrontProvider: Send + Sync {
             "install progress is not supported for this storefront".into(),
         ))
     }
+    async fn uninstall_game(&self, external_id: &str) -> Result<(), AppError>;
 }

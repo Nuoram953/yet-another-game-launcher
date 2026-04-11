@@ -7,6 +7,7 @@ pub mod install;
 pub mod launch;
 pub mod search;
 pub mod sync;
+pub mod uninstall;
 pub mod view;
 
 pub async fn run(command: Commands, pool: &DbPool, config: &Config) -> Result<()> {
@@ -24,5 +25,6 @@ pub async fn run(command: Commands, pool: &DbPool, config: &Config) -> Result<()
             storefront,
             follow,
         } => install::handle(pool, game_id, storefront, follow, config).await,
+        Commands::Uninstall { game_id } => uninstall::handle(pool, game_id, config).await,
     }
 }
