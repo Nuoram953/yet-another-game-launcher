@@ -27,6 +27,7 @@ pub struct StorefrontGame {
     pub size: Option<u64>,
     pub igdb_id: Option<i64>,
     pub time_played: Option<u64>,
+    pub last_played_at: Option<u64>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Type)]
