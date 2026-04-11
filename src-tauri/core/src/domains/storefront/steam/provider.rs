@@ -3,7 +3,10 @@ use async_trait::async_trait;
 use super::service;
 use crate::{
     config::Config,
-    domains::storefront::{models::StorefrontGame, providers::StorefrontProvider},
+    domains::storefront::{
+        models::{InstallProgress, StorefrontGame},
+        providers::StorefrontProvider,
+    },
     error::AppError,
 };
 
@@ -25,6 +28,10 @@ impl StorefrontProvider for SteamProvider {
         config.storefront.steam.enable
     }
 
+    fn supports_install_tracking(&self) -> bool {
+        true
+    }
+
     async fn sync_library(&self) -> Result<Vec<StorefrontGame>, AppError> {
         service::sync_library(&self.steam_id, service::default_base_url()).await
     }
@@ -35,5 +42,16 @@ impl StorefrontProvider for SteamProvider {
 
     async fn track_session(&self, external_id: &str) -> Option<(i64, i64)> {
         service::track_game_session(external_id).await
+    }
+
+    async fn install_game(&self, external_id: &str) -> Result<(), AppError> {
+        service::install_game(external_id)
+    }
+
+    async fn install_progress(
+        &self,
+        external_id: &str,
+    ) -> Result<Option<InstallProgress>, AppError> {
+        service::install_progress(external_id)
     }
 }

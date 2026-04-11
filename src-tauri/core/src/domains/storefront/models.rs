@@ -23,11 +23,22 @@ impl TryFrom<i64> for Storefront {
 pub struct StorefrontGame {
     pub external_id: String,
     pub name: String,
+    pub is_installed: bool,
     pub location: String,
     pub size: Option<u64>,
     pub igdb_id: Option<i64>,
     pub time_played: Option<u64>,
     pub last_played_at: Option<u64>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type)]
+pub struct InstallProgress {
+    pub size: Option<u64>,
+    pub downloaded_bytes: Option<u64>,
+    pub total_bytes: Option<u64>,
+    pub observed_downloaded: Option<u64>,
+    pub is_active: bool,
+    pub is_installed: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Type)]

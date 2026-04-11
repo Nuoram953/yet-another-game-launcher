@@ -2,10 +2,13 @@ use async_trait::async_trait;
 use std::sync::{Arc, Mutex};
 use yagl_core::{
     config::Config,
-    domains::storefront::{
-        models::{GameSyncStatus, Storefront, StorefrontGame},
-        providers::StorefrontProvider,
-        service::{sync_with_providers, sync_with_providers_tracked},
+    domains::{
+        game::repository as game_repository,
+        storefront::{
+            models::{GameSyncStatus, Storefront, StorefrontGame},
+            providers::StorefrontProvider,
+            service::{sync_with_providers, sync_with_providers_tracked},
+        },
     },
     error::AppError,
     testing::db::test_db,
@@ -38,6 +41,7 @@ impl StorefrontProvider for MockProvider {
             .map(|g| StorefrontGame {
                 external_id: g.external_id.clone(),
                 name: g.name.clone(),
+                is_installed: g.is_installed,
                 location: g.location.clone(),
                 size: g.size,
                 igdb_id: g.igdb_id,
@@ -53,6 +57,10 @@ impl StorefrontProvider for MockProvider {
 
     async fn track_session(&self, _external_id: &str) -> Option<(i64, i64)> {
         None
+    }
+
+    async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
     }
 }
 
@@ -75,6 +83,10 @@ impl StorefrontProvider for FailingProvider {
     async fn track_session(&self, _external_id: &str) -> Option<(i64, i64)> {
         None
     }
+
+    async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
+    }
 }
 
 struct DisabledProvider;
@@ -96,12 +108,17 @@ impl StorefrontProvider for DisabledProvider {
     async fn track_session(&self, _external_id: &str) -> Option<(i64, i64)> {
         None
     }
+
+    async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
+    }
 }
 
 fn make_game(external_id: &str, name: &str) -> StorefrontGame {
     StorefrontGame {
         external_id: external_id.to_string(),
         name: name.to_string(),
+        is_installed: false,
         location: String::new(),
         size: None,
         igdb_id: None,
@@ -226,6 +243,36 @@ async fn sync_with_providers_creates_game_and_library_entry_and_launch() {
     .await
     .unwrap();
     assert_eq!(launch_count, 1);
+}
+
+#[tokio::test]
+async fn sync_with_providers_persists_install_state_for_new_games() {
+    let pool = test_db().await;
+    let providers: Vec<(Storefront, Box<dyn StorefrontProvider>)> = vec![(
+        Storefront::Steam,
+        Box::new(MockProvider::with_games(vec![StorefrontGame {
+            external_id: "440".to_string(),
+            name: "Team Fortress 2".to_string(),
+            is_installed: true,
+            location: "/games/team-fortress-2".to_string(),
+            size: Some(4_242),
+            igdb_id: None,
+            time_played: None,
+            last_played_at: None,
+        }])),
+    )];
+
+    sync_with_providers(&pool, providers, &Config::default())
+        .await
+        .unwrap();
+
+    let entry = game_repository::find_by_external_id(&pool, 1, "440")
+        .await
+        .unwrap()
+        .expect("expected library entry");
+    assert!(entry.is_installed);
+    assert_eq!(entry.location.as_deref(), Some("/games/team-fortress-2"));
+    assert_eq!(entry.size, Some(4_242));
 }
 
 #[tokio::test]
@@ -456,6 +503,7 @@ async fn sync_with_providers_updates_time_played_when_changed() {
         Box::new(MockProvider::with_games(vec![StorefrontGame {
             external_id: "440".to_string(),
             name: "Team Fortress 2".to_string(),
+            is_installed: false,
             location: String::new(),
             size: None,
             igdb_id: None,
@@ -472,6 +520,7 @@ async fn sync_with_providers_updates_time_played_when_changed() {
         Box::new(MockProvider::with_games(vec![StorefrontGame {
             external_id: "440".to_string(),
             name: "Team Fortress 2".to_string(),
+            is_installed: false,
             location: String::new(),
             size: None,
             igdb_id: None,
@@ -488,6 +537,54 @@ async fn sync_with_providers_updates_time_played_when_changed() {
 }
 
 #[tokio::test]
+async fn sync_with_providers_updates_install_state_when_changed() {
+    let pool = test_db().await;
+
+    let providers: Vec<(Storefront, Box<dyn StorefrontProvider>)> = vec![(
+        Storefront::Steam,
+        Box::new(MockProvider::with_games(vec![StorefrontGame {
+            external_id: "440".to_string(),
+            name: "Team Fortress 2".to_string(),
+            is_installed: true,
+            location: "/games/team-fortress-2".to_string(),
+            size: Some(4_242),
+            igdb_id: None,
+            time_played: None,
+            last_played_at: None,
+        }])),
+    )];
+    sync_with_providers(&pool, providers, &Config::default())
+        .await
+        .unwrap();
+
+    let providers: Vec<(Storefront, Box<dyn StorefrontProvider>)> = vec![(
+        Storefront::Steam,
+        Box::new(MockProvider::with_games(vec![StorefrontGame {
+            external_id: "440".to_string(),
+            name: "Team Fortress 2".to_string(),
+            is_installed: false,
+            location: String::new(),
+            size: None,
+            igdb_id: None,
+            time_played: None,
+            last_played_at: None,
+        }])),
+    )];
+    let result = sync_with_providers(&pool, providers, &Config::default())
+        .await
+        .unwrap();
+
+    let entry = game_repository::find_by_external_id(&pool, 1, "440")
+        .await
+        .unwrap()
+        .expect("expected library entry");
+    assert_eq!(result.games_updated, 1);
+    assert!(!entry.is_installed);
+    assert_eq!(entry.location, None);
+    assert_eq!(entry.size, None);
+}
+
+#[tokio::test]
 async fn sync_with_providers_no_update_when_time_played_unchanged() {
     let pool = test_db().await;
 
@@ -497,6 +594,7 @@ async fn sync_with_providers_no_update_when_time_played_unchanged() {
             Box::new(MockProvider::with_games(vec![StorefrontGame {
                 external_id: "440".to_string(),
                 name: "Team Fortress 2".to_string(),
+                is_installed: false,
                 location: String::new(),
                 size: None,
                 igdb_id: None,
@@ -530,6 +628,7 @@ async fn sync_with_providers_updates_last_played_when_changed() {
         Box::new(MockProvider::with_games(vec![StorefrontGame {
             external_id: "440".to_string(),
             name: "Team Fortress 2".to_string(),
+            is_installed: false,
             location: String::new(),
             size: None,
             igdb_id: None,
@@ -546,6 +645,7 @@ async fn sync_with_providers_updates_last_played_when_changed() {
         Box::new(MockProvider::with_games(vec![StorefrontGame {
             external_id: "440".to_string(),
             name: "Team Fortress 2".to_string(),
+            is_installed: false,
             location: String::new(),
             size: None,
             igdb_id: None,

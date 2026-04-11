@@ -2,12 +2,14 @@ use sqlx::SqlitePool;
 use tracing::{info, instrument, warn};
 use uuid::Uuid;
 
-use super::models::{GameSyncEntry, GameSyncStatus, SyncResult};
+use super::models::{GameSyncEntry, GameSyncStatus, InstallProgress, SyncResult};
 use crate::{
     config::Config,
     domains::{
         game::{
-            models::{NewGameLaunch, NewGameLibraryEntry, UpdateGameLibraryEntry},
+            models::{
+                GameLibraryEntry, NewGameLaunch, NewGameLibraryEntry, UpdateGameLibraryEntry,
+            },
             repository as game_repository,
         },
         storefront::{
@@ -92,6 +94,71 @@ where
     })
 }
 
+#[instrument(skip(config, entry))]
+pub async fn install_library_entry(
+    config: &Config,
+    entry: &GameLibraryEntry,
+) -> Result<(), AppError> {
+    let provider = install_provider(config, entry)?;
+    provider.install_game(&entry.external_id).await
+}
+
+#[instrument(skip(config, entry))]
+pub fn supports_install_tracking(
+    config: &Config,
+    entry: &GameLibraryEntry,
+) -> Result<bool, AppError> {
+    let storefront = Storefront::try_from(entry.storefront_id).map_err(|_| {
+        AppError::Internal(format!(
+            "unknown storefront {} for library entry {}",
+            entry.storefront_id, entry.id
+        ))
+    })?;
+
+    match storefront {
+        Storefront::Steam => Ok(install_provider(config, entry)?.supports_install_tracking()),
+        Storefront::Custom => Ok(false),
+    }
+}
+
+#[instrument(skip(config, entry))]
+pub async fn install_progress(
+    config: &Config,
+    entry: &GameLibraryEntry,
+) -> Result<Option<InstallProgress>, AppError> {
+    let provider = install_provider(config, entry)?;
+    provider.install_progress(&entry.external_id).await
+}
+
+fn install_provider(
+    config: &Config,
+    entry: &GameLibraryEntry,
+) -> Result<Box<dyn StorefrontProvider>, AppError> {
+    let storefront = Storefront::try_from(entry.storefront_id).map_err(|_| {
+        AppError::Internal(format!(
+            "unknown storefront {} for library entry {}",
+            entry.storefront_id, entry.id
+        ))
+    })?;
+
+    let provider: Box<dyn StorefrontProvider> = match storefront {
+        Storefront::Steam => Box::new(SteamProvider::new("")),
+        Storefront::Custom => {
+            return Err(AppError::Internal(
+                "install is not supported for custom storefront entries".into(),
+            ));
+        }
+    };
+
+    if !provider.is_enabled(config) {
+        return Err(AppError::Internal(format!(
+            "{storefront:?} storefront is disabled"
+        )));
+    }
+
+    Ok(provider)
+}
+
 async fn sync_game(
     pool: &SqlitePool,
     storefront_id: i64,
@@ -101,15 +168,7 @@ async fn sync_game(
         game_repository::find_by_external_id(pool, storefront_id, &game.external_id).await?;
 
     if let Some(existing_entry) = existing {
-        update_existing_entry(
-            pool,
-            storefront_id,
-            &existing_entry.game_id,
-            existing_entry.time_played,
-            existing_entry.last_played_at,
-            game,
-        )
-        .await
+        update_existing_entry(pool, storefront_id, existing_entry, game).await
     } else {
         let entry = add_new_game_entry(pool, storefront_id, game).await?;
         Ok(Some(entry))
@@ -119,16 +178,26 @@ async fn sync_game(
 async fn update_existing_entry(
     pool: &SqlitePool,
     storefront_id: i64,
-    game_id: &str,
-    current_time_played: i64,
-    current_last_played_at: Option<i64>,
+    existing_entry: crate::domains::game::models::GameLibraryEntry,
     game: StorefrontGame,
 ) -> Result<Option<GameSyncEntry>, AppError> {
     let new_time_played = game.time_played.map(|t| t as i64);
     let new_last_played_at = game.last_played_at.map(|t| t as i64);
+    let new_location = (!game.location.is_empty()).then_some(game.location.clone());
+    let new_size = game.size.map(|s| s as i64);
 
-    let has_changes = new_time_played.is_some_and(|t| t != current_time_played)
-        || new_last_played_at.is_some_and(|t| current_last_played_at != Some(t));
+    let time_played_changed = new_time_played.is_some_and(|t| t != existing_entry.time_played);
+    let last_played_changed =
+        new_last_played_at.is_some_and(|t| existing_entry.last_played_at != Some(t));
+    let install_state_changed = existing_entry.is_installed != game.is_installed;
+    let location_changed = existing_entry.location != new_location;
+    let size_changed = existing_entry.size != new_size;
+
+    let has_changes = time_played_changed
+        || last_played_changed
+        || install_state_changed
+        || location_changed
+        || size_changed;
 
     if !has_changes {
         return Ok(None);
@@ -136,12 +205,22 @@ async fn update_existing_entry(
 
     game_repository::update_game_library_entry(
         pool,
-        game_id,
+        &existing_entry.game_id,
         storefront_id,
         &UpdateGameLibraryEntry {
-            time_played: new_time_played,
-            last_played_at: new_last_played_at,
-            ..Default::default()
+            is_installed: install_state_changed.then_some(game.is_installed),
+            location: location_changed.then_some(new_location),
+            size: size_changed.then_some(new_size),
+            time_played: if time_played_changed {
+                new_time_played
+            } else {
+                None
+            },
+            last_played_at: if last_played_changed {
+                Some(new_last_played_at)
+            } else {
+                None
+            },
         },
     )
     .await?;
@@ -169,7 +248,7 @@ async fn add_new_game_entry(
             game_id,
             storefront_id,
             external_id: game.external_id,
-            is_installed: false,
+            is_installed: game.is_installed,
             location: if game.location.is_empty() {
                 None
             } else {

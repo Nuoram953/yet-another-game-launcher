@@ -88,10 +88,10 @@ async fn view_renders_game_details_to_stdout() {
         1,
         &UpdateGameLibraryEntry {
             is_installed: Some(true),
-            location: Some("/games/balatro".to_string()),
-            size: Some(1_610_612_736),
+            location: Some(Some("/games/balatro".to_string())),
+            size: Some(Some(1_610_612_736)),
             time_played: Some(125),
-            last_played_at: Some(1_700_000_000),
+            last_played_at: Some(Some(1_700_000_000)),
         },
     )
     .await

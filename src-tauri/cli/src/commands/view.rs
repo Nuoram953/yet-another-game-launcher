@@ -223,7 +223,7 @@ async fn load_launch_views(pool: &DbPool, launches: Vec<GameLaunch>) -> Result<V
 }
 
 pub async fn handle(pool: &DbPool, game_id: Option<String>, _: &Config) -> Result<()> {
-    crate::utils::clear_screen();
+    crate::utils::clear_screen()?;
 
     let game_id = select_game_id(pool, game_id).await?;
     let view = load_game_view(pool, &game_id).await?;
