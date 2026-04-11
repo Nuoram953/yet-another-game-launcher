@@ -50,17 +50,49 @@ pnpm migrate
 
 The `yagl` binary supports the following commands:
 
-```
-yagl [OPTIONS] <COMMAND>
-
-Options:
-  --db <PATH>    Override the database path
-  -v, --verbose  Increase log verbosity
+```text
+Usage: yagl [OPTIONS] <COMMAND>
 
 Commands:
-  launch   Launch a game (interactive if no game_id given)
+  launch   Launch game
   sync     Sync games from a storefront into the database
-  search   Search for games in your library
+  search   Search for games
+  view     View details for a game
+  install  Install a game from a storefront
+  help     Print this message or the help of the given subcommand(s)
+```
+
+```rust
+# use clap::CommandFactory;
+# use cli_lib::cli::Cli;
+# fn normalize(line: &str) -> String {
+#     line.split_whitespace().collect::<Vec<_>>().join(" ")
+# }
+# let readme = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/../../README.md"))
+#     .expect("README.md should be readable");
+# let documented_help = readme
+#     .split("The `yagl` binary supports the following commands:\n\n```text\n")
+#     .nth(1)
+#     .and_then(|section| section.split("\n```").next())
+#     .expect("CLI usage block should exist in README.md");
+# let mut command = Cli::command();
+# let actual_lines = command
+#     .render_long_help()
+#     .to_string()
+#     .lines()
+#     .map(normalize)
+#     .filter(|line| !line.is_empty())
+#     .collect::<Vec<_>>();
+# for documented_line in documented_help
+#     .lines()
+#     .map(normalize)
+#     .filter(|line| !line.is_empty())
+# {
+#     assert!(
+#         actual_lines.iter().any(|actual_line| actual_line == &documented_line),
+#         "README CLI usage line not found in `yagl --help`: {documented_line}\n\n{actual_lines:#?}"
+#     );
+# }
 ```
 
 ### Examples
@@ -83,6 +115,12 @@ yagl search --name "Half-Life"
 
 # Search and show available launch options
 yagl search --launches
+
+# View game details
+yagl view <game_id>
+
+# Install a game
+yagl install <game_id>
 ```
 
 ## Configuration
@@ -122,7 +160,7 @@ Releases are fully automated using [semantic-release](https://semantic-release.g
 
 #### Commit format
 
-```
+```text
 <type>(<scope>): <description>
 
 feat: add HowLongToBeat lookup
