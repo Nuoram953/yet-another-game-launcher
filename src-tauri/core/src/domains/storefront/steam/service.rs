@@ -26,6 +26,7 @@ pub async fn sync_library(steam_id: &str, base_url: &str) -> Result<Vec<Storefro
                 size: None,
                 igdb_id: None,
                 time_played: app.playtime_forever,
+                last_played_at: app.rtime_last_played.and_then(|t| u64::try_from(t).ok()),
             })
         })
         .collect())
