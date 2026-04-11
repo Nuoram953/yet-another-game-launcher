@@ -17,6 +17,14 @@ use std::path::Path;
 use tauri::AppHandle;
 use tracing::{debug, info, instrument, warn};
 
+const APPIMAGE_RUNTIME_ENV_VARS: [&str; 4] = ["APPIMAGE", "APPDIR", "OWD", "ARGV0"];
+
+fn clear_appimage_runtime_env(cmd: &mut std::process::Command) {
+    for key in APPIMAGE_RUNTIME_ENV_VARS {
+        cmd.env_remove(key);
+    }
+}
+
 pub async fn get_by_id(
     pool: &SqlitePool,
     _: &AppHandle,
@@ -94,7 +102,8 @@ pub async fn launch_custom_exe_and_track(
         (exe.to_string(), None)
     };
 
-    let mut cmd = tokio::process::Command::new(&bin);
+    let mut cmd = std::process::Command::new(&bin);
+    clear_appimage_runtime_env(&mut cmd);
 
     // Proton compat env vars (user `env` values take precedence).
     if let Some(ref proton_dir) = launch.proton_dir {
@@ -146,7 +155,8 @@ pub async fn launch_custom_exe_and_track(
         cmd.current_dir(dir);
     }
 
-    cmd.spawn()
+    tokio::process::Command::from(cmd)
+        .spawn()
         .map_err(|e| AppError::Launch(e.to_string()))?
         .wait()
         .await
@@ -162,6 +172,27 @@ pub async fn launch_custom_exe_and_track(
     repository::insert_activity(pool, Some(&launch.id), started_at, ended_at, duration).await?;
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{clear_appimage_runtime_env, APPIMAGE_RUNTIME_ENV_VARS};
+    use std::ffi::OsStr;
+
+    #[test]
+    fn clear_appimage_runtime_env_marks_runtime_vars_for_removal() {
+        let mut cmd = std::process::Command::new("true");
+        clear_appimage_runtime_env(&mut cmd);
+
+        let envs: Vec<_> = cmd.get_envs().collect();
+        for key in APPIMAGE_RUNTIME_ENV_VARS {
+            assert!(
+                envs.iter()
+                    .any(|(name, value)| *name == OsStr::new(key) && value.is_none()),
+                "expected {key} to be removed from the child environment"
+            );
+        }
+    }
 }
 
 #[instrument(skip(pool, launch, provider))]
