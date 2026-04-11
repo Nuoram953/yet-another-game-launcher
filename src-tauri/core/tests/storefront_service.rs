@@ -42,6 +42,7 @@ impl StorefrontProvider for MockProvider {
                 size: g.size,
                 igdb_id: g.igdb_id,
                 time_played: g.time_played,
+                last_played_at: g.last_played_at,
             })
             .collect())
     }
@@ -105,6 +106,7 @@ fn make_game(external_id: &str, name: &str) -> StorefrontGame {
         size: None,
         igdb_id: None,
         time_played: None,
+        last_played_at: None,
     }
 }
 
@@ -458,6 +460,7 @@ async fn sync_with_providers_updates_time_played_when_changed() {
             size: None,
             igdb_id: None,
             time_played: Some(60),
+            last_played_at: None,
         }])),
     )];
     sync_with_providers(&pool, providers, &Config::default())
@@ -473,6 +476,7 @@ async fn sync_with_providers_updates_time_played_when_changed() {
             size: None,
             igdb_id: None,
             time_played: Some(120),
+            last_played_at: None,
         }])),
     )];
     let result = sync_with_providers(&pool, providers, &Config::default())
@@ -497,6 +501,7 @@ async fn sync_with_providers_no_update_when_time_played_unchanged() {
                 size: None,
                 igdb_id: None,
                 time_played: Some(60),
+                last_played_at: None,
             }])) as Box<dyn StorefrontProvider>,
         )]
     };
@@ -513,6 +518,46 @@ async fn sync_with_providers_no_update_when_time_played_unchanged() {
         result.games_updated, 0,
         "no update when time_played is the same"
     );
+    assert_eq!(result.games_added, 0);
+}
+
+#[tokio::test]
+async fn sync_with_providers_updates_last_played_when_changed() {
+    let pool = test_db().await;
+
+    let providers: Vec<(Storefront, Box<dyn StorefrontProvider>)> = vec![(
+        Storefront::Steam,
+        Box::new(MockProvider::with_games(vec![StorefrontGame {
+            external_id: "440".to_string(),
+            name: "Team Fortress 2".to_string(),
+            location: String::new(),
+            size: None,
+            igdb_id: None,
+            time_played: Some(60),
+            last_played_at: Some(1_700_000_000),
+        }])),
+    )];
+    sync_with_providers(&pool, providers, &Config::default())
+        .await
+        .unwrap();
+
+    let providers: Vec<(Storefront, Box<dyn StorefrontProvider>)> = vec![(
+        Storefront::Steam,
+        Box::new(MockProvider::with_games(vec![StorefrontGame {
+            external_id: "440".to_string(),
+            name: "Team Fortress 2".to_string(),
+            location: String::new(),
+            size: None,
+            igdb_id: None,
+            time_played: Some(60),
+            last_played_at: Some(1_700_000_123),
+        }])),
+    )];
+    let result = sync_with_providers(&pool, providers, &Config::default())
+        .await
+        .unwrap();
+
+    assert_eq!(result.games_updated, 1, "should report one updated game");
     assert_eq!(result.games_added, 0);
 }
 

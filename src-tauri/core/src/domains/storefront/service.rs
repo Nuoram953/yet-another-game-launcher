@@ -106,6 +106,7 @@ async fn sync_game(
             storefront_id,
             &existing_entry.game_id,
             existing_entry.time_played,
+            existing_entry.last_played_at,
             game,
         )
         .await
@@ -120,10 +121,14 @@ async fn update_existing_entry(
     storefront_id: i64,
     game_id: &str,
     current_time_played: i64,
+    current_last_played_at: Option<i64>,
     game: StorefrontGame,
 ) -> Result<Option<GameSyncEntry>, AppError> {
     let new_time_played = game.time_played.map(|t| t as i64);
-    let has_changes = new_time_played.is_some_and(|t| t != current_time_played);
+    let new_last_played_at = game.last_played_at.map(|t| t as i64);
+
+    let has_changes = new_time_played.is_some_and(|t| t != current_time_played)
+        || new_last_played_at.is_some_and(|t| current_last_played_at != Some(t));
 
     if !has_changes {
         return Ok(None);
@@ -135,6 +140,7 @@ async fn update_existing_entry(
         storefront_id,
         &UpdateGameLibraryEntry {
             time_played: new_time_played,
+            last_played_at: new_last_played_at,
             ..Default::default()
         },
     )
