@@ -496,6 +496,48 @@ async fn update_game_library_entry_updates_is_installed() {
 }
 
 #[tokio::test]
+async fn update_game_library_entry_can_clear_location_and_size() {
+    let pool = test_db().await;
+    insert_game(&pool, "game-1", "Portal", 1).await;
+    insert_game_library_entry(&pool, "entry-1", "game-1", "400").await;
+
+    repository::update_game_library_entry(
+        &pool,
+        "game-1",
+        1,
+        &UpdateGameLibraryEntry {
+            is_installed: Some(true),
+            location: Some(Some("/games/portal".to_string())),
+            size: Some(Some(5_000)),
+            ..Default::default()
+        },
+    )
+    .await
+    .unwrap();
+
+    repository::update_game_library_entry(
+        &pool,
+        "game-1",
+        1,
+        &UpdateGameLibraryEntry {
+            is_installed: Some(false),
+            location: Some(None),
+            size: Some(None),
+            ..Default::default()
+        },
+    )
+    .await
+    .unwrap();
+
+    let entry = repository::find_game_library_entry(&pool, "entry-1")
+        .await
+        .unwrap();
+    assert!(!entry.is_installed);
+    assert_eq!(entry.location, None);
+    assert_eq!(entry.size, None);
+}
+
+#[tokio::test]
 async fn update_game_library_entry_returns_error_for_nonexistent() {
     let pool = test_db().await;
 

@@ -11,10 +11,10 @@ pub struct UpdateGame {
 #[derive(Debug, Default)]
 pub struct UpdateGameLibraryEntry {
     pub is_installed: Option<bool>,
-    pub location: Option<String>,
-    pub size: Option<i64>,
+    pub location: Option<Option<String>>,
+    pub size: Option<Option<i64>>,
     pub time_played: Option<i64>,
-    pub last_played_at: Option<i64>,
+    pub last_played_at: Option<Option<i64>>,
 }
 
 #[derive(Debug, Default)]

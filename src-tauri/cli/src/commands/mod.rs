@@ -3,6 +3,7 @@ use yagl_core::{config::Config, db::DbPool};
 
 use crate::cli::Commands;
 
+pub mod install;
 pub mod launch;
 pub mod search;
 pub mod sync;
@@ -18,5 +19,10 @@ pub async fn run(command: Commands, pool: &DbPool, config: &Config) -> Result<()
         Commands::Sync { storefront } => sync::handle(pool, storefront, config).await,
         Commands::Search { name, launches } => search::handle(pool, name, launches, config).await,
         Commands::View { game_id } => view::handle(pool, game_id, config).await,
+        Commands::Install {
+            game_id,
+            storefront,
+            follow,
+        } => install::handle(pool, game_id, storefront, follow, config).await,
     }
 }

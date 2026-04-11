@@ -46,6 +46,10 @@ impl StorefrontProvider for MockProvider {
     async fn track_session(&self, _external_id: &str) -> Option<(i64, i64)> {
         self.session
     }
+
+    async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
+    }
 }
 
 #[tokio::test]
