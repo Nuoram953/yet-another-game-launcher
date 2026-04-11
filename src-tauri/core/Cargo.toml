@@ -24,6 +24,8 @@ uuid = { version = "1", features = ["v4"] }
 toml = "0.8"
 notify = { version = "6", features = ["crossbeam-channel"] }
 shlex = "1"
+steamlocate = "2.1.0"
+keyvalues-serde = "0.2.3"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }

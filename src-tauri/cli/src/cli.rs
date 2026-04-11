@@ -58,4 +58,23 @@ pub enum Commands {
 
     #[command(about = "View details for a game")]
     View { game_id: Option<String> },
+
+    #[command(
+        about = "Install a game from a storefront",
+        after_help = "Examples:\n  yagl install abc123\n  yagl install abc123 --follow\n  yagl --db /tmp/test.db install abc123 -f"
+    )]
+    Install {
+        game_id: Option<String>,
+
+        #[arg(
+            short,
+            long,
+            value_name = "STOREFRONT",
+            help = "Storefront to sync (e.g. steam)"
+        )]
+        storefront: Option<String>,
+
+        #[arg(short = 'f', long, action = ArgAction::SetTrue, help = "Follow install progress when supported")]
+        follow: bool,
+    },
 }

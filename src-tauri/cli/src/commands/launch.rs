@@ -78,7 +78,7 @@ pub async fn handle(
         resolve_interactively(pool).await?
     };
 
-    crate::utils::clear_screen();
+    crate::utils::clear_screen()?;
     println!(
         "{} {} with launch config '{}'...",
         "▶".cyan().bold(),

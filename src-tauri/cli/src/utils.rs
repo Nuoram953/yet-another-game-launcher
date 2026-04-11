@@ -1,3 +1,5 @@
+use std::io::{self, IsTerminal, Write};
+
 use anyhow::{Context, Result};
 use colored::Colorize;
 use yagl_core::db::DbPool;
@@ -60,6 +62,18 @@ pub fn print_separator() {
     println!("{}", "─".repeat(40).dimmed());
 }
 
-pub fn clear_screen() {
-    print!("\x1b[2J\x1b[H");
+pub fn clear_screen() -> Result<()> {
+    const CLEAR_SEQUENCE: &[u8] = b"\x1b[2J\x1b[H";
+
+    if io::stderr().is_terminal() {
+        let mut stderr = io::stderr().lock();
+        stderr.write_all(CLEAR_SEQUENCE)?;
+        stderr.flush()?;
+    } else if io::stdout().is_terminal() {
+        let mut stdout = io::stdout().lock();
+        stdout.write_all(CLEAR_SEQUENCE)?;
+        stdout.flush()?;
+    }
+
+    Ok(())
 }
