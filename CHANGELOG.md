@@ -1,3 +1,21 @@
+# [1.2.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.1.0...v1.2.0) (2026-04-11)
+
+
+### Bug Fixes
+
+* activiy of 0 minutes being recorded ([d329255](https://github.com/Nuoram953/yet-another-game-launcher/commit/d32925557a208fe09baf29b98892e4aa9fee5d4f))
+* build failing on windows and macos ([c7145b0](https://github.com/Nuoram953/yet-another-game-launcher/commit/c7145b07d8497e2f6d44dcf26feb63933c768f5b))
+
+
+### Features
+
+* install game using `install` command ([c506da0](https://github.com/Nuoram953/yet-another-game-launcher/commit/c506da07a4e73c71733d224e5cde7eff76aeced9))
+* install script for AppImage ([a495794](https://github.com/Nuoram953/yet-another-game-launcher/commit/a495794537399eece0a5db822981dbb5c91f53ac))
+* launch-last flag in launch command ([065880c](https://github.com/Nuoram953/yet-another-game-launcher/commit/065880c871fa93212fd7d1547d415db45cf2f4de))
+* syncing also update `last_played_at` ([ecfc559](https://github.com/Nuoram953/yet-another-game-launcher/commit/ecfc559457d031f14d4d827f14a6de594bbfadd2))
+* uninstall game using `uninstall` command ([869546b](https://github.com/Nuoram953/yet-another-game-launcher/commit/869546b338f11d94ff416b9c55e6e9a1485e82bf))
+* view command for game's details ([8c078ba](https://github.com/Nuoram953/yet-another-game-launcher/commit/8c078ba15fbe710eb2ba8f8936c95e433c51d7b6))
+
 # [1.1.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.0.0...v1.1.0) (2026-04-10)
 
 
