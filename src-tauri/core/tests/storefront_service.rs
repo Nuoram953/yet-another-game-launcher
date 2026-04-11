@@ -62,6 +62,10 @@ impl StorefrontProvider for MockProvider {
     async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
         Ok(())
     }
+
+    async fn uninstall_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
+    }
 }
 
 struct FailingProvider;
@@ -87,6 +91,9 @@ impl StorefrontProvider for FailingProvider {
     async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
         Ok(())
     }
+    async fn uninstall_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
+    }
 }
 
 struct DisabledProvider;
@@ -110,6 +117,9 @@ impl StorefrontProvider for DisabledProvider {
     }
 
     async fn install_game(&self, _external_id: &str) -> Result<(), AppError> {
+        Ok(())
+    }
+    async fn uninstall_game(&self, _external_id: &str) -> Result<(), AppError> {
         Ok(())
     }
 }

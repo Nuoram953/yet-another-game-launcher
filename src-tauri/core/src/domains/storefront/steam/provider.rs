@@ -54,4 +54,8 @@ impl StorefrontProvider for SteamProvider {
     ) -> Result<Option<InstallProgress>, AppError> {
         service::install_progress(external_id)
     }
+
+    async fn uninstall_game(&self, external_id: &str) -> Result<(), AppError> {
+        service::uninstall_game(external_id)
+    }
 }

@@ -1,9 +1,8 @@
-use std::{
-    fs,
-    path::{Path, PathBuf},
-    process::Command,
-    time::{SystemTime, UNIX_EPOCH},
-};
+mod common;
+
+use std::{fs, path::Path, process::Command};
+
+use common::{strip_ansi, unique_path, write_xdg_open_script};
 
 use yagl_core::{
     db::connect,
@@ -16,36 +15,6 @@ use yagl_core::{
     },
     testing::fixtures::insert_game_library_entry,
 };
-
-fn unique_path(prefix: &str) -> PathBuf {
-    let unique = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_nanos();
-    std::env::temp_dir().join(format!("{prefix}-{unique}"))
-}
-
-fn strip_ansi(value: &str) -> String {
-    let mut cleaned = String::new();
-    let mut chars = value.chars().peekable();
-
-    while let Some(ch) = chars.next() {
-        if ch == '\u{1b}' {
-            if chars.next_if_eq(&'[').is_some() {
-                for next in chars.by_ref() {
-                    if ('@'..='~').contains(&next) {
-                        break;
-                    }
-                }
-            }
-            continue;
-        }
-
-        cleaned.push(ch);
-    }
-
-    cleaned
-}
 
 fn write_libraryfolders_vdf(steam_root: &Path) {
     let steamapps = steam_root.join("steamapps");
@@ -60,34 +29,6 @@ fn write_libraryfolders_vdf(steam_root: &Path) {
     .unwrap();
 }
 
-fn write_xdg_open_script(bin_dir: &Path, with_follow_progress: bool) -> PathBuf {
-    fs::create_dir_all(bin_dir).unwrap();
-    let log_path = bin_dir.join("xdg-open.log");
-    let script_path = bin_dir.join("xdg-open");
-    let body = if with_follow_progress {
-        format!(
-            "#!/bin/sh\nset -eu\nurl=\"$1\"\necho \"$url\" > \"{}\"\nappid=\"${{url##*/}}\"\nsteam_root=\"$YAGL_STEAM_DIR\"\nsteamapps=\"$steam_root/steamapps\"\nmkdir -p \"$steamapps\" \"$steamapps/common\"\n(\ncat > \"$steamapps/appmanifest_${{appid}}.acf\" <<EOF\n\"AppState\"\n{{\n    \"appid\" \"${{appid}}\"\n    \"name\" \"Balatro\"\n    \"installdir\" \"Balatro\"\n    \"SizeOnDisk\" \"1024\"\n    \"BytesToDownload\" \"2048\"\n    \"BytesDownloaded\" \"512\"\n}}\nEOF\nsleep 0.3\nmkdir -p \"$steamapps/common/Balatro\"\ncat > \"$steamapps/appmanifest_${{appid}}.acf\" <<EOF\n\"AppState\"\n{{\n    \"appid\" \"${{appid}}\"\n    \"name\" \"Balatro\"\n    \"installdir\" \"Balatro\"\n    \"SizeOnDisk\" \"2048\"\n    \"BytesToDownload\" \"0\"\n    \"BytesDownloaded\" \"2048\"\n}}\nEOF\n) &\nexit 0\n",
-            log_path.display()
-        )
-    } else {
-        format!(
-            "#!/bin/sh\nset -eu\necho \"$1\" > \"{}\"\nexit 0\n",
-            log_path.display()
-        )
-    };
-    fs::write(&script_path, body).unwrap();
-
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mut perms = fs::metadata(&script_path).unwrap().permissions();
-        perms.set_mode(0o755);
-        fs::set_permissions(&script_path, perms).unwrap();
-    }
-
-    log_path
-}
-
 #[tokio::test]
 async fn install_starts_download_for_single_entry() {
     let db_path = unique_path("yagl-install-command.db");
@@ -97,7 +38,12 @@ async fn install_starts_download_for_single_entry() {
     fs::create_dir_all(&steam_root).unwrap();
     fs::create_dir_all(&data_home).unwrap();
     write_libraryfolders_vdf(&steam_root);
-    let log_path = write_xdg_open_script(&bin_dir, false);
+    let log_path = write_xdg_open_script(&bin_dir, |log_path| {
+        format!(
+            "#!/bin/sh\nset -eu\necho \"$1\" > \"{}\"\nexit 0\n",
+            log_path.display()
+        )
+    });
 
     let pool = connect(db_path.to_str().unwrap()).await.unwrap();
     repository::insert_game(&pool, "game-1", "Balatro", None)
@@ -143,7 +89,12 @@ async fn install_skips_installed_entries() {
     fs::create_dir_all(&steam_root).unwrap();
     fs::create_dir_all(&data_home).unwrap();
     write_libraryfolders_vdf(&steam_root);
-    let log_path = write_xdg_open_script(&bin_dir, false);
+    let log_path = write_xdg_open_script(&bin_dir, |log_path| {
+        format!(
+            "#!/bin/sh\nset -eu\necho \"$1\" > \"{}\"\nexit 0\n",
+            log_path.display()
+        )
+    });
 
     let pool = connect(db_path.to_str().unwrap()).await.unwrap();
     repository::insert_game(&pool, "game-1", "Balatro", None)
@@ -201,7 +152,12 @@ async fn install_follow_reports_download_completion() {
     fs::create_dir_all(&steam_root).unwrap();
     fs::create_dir_all(&data_home).unwrap();
     write_libraryfolders_vdf(&steam_root);
-    let log_path = write_xdg_open_script(&bin_dir, true);
+    let log_path = write_xdg_open_script(&bin_dir, |log_path| {
+        format!(
+            "#!/bin/sh\nset -eu\nurl=\"$1\"\necho \"$url\" > \"{}\"\nappid=\"${{url##*/}}\"\nsteam_root=\"$YAGL_STEAM_DIR\"\nsteamapps=\"$steam_root/steamapps\"\nmkdir -p \"$steamapps\" \"$steamapps/common\"\n(\ncat > \"$steamapps/appmanifest_${{appid}}.acf\" <<EOF\n\"AppState\"\n{{\n    \"appid\" \"${{appid}}\"\n    \"name\" \"Balatro\"\n    \"installdir\" \"Balatro\"\n    \"SizeOnDisk\" \"1024\"\n    \"BytesToDownload\" \"2048\"\n    \"BytesDownloaded\" \"512\"\n}}\nEOF\nsleep 0.3\nmkdir -p \"$steamapps/common/Balatro\"\ncat > \"$steamapps/appmanifest_${{appid}}.acf\" <<EOF\n\"AppState\"\n{{\n    \"appid\" \"${{appid}}\"\n    \"name\" \"Balatro\"\n    \"installdir\" \"Balatro\"\n    \"SizeOnDisk\" \"2048\"\n    \"BytesToDownload\" \"0\"\n    \"BytesDownloaded\" \"2048\"\n}}\nEOF\n) &\nexit 0\n",
+            log_path.display()
+        )
+    });
 
     let pool = connect(db_path.to_str().unwrap()).await.unwrap();
     repository::insert_game(&pool, "game-1", "Balatro", None)

@@ -241,6 +241,8 @@ async fn search_games_no_filter_returns_all_games() {
     repository::insert_game(&pool, "game-2", "Portal 2", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
+    insert_game_library_entry(&pool, "entry-2", "game-2", "222").await;
 
     let games = repository::search_games(&pool, &GameFilter::default())
         .await
@@ -258,11 +260,14 @@ async fn search_games_by_name_returns_matching_games() {
     repository::insert_game(&pool, "game-2", "Portal", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
+    insert_game_library_entry(&pool, "entry-2", "game-2", "222").await;
 
     let games = repository::search_games(
         &pool,
         &GameFilter {
             name: Some("halflife".to_string()),
+            has_any_installed: None,
         },
     )
     .await
@@ -278,11 +283,13 @@ async fn search_games_name_filter_is_case_insensitive() {
     repository::insert_game(&pool, "game-1", "Half-Life 2", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
 
     let games = repository::search_games(
         &pool,
         &GameFilter {
             name: Some("HALFLIFE".to_string()),
+            has_any_installed: None,
         },
     )
     .await
@@ -298,11 +305,13 @@ async fn search_games_by_name_returns_empty_when_no_match() {
     repository::insert_game(&pool, "game-1", "Portal", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
 
     let games = repository::search_games(
         &pool,
         &GameFilter {
             name: Some("halo".to_string()),
+            has_any_installed: None,
         },
     )
     .await
@@ -323,11 +332,15 @@ async fn search_games_partial_name_returns_multiple_matches() {
     repository::insert_game(&pool, "game-3", "Half-Life 2", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
+    insert_game_library_entry(&pool, "entry-2", "game-2", "222").await;
+    insert_game_library_entry(&pool, "entry-3", "game-3", "333").await;
 
     let games = repository::search_games(
         &pool,
         &GameFilter {
             name: Some("portal".to_string()),
+            has_any_installed: None,
         },
     )
     .await
@@ -342,11 +355,13 @@ async fn search_games_strips_special_chars_from_query() {
     repository::insert_game(&pool, "game-1", "Batman: Arkham City", None)
         .await
         .unwrap();
+    insert_game_library_entry(&pool, "entry-1", "game-1", "111").await;
 
     let games = repository::search_games(
         &pool,
         &GameFilter {
             name: Some("Batman Arkham".to_string()),
+            has_any_installed: None,
         },
     )
     .await

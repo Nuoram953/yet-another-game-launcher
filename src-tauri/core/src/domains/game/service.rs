@@ -40,7 +40,10 @@ pub async fn search_game(
     pool: &SqlitePool,
     payload: SearchGamePayload,
 ) -> Result<Vec<Game>, AppError> {
-    let filter = GameFilter { name: payload.name };
+    let filter = GameFilter {
+        name: payload.name,
+        has_any_installed: payload.has_any_installed,
+    };
     repository::search_games(pool, &filter).await
 }
 

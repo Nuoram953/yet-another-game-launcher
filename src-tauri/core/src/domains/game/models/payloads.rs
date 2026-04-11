@@ -20,11 +20,11 @@ pub struct LaunchGamePayload {
 #[derive(Debug, Deserialize, Type)]
 pub struct SearchGamePayload {
     pub name: Option<String>,
+    pub has_any_installed: Option<bool>,
 }
 
-/// Internal filter used by the repository layer to build dynamic search queries.
-/// Add new fields here as more search options become available.
 #[derive(Debug, Default)]
 pub struct GameFilter {
     pub name: Option<String>,
+    pub has_any_installed: Option<bool>,
 }
