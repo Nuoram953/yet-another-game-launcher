@@ -42,9 +42,9 @@ pub enum Commands {
             short,
             long,
             value_name = "STOREFRONT",
-            help = "Storefront to sync (e.g. steam)"
+            help = "Storefront to sync (e.g. steam). If omitted, sync all storefronts"
         )]
-        storefront: String,
+        storefront: Option<String>,
     },
 
     #[command(about = "Search for games")]

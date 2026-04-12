@@ -22,6 +22,35 @@ use crate::{
     utils::normalize_name,
 };
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct StorefrontSyncProgress {
+    pub storefront: Storefront,
+    pub processed_games: u32,
+    pub total_games: u32,
+    pub games_added: u32,
+    pub games_updated: u32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SyncProgressEvent {
+    StorefrontStarted {
+        storefront: Storefront,
+    },
+    StorefrontSkipped {
+        storefront: Storefront,
+    },
+    StorefrontFetched {
+        progress: StorefrontSyncProgress,
+    },
+    GameProcessed {
+        entry: Option<GameSyncEntry>,
+        progress: StorefrontSyncProgress,
+    },
+    StorefrontCompleted {
+        progress: StorefrontSyncProgress,
+    },
+}
+
 #[instrument(skip(pool, config))]
 pub async fn sync_all_libraries(
     pool: &SqlitePool,
@@ -42,25 +71,48 @@ pub async fn sync_with_providers(
     providers: Vec<(Storefront, Box<dyn StorefrontProvider>)>,
     config: &Config,
 ) -> Result<SyncResult, AppError> {
-    sync_with_providers_tracked(pool, providers, config, |_| {}).await
+    sync_with_providers_observed(pool, providers, config, |_| {}).await
 }
 
 pub async fn sync_with_providers_tracked<F>(
     pool: &SqlitePool,
     providers: Vec<(Storefront, Box<dyn StorefrontProvider>)>,
     config: &Config,
-    on_progress: F,
+    mut on_progress: F,
 ) -> Result<SyncResult, AppError>
 where
-    F: Fn(&GameSyncEntry),
+    F: FnMut(&GameSyncEntry),
+{
+    sync_with_providers_observed(pool, providers, config, |event| {
+        if let SyncProgressEvent::GameProcessed {
+            entry: Some(entry), ..
+        } = event
+        {
+            on_progress(&entry);
+        }
+    })
+    .await
+}
+
+pub async fn sync_with_providers_observed<F>(
+    pool: &SqlitePool,
+    providers: Vec<(Storefront, Box<dyn StorefrontProvider>)>,
+    config: &Config,
+    mut on_progress: F,
+) -> Result<SyncResult, AppError>
+where
+    F: FnMut(SyncProgressEvent),
 {
     let mut games: Vec<GameSyncEntry> = Vec::new();
     let mut games_added = 0u32;
     let mut games_updated = 0u32;
 
     for (storefront, provider) in providers {
+        on_progress(SyncProgressEvent::StorefrontStarted { storefront });
+
         if !provider.is_enabled(config) {
             warn!(?storefront, "storefront is disabled in config, skipping");
+            on_progress(SyncProgressEvent::StorefrontSkipped { storefront });
             continue;
         }
 
@@ -74,16 +126,49 @@ where
             "received games from provider"
         );
 
+        let mut storefront_progress = StorefrontSyncProgress {
+            storefront,
+            processed_games: 0,
+            total_games: fetched.len() as u32,
+            games_added: 0,
+            games_updated: 0,
+        };
+        on_progress(SyncProgressEvent::StorefrontFetched {
+            progress: storefront_progress,
+        });
+
         for game in fetched {
-            if let Some(entry) = sync_game(pool, storefront_id, game).await? {
+            let entry = sync_game(pool, storefront_id, game).await?;
+            storefront_progress.processed_games += 1;
+
+            if let Some(entry) = entry {
                 match entry.status {
-                    GameSyncStatus::Added => games_added += 1,
-                    GameSyncStatus::Updated => games_updated += 1,
+                    GameSyncStatus::Added => {
+                        games_added += 1;
+                        storefront_progress.games_added += 1;
+                    }
+                    GameSyncStatus::Updated => {
+                        games_updated += 1;
+                        storefront_progress.games_updated += 1;
+                    }
                 }
-                on_progress(&entry);
-                games.push(entry);
+
+                games.push(entry.clone());
+                on_progress(SyncProgressEvent::GameProcessed {
+                    entry: Some(entry),
+                    progress: storefront_progress,
+                });
+            } else {
+                on_progress(SyncProgressEvent::GameProcessed {
+                    entry: None,
+                    progress: storefront_progress,
+                });
             }
         }
+
+        on_progress(SyncProgressEvent::StorefrontCompleted {
+            progress: storefront_progress,
+        });
     }
 
     info!(games_added, games_updated, "library sync complete");
