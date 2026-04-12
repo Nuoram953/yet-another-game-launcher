@@ -7,7 +7,10 @@ use yagl_core::{
         storefront::{
             models::{GameSyncStatus, Storefront, StorefrontGame},
             providers::StorefrontProvider,
-            service::{sync_with_providers, sync_with_providers_tracked},
+            service::{
+                sync_with_providers, sync_with_providers_observed, sync_with_providers_tracked,
+                SyncProgressEvent,
+            },
         },
     },
     error::AppError,
@@ -701,4 +704,57 @@ async fn sync_with_providers_tracked_invokes_callback_for_each_added_game() {
         "callback should be called once per added game"
     );
     assert!(entries.iter().all(|(_, s)| *s == GameSyncStatus::Added));
+}
+
+#[tokio::test]
+async fn sync_with_providers_observed_reports_storefront_progress() {
+    let pool = test_db().await;
+    let providers: Vec<(Storefront, Box<dyn StorefrontProvider>)> = vec![(
+        Storefront::Steam,
+        Box::new(MockProvider::with_games(vec![
+            make_game("440", "Team Fortress 2"),
+            make_game("570", "Dota 2"),
+        ])),
+    )];
+    let events = Arc::new(Mutex::new(Vec::new()));
+    let events_clone = Arc::clone(&events);
+
+    sync_with_providers_observed(&pool, providers, &Config::default(), |event| {
+        let label = match event {
+            SyncProgressEvent::StorefrontStarted { storefront } => {
+                format!("start:{storefront:?}")
+            }
+            SyncProgressEvent::StorefrontSkipped { storefront } => {
+                format!("skipped:{storefront:?}")
+            }
+            SyncProgressEvent::StorefrontFetched { progress } => {
+                format!("fetched:{:?}:{}", progress.storefront, progress.total_games)
+            }
+            SyncProgressEvent::GameProcessed { entry, progress } => format!(
+                "processed:{:?}:{}:{}:{}",
+                progress.storefront,
+                progress.processed_games,
+                progress.games_added,
+                entry
+                    .as_ref()
+                    .map(|entry| entry.name.as_str())
+                    .unwrap_or("unchanged")
+            ),
+            SyncProgressEvent::StorefrontCompleted { progress } => format!(
+                "completed:{:?}:{}:{}",
+                progress.storefront, progress.games_added, progress.games_updated
+            ),
+        };
+
+        events_clone.lock().unwrap().push(label);
+    })
+    .await
+    .unwrap();
+
+    let events = events.lock().unwrap();
+    assert_eq!(events[0], "start:Steam");
+    assert_eq!(events[1], "fetched:Steam:2");
+    assert_eq!(events[2], "processed:Steam:1:1:Team Fortress 2");
+    assert_eq!(events[3], "processed:Steam:2:2:Dota 2");
+    assert_eq!(events[4], "completed:Steam:2:0");
 }
