@@ -17,23 +17,27 @@ use std::{ffi::OsStr, path::Path};
 use tauri::AppHandle;
 use tracing::{debug, info, instrument, warn};
 
-const APPIMAGE_RUNTIME_ENV_VARS: [&str; 4] = ["APPIMAGE", "APPDIR", "OWD", "ARGV0"];
+#[doc(hidden)]
+pub const APPIMAGE_RUNTIME_ENV_VARS: [&str; 4] = ["APPIMAGE", "APPDIR", "OWD", "ARGV0"];
 const APPIMAGE_PATH_ENV_VARS: [&str; 3] = ["PATH", "LD_LIBRARY_PATH", "XDG_DATA_DIRS"];
 const APPIMAGE_PYTHON_ENV_VARS: [&str; 2] = ["PYTHONHOME", "PYTHONPATH"];
 const APPIMAGE_MOUNT_PREFIX: &str = "/tmp/.mount_";
 
-fn clear_appimage_runtime_env(cmd: &mut std::process::Command) {
+#[doc(hidden)]
+pub fn clear_appimage_runtime_env(cmd: &mut std::process::Command) {
     for key in APPIMAGE_RUNTIME_ENV_VARS {
         cmd.env_remove(key);
     }
 }
 
-fn is_appimage_runtime_path(path: &Path, appdir: Option<&Path>) -> bool {
+#[doc(hidden)]
+pub fn is_appimage_runtime_path(path: &Path, appdir: Option<&Path>) -> bool {
     path.to_string_lossy().starts_with(APPIMAGE_MOUNT_PREFIX)
         || appdir.is_some_and(|dir| path.starts_with(dir))
 }
 
-fn value_contains_appimage_runtime_path(value: &OsStr, appdir: Option<&Path>) -> bool {
+#[doc(hidden)]
+pub fn value_contains_appimage_runtime_path(value: &OsStr, appdir: Option<&Path>) -> bool {
     let path = Path::new(value);
     if is_appimage_runtime_path(path, appdir) {
         return true;
@@ -231,67 +235,6 @@ pub async fn launch_custom_exe_and_track(
     repository::insert_activity(pool, Some(&launch.id), started_at, ended_at, duration).await?;
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{
-        clear_appimage_runtime_env, is_appimage_runtime_path, value_contains_appimage_runtime_path,
-        APPIMAGE_RUNTIME_ENV_VARS,
-    };
-    use std::ffi::OsStr;
-    use std::path::Path;
-
-    #[test]
-    fn clear_appimage_runtime_env_marks_runtime_vars_for_removal() {
-        let mut cmd = std::process::Command::new("true");
-        clear_appimage_runtime_env(&mut cmd);
-
-        let envs: Vec<_> = cmd.get_envs().collect();
-        for key in APPIMAGE_RUNTIME_ENV_VARS {
-            assert!(
-                envs.iter()
-                    .any(|(name, value)| *name == OsStr::new(key) && value.is_none()),
-                "expected {key} to be removed from the child environment"
-            );
-        }
-    }
-
-    #[test]
-    fn runtime_path_detection_matches_mount_and_appdir_paths() {
-        let appdir = Path::new("/tmp/.mount_yagl123/usr");
-
-        assert!(is_appimage_runtime_path(
-            Path::new("/tmp/.mount_yagl123/usr/bin/python3"),
-            Some(appdir)
-        ));
-        assert!(is_appimage_runtime_path(
-            Path::new("/tmp/.mount_other987/usr/lib"),
-            Some(appdir)
-        ));
-        assert!(!is_appimage_runtime_path(
-            Path::new("/usr/bin"),
-            Some(appdir)
-        ));
-    }
-
-    #[test]
-    fn python_env_detection_matches_mount_backed_values() {
-        let appdir = Path::new("/tmp/.mount_yagl123/usr");
-
-        assert!(value_contains_appimage_runtime_path(
-            OsStr::new("/tmp/.mount_yagl123/usr"),
-            Some(appdir)
-        ));
-        assert!(value_contains_appimage_runtime_path(
-            OsStr::new("/tmp/.mount_yagl123/usr/lib/python3.11:/usr/lib/python3.11"),
-            Some(appdir)
-        ));
-        assert!(!value_contains_appimage_runtime_path(
-            OsStr::new("/usr/lib/python3.11"),
-            Some(appdir)
-        ));
-    }
 }
 
 #[instrument(skip(pool, launch, provider))]
