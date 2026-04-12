@@ -22,15 +22,15 @@ jobs:
             args: --config src-tauri/app/tauri.conf.json
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.release.tag_name }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: latest
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: lts/*
           cache: pnpm
@@ -85,7 +85,7 @@ jobs:
             artifact: yagl-windows-x86_64.exe
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.release.tag_name }}
 
