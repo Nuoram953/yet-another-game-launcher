@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.2.2...v1.3.0) (2026-04-13)
+
+
+### Features
+
+* launch game output session info ([f9555aa](https://github.com/Nuoram953/yet-another-game-launcher/commit/f9555aa289064195548b8fca1b2d67ff28402870))
+* licenses and workflow ([f8a97bc](https://github.com/Nuoram953/yet-another-game-launcher/commit/f8a97bcc99dd661f55716290485e293342ec268a))
+* sync command no flag syncs all storefront ([bb564ab](https://github.com/Nuoram953/yet-another-game-launcher/commit/bb564ab8bf1f568d046c43aac08920959db820c3))
+
 ## [1.2.2](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.2.1...v1.2.2) (2026-04-11)
 
 
