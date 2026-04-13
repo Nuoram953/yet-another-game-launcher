@@ -47,7 +47,7 @@ pub enum GameSyncStatus {
     Updated,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type)]
+#[derive(Debug, Serialize, Deserialize, Type)]
 pub struct GameSyncEntry {
     pub name: String,
     pub status: GameSyncStatus,

@@ -4,7 +4,6 @@ pub mod cli;
 pub mod commands;
 pub mod config;
 pub mod interactive;
-pub mod progress;
 pub mod utils;
 
 use anyhow::{Context, Result};

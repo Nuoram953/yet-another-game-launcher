@@ -1,6 +1,6 @@
 use anyhow::{bail, Context, Result};
 use colored::Colorize;
-use indicatif::ProgressBar;
+use indicatif::{ProgressBar, ProgressStyle};
 use tokio::time::{sleep, Duration};
 use yagl_core::{
     config::Config,
@@ -16,7 +16,7 @@ use yagl_core::{
 };
 
 use crate::{
-    interactive, progress,
+    interactive,
     utils::{clear_screen, select_game_id},
 };
 
@@ -98,7 +98,13 @@ async fn resolve_install_target(pool: &DbPool, game_id: &str) -> Result<InstallT
 }
 
 fn build_progress_bar() -> ProgressBar {
-    progress::build_spinner("{spinner:.cyan} {msg}")
+    let bar = ProgressBar::new_spinner();
+    bar.enable_steady_tick(Duration::from_millis(100));
+    bar.set_style(
+        ProgressStyle::with_template("{spinner:.cyan} {msg}")
+            .expect("progress template should be valid"),
+    );
+    bar
 }
 
 fn observed_progress(progress: &InstallProgress) -> Option<(u64, u64)> {
@@ -108,9 +114,11 @@ fn observed_progress(progress: &InstallProgress) -> Option<(u64, u64)> {
 }
 
 fn set_bar_style(bar: &ProgressBar) {
-    bar.set_style(progress::progress_style(
-        "{spinner:.cyan} {msg} [{bar:30.cyan/blue}] {percent:>3}%",
-    ));
+    bar.set_style(
+        ProgressStyle::with_template("{spinner:.cyan} {msg} [{bar:30.cyan/blue}] {percent:>3}%")
+            .expect("progress template should be valid")
+            .progress_chars("=> "),
+    );
 }
 
 fn render_progress(bar: &ProgressBar, progress: &InstallProgress) {
