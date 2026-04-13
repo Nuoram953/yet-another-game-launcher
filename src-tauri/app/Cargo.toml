@@ -3,7 +3,6 @@ name = "app"
 version = "1.2.2"
 description = "Yet Another Game Launcher"
 edition = "2021"
-license = "MIT"
 default-run = "app"
 
 [[bin]]
@@ -33,3 +32,4 @@ specta = { version = "=2.0.0-rc.24", features = ["derive"] }
 specta-typescript = "0.0.11"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
