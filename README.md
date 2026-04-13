@@ -111,11 +111,13 @@ The database is resolved in this order:
 
 ## CI / CD
 
-Three GitHub Actions workflows are included:
+Five GitHub Actions workflows are included:
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `ci.yml` | Push / PR to `main` | Rust fmt, Clippy, tests + TypeScript type check |
+| `ci.yml` | Pull requests | Rust fmt, Clippy, tests + TypeScript type check |
+| `licenses.yml` | Pull requests, push to `main`, manual | Dependency license review, Rust license policy checks, and manifest/license-file validation |
+| `security.yml` | Weekly, manual | CodeQL analysis for Actions, JavaScript/TypeScript, and Rust |
 | `release.yml` | Push to `main` | Runs semantic-release, bumps versions, creates GitHub release |
 | `build.yml` | GitHub release published | Builds Tauri app and CLI binaries for Linux, macOS, and Windows |
 
@@ -138,3 +140,7 @@ feat: add HowLongToBeat lookup
 fix(cli): handle missing database gracefully
 feat!: redesign launch configuration schema
 ```
+
+## License
+
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
