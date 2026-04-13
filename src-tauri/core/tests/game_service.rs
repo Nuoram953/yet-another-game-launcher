@@ -132,12 +132,9 @@ async fn launch_custom_exe_and_track_inserts_activity_in_db() {
     let entry = insert_game_library_entry(&pool, "e1", "g1", "111").await;
     let launch = insert_game_launch(&pool, "l1", &entry.id, Some("echo")).await;
 
-    let session = service::launch_custom_exe_and_track(&pool, &launch, &entry, "echo")
+    service::launch_custom_exe_and_track(&pool, &launch, &entry, "echo")
         .await
         .unwrap();
-
-    assert!(session.ended_at >= session.started_at);
-    assert_eq!(session.duration, session.ended_at - session.started_at);
 
     let count: i64 = sqlx::query_scalar!(
         "SELECT COUNT(*) FROM game_activity WHERE game_launch_id = ?",
@@ -220,19 +217,9 @@ async fn launch_storefront_and_track_inserts_activity_via_mock_provider() {
 
     let provider = Box::new(MockProvider::with_session(1000, 4600));
 
-    let session =
-        service::launch_storefront_and_track(&pool, &launch, &entry.external_id, provider)
-            .await
-            .unwrap();
-
-    assert_eq!(
-        session,
-        Some(service::LaunchSession {
-            started_at: 1000,
-            ended_at: 4600,
-            duration: 3600,
-        })
-    );
+    service::launch_storefront_and_track(&pool, &launch, &entry.external_id, provider)
+        .await
+        .unwrap();
 
     sleep(Duration::from_millis(100)).await;
 
@@ -258,12 +245,9 @@ async fn launch_storefront_and_track_skips_activity_when_tracking_fails() {
 
     let provider = Box::new(MockProvider::untrackable());
 
-    let session =
-        service::launch_storefront_and_track(&pool, &launch, &entry.external_id, provider)
-            .await
-            .unwrap();
-
-    assert_eq!(session, None);
+    service::launch_storefront_and_track(&pool, &launch, &entry.external_id, provider)
+        .await
+        .unwrap();
 
     sleep(Duration::from_millis(100)).await;
 
@@ -287,12 +271,9 @@ async fn launch_storefront_and_track_skips_zero_duration_session() {
 
     let provider = Box::new(MockProvider::with_session(1000, 1000));
 
-    let session =
-        service::launch_storefront_and_track(&pool, &launch, &entry.external_id, provider)
-            .await
-            .unwrap();
-
-    assert_eq!(session, None);
+    service::launch_storefront_and_track(&pool, &launch, &entry.external_id, provider)
+        .await
+        .unwrap();
 
     let count: i64 = sqlx::query_scalar!(
         "SELECT COUNT(*) FROM game_activity WHERE game_launch_id = ?",

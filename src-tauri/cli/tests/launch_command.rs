@@ -1,12 +1,7 @@
-mod common;
-
-use std::{fs, process::Command};
-
 use cli_lib::commands::launch;
-use common::{strip_ansi, unique_path};
 use yagl_core::{
     db::DbPool,
-    domains::game::{models::NewGameLaunch, repository},
+    domains::game::repository,
     testing::{
         db::test_db,
         fixtures::{insert_game_launch, insert_game_library_entry},
@@ -148,62 +143,4 @@ async fn game_id_resolves_default_launch_and_reaches_launch_stage() {
         !msg.contains("no launch config found"),
         "resolution should have succeeded, got: {msg}"
     );
-}
-
-#[tokio::test]
-async fn launch_command_prints_launch_summary_and_session_duration() {
-    let db_path = unique_path("yagl-launch-command.db");
-    let pool = yagl_core::db::connect(db_path.to_str().unwrap())
-        .await
-        .unwrap();
-
-    repository::insert_game(&pool, "game-1", "Portal", None)
-        .await
-        .unwrap();
-    let entry = insert_game_library_entry(&pool, "entry-1", "game-1", "400").await;
-    repository::insert_game_launch(
-        &pool,
-        &NewGameLaunch {
-            id: "launch-1".to_string(),
-            game_library_entry_id: entry.id,
-            name: "Steam".to_string(),
-            executable: Some("/bin/sh".to_string()),
-            args: Some("-c 'exit 0'".to_string()),
-            working_dir: None,
-            is_default: true,
-            env: None,
-            proton_dir: None,
-        },
-    )
-    .await
-    .unwrap();
-
-    drop(pool);
-
-    let output = Command::new(env!("CARGO_BIN_EXE_yagl"))
-        .args(["--db", db_path.to_str().unwrap(), "launch", "game-1"])
-        .output()
-        .unwrap();
-
-    fs::remove_file(&db_path).unwrap();
-
-    assert!(
-        output.status.success(),
-        "expected success, stderr: {}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-
-    let stdout = strip_ansi(&String::from_utf8_lossy(&output.stdout));
-
-    assert!(stdout.contains("Launching Portal"), "stdout was: {stdout}");
-    assert!(
-        stdout.contains("Launch        Steam"),
-        "stdout was: {stdout}"
-    );
-    assert!(
-        stdout.contains("Storefront    Steam"),
-        "stdout was: {stdout}"
-    );
-    assert!(stdout.contains("Session recorded"), "stdout was: {stdout}");
-    assert!(stdout.contains("Duration"), "stdout was: {stdout}");
 }

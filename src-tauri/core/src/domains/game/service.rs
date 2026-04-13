@@ -118,26 +118,17 @@ pub async fn search_game(
     repository::search_games(pool, &filter).await
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct LaunchSession {
-    pub started_at: i64,
-    pub ended_at: i64,
-    pub duration: i64,
-}
-
 #[instrument(skip(pool, payload))]
 pub async fn launch_and_track(
     pool: &SqlitePool,
     payload: LaunchGamePayload,
-) -> Result<Option<LaunchSession>, AppError> {
+) -> Result<(), AppError> {
     let launch = repository::find_game_launch(pool, &payload.game_launch_id).await?;
     let entry = repository::find_game_library_entry(pool, &launch.game_library_entry_id).await?;
     debug!(launch_id = %launch.id, game_library_entry_id = %launch.game_library_entry_id, "resolved launch config");
 
     if let Some(ref exe) = launch.executable {
-        launch_custom_exe_and_track(pool, &launch, &entry, exe)
-            .await
-            .map(Some)
+        launch_custom_exe_and_track(pool, &launch, &entry, exe).await
     } else {
         let provider: Box<dyn StorefrontProvider> = match Storefront::try_from(entry.storefront_id)
             .map_err(|_| AppError::Launch(format!("unknown storefront {}", entry.storefront_id)))?
@@ -159,7 +150,7 @@ pub async fn launch_custom_exe_and_track(
     launch: &GameLaunch,
     entry: &GameLibraryEntry,
     exe: &str,
-) -> Result<LaunchSession, AppError> {
+) -> Result<(), AppError> {
     let started_at = chrono::Utc::now().timestamp();
 
     let (bin, prepended_args) = if let Some(ref proton_dir) = launch.proton_dir {
@@ -243,11 +234,7 @@ pub async fn launch_custom_exe_and_track(
 
     repository::insert_activity(pool, Some(&launch.id), started_at, ended_at, duration).await?;
 
-    Ok(LaunchSession {
-        started_at,
-        ended_at,
-        duration,
-    })
+    Ok(())
 }
 
 #[instrument(skip(pool, launch, provider))]
@@ -256,7 +243,7 @@ pub async fn launch_storefront_and_track(
     launch: &GameLaunch,
     external_id: &str,
     provider: Box<dyn StorefrontProvider>,
-) -> Result<Option<LaunchSession>, AppError> {
+) -> Result<(), AppError> {
     info!("launching via storefront provider");
     provider.launch_game(external_id).await?;
 
@@ -269,18 +256,13 @@ pub async fn launch_storefront_and_track(
 
         if duration == 0 {
             info!("session tracking was 0 minutes, activity not recorded");
-            return Ok(None);
+            return Ok(());
         }
 
         repository::insert_activity(pool, Some(&launch.id), started_at, ended_at, duration).await?;
-        return Ok(Some(LaunchSession {
-            started_at,
-            ended_at,
-            duration,
-        }));
     } else {
         warn!("session tracking returned no data, activity not recorded");
     }
 
-    Ok(None)
+    Ok(())
 }
