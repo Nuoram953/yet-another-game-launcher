@@ -18,6 +18,13 @@ pub fn spinner_style(template: &str) -> ProgressStyle {
         .tick_strings(TICK_STRINGS)
 }
 
+pub fn progress_spinner_style(template: &str) -> ProgressStyle {
+    ProgressStyle::with_template(template)
+        .expect("progress template should be valid")
+        .tick_strings(TICK_STRINGS)
+        .progress_chars(PROGRESS_CHARS)
+}
+
 pub fn progress_style(template: &str) -> ProgressStyle {
     ProgressStyle::with_template(template)
         .expect("progress template should be valid")

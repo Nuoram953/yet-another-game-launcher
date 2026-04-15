@@ -19,7 +19,10 @@ pub async fn run(command: Commands, pool: &DbPool, config: &Config) -> Result<()
         } => launch::handle(pool, game_id, launch_id, launch_last).await,
         Commands::Sync { storefront } => sync::handle(pool, storefront, config).await,
         Commands::Search { name, launches } => search::handle(pool, name, launches, config).await,
-        Commands::View { game_id } => view::handle(pool, game_id, config).await,
+        Commands::View {
+            game_id,
+            achievements,
+        } => view::handle(pool, game_id, achievements, config).await,
         Commands::Install {
             game_id,
             storefront,

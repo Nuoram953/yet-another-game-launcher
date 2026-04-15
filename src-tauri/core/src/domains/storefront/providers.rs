@@ -2,7 +2,10 @@ use async_trait::async_trait;
 
 use crate::{
     config::Config,
-    domains::storefront::models::{InstallProgress, StorefrontGame},
+    domains::{
+        achievement::models::ImportedAchievementSet,
+        storefront::models::{InstallProgress, StorefrontGame},
+    },
     error::AppError,
 };
 
@@ -26,4 +29,10 @@ pub trait StorefrontProvider: Send + Sync {
         ))
     }
     async fn uninstall_game(&self, external_id: &str) -> Result<(), AppError>;
+    async fn fetch_achievement_set(
+        &self,
+        _external_id: &str,
+    ) -> Result<Option<ImportedAchievementSet>, AppError> {
+        Ok(None)
+    }
 }

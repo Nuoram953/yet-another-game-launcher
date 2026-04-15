@@ -104,3 +104,4 @@ release/1.0.0
 
 src-tauri/target/*
 /src-tauri/dev.db
+/src-tauri/test.db
