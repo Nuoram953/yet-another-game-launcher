@@ -102,6 +102,32 @@ async fn make_mock(status: usize, body: &str) -> (mockito::ServerGuard, mockito:
     (server, mock)
 }
 
+async fn make_achievement_mocks(
+    schema_status: usize,
+    schema_body: &str,
+    player_status: usize,
+    player_body: &str,
+) -> (mockito::ServerGuard, mockito::Mock, mockito::Mock) {
+    let mut server = Server::new_async().await;
+    let schema = server
+        .mock("GET", "/ISteamUserStats/GetSchemaForGame/v0002")
+        .match_query(mockito::Matcher::Any)
+        .with_status(schema_status)
+        .with_header("content-type", "application/json")
+        .with_body(schema_body)
+        .create_async()
+        .await;
+    let player = server
+        .mock("GET", "/ISteamUserStats/GetPlayerAchievements/v0001")
+        .match_query(mockito::Matcher::Any)
+        .with_status(player_status)
+        .with_header("content-type", "application/json")
+        .with_body(player_body)
+        .create_async()
+        .await;
+    (server, schema, player)
+}
+
 #[tokio::test]
 async fn api_returns_games_on_success() {
     let (server, mock) = make_mock(200, two_game_body()).await;
@@ -255,6 +281,135 @@ async fn service_sync_library_reads_installed_state_from_local_steam_files() {
         games.iter().any(|game| !game.is_installed),
         "expected at least one not-installed game"
     );
+}
+
+#[tokio::test]
+async fn service_fetch_achievement_set_maps_schema_and_progress() {
+    let _guard = env_lock().lock().await;
+    let schema = r#"{
+        "game": {
+            "gameName": "Team Fortress 2",
+            "gameVersion": "7",
+            "availableGameStats": {
+                "achievements": [
+                    {
+                        "name": "ACH_WIN_ONE_GAME",
+                        "defaultvalue": 0,
+                        "displayName": "Winner",
+                        "hidden": 0,
+                        "description": "Win one game",
+                        "icon": "https://example.com/icon.png",
+                        "icongray": "https://example.com/icon-gray.png"
+                    }
+                ]
+            }
+        }
+    }"#;
+    let player = r#"{
+        "playerstats": {
+            "steamID": "76561198000000000",
+            "gameName": "Team Fortress 2",
+            "achievements": [
+                {
+                    "apiname": "ACH_WIN_ONE_GAME",
+                    "achieved": 1,
+                    "unlocktime": 1700000000
+                }
+            ],
+            "success": true
+        }
+    }"#;
+    let (server, schema_mock, player_mock) = make_achievement_mocks(200, schema, 200, player).await;
+    std::env::set_var("STEAM_API_KEY", "test_key");
+
+    let result = service::fetch_achievement_set("76561198000000000", "440", &server.url())
+        .await
+        .unwrap()
+        .expect("expected achievement set");
+
+    schema_mock.assert_async().await;
+    player_mock.assert_async().await;
+    assert_eq!(result.provider, "steam");
+    assert_eq!(result.external_set_id, "440");
+    assert_eq!(result.name, "Team Fortress 2");
+    assert_eq!(result.version.as_deref(), Some("7"));
+    assert_eq!(result.achievements.len(), 1);
+    assert!(result.achievements[0].is_unlocked);
+    assert_eq!(result.achievements[0].unlocked_at, Some(1700000000));
+}
+
+#[tokio::test]
+async fn service_fetch_achievement_set_handles_unsuccessful_player_stats() {
+    let _guard = env_lock().lock().await;
+    let schema = r#"{
+        "game": {
+            "gameName": "Team Fortress 2",
+            "gameVersion": "7",
+            "availableGameStats": {
+                "achievements": [
+                    {
+                        "name": "ACH_WIN_ONE_GAME",
+                        "defaultvalue": 0,
+                        "displayName": "Winner",
+                        "hidden": 0,
+                        "description": "Win one game",
+                        "icon": "https://example.com/icon.png",
+                        "icongray": "https://example.com/icon-gray.png"
+                    }
+                ]
+            }
+        }
+    }"#;
+    let player = r#"{
+        "playerstats": {
+            "gameName": "Team Fortress 2",
+            "error": "profile is private",
+            "success": false
+        }
+    }"#;
+    let (server, schema_mock, player_mock) = make_achievement_mocks(200, schema, 200, player).await;
+    std::env::set_var("STEAM_API_KEY", "test_key");
+
+    let result = service::fetch_achievement_set("76561198000000000", "440", &server.url())
+        .await
+        .unwrap()
+        .expect("expected achievement set");
+
+    schema_mock.assert_async().await;
+    player_mock.assert_async().await;
+    assert_eq!(
+        result.description.as_deref(),
+        Some("Steam player achievements: profile is private")
+    );
+    assert!(!result.achievements[0].is_unlocked);
+    assert!(result.achievements[0].unlocked_at.is_none());
+}
+
+#[tokio::test]
+async fn service_fetch_achievement_set_returns_none_when_schema_has_no_achievements() {
+    let _guard = env_lock().lock().await;
+    let schema = r#"{
+        "game": {
+            "gameName": "Half-Life",
+            "gameVersion": "1",
+            "availableGameStats": {}
+        }
+    }"#;
+    let player = r#"{
+        "playerstats": {
+            "success": true
+        }
+    }"#;
+    let (server, schema_mock, _player_mock) =
+        make_achievement_mocks(200, schema, 200, player).await;
+    std::env::set_var("STEAM_API_KEY", "test_key");
+
+    let result = service::fetch_achievement_set("76561198000000000", "70", &server.url())
+        .await
+        .unwrap();
+
+    schema_mock.assert_async().await;
+    assert!(result.is_none());
 }
 
 #[tokio::test]

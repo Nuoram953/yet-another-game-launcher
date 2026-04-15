@@ -8,6 +8,7 @@ pub fn run() {
     dotenvy::dotenv().ok();
 
     let builder = Builder::<tauri::Wry>::new().commands(collect_commands![
+        yagl_core::domains::achievement::commands::get_game_achievement_sets,
         yagl_core::domains::game::commands::update_status,
         yagl_core::domains::game::commands::get_by_id,
         yagl_core::domains::game::commands::launch_game,

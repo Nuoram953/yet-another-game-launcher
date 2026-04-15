@@ -57,7 +57,12 @@ pub enum Commands {
     },
 
     #[command(about = "View details for a game")]
-    View { game_id: Option<String> },
+    View {
+        game_id: Option<String>,
+
+        #[arg(long, action = ArgAction::SetTrue, help = "Show the full achievement list")]
+        achievements: bool,
+    },
 
     #[command(
         about = "Install a game from a storefront",

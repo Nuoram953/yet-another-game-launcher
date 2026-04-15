@@ -1,11 +1,15 @@
 use super::{api, local::LocalSteamApps};
 use crate::{
-    domains::storefront::{
-        models::{InstallProgress, StorefrontGame},
-        steam::local::AppStatus,
+    domains::{
+        achievement::models::{ImportedAchievement, ImportedAchievementSet},
+        storefront::{
+            models::{InstallProgress, StorefrontGame},
+            steam::local::AppStatus,
+        },
     },
     error::AppError,
 };
+use std::collections::HashMap;
 use sysinfo::Pid;
 use tokio::time::Duration;
 use tracing::{debug, info, instrument, warn};
@@ -49,6 +53,89 @@ pub async fn sync_library(steam_id: &str, base_url: &str) -> Result<Vec<Storefro
     }
 
     Ok(mapped)
+}
+
+#[instrument(skip(base_url))]
+pub async fn fetch_achievement_set(
+    steam_id: &str,
+    app_id: &str,
+    base_url: &str,
+) -> Result<Option<ImportedAchievementSet>, AppError> {
+    let api_key = std::env::var("STEAM_API_KEY")
+        .map_err(|_| AppError::Steam("STEAM_API_KEY env var not set".into()))?;
+
+    let schema = api::get_schema_for_game(base_url, &api_key, steam_id, app_id).await?;
+    let schema_payload = schema.game;
+    let Some(schema_achievements) = schema_payload
+        .available_game_stats
+        .and_then(|stats| stats.achievements)
+    else {
+        return Ok(None);
+    };
+    if schema_achievements.is_empty() {
+        return Ok(None);
+    }
+
+    let player = api::get_player_achievements(base_url, &api_key, steam_id, app_id).await?;
+    let player_payload = player.playerstats;
+    let unlocked_by_api_name: HashMap<String, (bool, Option<i64>)> = if player_payload.success {
+        player_payload
+            .achievements
+            .unwrap_or_default()
+            .into_iter()
+            .map(|achievement| {
+                (
+                    achievement.api_name,
+                    (
+                        achievement.achieved != 0,
+                        (achievement.unlock_time > 0).then_some(achievement.unlock_time as i64),
+                    ),
+                )
+            })
+            .collect()
+    } else {
+        HashMap::new()
+    };
+
+    let achievements = schema_achievements
+        .into_iter()
+        .enumerate()
+        .map(|(index, achievement)| {
+            let (is_unlocked, unlocked_at) = unlocked_by_api_name
+                .get(&achievement.name)
+                .copied()
+                .unwrap_or((false, None));
+            ImportedAchievement {
+                external_id: achievement.name,
+                name: achievement.display_name,
+                description: achievement.description,
+                icon_url: Some(achievement.icon),
+                icon_gray_url: Some(achievement.icon_gray),
+                is_hidden: achievement.hidden != 0,
+                display_order: index as i64,
+                is_unlocked,
+                unlocked_at,
+            }
+        })
+        .collect();
+
+    Ok(Some(ImportedAchievementSet {
+        game_launch_id: None,
+        storefront_id: Some(1),
+        provider: "steam".to_string(),
+        external_set_id: app_id.to_string(),
+        external_game_id: app_id.to_string(),
+        variant: String::new(),
+        name: schema_payload
+            .game_name
+            .or(player_payload.game_name)
+            .unwrap_or_else(|| format!("Steam achievements {app_id}")),
+        description: player_payload
+            .error
+            .map(|error| format!("Steam player achievements: {error}")),
+        version: schema_payload.game_version,
+        achievements,
+    }))
 }
 
 #[instrument]

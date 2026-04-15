@@ -3,9 +3,12 @@ use async_trait::async_trait;
 use super::service;
 use crate::{
     config::Config,
-    domains::storefront::{
-        models::{InstallProgress, StorefrontGame},
-        providers::StorefrontProvider,
+    domains::{
+        achievement::models::ImportedAchievementSet,
+        storefront::{
+            models::{InstallProgress, StorefrontGame},
+            providers::StorefrontProvider,
+        },
     },
     error::AppError,
 };
@@ -57,5 +60,13 @@ impl StorefrontProvider for SteamProvider {
 
     async fn uninstall_game(&self, external_id: &str) -> Result<(), AppError> {
         service::uninstall_game(external_id)
+    }
+
+    async fn fetch_achievement_set(
+        &self,
+        external_id: &str,
+    ) -> Result<Option<ImportedAchievementSet>, AppError> {
+        service::fetch_achievement_set(&self.steam_id, external_id, service::default_base_url())
+            .await
     }
 }

@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO achievement_source_status (\n                id,\n                game_id,\n                storefront_id,\n                provider,\n                external_game_id,\n                has_achievements,\n                checked_at\n             ) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 7
+    },
+    "nullable": []
+  },
+  "hash": "961398aa9605f0198882d33412c347fb41cf2f0e56d613d7eb2d94db4aabee3d"
+}

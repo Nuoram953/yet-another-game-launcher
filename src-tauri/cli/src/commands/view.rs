@@ -5,8 +5,12 @@ use std::{
 
 use anyhow::{Context, Result};
 use colored::Colorize;
+use yagl_core::domains::achievement::{
+    models::{AchievementSet, GameAchievementData, GetGameAchievementSetsPayload},
+    service as achievement_service,
+};
 use yagl_core::domains::game::{
-    models::{Game, GameActivity, GameLaunch, GameLibraryEntry},
+    models::{Game, GameLaunch, GameLibraryEntry},
     repository,
 };
 use yagl_core::{
@@ -14,7 +18,7 @@ use yagl_core::{
     db::DbPool,
     utils::{
         format_playtime_minutes, format_playtime_seconds, format_size, format_timestamp,
-        format_timestamp_date, format_timestamp_time, game_status_label, storefront_label,
+        game_status_label, storefront_label,
     },
 };
 
@@ -23,6 +27,7 @@ use crate::utils::select_game_id;
 struct GameView {
     game: Game,
     entries: Vec<LibraryEntryView>,
+    achievements: GameAchievementData,
 }
 
 struct LibraryEntryView {
@@ -33,10 +38,9 @@ struct LibraryEntryView {
 struct LaunchView {
     launch: GameLaunch,
     total_playtime_seconds: i64,
-    recent_activities: Vec<GameActivity>,
 }
 
-fn render_game_view(view: &GameView) -> String {
+fn render_game_view(view: &GameView, show_achievements: bool) -> String {
     let mut output = String::new();
     let favorite = if view.game.is_favorite { " ★" } else { "" };
 
@@ -58,6 +62,8 @@ fn render_game_view(view: &GameView) -> String {
     for entry in &view.entries {
         render_library_entry(&mut output, entry);
     }
+
+    render_achievement_summary(&mut output, view, show_achievements);
 
     output.push('\n');
     output
@@ -103,7 +109,8 @@ fn render_library_entry(output: &mut String, entry: &LibraryEntryView) {
         return;
     }
 
-    writeln!(output, "\n  {}", "Launches:".dimmed())
+    let dashes = "─".repeat(30);
+    writeln!(output, "\n  {} {}", "Launches".bold(), dashes.dimmed())
         .expect("writing launches header should not fail");
 
     for launch in &entry.launches {
@@ -113,41 +120,133 @@ fn render_library_entry(output: &mut String, entry: &LibraryEntryView) {
 
 fn render_launch(output: &mut String, launch: &LaunchView) {
     let default_marker = if launch.launch.is_default {
-        format!("  {}", "default".green())
+        format!(" {}", "[default]".green())
     } else {
         String::new()
     };
 
     writeln!(
         output,
-        "\n    {}{}  {}",
+        "    {}{}  {}",
         launch.launch.name.bold(),
         default_marker,
         format_playtime_seconds(launch.total_playtime_seconds).cyan()
     )
     .expect("writing launch summary should not fail");
+}
 
-    if launch.recent_activities.is_empty() {
-        writeln!(output, "    {}", "No sessions recorded.".dimmed())
-            .expect("writing empty sessions state should not fail");
+fn render_achievement_summary(output: &mut String, view: &GameView, show_achievements: bool) {
+    let dashes = "─".repeat(24);
+    writeln!(output, "\n  {} {}", "Achievements".bold(), dashes.dimmed())
+        .expect("writing achievements header should not fail");
+
+    if view.achievements.sets.is_empty() {
+        let status = if view.achievements.source_statuses.is_empty() {
+            "Not synced yet".to_string()
+        } else if view
+            .achievements
+            .source_statuses
+            .iter()
+            .all(|status| !status.has_achievements)
+        {
+            "No achievements found".to_string()
+        } else {
+            "No achievement sets found".to_string()
+        };
+
+        write_kv(output, "Status", status);
         return;
     }
 
-    for activity in &launch.recent_activities {
-        writeln!(
-            output,
-            "    {}  {} – {}  {}",
-            format_timestamp_date(activity.started_at).dimmed(),
-            format_timestamp_time(activity.started_at).dimmed(),
-            format_timestamp_time(activity.ended_at).dimmed(),
-            format_playtime_seconds(activity.duration)
-        )
-        .expect("writing activity row should not fail");
+    let total_unlocked = view
+        .achievements
+        .sets
+        .iter()
+        .map(|set| set.unlocked_achievements)
+        .sum::<i64>();
+    let total_achievements = view
+        .achievements
+        .sets
+        .iter()
+        .map(|set| set.total_achievements)
+        .sum::<i64>();
+    write_kv(
+        output,
+        "Progress",
+        format!("{total_unlocked}/{total_achievements} unlocked").bold(),
+    );
+    write_kv(output, "Sets", view.achievements.sets.len());
+
+    for set in &view.achievements.sets {
+        render_achievement_set(output, view, set, show_achievements);
+    }
+}
+
+fn render_achievement_set(
+    output: &mut String,
+    view: &GameView,
+    set: &AchievementSet,
+    show_achievements: bool,
+) {
+    writeln!(
+        output,
+        "\n  {}  {}",
+        achievement_set_label(view, set).bold(),
+        format!("{}/{}", set.unlocked_achievements, set.total_achievements).cyan()
+    )
+    .expect("writing achievement set summary should not fail");
+
+    if !show_achievements {
+        return;
     }
 
-    if launch.recent_activities.len() == 3 {
-        writeln!(output, "    ...").expect("");
+    for achievement in &set.achievements {
+        let icon = if achievement.is_unlocked {
+            "✓"
+        } else {
+            "○"
+        };
+        let unlocked_at = achievement
+            .unlocked_at
+            .map(|timestamp| format!("  {}", format_timestamp(timestamp).dimmed()))
+            .unwrap_or_default();
+        writeln!(
+            output,
+            "    {} {}{}",
+            if achievement.is_unlocked {
+                icon.green().to_string()
+            } else {
+                icon.dimmed().to_string()
+            },
+            achievement.name,
+            unlocked_at
+        )
+        .expect("writing achievement row should not fail");
     }
+}
+
+fn achievement_set_label(view: &GameView, set: &AchievementSet) -> String {
+    let mut label = set.name.clone();
+
+    if !set.variant.is_empty() {
+        label.push_str(&format!(" ({})", set.variant));
+    }
+
+    if let Some(launch_id) = &set.game_launch_id {
+        if let Some(launch_name) = find_launch_name(view, launch_id) {
+            label.push_str(&format!(" [{}]", launch_name));
+        }
+    }
+
+    label
+}
+
+fn find_launch_name<'a>(view: &'a GameView, launch_id: &str) -> Option<&'a str> {
+    view.entries
+        .iter()
+        .flat_map(|entry| entry.launches.iter())
+        .find(|launch| launch.launch.id == launch_id)
+        .map(|launch| launch.launch.name.as_str())
 }
 
 fn write_kv(output: &mut String, label: &str, value: impl fmt::Display) {
@@ -165,10 +264,20 @@ async fn load_game_view(pool: &DbPool, game_id: &str) -> Result<GameView> {
     let launches = repository::find_launches_for_game(pool, game_id)
         .await
         .with_context(|| format!("launches for '{game_id}' not found"))?;
+    let achievements = achievement_service::get_game_achievement_sets(
+        pool,
+        GetGameAchievementSetsPayload {
+            game_id: game_id.to_string(),
+            game_launch_id: None,
+        },
+    )
+    .await
+    .with_context(|| format!("failed to load achievements for '{game_id}'"))?;
 
     Ok(GameView {
         game,
         entries: load_library_entry_views(pool, entries, launches).await?,
+        achievements,
     })
 }
 
@@ -206,28 +315,27 @@ async fn load_launch_views(pool: &DbPool, launches: Vec<GameLaunch>) -> Result<V
         let total_playtime_seconds = repository::find_total_playtime_for_launch(pool, &launch.id)
             .await
             .with_context(|| format!("failed to load playtime for launch '{}'", launch.id))?;
-        let recent_activities = repository::find_recent_activities_for_launch(pool, &launch.id, 3)
-            .await
-            .with_context(|| {
-                format!("failed to load recent activity for launch '{}'", launch.id)
-            })?;
 
         launch_views.push(LaunchView {
             launch,
             total_playtime_seconds,
-            recent_activities,
         });
     }
 
     Ok(launch_views)
 }
 
-pub async fn handle(pool: &DbPool, game_id: Option<String>, _: &Config) -> Result<()> {
+pub async fn handle(
+    pool: &DbPool,
+    game_id: Option<String>,
+    achievements: bool,
+    _: &Config,
+) -> Result<()> {
     crate::utils::clear_screen()?;
 
     let game_id = select_game_id(pool, game_id).await?;
     let view = load_game_view(pool, &game_id).await?;
 
-    print!("{}", render_game_view(&view));
+    print!("{}", render_game_view(&view, achievements));
     Ok(())
 }

@@ -4,22 +4,124 @@ import { invoke as __TAURI_INVOKE } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
+	getGameAchievementSets: (payload: GetGameAchievementSetsPayload) => typedError<GameAchievementData, AppError>(__TAURI_INVOKE("get_game_achievement_sets", { payload })),
 	updateStatus: (payload: UpdateStatusPayload) => typedError<null, AppError>(__TAURI_INVOKE("update_status", { payload })),
 	getById: (payload: GetByIdPayload) => typedError<Game, AppError>(__TAURI_INVOKE("get_by_id", { payload })),
+	launchGame: (payload: LaunchGamePayload) => typedError<null, AppError>(__TAURI_INVOKE("launch_game", { payload })),
+	syncLibraries: () => typedError<SyncResult, AppError>(__TAURI_INVOKE("sync_libraries")),
+	getMediaByEntity: (payload: GetMediaPayload) => typedError<Media[], AppError>(__TAURI_INVOKE("get_media_by_entity", { payload })),
+	getMediaByEntityAndType: (payload: GetMediaByTypePayload) => typedError<Media[], AppError>(__TAURI_INVOKE("get_media_by_entity_and_type", { payload })),
+	deleteMedia: (payload: DeleteMediaPayload) => typedError<null, AppError>(__TAURI_INVOKE("delete_media", { payload })),
 };
 
 /* Types */
-export type AppError = ({ Database: string }) & { NotFound?: never } | ({ NotFound: string }) & { Database?: never };
+export type Achievement = {
+	id: string,
+	achievement_set_id: string,
+	external_id: string,
+	name: string,
+	description: string | null,
+	icon_url: string | null,
+	icon_gray_url: string | null,
+	is_hidden: boolean,
+	display_order: number,
+	is_unlocked: boolean,
+	unlocked_at: number | null,
+};
+
+export type AchievementSet = {
+	id: string,
+	game_id: string,
+	game_launch_id: string | null,
+	storefront_id: number | null,
+	provider: string,
+	external_set_id: string,
+	external_game_id: string,
+	variant: string,
+	name: string,
+	description: string | null,
+	version: string | null,
+	unlocked_achievements: number,
+	total_achievements: number,
+	achievements: Achievement[],
+};
+
+export type AchievementSourceStatus = {
+	id: string,
+	game_id: string,
+	game_launch_id: string | null,
+	storefront_id: number | null,
+	provider: string,
+	external_game_id: string,
+	has_achievements: boolean,
+	checked_at: number,
+};
+
+export type AppError = ({ Database: string }) & { Http?: never; Internal?: never; Launch?: never; NotFound?: never; Steam?: never } | ({ NotFound: string }) & { Database?: never; Http?: never; Internal?: never; Launch?: never; Steam?: never } | ({ Http: string }) & { Database?: never; Internal?: never; Launch?: never; NotFound?: never; Steam?: never } | ({ Steam: string }) & { Database?: never; Http?: never; Internal?: never; Launch?: never; NotFound?: never } | ({ Launch: string }) & { Database?: never; Http?: never; Internal?: never; NotFound?: never; Steam?: never } | ({ Internal: string }) & { Database?: never; Http?: never; Launch?: never; NotFound?: never; Steam?: never };
+
+export type DeleteMediaPayload = {
+	id: string,
+};
 
 export type Game = {
 	id: string,
 	name: string,
 	game_status_id: number,
 	is_favorite: boolean,
+	igdb_id: number | null,
 };
+
+export type GameAchievementData = {
+	source_statuses: AchievementSourceStatus[],
+	sets: AchievementSet[],
+};
+
+export type GameSyncEntry = {
+	name: string,
+	status: GameSyncStatus,
+};
+
+export type GameSyncStatus = "Added" | "Updated";
 
 export type GetByIdPayload = {
 	game_id: string,
+};
+
+export type GetGameAchievementSetsPayload = {
+	game_id: string,
+	game_launch_id: string | null,
+};
+
+export type GetMediaByTypePayload = {
+	entity_type: string,
+	entity_id: string,
+	media_type_id: number,
+};
+
+export type GetMediaPayload = {
+	entity_type: string,
+	entity_id: string,
+};
+
+export type LaunchGamePayload = {
+	game_launch_id: string,
+};
+
+export type Media = {
+	id: string,
+	entity_type: string,
+	entity_id: string,
+	media_type_id: number,
+	file_name: string,
+	source_url: string | null,
+	is_user: boolean,
+	created_at: number,
+};
+
+export type SyncResult = {
+	games: GameSyncEntry[],
+	games_added: number,
+	games_updated: number,
 };
 
 export type UpdateStatusPayload = {

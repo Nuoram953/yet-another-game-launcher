@@ -1,15 +1,17 @@
 use async_trait::async_trait;
+use std::collections::HashSet;
 use std::sync::{Arc, Mutex};
 use yagl_core::{
     config::Config,
     domains::{
+        achievement::models::{ImportedAchievement, ImportedAchievementSet},
         game::repository as game_repository,
         storefront::{
             models::{GameSyncStatus, Storefront, StorefrontGame},
             providers::StorefrontProvider,
             service::{
-                sync_with_providers, sync_with_providers_observed, sync_with_providers_tracked,
-                SyncProgressEvent,
+                sync_achievements_with_providers_observed, sync_with_providers,
+                sync_with_providers_observed, sync_with_providers_tracked, SyncProgressEvent,
             },
         },
     },
@@ -19,15 +21,32 @@ use yagl_core::{
 
 struct MockProvider {
     games: Vec<StorefrontGame>,
+    achievement_games: HashSet<String>,
 }
 
 impl MockProvider {
     fn with_games(games: Vec<StorefrontGame>) -> Self {
-        Self { games }
+        Self {
+            games,
+            achievement_games: HashSet::new(),
+        }
+    }
+
+    fn with_achievement_games(games: Vec<StorefrontGame>, achievement_games: &[&str]) -> Self {
+        Self {
+            games,
+            achievement_games: achievement_games
+                .iter()
+                .map(|id| (*id).to_string())
+                .collect(),
+        }
     }
 
     fn empty() -> Self {
-        Self { games: vec![] }
+        Self {
+            games: vec![],
+            achievement_games: HashSet::new(),
+        }
     }
 }
 
@@ -68,6 +87,38 @@ impl StorefrontProvider for MockProvider {
 
     async fn uninstall_game(&self, _external_id: &str) -> Result<(), AppError> {
         Ok(())
+    }
+
+    async fn fetch_achievement_set(
+        &self,
+        external_id: &str,
+    ) -> Result<Option<ImportedAchievementSet>, AppError> {
+        if !self.achievement_games.contains(external_id) {
+            return Ok(None);
+        }
+
+        Ok(Some(ImportedAchievementSet {
+            game_launch_id: None,
+            storefront_id: Some(Storefront::Steam as i64),
+            provider: "steam".to_string(),
+            external_set_id: format!("set-{external_id}"),
+            external_game_id: external_id.to_string(),
+            variant: "default".to_string(),
+            name: format!("Achievements {external_id}"),
+            description: None,
+            version: None,
+            achievements: vec![ImportedAchievement {
+                external_id: format!("achievement-{external_id}"),
+                name: "First step".to_string(),
+                description: None,
+                icon_url: None,
+                icon_gray_url: None,
+                is_hidden: false,
+                display_order: 0,
+                is_unlocked: true,
+                unlocked_at: Some(1_700_000_000),
+            }],
+        }))
     }
 }
 
@@ -744,6 +795,26 @@ async fn sync_with_providers_observed_reports_storefront_progress() {
                 "completed:{:?}:{}:{}",
                 progress.storefront, progress.games_added, progress.games_updated
             ),
+            SyncProgressEvent::AchievementSyncStarted { storefront } => {
+                format!("achievement-start:{storefront:?}")
+            }
+            SyncProgressEvent::AchievementSyncFetched { progress } => format!(
+                "achievement-fetched:{:?}:{}",
+                progress.storefront, progress.total_games
+            ),
+            SyncProgressEvent::AchievementProcessed { progress } => format!(
+                "achievement-processed:{:?}:{}:{}:{}",
+                progress.storefront,
+                progress.processed_games,
+                progress.games_with_achievements,
+                progress.games_without_achievements
+            ),
+            SyncProgressEvent::AchievementSyncCompleted { progress } => format!(
+                "achievement-completed:{:?}:{}:{}",
+                progress.storefront,
+                progress.games_with_achievements,
+                progress.games_without_achievements
+            ),
         };
 
         events_clone.lock().unwrap().push(label);
@@ -757,4 +828,213 @@ async fn sync_with_providers_observed_reports_storefront_progress() {
     assert_eq!(events[2], "processed:Steam:1:1:Team Fortress 2");
     assert_eq!(events[3], "processed:Steam:2:2:Dota 2");
     assert_eq!(events[4], "completed:Steam:2:0");
+}
+
+#[tokio::test]
+async fn sync_achievements_with_providers_observed_reports_progress() {
+    let pool = test_db().await;
+
+    sync_with_providers(
+        &pool,
+        vec![(
+            Storefront::Steam,
+            Box::new(MockProvider::with_games(vec![
+                make_game("440", "Team Fortress 2"),
+                make_game("570", "Dota 2"),
+            ])) as Box<dyn StorefrontProvider>,
+        )],
+        &Config::default(),
+    )
+    .await
+    .unwrap();
+
+    let events = Arc::new(Mutex::new(Vec::new()));
+    let events_clone = Arc::clone(&events);
+
+    sync_achievements_with_providers_observed(
+        &pool,
+        vec![(
+            Storefront::Steam,
+            Box::new(MockProvider::with_achievement_games(vec![], &["440"]))
+                as Box<dyn StorefrontProvider>,
+        )],
+        &Config::default(),
+        |event| {
+            let label = match event {
+                SyncProgressEvent::AchievementSyncStarted { storefront } => {
+                    format!("start:{storefront:?}")
+                }
+                SyncProgressEvent::AchievementSyncFetched { progress } => {
+                    format!("fetched:{:?}:{}", progress.storefront, progress.total_games)
+                }
+                SyncProgressEvent::AchievementProcessed { progress } => format!(
+                    "processed:{:?}:{}:{}:{}",
+                    progress.storefront,
+                    progress.processed_games,
+                    progress.games_with_achievements,
+                    progress.games_without_achievements
+                ),
+                SyncProgressEvent::AchievementSyncCompleted { progress } => format!(
+                    "completed:{:?}:{}:{}",
+                    progress.storefront,
+                    progress.games_with_achievements,
+                    progress.games_without_achievements
+                ),
+                other => panic!("unexpected event: {other:?}"),
+            };
+
+            events_clone.lock().unwrap().push(label);
+        },
+    )
+    .await
+    .unwrap();
+
+    let events = events.lock().unwrap();
+    assert_eq!(events[0], "start:Steam");
+    assert_eq!(events[1], "fetched:Steam:2");
+    assert_eq!(events[2], "processed:Steam:1:1:0");
+    assert_eq!(events[3], "processed:Steam:2:1:1");
+    assert_eq!(events[4], "completed:Steam:1:1");
+}
+
+#[tokio::test]
+async fn sync_achievements_only_refreshes_games_played_since_last_check() {
+    let pool = test_db().await;
+    let now: i64 = sqlx::query_scalar!("SELECT unixepoch() AS value")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    sync_with_providers(
+        &pool,
+        vec![(
+            Storefront::Steam,
+            Box::new(MockProvider::with_games(vec![
+                StorefrontGame {
+                    external_id: "440".to_string(),
+                    name: "Team Fortress 2".to_string(),
+                    is_installed: false,
+                    location: String::new(),
+                    size: None,
+                    igdb_id: None,
+                    time_played: Some(60),
+                    last_played_at: Some((now - 10) as u64),
+                },
+                StorefrontGame {
+                    external_id: "570".to_string(),
+                    name: "Dota 2".to_string(),
+                    is_installed: false,
+                    location: String::new(),
+                    size: None,
+                    igdb_id: None,
+                    time_played: Some(60),
+                    last_played_at: Some((now - 200) as u64),
+                },
+            ])) as Box<dyn StorefrontProvider>,
+        )],
+        &Config::default(),
+    )
+    .await
+    .unwrap();
+
+    let recent_last_played = now - 10;
+    let stale_last_played = now - 200;
+    sqlx::query!(
+        "UPDATE game_library_entry
+         SET last_played_at = CASE external_id
+             WHEN '440' THEN ?
+             WHEN '570' THEN ?
+             ELSE last_played_at
+         END
+         WHERE storefront_id = ?",
+        recent_last_played,
+        stale_last_played,
+        Storefront::Steam as i64,
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+
+    for external_id in ["440", "570"] {
+        let entry =
+            game_repository::find_by_external_id(&pool, Storefront::Steam as i64, external_id)
+                .await
+                .unwrap()
+                .expect("expected synced library entry");
+        let status_id = format!("status-{external_id}");
+        let checked_at = now - 100;
+        sqlx::query!(
+            "INSERT INTO achievement_source_status (
+                id,
+                game_id,
+                storefront_id,
+                provider,
+                external_game_id,
+                has_achievements,
+                checked_at
+             ) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            status_id,
+            entry.game_id,
+            Storefront::Steam as i64,
+            "steam",
+            external_id,
+            false,
+            checked_at,
+        )
+        .execute(&pool)
+        .await
+        .unwrap();
+    }
+
+    let events = Arc::new(Mutex::new(Vec::new()));
+    let events_clone = Arc::clone(&events);
+    sync_achievements_with_providers_observed(
+        &pool,
+        vec![(
+            Storefront::Steam,
+            Box::new(MockProvider::with_achievement_games(vec![], &["440"]))
+                as Box<dyn StorefrontProvider>,
+        )],
+        &Config::default(),
+        |event| {
+            if let SyncProgressEvent::AchievementProcessed { progress } = event {
+                events_clone.lock().unwrap().push(format!(
+                    "{}:{}:{}",
+                    progress.processed_games,
+                    progress.games_with_achievements,
+                    progress.games_without_achievements
+                ));
+            }
+        },
+    )
+    .await
+    .unwrap();
+
+    let statuses = sqlx::query!(
+        "SELECT external_game_id, has_achievements, checked_at
+         FROM achievement_source_status
+         WHERE provider = 'steam'
+         ORDER BY external_game_id"
+    )
+    .fetch_all(&pool)
+    .await
+    .unwrap();
+
+    assert_eq!(statuses.len(), 2);
+    let refreshed = statuses
+        .iter()
+        .find(|status| status.external_game_id == "440")
+        .expect("expected refreshed status");
+    assert!(refreshed.has_achievements);
+    assert!(refreshed.checked_at > now - 100);
+
+    let skipped = statuses
+        .iter()
+        .find(|status| status.external_game_id == "570")
+        .expect("expected skipped status");
+    assert!(!skipped.has_achievements);
+    assert_eq!(skipped.checked_at, now - 100);
+
+    let events = events.lock().unwrap();
+    assert_eq!(events.as_slice(), ["1:1:0"]);
 }
