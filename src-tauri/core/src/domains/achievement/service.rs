@@ -3,7 +3,7 @@ use crate::{
         models::{
             Achievement, AchievementSet, AchievementSourceStatus, GameAchievementData,
             GetGameAchievementSetsPayload, ImportedAchievementSet, NewAchievement,
-            NewAchievementSet, NewAchievementSourceStatus,
+            NewAchievementSet, NewAchievementSource,
         },
         repository,
     },
@@ -100,9 +100,9 @@ pub async fn get_game_achievement_sets(
 
 pub async fn mark_source_checked(
     pool: &sqlx::SqlitePool,
-    status: NewAchievementSourceStatus,
+    source: NewAchievementSource,
 ) -> Result<(), AppError> {
-    repository::upsert_source_status(pool, &status).await
+    repository::upsert_source(pool, &source).await.map(|_| ())
 }
 
 pub async fn sync_imported_set(
@@ -111,9 +111,9 @@ pub async fn sync_imported_set(
     library_entry: &GameLibraryEntry,
     imported_set: ImportedAchievementSet,
 ) -> Result<(), AppError> {
-    repository::upsert_source_status(
+    let source = repository::upsert_source(
         pool,
-        &NewAchievementSourceStatus {
+        &NewAchievementSource {
             id: Uuid::new_v4().to_string(),
             game_id: game_id.to_string(),
             game_launch_id: imported_set.game_launch_id.clone(),
@@ -131,14 +131,8 @@ pub async fn sync_imported_set(
         pool,
         &NewAchievementSet {
             id: Uuid::new_v4().to_string(),
-            game_id: game_id.to_string(),
-            game_launch_id: imported_set.game_launch_id,
-            storefront_id: imported_set
-                .storefront_id
-                .or(Some(library_entry.storefront_id)),
-            provider: imported_set.provider,
+            achievement_source_id: source.id.clone(),
             external_set_id: imported_set.external_set_id,
-            external_game_id: imported_set.external_game_id,
             variant: imported_set.variant,
             name: imported_set.name,
             description: imported_set.description,

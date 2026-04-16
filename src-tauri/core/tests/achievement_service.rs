@@ -370,7 +370,7 @@ async fn mark_source_checked_records_no_achievements_state() {
 
     service::mark_source_checked(
         &pool,
-        yagl_core::domains::achievement::models::NewAchievementSourceStatus {
+        yagl_core::domains::achievement::models::NewAchievementSource {
             id: "status-1".to_string(),
             game_id: game.id.clone(),
             game_launch_id: None,

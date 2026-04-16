@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use sqlx::Row;
 use std::collections::HashSet;
 use std::sync::{Arc, Mutex};
 use yagl_core::{
@@ -963,8 +964,8 @@ async fn sync_achievements_only_refreshes_games_played_since_last_check() {
                 .expect("expected synced library entry");
         let status_id = format!("status-{external_id}");
         let checked_at = now - 100;
-        sqlx::query!(
-            "INSERT INTO achievement_source_status (
+        sqlx::query(
+            "INSERT INTO achievement_source (
                 id,
                 game_id,
                 storefront_id,
@@ -973,14 +974,14 @@ async fn sync_achievements_only_refreshes_games_played_since_last_check() {
                 has_achievements,
                 checked_at
              ) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            status_id,
-            entry.game_id,
-            Storefront::Steam as i64,
-            "steam",
-            external_id,
-            false,
-            checked_at,
         )
+        .bind(status_id)
+        .bind(entry.game_id)
+        .bind(Storefront::Steam as i64)
+        .bind("steam")
+        .bind(external_id)
+        .bind(false)
+        .bind(checked_at)
         .execute(&pool)
         .await
         .unwrap();
@@ -1010,11 +1011,11 @@ async fn sync_achievements_only_refreshes_games_played_since_last_check() {
     .await
     .unwrap();
 
-    let statuses = sqlx::query!(
+    let statuses = sqlx::query(
         "SELECT external_game_id, has_achievements, checked_at
-         FROM achievement_source_status
+         FROM achievement_source
          WHERE provider = 'steam'
-         ORDER BY external_game_id"
+         ORDER BY external_game_id",
     )
     .fetch_all(&pool)
     .await
@@ -1023,17 +1024,17 @@ async fn sync_achievements_only_refreshes_games_played_since_last_check() {
     assert_eq!(statuses.len(), 2);
     let refreshed = statuses
         .iter()
-        .find(|status| status.external_game_id == "440")
+        .find(|status| status.get::<String, _>("external_game_id") == "440")
         .expect("expected refreshed status");
-    assert!(refreshed.has_achievements);
-    assert!(refreshed.checked_at > now - 100);
+    assert!(refreshed.get::<bool, _>("has_achievements"));
+    assert!(refreshed.get::<i64, _>("checked_at") > now - 100);
 
     let skipped = statuses
         .iter()
-        .find(|status| status.external_game_id == "570")
+        .find(|status| status.get::<String, _>("external_game_id") == "570")
         .expect("expected skipped status");
-    assert!(!skipped.has_achievements);
-    assert_eq!(skipped.checked_at, now - 100);
+    assert!(!skipped.get::<bool, _>("has_achievements"));
+    assert_eq!(skipped.get::<i64, _>("checked_at"), now - 100);
 
     let events = events.lock().unwrap();
     assert_eq!(events.as_slice(), ["1:1:0"]);

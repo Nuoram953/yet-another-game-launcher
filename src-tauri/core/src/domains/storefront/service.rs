@@ -7,7 +7,7 @@ use crate::{
     config::Config,
     domains::{
         achievement::{
-            models::NewAchievementSourceStatus, repository as achivement_repositery,
+            models::NewAchievementSource, repository as achivement_repositery,
             service as achievement_service,
         },
         game::{
@@ -262,7 +262,7 @@ where
             } else {
                 achievement_service::mark_source_checked(
                     pool,
-                    NewAchievementSourceStatus {
+                    NewAchievementSource {
                         id: uuid::Uuid::new_v4().to_string(),
                         game_id: entry.game_id.clone(),
                         game_launch_id: None,

@@ -1,14 +1,38 @@
 use crate::{
     domains::{
         achievement::models::{
-            AchievementRecord, AchievementSetRecord, AchievementSourceStatusRecord,
-            AchievementUpsertRecord, NewAchievement, NewAchievementSet, NewAchievementSourceStatus,
+            AchievementRecord, AchievementSetRecord, AchievementSourceRecord,
+            AchievementUpsertRecord, NewAchievement, NewAchievementSet, NewAchievementSource,
         },
         game::models::GameLibraryEntry,
     },
     error::AppError,
 };
 use sqlx::{QueryBuilder, Sqlite, SqlitePool};
+
+async fn get_set_by_id(pool: &SqlitePool, set_id: &str) -> Result<AchievementSetRecord, AppError> {
+    sqlx::query_as::<_, AchievementSetRecord>(
+        "SELECT
+            s.id,
+            src.game_id AS game_id,
+            src.game_launch_id AS game_launch_id,
+            src.storefront_id AS storefront_id,
+            src.provider AS provider,
+            s.external_set_id AS external_set_id,
+            src.external_game_id AS external_game_id,
+            s.variant AS variant,
+            s.name AS name,
+            s.description AS description,
+            s.version AS version
+         FROM achievement_set s
+         JOIN achievement_source src ON src.id = s.achievement_source_id
+         WHERE s.id = ?",
+    )
+    .bind(set_id)
+    .fetch_one(pool)
+    .await
+    .map_err(AppError::from)
+}
 
 pub async fn list_sets_by_game_id(
     pool: &SqlitePool,
@@ -18,38 +42,40 @@ pub async fn list_sets_by_game_id(
     let sql = match game_launch_id {
         Some(_) => {
             "SELECT
-                id,
-                game_id,
-                game_launch_id,
-                storefront_id,
-                provider,
-                external_set_id,
-                external_game_id,
-                variant,
-                name,
-                description,
-                version
-             FROM achievement_set
-             WHERE game_id = ?
-               AND (game_launch_id IS NULL OR game_launch_id = ?)
-             ORDER BY provider ASC, name ASC, external_set_id ASC, variant ASC"
+                s.id,
+                src.game_id AS game_id,
+                src.game_launch_id AS game_launch_id,
+                src.storefront_id AS storefront_id,
+                src.provider AS provider,
+                s.external_set_id AS external_set_id,
+                src.external_game_id AS external_game_id,
+                s.variant AS variant,
+                s.name AS name,
+                s.description AS description,
+                s.version AS version
+             FROM achievement_set s
+             JOIN achievement_source src ON src.id = s.achievement_source_id
+             WHERE src.game_id = ?
+               AND (src.game_launch_id IS NULL OR src.game_launch_id = ?)
+             ORDER BY src.provider ASC, s.name ASC, s.external_set_id ASC, s.variant ASC"
         }
         None => {
             "SELECT
-                id,
-                game_id,
-                game_launch_id,
-                storefront_id,
-                provider,
-                external_set_id,
-                external_game_id,
-                variant,
-                name,
-                description,
-                version
-             FROM achievement_set
-             WHERE game_id = ?
-             ORDER BY provider ASC, name ASC, external_set_id ASC, variant ASC"
+                s.id,
+                src.game_id AS game_id,
+                src.game_launch_id AS game_launch_id,
+                src.storefront_id AS storefront_id,
+                src.provider AS provider,
+                s.external_set_id AS external_set_id,
+                src.external_game_id AS external_game_id,
+                s.variant AS variant,
+                s.name AS name,
+                s.description AS description,
+                s.version AS version
+             FROM achievement_set s
+             JOIN achievement_source src ON src.id = s.achievement_source_id
+             WHERE src.game_id = ?
+             ORDER BY src.provider ASC, s.name ASC, s.external_set_id ASC, s.variant ASC"
         }
     };
 
@@ -64,7 +90,7 @@ pub async fn list_source_statuses_by_game_id(
     pool: &SqlitePool,
     game_id: &str,
     game_launch_id: Option<&str>,
-) -> Result<Vec<AchievementSourceStatusRecord>, AppError> {
+) -> Result<Vec<AchievementSourceRecord>, AppError> {
     let sql = match game_launch_id {
         Some(_) => {
             "SELECT
@@ -76,7 +102,7 @@ pub async fn list_source_statuses_by_game_id(
                 external_game_id,
                 has_achievements,
                 checked_at
-             FROM achievement_source_status
+             FROM achievement_source
              WHERE game_id = ?
                AND (game_launch_id IS NULL OR game_launch_id = ?)
              ORDER BY provider ASC, external_game_id ASC"
@@ -91,13 +117,13 @@ pub async fn list_source_statuses_by_game_id(
                 external_game_id,
                 has_achievements,
                 checked_at
-             FROM achievement_source_status
+             FROM achievement_source
              WHERE game_id = ?
              ORDER BY provider ASC, external_game_id ASC"
         }
     };
 
-    let mut query = sqlx::query_as::<_, AchievementSourceStatusRecord>(sql).bind(game_id);
+    let mut query = sqlx::query_as::<_, AchievementSourceRecord>(sql).bind(game_id);
     if let Some(game_launch_id) = game_launch_id {
         query = query.bind(game_launch_id);
     }
@@ -125,9 +151,10 @@ pub async fn list_achievements_by_game_id(
                 a.unlocked_at
              FROM achievement a
              JOIN achievement_set s ON s.id = a.achievement_set_id
-             WHERE s.game_id = ?
-               AND (s.game_launch_id IS NULL OR s.game_launch_id = ?)
-             ORDER BY s.provider ASC, s.name ASC, a.display_order ASC, a.name ASC"
+             JOIN achievement_source src ON src.id = s.achievement_source_id
+             WHERE src.game_id = ?
+               AND (src.game_launch_id IS NULL OR src.game_launch_id = ?)
+             ORDER BY src.provider ASC, s.name ASC, a.display_order ASC, a.name ASC"
         }
         None => {
             "SELECT
@@ -144,8 +171,9 @@ pub async fn list_achievements_by_game_id(
                 a.unlocked_at
              FROM achievement a
              JOIN achievement_set s ON s.id = a.achievement_set_id
-             WHERE s.game_id = ?
-             ORDER BY s.provider ASC, s.name ASC, a.display_order ASC, a.name ASC"
+             JOIN achievement_source src ON src.id = s.achievement_source_id
+             WHERE src.game_id = ?
+             ORDER BY src.provider ASC, s.name ASC, a.display_order ASC, a.name ASC"
         }
     };
 
@@ -156,12 +184,12 @@ pub async fn list_achievements_by_game_id(
     query.fetch_all(pool).await.map_err(AppError::from)
 }
 
-pub async fn upsert_source_status(
+pub async fn upsert_source(
     pool: &SqlitePool,
-    status: &NewAchievementSourceStatus,
-) -> Result<(), AppError> {
-    sqlx::query(
-        "INSERT INTO achievement_source_status (
+    source: &NewAchievementSource,
+) -> Result<AchievementSourceRecord, AppError> {
+    sqlx::query_as::<_, AchievementSourceRecord>(
+        "INSERT INTO achievement_source (
             id,
             game_id,
             game_launch_id,
@@ -169,81 +197,68 @@ pub async fn upsert_source_status(
             provider,
             external_game_id,
             has_achievements
-         )
-         VALUES (?, ?, ?, ?, ?, ?, ?)
-         ON CONFLICT DO UPDATE SET
-            storefront_id = excluded.storefront_id,
-            has_achievements = excluded.has_achievements,
-            checked_at = unixepoch()",
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT DO UPDATE SET
+             storefront_id = excluded.storefront_id,
+             has_achievements = excluded.has_achievements,
+             checked_at = unixepoch()
+          RETURNING
+             id,
+             game_id,
+             game_launch_id,
+             storefront_id,
+             provider,
+             external_game_id,
+             has_achievements,
+             checked_at",
     )
-    .bind(&status.id)
-    .bind(&status.game_id)
-    .bind(&status.game_launch_id)
-    .bind(status.storefront_id)
-    .bind(&status.provider)
-    .bind(&status.external_game_id)
-    .bind(status.has_achievements)
-    .execute(pool)
-    .await?;
-    Ok(())
+    .bind(&source.id)
+    .bind(&source.game_id)
+    .bind(&source.game_launch_id)
+    .bind(source.storefront_id)
+    .bind(&source.provider)
+    .bind(&source.external_game_id)
+    .bind(source.has_achievements)
+    .fetch_one(pool)
+    .await
+    .map_err(AppError::from)
 }
 
 pub async fn upsert_set(
     pool: &SqlitePool,
     set: &NewAchievementSet,
 ) -> Result<AchievementSetRecord, AppError> {
-    sqlx::query_as::<_, AchievementSetRecord>(
+    let set_id = sqlx::query_scalar::<_, String>(
         "INSERT INTO achievement_set (
             id,
-            game_id,
-            game_launch_id,
-            storefront_id,
-            provider,
+            achievement_source_id,
             external_set_id,
-            external_game_id,
             variant,
             name,
             description,
             version
-         )
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-         ON CONFLICT DO UPDATE SET
-            game_launch_id = excluded.game_launch_id,
-            storefront_id = excluded.storefront_id,
-            external_game_id = excluded.external_game_id,
-            name = excluded.name,
-            description = excluded.description,
-            version = excluded.version,
-            updated_at = unixepoch()
-         RETURNING
-            id,
-            game_id,
-            game_launch_id,
-            storefront_id,
-            provider,
-            external_set_id,
-            external_game_id,
-            variant,
-            name,
-            description,
-            version,
-            created_at,
-            updated_at",
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT DO UPDATE SET
+             name = excluded.name,
+             description = excluded.description,
+             version = excluded.version,
+             updated_at = unixepoch()
+          RETURNING id",
     )
     .bind(&set.id)
-    .bind(&set.game_id)
-    .bind(&set.game_launch_id)
-    .bind(set.storefront_id)
-    .bind(&set.provider)
+    .bind(&set.achievement_source_id)
     .bind(&set.external_set_id)
-    .bind(&set.external_game_id)
     .bind(&set.variant)
     .bind(&set.name)
     .bind(&set.description)
     .bind(&set.version)
     .fetch_one(pool)
     .await
-    .map_err(AppError::from)
+    .map_err(AppError::from)?;
+
+    get_set_by_id(pool, &set_id).await
 }
 
 pub async fn upsert_achievement(
@@ -327,17 +342,17 @@ pub async fn list_achievement_sync_entries(
     sqlx::query_as::<_, GameLibraryEntry>(
         "SELECT gle.*
          FROM game_library_entry gle
-         LEFT JOIN achievement_source_status ass
-           ON ass.game_id = gle.game_id
-          AND COALESCE(ass.game_launch_id, '') = ''
-          AND ass.provider = ?
-          AND ass.external_game_id = gle.external_id
+         LEFT JOIN achievement_source src
+           ON src.game_id = gle.game_id
+          AND COALESCE(src.game_launch_id, '') = ''
+          AND src.provider = ?
+          AND src.external_game_id = gle.external_id
          WHERE gle.storefront_id = ?
            AND (
-             ass.id IS NULL
-             OR (gle.last_played_at IS NOT NULL AND gle.last_played_at > ass.checked_at)
-           )
-         ORDER BY gle.external_id ASC",
+             src.id IS NULL
+             OR (gle.last_played_at IS NOT NULL AND gle.last_played_at > src.checked_at)
+            )
+          ORDER BY gle.external_id ASC",
     )
     .bind(provider_name)
     .bind(storefront_id)
