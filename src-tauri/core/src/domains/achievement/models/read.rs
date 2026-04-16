@@ -19,6 +19,18 @@ pub struct AchievementSourceStatus {
     pub checked_at: i64,
 }
 
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct AchievementSourceRecord {
+    pub id: String,
+    pub game_id: String,
+    pub game_launch_id: Option<String>,
+    pub storefront_id: Option<i64>,
+    pub provider: String,
+    pub external_game_id: String,
+    pub has_achievements: bool,
+    pub checked_at: i64,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct AchievementSet {
     pub id: String,
@@ -65,18 +77,6 @@ pub struct AchievementSetRecord {
     pub name: String,
     pub description: Option<String>,
     pub version: Option<String>,
-}
-
-#[derive(Debug, Clone, sqlx::FromRow)]
-pub struct AchievementSourceStatusRecord {
-    pub id: String,
-    pub game_id: String,
-    pub game_launch_id: Option<String>,
-    pub storefront_id: Option<i64>,
-    pub provider: String,
-    pub external_game_id: String,
-    pub has_achievements: bool,
-    pub checked_at: i64,
 }
 
 #[derive(Debug, Clone, sqlx::FromRow)]

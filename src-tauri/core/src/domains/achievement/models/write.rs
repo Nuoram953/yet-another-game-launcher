@@ -1,20 +1,5 @@
 #[derive(Debug, Clone)]
-pub struct NewAchievementSet {
-    pub id: String,
-    pub game_id: String,
-    pub game_launch_id: Option<String>,
-    pub storefront_id: Option<i64>,
-    pub provider: String,
-    pub external_set_id: String,
-    pub external_game_id: String,
-    pub variant: String,
-    pub name: String,
-    pub description: Option<String>,
-    pub version: Option<String>,
-}
-
-#[derive(Debug, Clone)]
-pub struct NewAchievementSourceStatus {
+pub struct NewAchievementSource {
     pub id: String,
     pub game_id: String,
     pub game_launch_id: Option<String>,
@@ -22,6 +7,17 @@ pub struct NewAchievementSourceStatus {
     pub provider: String,
     pub external_game_id: String,
     pub has_achievements: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct NewAchievementSet {
+    pub id: String,
+    pub achievement_source_id: String,
+    pub external_set_id: String,
+    pub variant: String,
+    pub name: String,
+    pub description: Option<String>,
+    pub version: Option<String>,
 }
 
 #[derive(Debug, Clone)]
