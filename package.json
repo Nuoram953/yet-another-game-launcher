@@ -11,6 +11,7 @@
     "tauri": "tauri dev --config src-tauri/app/tauri.conf.json",
     "bindings": "cargo run -p app --bin export-bindings --manifest-path src-tauri/Cargo.toml",
     "test": "cd src-tauri && cargo test",
+    "sqlx:prepare": "cd src-tauri && cargo sqlx prepare --workspace -- --all-targets",
     "prepare": "husky",
     "migrate": "cd src-tauri && sqlx migrate run --source core/src/migrations"
   },
