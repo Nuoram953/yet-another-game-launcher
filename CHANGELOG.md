@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.3.0...v1.4.0) (2026-04-16)
+
+
+### Features
+
+* add achivements support in steam ([62274ea](https://github.com/Nuoram953/yet-another-game-launcher/commit/62274ea66eda84890837f21da1a5732d8d341579))
+
 # [1.3.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.2.2...v1.3.0) (2026-04-13)
 
 
