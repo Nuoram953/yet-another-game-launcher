@@ -119,17 +119,17 @@ fn render_library_entry(output: &mut String, entry: &LibraryEntryView) {
 }
 
 fn render_launch(output: &mut String, launch: &LaunchView) {
-    let default_marker = if launch.launch.is_default {
-        format!(" {}", "[default]".green())
+    let launch_kind = if launch.launch.is_default {
+        "default"
     } else {
-        String::new()
+        "launch"
     };
 
     writeln!(
         output,
-        "    {}{}  {}",
-        launch.launch.name.bold(),
-        default_marker,
+        "    {} {}  {}",
+        launch_kind.dimmed(),
+        launch.launch.name,
         format_playtime_seconds(launch.total_playtime_seconds).cyan()
     )
     .expect("writing launch summary should not fail");
@@ -338,4 +338,50 @@ pub async fn handle(
 
     print!("{}", render_game_view(&view, achievements));
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_launch(name: &str, is_default: bool, total_playtime_seconds: i64) -> LaunchView {
+        LaunchView {
+            launch: GameLaunch {
+                id: "launch-id".to_string(),
+                game_library_entry_id: "entry-id".to_string(),
+                name: name.to_string(),
+                executable: None,
+                args: None,
+                working_dir: None,
+                is_default,
+                created_at: 0,
+                env: None,
+                proton_dir: None,
+            },
+            total_playtime_seconds,
+        }
+    }
+
+    #[test]
+    fn renders_default_launch_with_leading_label() {
+        let mut output = String::new();
+
+        render_launch(&mut output, &test_launch("Play", true, 90));
+
+        assert!(output.contains("default"));
+        assert!(output.contains("Play"));
+        assert!(output.contains("1m"));
+        assert!(!output.contains("[default]"));
+    }
+
+    #[test]
+    fn renders_non_default_launch_with_leading_label() {
+        let mut output = String::new();
+
+        render_launch(&mut output, &test_launch("Safe Mode", false, 0));
+
+        assert!(output.contains("launch"));
+        assert!(output.contains("Safe Mode"));
+        assert!(!output.contains("[default]"));
+    }
 }
