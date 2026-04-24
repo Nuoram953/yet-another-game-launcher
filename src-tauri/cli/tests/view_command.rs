@@ -162,10 +162,10 @@ async fn view_renders_game_details_to_stdout() {
     );
     assert!(stdout.contains("Launches"), "stdout was: {stdout}");
     assert!(
-        stdout.contains("DirectX [default]  25m"),
+        stdout.contains("default DirectX  25m"),
         "stdout was: {stdout}"
     );
-    assert!(stdout.contains("Vulkan  —"), "stdout was: {stdout}");
+    assert!(stdout.contains("launch Vulkan  —"), "stdout was: {stdout}");
     assert!(!stdout.contains("22:13 – 22:28"), "stdout was: {stdout}");
     assert!(!stdout.contains("22:06"), "stdout was: {stdout}");
     assert!(
