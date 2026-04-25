@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE game SET game_status_id = ?, updated_at = unixepoch() WHERE id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "98e55225c45fcd7574e29e407fb1cc0d336e58653a9e1cdd35f914fc95d96340"
+}
