@@ -71,7 +71,7 @@ async fn resolve_last_launch(pool: &DbPool) -> Result<LaunchTarget> {
 }
 
 async fn resolve_interactively(pool: &DbPool) -> Result<LaunchTarget> {
-    let game_id = utils::select_game_id(pool, None).await?;
+    let game_id = utils::select_installed_game_id(pool, None).await?;
     let launch_id = utils::select_launch_id(pool, None, &game_id).await?;
     resolve_by_launch_id(pool, launch_id).await
 }

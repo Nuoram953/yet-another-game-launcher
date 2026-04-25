@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO game_activity (game_launch_id, started_at, ended_at, duration)\n         VALUES (?, ?, ?, ?)\n         RETURNING id as \"id!\", game_launch_id, started_at, ended_at, duration",
+  "describe": {
+    "columns": [
+      {
+        "name": "id!",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "game_launch_id",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "started_at",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "ended_at",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "duration",
+        "ordinal": 4,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "9974921c6a34e5c8a3f8b4522edb6d6fd940a1ba7c5cf75feb954aa40e1f7b7d"
+}

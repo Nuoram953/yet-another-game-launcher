@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT COUNT(*) FROM game_launch gl\n         JOIN game_library_entry gle ON gle.id = gl.game_library_entry_id\n         WHERE gle.external_id = '440'",
+  "describe": {
+    "columns": [
+      {
+        "name": "COUNT(*)",
+        "ordinal": 0,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "26ff7c1a28c83d6d3d9e9d41234bb91fd9dd26a2b4f28b69cbada35c0e6e42f8"
+}
