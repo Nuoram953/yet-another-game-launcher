@@ -13,6 +13,10 @@ path = "src/main.rs"
 [[bin]]
 name = "export-bindings"
 path = "src/bin/export-bindings.rs"
+required-features = ["export-bindings"]
+
+[features]
+export-bindings=[]
 
 [lib]
 name = "app_lib"
