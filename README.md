@@ -60,6 +60,7 @@ Commands:
   view     View details for a game
   install  Install a game from a storefront
   uninstall  Uninstall a game from a storefront
+  status   Update the status of a game
   help     Print this message or the help of the given subcommand(s)
 ```
 
