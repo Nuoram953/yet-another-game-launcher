@@ -10,20 +10,20 @@ test-helpers = []
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-thiserror = "1"
+thiserror = "2"
 sqlx = { version = "0.8.6", features = ["sqlite", "runtime-tokio", "macros", "migrate"] }
 tauri = { version = "2", features = [] }
 specta = { version = "=2.0.0-rc.24", features = ["derive"] }
 tauri-specta = { version = "=2.0.0-rc.24", features = ["derive", "typescript"] }
 chrono = "0.4.44"
-reqwest = { version = "0.12", features = ["json"] }
+reqwest = { version = "0.13", features = ["json"] }
 tokio = { version = "1", features = ["process", "time", "rt"] }
-sysinfo = "0.33"
+sysinfo = "0.39"
 async-trait = "0.1"
 tracing = "0.1.36"
 uuid = { version = "1", features = ["v4"] }
-toml = "0.8"
-notify = { version = "6", features = ["crossbeam-channel"] }
+toml = "0.9"
+notify = { version = "8", features = ["crossbeam-channel"] }
 shlex = "1"
 steamlocate = "2.1.0"
 keyvalues-serde = "0.2.3"
