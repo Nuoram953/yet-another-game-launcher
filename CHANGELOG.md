@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.5.0...v1.5.1) (2026-05-10)
+
+
+### Bug Fixes
+
+* failing build ([8027a82](https://github.com/Nuoram953/yet-another-game-launcher/commit/8027a82f4b06672faf9fc4dd355581c29c9e4a80))
+
 # [1.5.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.4.0...v1.5.0) (2026-05-10)
 
 
