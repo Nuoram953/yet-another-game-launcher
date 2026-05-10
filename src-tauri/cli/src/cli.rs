@@ -85,4 +85,20 @@ pub enum Commands {
 
     #[command(about = "Uninstall a game from a storefront")]
     Uninstall { game_id: Option<String> },
+
+    #[command(
+        about = "Update the status of a game",
+        after_help = "Examples:\n  yagl status                      (interactive)\n  yagl status abc123\n  yagl status abc123 --status Playing\n  yagl status abc123 --status \"On Hold\""
+    )]
+    Status {
+        game_id: Option<String>,
+
+        #[arg(
+            short,
+            long,
+            value_name = "STATUS",
+            help = "New status (Wishlist, Playing, Completed, Dropped, On Hold, To Do)"
+        )]
+        status: Option<String>,
+    },
 }
