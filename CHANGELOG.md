@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.4.0...v1.5.0) (2026-05-10)
+
+
+### Bug Fixes
+
+* build failing on macos ([94d3f21](https://github.com/Nuoram953/yet-another-game-launcher/commit/94d3f21811c91a5eab174c93fa12212a01fd5537))
+* launch command showing all games ([bd39cc0](https://github.com/Nuoram953/yet-another-game-launcher/commit/bd39cc0c9448b3a2017296bcbc4e5e5fc24038c9))
+
+
+### Features
+
+* add commend to update game status ([0ad62f3](https://github.com/Nuoram953/yet-another-game-launcher/commit/0ad62f375394efb6e0598edd1aed798eec6d782d))
+
 # [1.4.0](https://github.com/Nuoram953/yet-another-game-launcher/compare/v1.3.0...v1.4.0) (2026-04-16)
 
 
