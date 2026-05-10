@@ -6,6 +6,7 @@ use crate::cli::Commands;
 pub mod install;
 pub mod launch;
 pub mod search;
+pub mod status;
 pub mod sync;
 pub mod uninstall;
 pub mod view;
@@ -29,5 +30,6 @@ pub async fn run(command: Commands, pool: &DbPool, config: &Config) -> Result<()
             follow,
         } => install::handle(pool, game_id, storefront, follow, config).await,
         Commands::Uninstall { game_id } => uninstall::handle(pool, game_id, config).await,
+        Commands::Status { game_id, status } => status::handle(pool, game_id, status).await,
     }
 }
