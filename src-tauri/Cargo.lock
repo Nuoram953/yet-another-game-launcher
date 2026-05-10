@@ -111,7 +111,7 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
 
 [[package]]
 name = "app"
-version = "1.4.0"
+version = "1.5.1"
 dependencies = [
  "cli",
  "dotenvy",
@@ -605,7 +605,7 @@ checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
 
 [[package]]
 name = "cli"
-version = "1.4.0"
+version = "1.5.1"
 dependencies = [
  "anyhow",
  "clap",
@@ -5206,9 +5206,9 @@ checksum = "61c41af27dd6d1e27b1b16b489db798443478cef1f06a660c96db617ba5de3b1"
 
 [[package]]
 name = "tauri"
-version = "2.11.0"
+version = "2.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d059f2527558d9dba6f186dec4772610e1aecfd3f94002397613e7e648752b66"
+checksum = "b93bd86d231f0a8138f11a02a584769fe4b703dc36ae133d783228dbc4801405"
 dependencies = [
  "anyhow",
  "bytes",
@@ -7125,7 +7125,7 @@ dependencies = [
 
 [[package]]
 name = "yagl-core"
-version = "1.4.0"
+version = "1.5.1"
 dependencies = [
  "async-trait",
  "chrono",
