@@ -18,22 +18,22 @@
   "dependencies": {
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
-    "lint-staged": "^16.4.0",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "lint-staged": "^17.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6",
+    "@semantic-release/changelog": "^7",
     "@semantic-release/exec": "^7",
-    "@semantic-release/git": "^10",
+    "@semantic-release/git": "^11",
     "@semantic-release/github": "^12",
     "@tauri-apps/cli": "^2",
-    "@types/react": "^19.1.8",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react": "^6.0.4",
     "husky": "^9.1.7",
     "semantic-release": "^25",
-    "typescript": "~6.0.3",
-    "vite": "^8.0.10"
+    "typescript": "~7.0.2",
+    "vite": "^8.1.5"
   }
 }
